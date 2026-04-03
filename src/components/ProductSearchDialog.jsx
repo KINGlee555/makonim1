@@ -16,12 +16,15 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     setLoading(true);
     setResults([]);
     const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `אתה עוזר קניות בסופרמרקט בישראל. המשתמש מחפש: "${query}".
+      model: "gemini_3_flash",
+      add_context_from_internet: true,
+      prompt: `חפש מוצרים בסופרמרקט ישראלי בהתאם לשאילתה: "${query}".
       
-      החזר רשימה של עד 10 מוצרים רלוונטיים שניתן למצוא בסופרמרקטים בישראל (שופרסל, רמי לוי, מגה וכו').
-      עבור כל מוצר תן: שם מוצר מדויק בעברית, מותג, קטגוריה, ומחיר משוער בשקלים.
+      חפש באתרים של שופרסל (shufersal.co.il), רמי לוי (rami-levy.co.il), ויקטורי (victory.co.il) או מחירון (מחירון.co.il / mchiroon.co.il).
+      החזר עד 10 מוצרים אמיתיים ומדויקים.
+      עבור כל מוצר תן שם מדויק, מותג, קטגוריה, מחיר עדכני בשקלים, וURL של תמונת המוצר מאתר הסופר (אם קיים).
       
-      הקטגוריות האפשריות: פירות וירקות, מוצרי חלב, בשר ודגים, לחם ומאפים, שימורים, חטיפים ומתוקים, משקאות, ניקיון, היגיינה, תבלינים, קפואים, אחר.`,
+      קטגוריות אפשריות: פירות וירקות, מוצרי חלב, בשר ודגים, לחם ומאפים, שימורים, חטיפים ומתוקים, משקאות, ניקיון, היגיינה, תבלינים, קפואים, אחר.`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -33,7 +36,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                 name: { type: "string" },
                 brand: { type: "string" },
                 category: { type: "string" },
-                price: { type: "number" }
+                price: { type: "number" },
+                image_url: { type: "string" }
               }
             }
           }
@@ -112,8 +116,15 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                 key={idx}
                 className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-card hover:shadow-md transition-all"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <ShoppingBasket className="w-6 h-6 text-primary" />
+                <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  {product.image_url ? (
+                    <img src={product.image_url} alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="font-size:22px">🛒</span>'; }}
+                    />
+                  ) : (
+                    <ShoppingBasket className="w-6 h-6 text-primary" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-base font-medium text-foreground truncate">
