@@ -1,0 +1,25 @@
+{
+  "name": "ShoppingList",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05e8\u05e9\u05d9\u05de\u05d4"
+    },
+    "shared_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05d0\u05d9\u05de\u05d9\u05d9\u05dc\u05d9\u05dd \u05e9\u05dc \u05d0\u05e0\u05e9\u05d9\u05dd \u05e9\u05e9\u05d5\u05ea\u05e4\u05d5 \u05dc\u05e8\u05e9\u05d9\u05de\u05d4 (\u05e2\u05d3 5)",
+      "default": []
+    },
+    "share_code": {
+      "type": "string",
+      "description": "\u05e7\u05d5\u05d3 \u05e9\u05d9\u05ea\u05d5\u05e3 \u05d9\u05d9\u05d7\u05d5\u05d3\u05d9 \u05dc\u05e8\u05e9\u05d9\u05de\u05d4"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}
