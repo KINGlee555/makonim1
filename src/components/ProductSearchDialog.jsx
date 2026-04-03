@@ -16,15 +16,26 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     setLoading(true);
     setResults([]);
     const res = await base44.integrations.Core.InvokeLLM({
-      model: "gemini_3_flash",
-      add_context_from_internet: true,
-      prompt: `חפש מוצרים בסופרמרקט ישראלי בהתאם לשאילתה: "${query}".
-      
-      חפש באתרים של שופרסל (shufersal.co.il), רמי לוי (rami-levy.co.il), ויקטורי (victory.co.il) או מחירון (מחירון.co.il / mchiroon.co.il).
-      החזר עד 10 מוצרים אמיתיים ומדויקים.
-      עבור כל מוצר תן שם מדויק, מותג, קטגוריה, מחיר עדכני בשקלים, וURL של תמונת המוצר מאתר הסופר (אם קיים).
-      
-      קטגוריות אפשריות: פירות וירקות, מוצרי חלב, בשר ודגים, לחם ומאפים, שימורים, חטיפים ומתוקים, משקאות, ניקיון, היגיינה, תבלינים, קפואים, אחר.`,
+      prompt: `אתה מאגר מוצרים של סופרמרקט ישראלי. המשתמש חיפש: "${query}".
+
+החזר רשימה של 8-10 מוצרים אמיתיים שנמכרים בסופרמרקטים בישראל (שופרסל, רמי לוי, מגה, ויקטורי).
+השתמש בידע שלך על מוצרים ישראליים אמיתיים עם מותגים אמיתיים.
+
+דוגמאות למוצרים:
+- חלב תנובה 3% 1 ליטר - ₪6.90
+- לחם אחיד אחד - ₪7.50
+- ביצים L 12 יחידות - ₪19.90
+- שמן זית כתית מעולה 750ml - ₪35.00
+- גבינה צהובה עמק 400g - ₪22.90
+
+עבור כל מוצר תן:
+- name: שם המוצר המלא בעברית כולל מותג וגודל/משקל
+- brand: שם המותג
+- category: קטגוריה (פירות וירקות / מוצרי חלב / בשר ודגים / לחם ומאפים / שימורים / חטיפים ומתוקים / משקאות / ניקיון / היגיינה / תבלינים / קפואים / אחר)
+- price: מחיר משוער בשקלים (מספר בלבד)
+- image_url: השאר ריק ("")
+
+ודא שהמוצרים רלוונטיים לחיפוש ואמיתיים לחלוטין.`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -44,18 +55,18 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
         }
       }
     });
-    setResults(res.products || []);
+    setResults(res?.products || []);
     setLoading(false);
   };
 
   const handleAdd = (product) => {
     onAddProduct({
-      name: product.brand ? `${product.name} - ${product.brand}` : product.name,
+      name: product.name,
       price: product.price || 0,
       category: product.category || "אחר",
-      image_url: ""
+      image_url: product.image_url || ""
     });
-    setAddedIds(prev => new Set([...prev, `${product.name}-${product.brand}`]));
+    setAddedIds(prev => new Set([...prev, product.name]));
   };
 
   const handleClose = (val) => {
@@ -67,6 +78,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     }
   };
 
+  const CATEGORY_EMOJIS = {
+    "פירות וירקות": "🥦", "מוצרי חלב": "🥛", "בשר ודגים": "🥩",
+    "לחם ומאפים": "🍞", "שימורים": "🥫", "חטיפים ומתוקים": "🍫",
+    "משקאות": "🧃", "ניקיון": "🧹", "היגיינה": "🧴",
+    "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-md mx-auto max-h-[85vh] flex flex-col" dir="rtl">
@@ -76,7 +94,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
         <div className="flex gap-2 mt-2">
           <Input
-            placeholder="חפש מוצר... (למשל: חלב, לחם, עגבניות)"
+            placeholder="חפש מוצר... (חלב, לחם, עגבניות...)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -100,17 +118,23 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             </div>
           )}
 
-          {!loading && results.length === 0 && query && (
+          {!loading && results.length === 0 && !query && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-12 h-12 text-muted-foreground mb-3" />
-              <p className="text-muted-foreground text-base">חפש מוצרים מהסופר</p>
+              <p className="text-muted-foreground text-base">חפש מוצר מהסופר</p>
+            </div>
+          )}
+
+          {!loading && results.length === 0 && query && (
+            <div className="flex flex-col items-center justify-center py-8">
+              <p className="text-muted-foreground text-base">לא נמצאו תוצאות, נסה שוב</p>
             </div>
           )}
 
           {results.map((product, idx) => {
-            const productId = `${product.name}-${product.brand}`;
-            const isAdded = addedIds.has(productId);
-            
+            const isAdded = addedIds.has(product.name);
+            const emoji = CATEGORY_EMOJIS[product.category] || "🛒";
+
             return (
               <div
                 key={idx}
@@ -120,22 +144,18 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name}
                       className="w-full h-full object-cover"
-                      onError={(e) => { e.target.onerror=null; e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="font-size:22px">🛒</span>'; }}
+                      onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; e.target.parentNode.innerHTML = `<span style="font-size:24px">${emoji}</span>`; }}
                     />
                   ) : (
-                    <ShoppingBasket className="w-6 h-6 text-primary" />
+                    <span className="text-2xl">{emoji}</span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-medium text-foreground truncate">
-                    {product.name}
-                  </p>
+                  <p className="text-base font-medium text-foreground">{product.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    {product.brand && (
-                      <span className="text-sm text-muted-foreground">{product.brand}</span>
-                    )}
+                    {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
                     {product.price > 0 && (
-                      <span className="text-sm font-medium text-primary">₪{product.price.toFixed(2)}</span>
+                      <span className="text-sm font-semibold text-primary">₪{Number(product.price).toFixed(2)}</span>
                     )}
                   </div>
                   {product.category && (
@@ -148,8 +168,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                   size="icon"
                   variant={isAdded ? "default" : "outline"}
                   className="h-10 w-10 rounded-full flex-shrink-0"
-                  onClick={() => handleAdd(product)}
-                  disabled={isAdded}
+                  onClick={() => !isAdded && handleAdd(product)}
                 >
                   {isAdded ? <span className="text-sm">✓</span> : <Plus className="w-5 h-5" />}
                 </Button>

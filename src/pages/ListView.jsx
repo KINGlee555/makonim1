@@ -140,7 +140,7 @@ export default function ListView() {
   return (
     <div className="min-h-screen bg-background pb-24" dir="rtl">
       <AppHeader
-        title={list.title}
+        subtitle={list.title}
         backTo="/"
         rightAction={
           <Button
