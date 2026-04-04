@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, Trash2, ShoppingCart, Bell, BellOff } from "lucide-react";
+import { Share2, Trash2, ShoppingCart, Bell, BellOff, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
+import ProfileDialog from "../components/ProfileDialog";
 import ProductItem from "../components/ProductItem";
 import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
@@ -18,6 +19,7 @@ export default function ListView() {
   const [loading, setLoading] = useState(true);
   const [showShare, setShowShare] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [notifPermission, setNotifPermission] = useState(typeof Notification !== 'undefined' ? Notification.permission : 'not-supported');
   const currentUserRef = useState(null);
 
@@ -35,6 +37,10 @@ export default function ListView() {
     loadData();
     base44.auth.me().then(me => { currentUserRef[1](me); });
   }, [loadData]);
+
+  const handleNameUpdated = (newName) => {
+    currentUserRef[1](prev => ({ ...prev, full_name: newName }));
+  };
 
   // Real-time subscription
   useEffect(() => {
@@ -150,6 +156,15 @@ export default function ListView() {
         subtitle="רשימת קניות משותפת"
         rightAction={
           <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl"
+              title="שנה שם"
+              onClick={() => setShowProfile(true)}
+            >
+              <User className="w-5 h-5" />
+            </Button>
             {notifPermission !== 'not-supported' && notifPermission !== 'denied' && (
               <Button
                 variant="ghost"
@@ -265,6 +280,13 @@ export default function ListView() {
         open={showSearch}
         onOpenChange={setShowSearch}
         onAddProduct={handleAddProduct}
+      />
+
+      <ProfileDialog
+        open={showProfile}
+        onOpenChange={setShowProfile}
+        currentUser={currentUserRef[0]}
+        onNameUpdated={handleNameUpdated}
       />
     </div>
   );
