@@ -140,7 +140,7 @@ export default function ListView() {
   return (
     <div className="min-h-screen bg-background pb-24" dir="rtl">
       <AppHeader
-        subtitle={list.title}
+        subtitle="רשימת קניות משותפת"
         backTo="/"
         rightAction={
           <Button
@@ -165,10 +165,11 @@ export default function ListView() {
             <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
             <span className="text-base text-muted-foreground">{boughtItems.length} נקנו</span>
           </div>
-          {items.length > 0 && items.some(i => i.price > 0) && (
-            <div className="mr-auto">
-              <span className="text-base font-semibold text-primary">
-                ₪{items.filter(i => i.status === "pending").reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
+          {items.length > 0 && (
+            <div className="mr-auto text-left">
+              <span className="text-sm text-muted-foreground">סה״כ: </span>
+              <span className="text-base font-bold text-primary">
+                ₪{items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
               </span>
             </div>
           )}

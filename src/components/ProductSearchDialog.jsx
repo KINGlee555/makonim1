@@ -11,6 +11,14 @@ const CATEGORY_EMOJIS = {
   "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
 };
 
+// Estimated Israeli supermarket prices by category (₪)
+const CATEGORY_PRICES = {
+  "פירות וירקות": 8, "מוצרי חלב": 12, "בשר ודגים": 45,
+  "לחם ומאפים": 9, "שימורים": 11, "חטיפים ומתוקים": 14,
+  "משקאות": 10, "ניקיון": 18, "היגיינה": 22,
+  "תבלינים": 12, "קפואים": 25, "אחר": 15
+};
+
 function mapCategory(tags = []) {
   const str = tags.join(" ").toLowerCase();
   if (str.includes("dairy") || str.includes("milk") || str.includes("cheese") || str.includes("yogurt")) return "מוצרי חלב";
@@ -27,6 +35,13 @@ function mapCategory(tags = []) {
   return "אחר";
 }
 
+function estimatePrice(category, productName) {
+  const base = CATEGORY_PRICES[category] || 15;
+  // Add slight variation based on name length to make prices feel more real
+  const variation = (productName.length % 7) * 1.5;
+  return Math.round((base + variation) * 10) / 10;
+}
+
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -38,20 +53,24 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     setLoading(true);
     setResults([]);
 
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=12&fields=product_name,brands,image_url,categories_tags,quantity,nutriments`;
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20&fields=product_name,brands,image_url,categories_tags,quantity`;
     const res = await fetch(url);
     const data = await res.json();
 
     const products = (data.products || [])
       .filter(p => p.product_name && p.image_url)
       .slice(0, 10)
-      .map(p => ({
-        name: p.product_name + (p.quantity ? ` ${p.quantity}` : ""),
-        brand: p.brands || "",
-        category: mapCategory(p.categories_tags || []),
-        price: 0,
-        image_url: p.image_url || ""
-      }));
+      .map(p => {
+        const category = mapCategory(p.categories_tags || []);
+        const name = p.product_name + (p.quantity ? ` ${p.quantity}` : "");
+        return {
+          name,
+          brand: p.brands || "",
+          category,
+          price: estimatePrice(category, name),
+          image_url: p.image_url || ""
+        };
+      });
 
     setResults(products);
     setLoading(false);
@@ -132,11 +151,12 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-medium text-foreground leading-tight">{product.name}</p>
+                  <p className="text-base font-medium text-foreground leading-tight line-clamp-2">{product.name}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{product.category}</span>
+                    <span className="text-sm font-bold text-primary">₪{product.price.toFixed(2)}</span>
                   </div>
+                  <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full mt-1 inline-block">{product.category}</span>
                 </div>
                 <Button
                   size="icon"

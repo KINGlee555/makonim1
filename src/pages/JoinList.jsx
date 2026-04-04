@@ -16,7 +16,9 @@ export default function JoinList() {
 
   const joinList = async () => {
     const me = await base44.auth.me();
-    const lists = await base44.entities.ShoppingList.filter({ share_code: shareCode });
+    // Fetch all lists and find by share_code manually (filter may not support nested queries)
+    const allLists = await base44.entities.ShoppingList.list("-created_date", 100);
+    const lists = allLists.filter(l => l.share_code === shareCode);
     
     if (lists.length === 0) {
       setStatus("error");
