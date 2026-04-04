@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, Trash2, ShoppingCart } from "lucide-react";
+import { Share2, Trash2, ShoppingCart, Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProductItem from "../components/ProductItem";
@@ -9,6 +9,7 @@ import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
 import { toast } from "@/components/ui/use-toast";
+import { requestNotificationPermission, sendNotification } from "../hooks/useListNotifications";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -17,6 +18,8 @@ export default function ListView() {
   const [loading, setLoading] = useState(true);
   const [showShare, setShowShare] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [notifPermission, setNotifPermission] = useState(typeof Notification !== 'undefined' ? Notification.permission : 'not-supported');
+  const currentUserRef = useState(null);
 
   const loadData = useCallback(async () => {
     const [allLists, allItems] = await Promise.all([
@@ -30,6 +33,7 @@ export default function ListView() {
 
   useEffect(() => {
     loadData();
+    base44.auth.me().then(me => { currentUserRef[1](me); });
   }, [loadData]);
 
   // Real-time subscription
@@ -40,10 +44,23 @@ export default function ListView() {
       if (event.type === "create") {
         setItems(prev => {
           if (prev.some(i => i.id === event.data.id)) return prev;
+          // Notify if added by someone else
+          if (currentUserRef[0] && event.data.created_by !== currentUserRef[0].email) {
+            sendNotification("מקונים — מוצר נוסף", `${event.data.name} נוסף לרשימה`);
+          }
           return [event.data, ...prev];
         });
       } else if (event.type === "update") {
-        setItems(prev => prev.map(i => i.id === event.id ? event.data : i));
+        setItems(prev => prev.map(i => {
+          if (i.id === event.id) {
+            if (event.data.status === "bought" && i.status !== "bought" && currentUserRef[0] && event.data.bought_by !== (currentUserRef[0].full_name || currentUserRef[0].email)) {
+              sendNotification("מקונים — נקנה!", `${i.name} סומן כנקנה על ידי ${event.data.bought_by}`);
+            }
+            return event.data;
+          }
+          return i;
+        }));
+        return;
       } else if (event.type === "delete") {
         setItems(prev => prev.filter(i => i.id !== event.id));
       }
@@ -70,17 +87,7 @@ export default function ListView() {
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: qty } : i));
   };
 
-  const handleQuickAdd = async (name) => {
-    const newItem = await base44.entities.ListItem.create({
-      list_id: listId,
-      name,
-      status: "pending",
-      quantity: 1,
-      price: 0,
-      category: "אחר"
-    });
-    setItems(prev => [newItem, ...prev]);
-  };
+  // Quick add removed — products added via search only
 
   const handleAddProduct = async (product) => {
     const newItem = await base44.entities.ListItem.create({
@@ -93,14 +100,14 @@ export default function ListView() {
       quantity: 1
     });
     setItems(prev => [newItem, ...prev]);
-    toast({ title: `${product.name} נוסף לרשימה` });
+    toast({ title: `${product.name} נוסף לרשימה`, duration: 1500 });
   };
 
   const handleAddUser = async (email) => {
     const updated = [...(list.shared_with || []), email];
     await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
     setList(prev => ({ ...prev, shared_with: updated }));
-    toast({ title: `${email} נוסף לרשימה` });
+    toast({ title: `${email} נוסף לרשימה`, duration: 1500 });
   };
 
   const handleRemoveUser = async (email) => {
@@ -113,7 +120,7 @@ export default function ListView() {
     const boughtItems = items.filter(i => i.status === "bought");
     await Promise.all(boughtItems.map(i => base44.entities.ListItem.delete(i.id)));
     setItems(prev => prev.filter(i => i.status !== "bought"));
-    toast({ title: "המוצרים שנקנו נמחקו" });
+    toast({ title: "המוצרים שנקנו נמחקו", duration: 1500 });
   };
 
   if (loading) {
@@ -141,16 +148,32 @@ export default function ListView() {
     <div className="min-h-screen bg-background pb-24" dir="rtl">
       <AppHeader
         subtitle="רשימת קניות משותפת"
-        backTo="/"
         rightAction={
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 rounded-xl"
-            onClick={() => setShowShare(true)}
-          >
-            <Share2 className="w-5 h-5" />
-          </Button>
+          <div className="flex gap-2">
+            {notifPermission !== 'not-supported' && notifPermission !== 'denied' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 rounded-xl"
+                title={notifPermission === 'granted' ? 'התראות פעילות' : 'הפעל התראות'}
+                onClick={async () => {
+                  const result = await requestNotificationPermission();
+                  setNotifPermission(result);
+                  if (result === 'granted') toast({ title: 'התראות הופעלו בהצלחה!', duration: 1500 });
+                }}
+              >
+                {notifPermission === 'granted' ? <Bell className="w-5 h-5 text-primary" /> : <BellOff className="w-5 h-5" />}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl"
+              onClick={() => setShowShare(true)}
+            >
+              <Share2 className="w-5 h-5" />
+            </Button>
+          </div>
         }
       />
 
@@ -228,7 +251,7 @@ export default function ListView() {
         )}
       </main>
 
-      <QuickAddBar onQuickAdd={handleQuickAdd} onOpenSearch={() => setShowSearch(true)} />
+      <QuickAddBar onOpenSearch={() => setShowSearch(true)} />
 
       <ShareDialog
         open={showShare}
