@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { searchProducts } from "@/lib/israeliProducts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Loader2, ShoppingBasket } from "lucide-react";
+import { Search, Plus, ShoppingBasket } from "lucide-react";
 
 const CATEGORY_EMOJIS = {
   "פירות וירקות": "🥦", "מוצרי חלב": "🥛", "בשר ודגים": "🥩",
@@ -10,30 +11,6 @@ const CATEGORY_EMOJIS = {
   "משקאות": "🧃", "ניקיון": "🧹", "היגיינה": "🧴",
   "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
 };
-
-// Estimated Israeli supermarket prices by category (₪)
-const CATEGORY_PRICES = {
-  "פירות וירקות": 8, "מוצרי חלב": 12, "בשר ודגים": 45,
-  "לחם ומאפים": 9, "שימורים": 11, "חטיפים ומתוקים": 14,
-  "משקאות": 10, "ניקיון": 18, "היגיינה": 22,
-  "תבלינים": 12, "קפואים": 25, "אחר": 15
-};
-
-function mapCategory(tags = []) {
-  const str = tags.join(" ").toLowerCase();
-  if (str.includes("dairy") || str.includes("milk") || str.includes("cheese") || str.includes("yogurt")) return "מוצרי חלב";
-  if (str.includes("meat") || str.includes("fish") || str.includes("chicken")) return "בשר ודגים";
-  if (str.includes("bread") || str.includes("bakery") || str.includes("pastry")) return "לחם ומאפים";
-  if (str.includes("snack") || str.includes("candy") || str.includes("sweet") || str.includes("chocolate")) return "חטיפים ומתוקים";
-  if (str.includes("beverage") || str.includes("drink") || str.includes("juice") || str.includes("water")) return "משקאות";
-  if (str.includes("frozen")) return "קפואים";
-  if (str.includes("fruit") || str.includes("vegetable")) return "פירות וירקות";
-  if (str.includes("spice") || str.includes("condiment") || str.includes("sauce")) return "תבלינים";
-  if (str.includes("canned") || str.includes("conserve")) return "שימורים";
-  if (str.includes("cleaning") || str.includes("household")) return "ניקיון";
-  if (str.includes("hygiene") || str.includes("beauty") || str.includes("cosmetic")) return "היגיינה";
-  return "אחר";
-}
 
 function estimatePrice(category, productName) {
   const base = CATEGORY_PRICES[category] || 15;
@@ -45,35 +22,11 @@ function estimatePrice(category, productName) {
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [addedIds, setAddedIds] = useState(new Set());
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!query.trim()) return;
-    setLoading(true);
-    setResults([]);
-
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=20&fields=product_name,brands,image_url,categories_tags,quantity`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const products = (data.products || [])
-      .filter(p => p.product_name && p.image_url)
-      .slice(0, 10)
-      .map(p => {
-        const category = mapCategory(p.categories_tags || []);
-        const name = p.product_name + (p.quantity ? ` ${p.quantity}` : "");
-        return {
-          name,
-          brand: p.brands || "",
-          category,
-          price: estimatePrice(category, name),
-          image_url: p.image_url || ""
-        };
-      });
-
-    setResults(products);
-    setLoading(false);
+    setResults(searchProducts(query));
   };
 
   const handleAdd = (product) => {
@@ -103,26 +56,19 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             autoFocus
           />
           <Button onClick={handleSearch} className="h-12 w-12 rounded-xl flex-shrink-0" disabled={loading}>
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+            <Search className="w-5 h-5" />
           </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto mt-4 space-y-2 min-h-0">
-          {loading && (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
-              <p className="text-muted-foreground text-base">מחפש מוצרים...</p>
-            </div>
-          )}
-
-          {!loading && results.length === 0 && !query && (
+          {results.length === 0 && !query && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-12 h-12 text-muted-foreground mb-3" />
               <p className="text-muted-foreground text-base">חפש מוצר מהסופר</p>
             </div>
           )}
 
-          {!loading && results.length === 0 && query && (
+          {results.length === 0 && query && (
             <div className="flex flex-col items-center justify-center py-8">
               <p className="text-muted-foreground text-base">לא נמצאו תוצאות, נסה מילה אחרת</p>
             </div>
