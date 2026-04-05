@@ -12,12 +12,7 @@ const CATEGORY_EMOJIS = {
   "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
 };
 
-function estimatePrice(category, productName) {
-  const base = CATEGORY_PRICES[category] || 15;
-  // Add slight variation based on name length to make prices feel more real
-  const variation = (productName.length % 7) * 1.5;
-  return Math.round((base + variation) * 10) / 10;
-}
+
 
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }) {
   const [query, setQuery] = useState("");
@@ -55,7 +50,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             className="h-12 rounded-xl text-base"
             autoFocus
           />
-          <Button onClick={handleSearch} className="h-12 w-12 rounded-xl flex-shrink-0" disabled={loading}>
+          <Button onClick={handleSearch} className="h-12 w-12 rounded-xl flex-shrink-0">
             <Search className="w-5 h-5" />
           </Button>
         </div>
