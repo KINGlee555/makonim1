@@ -12,8 +12,6 @@ const CATEGORY_EMOJIS = {
   "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
 };
 
-
-
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
