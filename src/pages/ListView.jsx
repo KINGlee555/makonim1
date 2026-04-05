@@ -106,7 +106,7 @@ export default function ListView() {
       quantity: 1
     });
     setItems(prev => [newItem, ...prev]);
-    toast({ title: `${product.name} נוסף לרשימה`, duration: 1500 });
+    toast({ title: `${product.name} נוסף לרשימה`, duration: 1000 });
   };
 
   const handleAddUser = async (email) => {
