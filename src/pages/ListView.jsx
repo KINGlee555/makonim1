@@ -125,6 +125,11 @@ export default function ListView() {
     setList(prev => ({ ...prev, shared_with: updated }));
   };
 
+  const handleRemoveItem = async (item) => {
+    await base44.entities.ListItem.delete(item.id);
+    setItems(prev => prev.filter(i => i.id !== item.id));
+  };
+
   const handleClearBought = async () => {
     const boughtItems = items.filter(i => i.status === "bought");
     await Promise.all(boughtItems.map(i => base44.entities.ListItem.delete(i.id)));
@@ -227,6 +232,7 @@ export default function ListView() {
                 onToggleBought={handleToggleBought}
                 onUpdateQuantity={handleUpdateQuantity}
                 onNavigate={(item) => setNavigateProduct(item)}
+                onRemove={handleRemoveItem}
               />
             ))}
           </div>

@@ -20,7 +20,7 @@ function getCategoryEmoji(category) {
   return CATEGORY_EMOJIS[category] || "🛒";
 }
 
-export default function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate }) {
+export default function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove }) {
   const isBought = item.status === "bought";
 
   return (
@@ -80,7 +80,13 @@ export default function ProductItem({ item, onToggleBought, onUpdateQuantity, on
             variant="ghost"
             size="icon"
             className="h-9 w-9 rounded-full"
-            onClick={() => onUpdateQuantity(item, Math.max(1, (item.quantity || 1) - 1))}
+            onClick={() => {
+              if ((item.quantity || 1) <= 1) {
+                onRemove && onRemove(item);
+              } else {
+                onUpdateQuantity(item, (item.quantity || 1) - 1);
+              }
+            }}
           >
             <Minus className="w-4 h-4" />
           </Button>

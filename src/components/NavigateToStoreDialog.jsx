@@ -23,31 +23,20 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
   const navigate = (mode) => {
     setLoading(true);
     const store = getNearestStore(product?.name || "");
-    const travelMode = mode === "walk" ? "walking" : "driving";
     const destination = encodeURIComponent(`${store} סופרמרקט`);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          const url = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}&travelmode=${travelMode}`;
-          window.open(url, "_blank");
-          setLoading(false);
-          onOpenChange(false);
-        },
-        () => {
-          const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=${travelMode}`;
-          window.open(url, "_blank");
-          setLoading(false);
-          onOpenChange(false);
-        }
-      );
+    let url;
+    if (mode === "walk") {
+      // Waze doesn't support walking — use Google Maps walking
+      url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=walking`;
     } else {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=${travelMode}`;
-      window.open(url, "_blank");
-      setLoading(false);
-      onOpenChange(false);
+      // Open Waze navigation
+      url = `https://waze.com/ul?q=${destination}&navigate=yes`;
     }
+
+    window.open(url, "_blank");
+    setLoading(false);
+    onOpenChange(false);
   };
 
   const store = product ? getNearestStore(product.name) : "";
