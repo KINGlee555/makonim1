@@ -10,6 +10,7 @@ import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
 import ConnectedUsers from "../components/ConnectedUsers";
+import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import { toast } from "@/components/ui/use-toast";
 import { requestNotificationPermission, sendNotification } from "../hooks/useListNotifications";
 
@@ -21,6 +22,7 @@ export default function ListView() {
   const [showShare, setShowShare] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [navigateProduct, setNavigateProduct] = useState(null);
   const [notifPermission, setNotifPermission] = useState(typeof Notification !== 'undefined' ? Notification.permission : 'not-supported');
   const currentUserRef = useState(null);
 
@@ -224,6 +226,7 @@ export default function ListView() {
                 item={item}
                 onToggleBought={handleToggleBought}
                 onUpdateQuantity={handleUpdateQuantity}
+                onNavigate={(item) => setNavigateProduct(item)}
               />
             ))}
           </div>
@@ -289,6 +292,12 @@ export default function ListView() {
         onOpenChange={setShowProfile}
         currentUser={currentUserRef[0]}
         onNameUpdated={handleNameUpdated}
+      />
+
+      <NavigateToStoreDialog
+        open={!!navigateProduct}
+        onOpenChange={(v) => !v && setNavigateProduct(null)}
+        product={navigateProduct}
       />
     </div>
   );

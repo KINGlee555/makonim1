@@ -1,4 +1,4 @@
-import { Check, Plus, Minus, Undo2 } from "lucide-react";
+import { Check, Plus, Minus, Undo2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const CATEGORY_EMOJIS = {
@@ -20,7 +20,7 @@ function getCategoryEmoji(category) {
   return CATEGORY_EMOJIS[category] || "🛒";
 }
 
-export default function ProductItem({ item, onToggleBought, onUpdateQuantity }) {
+export default function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate }) {
   const isBought = item.status === "bought";
 
   return (
@@ -57,7 +57,7 @@ export default function ProductItem({ item, onToggleBought, onUpdateQuantity }) 
         )}
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => !isBought && onNavigate && onNavigate(item)}>
         <p className={`text-lg font-medium truncate ${isBought ? "line-through text-muted-foreground" : "text-foreground"}`}>
           {item.name}
         </p>
@@ -67,6 +67,9 @@ export default function ProductItem({ item, onToggleBought, onUpdateQuantity }) 
           )}
           {item.price > 0 && (
             <span className="text-sm font-semibold text-primary">₪{Number(item.price).toFixed(2)}</span>
+          )}
+          {!isBought && onNavigate && (
+            <span className="text-xs text-primary/60 flex items-center gap-0.5"><MapPin className="w-3 h-3" />ניווט</span>
           )}
         </div>
       </div>

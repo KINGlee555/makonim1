@@ -23,15 +23,23 @@ export default function ConnectedUsers({ list }) {
   if (users.length === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 bg-primary/5 border-b border-primary/10 overflow-x-auto" dir="rtl">
-      <Users className="w-4 h-4 text-primary flex-shrink-0" />
-      <div className="flex gap-2 flex-wrap">
-        {users.map(u => (
-          <span key={u.email} className="text-sm text-primary font-medium bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap">
-            {u.full_name || u.email.split("@")[0]} מחובר/ת
-          </span>
-        ))}
+    <div className="flex items-center justify-between px-4 py-2 bg-primary/5 border-b border-primary/10" dir="rtl">
+      <div className="flex items-center gap-2 overflow-x-auto flex-1">
+        <Users className="w-4 h-4 text-primary flex-shrink-0" />
+        <div className="flex gap-2 flex-wrap">
+          {users.map(u => (
+            <span key={u.email} className="text-sm text-primary font-medium bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap">
+              {u.full_name || u.email.split("@")[0]} מחובר/ת
+            </span>
+          ))}
+        </div>
       </div>
+      {users.length > 1 && (
+        <div className="flex items-center gap-1.5 flex-shrink-0 mr-2 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse inline-block" />
+          LIVE
+        </div>
+      )}
     </div>
   );
 }
