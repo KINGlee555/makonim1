@@ -9,6 +9,7 @@ import ProductItem from "../components/ProductItem";
 import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
+import ConnectedUsers from "../components/ConnectedUsers";
 import { toast } from "@/components/ui/use-toast";
 import { requestNotificationPermission, sendNotification } from "../hooks/useListNotifications";
 
@@ -152,8 +153,9 @@ export default function ListView() {
 
   return (
     <div className="min-h-screen bg-background pb-24" dir="rtl">
+      <ConnectedUsers list={list} />
       <AppHeader
-        subtitle="רשימת קניות משותפת"
+        subtitle=""
         rightAction={
           <div className="flex gap-2">
             <Button

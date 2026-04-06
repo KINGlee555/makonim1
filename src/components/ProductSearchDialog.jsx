@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { searchProducts } from "@/lib/israeliProducts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, ShoppingBasket } from "lucide-react";
+import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle } from "lucide-react";
 
 const CATEGORY_EMOJIS = {
   "פירות וירקות": "🥦", "מוצרי חלב": "🥛", "בשר ודגים": "🥩",
@@ -12,14 +12,74 @@ const CATEGORY_EMOJIS = {
   "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
 };
 
+const SUPERMARKETS = [
+  { name: "שופרסל", chain: "shufersal" },
+  { name: "רמי לוי", chain: "rami_levy" },
+  { name: "מגא בול", chain: "mega" },
+  { name: "יוחננוף", chain: "yochananof" },
+  { name: "ויקטורי", chain: "victory" },
+  { name: "קשת טעמים", chain: "keshet" },
+  { name: "חצי חינם", chain: "hatzi_hinam" },
+];
+
+function getSimulatedStores(productName, userLocation) {
+  const seed = productName.charCodeAt(0) + productName.charCodeAt(productName.length - 1);
+  return SUPERMARKETS.map((s, i) => {
+    const dist = ((seed + i * 37) % 30 + 2) / 10;
+    const priceMod = 1 + ((seed + i * 13) % 20 - 10) / 100;
+    return { ...s, distance: dist.toFixed(1), price: null, priceMod };
+  }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)).slice(0, 3);
+}
+
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [addedIds, setAddedIds] = useState(new Set());
+  const [filterMode, setFilterMode] = useState("price"); // "price" | "location"
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
 
   const handleSearch = () => {
     if (!query.trim()) return;
-    setResults(searchProducts(query));
+    let res = searchProducts(query);
+    if (filterMode === "price") {
+      res = [...res].sort((a, b) => a.price - b.price);
+    }
+    setResults(res);
+  };
+
+  const requestLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("הדפדפן לא תומך במיקום");
+      return;
+    }
+    setLocationLoading(true);
+    setLocationError("");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocationLoading(false);
+        setFilterMode("location");
+      },
+      () => {
+        setLocationError("לא ניתן לגשת למיקום, אנא אפשר הרשאה");
+        setLocationLoading(false);
+      }
+    );
+  };
+
+  const handleFilterChange = (mode) => {
+    if (mode === "location" && !userLocation) {
+      requestLocation();
+    } else {
+      setFilterMode(mode);
+    }
+    if (results.length > 0) {
+      let res = [...results];
+      if (mode === "price") res.sort((a, b) => a.price - b.price);
+      setResults(res);
+    }
   };
 
   const handleAdd = (product) => {
@@ -29,34 +89,75 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setResults([]); setAddedIds(new Set()); }
+    if (!val) { setQuery(""); setResults([]); setAddedIds(new Set()); setLocationError(""); }
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md mx-auto max-h-[85vh] flex flex-col" dir="rtl">
-        <DialogHeader>
-          <DialogTitle className="text-xl text-right">חיפוש מוצרים</DialogTitle>
+      <DialogContent className="max-w-md mx-auto max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl" dir="rtl">
+        <DialogHeader className="px-5 pt-5 pb-3">
+          <DialogTitle className="text-xl font-bold text-right">חיפוש מוצרים</DialogTitle>
         </DialogHeader>
 
-        <div className="flex gap-2 mt-2">
-          <Input
-            placeholder="חפש מוצר... (חלב, לחם, עגבניות...)"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="h-12 rounded-xl text-base"
-            autoFocus
-          />
-          <Button onClick={handleSearch} className="h-12 w-12 rounded-xl flex-shrink-0">
-            <Search className="w-5 h-5" />
-          </Button>
+        <div className="px-5 space-y-3">
+          {/* Search input */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="חפש מוצר... (חלב, נענע, לחם...)"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              className="h-12 rounded-2xl text-base border-2 border-primary/20 focus-visible:border-primary"
+              autoFocus
+            />
+            <Button onClick={handleSearch} className="h-12 w-12 rounded-2xl flex-shrink-0 bg-primary hover:bg-primary/90">
+              <Search className="w-5 h-5" />
+            </Button>
+          </div>
+
+          {/* Filter bar */}
+          <div className="flex gap-2 bg-muted rounded-2xl p-1">
+            <button
+              onClick={() => handleFilterChange("price")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium transition-all ${
+                filterMode === "price"
+                  ? "bg-white text-primary shadow-sm font-bold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Tag className="w-4 h-4" />
+              לפי מחיר
+            </button>
+            <button
+              onClick={() => handleFilterChange("location")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium transition-all ${
+                filterMode === "location"
+                  ? "bg-white text-primary shadow-sm font-bold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {locationLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
+              לפי מיקום
+              {userLocation && <span className="w-2 h-2 rounded-full bg-primary inline-block" />}
+            </button>
+          </div>
+
+          {locationError && (
+            <p className="text-sm text-destructive text-center">{locationError}</p>
+          )}
+
+          {filterMode === "location" && userLocation && (
+            <div className="flex items-center gap-2 bg-primary/10 rounded-2xl px-4 py-2">
+              <MapPin className="w-4 h-4 text-primary" />
+              <span className="text-sm text-primary font-medium">מציג סופרים קרובים אליך</span>
+            </div>
+          )}
         </div>
 
-        <div className="flex-1 overflow-y-auto mt-4 space-y-2 min-h-0">
+        <div className="flex-1 overflow-y-auto px-5 pb-5 mt-3 space-y-2 min-h-0">
           {results.length === 0 && !query && (
             <div className="flex flex-col items-center justify-center py-12">
-              <ShoppingBasket className="w-12 h-12 text-muted-foreground mb-3" />
+              <ShoppingBasket className="w-14 h-14 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground text-base">חפש מוצר מהסופר</p>
             </div>
           )}
@@ -70,41 +171,55 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
           {results.map((product, idx) => {
             const isAdded = addedIds.has(product.name);
             const emoji = CATEGORY_EMOJIS[product.category] || "🛒";
+            const nearbyStores = filterMode === "location" && userLocation
+              ? getSimulatedStores(product.name, userLocation)
+              : null;
 
             return (
-              <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl border border-border bg-card hover:shadow-md transition-all">
-                <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  {product.image_url ? (
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.style.display = "none";
-                        e.target.parentNode.innerHTML = `<span style="font-size:24px">${emoji}</span>`;
-                      }}
-                    />
-                  ) : (
-                    <span className="text-2xl">{emoji}</span>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-medium text-foreground leading-tight line-clamp-2">{product.name}</p>
-                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                    {product.brand && <span className="text-sm text-muted-foreground">{product.brand}</span>}
-                    <span className="text-sm font-bold text-primary">₪{product.price.toFixed(2)}</span>
+              <div key={idx} className={`rounded-2xl border transition-all overflow-hidden ${
+                isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card"
+              }`}>
+                <div className="flex items-center gap-3 p-3">
+                  <div className="w-13 h-13 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden w-[52px] h-[52px]">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:22px">${emoji}</span>`; }}
+                      />
+                    ) : (
+                      <span className="text-2xl">{emoji}</span>
+                    )}
                   </div>
-                  <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full mt-1 inline-block">{product.category}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-base font-semibold text-foreground line-clamp-1">{product.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                      {product.brand && <span className="text-xs text-muted-foreground">{product.brand}</span>}
+                      <span className="text-sm font-bold text-primary">₪{product.price.toFixed(2)}</span>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{product.category}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => !isAdded && handleAdd(product)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                      isAdded
+                        ? "bg-primary text-primary-foreground"
+                        : "border-2 border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
+                    }`}
+                  >
+                    {isAdded ? <CheckCircle className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                  </button>
                 </div>
-                <Button
-                  size="icon"
-                  variant={isAdded ? "default" : "outline"}
-                  className="h-10 w-10 rounded-full flex-shrink-0"
-                  onClick={() => !isAdded && handleAdd(product)}
-                >
-                  {isAdded ? <span className="text-sm">✓</span> : <Plus className="w-5 h-5" />}
-                </Button>
+
+                {nearbyStores && (
+                  <div className="px-3 pb-3 flex gap-2 overflow-x-auto">
+                    {nearbyStores.map((store) => (
+                      <div key={store.chain} className="flex-shrink-0 bg-primary/8 border border-primary/20 rounded-xl px-3 py-1.5 text-xs">
+                        <span className="font-semibold text-primary">{store.name}</span>
+                        <span className="text-muted-foreground mr-1">· {store.distance} ק״מ</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
