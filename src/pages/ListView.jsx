@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, Trash2, ShoppingCart, Bell, BellOff, User } from "lucide-react";
+import { Share2, Trash2, ShoppingCart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -12,7 +12,7 @@ import ProductSearchDialog from "../components/ProductSearchDialog";
 import ConnectedUsers from "../components/ConnectedUsers";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import { toast } from "@/components/ui/use-toast";
-import { requestNotificationPermission, sendNotification } from "../hooks/useListNotifications";
+
 
 export default function ListView() {
   const { listId } = useParams();
@@ -23,7 +23,6 @@ export default function ListView() {
   const [showSearch, setShowSearch] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [navigateProduct, setNavigateProduct] = useState(null);
-  const [notifPermission, setNotifPermission] = useState(typeof Notification !== 'undefined' ? Notification.permission : 'not-supported');
   const currentUserRef = useState(null);
 
   const loadData = useCallback(async () => {
@@ -160,7 +159,6 @@ export default function ListView() {
 
   return (
     <div className="min-h-screen bg-background pb-24" dir="rtl">
-      <ConnectedUsers list={list} />
       <AppHeader
         subtitle=""
         rightAction={
@@ -174,21 +172,7 @@ export default function ListView() {
             >
               <User className="w-5 h-5" />
             </Button>
-            {notifPermission !== 'not-supported' && notifPermission !== 'denied' && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 rounded-xl"
-                title={notifPermission === 'granted' ? 'התראות פעילות' : 'הפעל התראות'}
-                onClick={async () => {
-                  const result = await requestNotificationPermission();
-                  setNotifPermission(result);
-                  if (result === 'granted') toast({ title: 'התראות הופעלו בהצלחה!', duration: 1500 });
-                }}
-              >
-                {notifPermission === 'granted' ? <Bell className="w-5 h-5 text-primary" /> : <BellOff className="w-5 h-5" />}
-              </Button>
-            )}
+
             <Button
               variant="ghost"
               size="icon"
@@ -203,6 +187,7 @@ export default function ListView() {
 
       <main className="max-w-lg mx-auto px-4 py-4">
         {/* Summary */}
+        <ConnectedUsers list={list} />
         <div className="flex items-center gap-4 mb-6 px-2">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-primary" />
