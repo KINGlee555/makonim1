@@ -44,31 +44,26 @@ export default function ListView() {
     currentUserRef[1](prev => ({ ...prev, full_name: newName }));
   };
 
-  // Real-time subscription
+  // Real-time subscription for list metadata (shared_with changes when someone joins)
+  useEffect(() => {
+    const unsubscribe = base44.entities.ShoppingList.subscribe((event) => {
+      if (event.id !== listId) return;
+      if (event.type === "update") {
+        setList(prev => prev ? { ...prev, ...event.data } : prev);
+      }
+    });
+    return unsubscribe;
+  }, [listId]);
+
+  // Real-time subscription for items
   useEffect(() => {
     const unsubscribe = base44.entities.ListItem.subscribe((event) => {
       if (event.data?.list_id !== listId && event.type !== "delete") return;
       
       if (event.type === "create") {
-        setItems(prev => {
-          if (prev.some(i => i.id === event.data.id)) return prev;
-          // Notify if added by someone else
-          if (currentUserRef[0] && event.data.created_by !== currentUserRef[0].email) {
-            sendNotification("מקונים — מוצר נוסף", `${event.data.name} נוסף לרשימה`);
-          }
-          return [event.data, ...prev];
-        });
+        setItems(prev => prev.some(i => i.id === event.data.id) ? prev : [event.data, ...prev]);
       } else if (event.type === "update") {
-        setItems(prev => prev.map(i => {
-          if (i.id === event.id) {
-            if (event.data.status === "bought" && i.status !== "bought" && currentUserRef[0] && event.data.bought_by !== (currentUserRef[0].full_name || currentUserRef[0].email)) {
-              sendNotification("מקונים — נקנה!", `${i.name} סומן כנקנה על ידי ${event.data.bought_by}`);
-            }
-            return event.data;
-          }
-          return i;
-        }));
-        return;
+        setItems(prev => prev.map(i => i.id === event.id ? event.data : i));
       } else if (event.type === "delete") {
         setItems(prev => prev.filter(i => i.id !== event.id));
       }
