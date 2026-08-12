@@ -195,6 +195,7 @@ export default function ListView() {
               variant="ghost"
               size="icon"
               className="h-10 w-10 rounded-xl"
+              title="שתף"
               onClick={() => setShowShare(true)}
             >
               <Share2 className="w-5 h-5" />
@@ -286,8 +287,7 @@ export default function ListView() {
         open={showShare}
         onOpenChange={setShowShare}
         list={list}
-        onAddUser={handleAddUser}
-        onRemoveUser={handleRemoveUser}
+        currentUser={currentUserRef[0]}
       />
 
       <ProductSearchDialog
