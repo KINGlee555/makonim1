@@ -373,14 +373,18 @@ export const israeliProducts = [
   { name: "שרימפס קפוא", category: "קפואים", price: 44.90, brand: "", image_url: "" },
 ];
 
+// Precompute lowercase search indices once for fast filtering
+const _indexed = israeliProducts.map(p => ({
+  ...p,
+  _name: p.name.toLowerCase(),
+  _category: p.category.toLowerCase(),
+  _brand: (p.brand || "").toLowerCase(),
+}));
+
 export function searchProducts(query) {
   if (!query || query.trim().length < 1) return [];
   const q = query.trim().toLowerCase();
-  return israeliProducts
-    .filter(p =>
-      p.name.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q) ||
-      (p.brand && p.brand.toLowerCase().includes(q))
-    )
+  return _indexed
+    .filter(p => p._name.includes(q) || p._category.includes(q) || p._brand.includes(q))
     .slice(0, 20);
 }

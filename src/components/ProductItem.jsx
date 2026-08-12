@@ -1,24 +1,6 @@
 import { Check, Plus, Minus, Undo2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const CATEGORY_EMOJIS = {
-  "פירות וירקות": "🥦",
-  "מוצרי חלב": "🥛",
-  "בשר ודגים": "🥩",
-  "לחם ומאפים": "🍞",
-  "שימורים": "🥫",
-  "חטיפים ומתוקים": "🍫",
-  "משקאות": "🧃",
-  "ניקיון": "🧹",
-  "היגיינה": "🧴",
-  "תבלינים": "🧂",
-  "קפואים": "🧊",
-  "אחר": "🛒"
-};
-
-function getCategoryEmoji(category) {
-  return CATEGORY_EMOJIS[category] || "🛒";
-}
+import { getProductEmoji } from "@/lib/productEmoji";
 
 export default function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove }) {
   const isBought = item.status === "bought";
@@ -49,11 +31,11 @@ export default function ProductItem({ item, onToggleBought, onUpdateQuantity, on
             onError={(e) => {
               e.target.onerror = null;
               e.target.style.display = "none";
-              e.target.parentNode.innerHTML = `<span style="font-size:24px">${getCategoryEmoji(item.category)}</span>`;
+              e.target.parentNode.innerHTML = `<span style="font-size:24px">${getProductEmoji(item.name, item.category)}</span>`;
             }}
           />
         ) : (
-          <span className="text-2xl">{getCategoryEmoji(item.category)}</span>
+          <span className="text-2xl">{getProductEmoji(item.name, item.category)}</span>
         )}
       </div>
 

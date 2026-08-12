@@ -1,16 +1,10 @@
 import { useState, useEffect } from "react";
 import { searchProducts } from "@/lib/israeliProducts";
+import { getProductEmoji } from "@/lib/productEmoji";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle } from "lucide-react";
-
-const CATEGORY_EMOJIS = {
-  "פירות וירקות": "🥦", "מוצרי חלב": "🥛", "בשר ודגים": "🥩",
-  "לחם ומאפים": "🍞", "שימורים": "🥫", "חטיפים ומתוקים": "🍫",
-  "משקאות": "🧃", "ניקיון": "🧹", "היגיינה": "🧴",
-  "תבלינים": "🧂", "קפואים": "🧊", "אחר": "🛒"
-};
 
 const SUPERMARKETS = [
   { name: "שופרסל", chain: "shufersal" },
@@ -40,9 +34,11 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
 
-  const handleSearch = () => {
-    if (!query.trim()) return;
-    let res = searchProducts(query);
+  // Live search — updates results as you type, no need to press Enter
+  const handleSearch = (value) => {
+    const q = value !== undefined ? value : query;
+    if (!q.trim()) { setResults([]); return; }
+    let res = searchProducts(q);
     if (filterMode === "price") {
       res = [...res].sort((a, b) => a.price - b.price);
     }
@@ -105,12 +101,11 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             <Input
               placeholder="חפש מוצר... (חלב, נענע, לחם...)"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              onChange={(e) => { setQuery(e.target.value); handleSearch(e.target.value); }}
               className="h-12 rounded-2xl text-base border-2 border-primary/20 focus-visible:border-primary"
               autoFocus
             />
-            <Button onClick={handleSearch} className="h-12 w-12 rounded-2xl flex-shrink-0 bg-primary hover:bg-primary/90">
+            <Button onClick={() => handleSearch()} className="h-12 w-12 rounded-2xl flex-shrink-0 bg-primary hover:bg-primary/90">
               <Search className="w-5 h-5" />
             </Button>
           </div>
@@ -170,7 +165,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
           {results.map((product, idx) => {
             const isAdded = addedIds.has(product.name);
-            const emoji = CATEGORY_EMOJIS[product.category] || "🛒";
+            const emoji = getProductEmoji(product.name, product.category);
             const nearbyStores = filterMode === "location" && userLocation
               ? getSimulatedStores(product.name, userLocation)
               : null;

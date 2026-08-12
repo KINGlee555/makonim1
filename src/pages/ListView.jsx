@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, Trash2, ShoppingCart, User } from "lucide-react";
+import { Share2, Trash2, ShoppingCart, User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -11,6 +11,7 @@ import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
 import ConnectedUsers from "../components/ConnectedUsers";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
+import SettingsDialog from "../components/SettingsDialog";
 import { toast } from "@/components/ui/use-toast";
 
 
@@ -22,6 +23,7 @@ export default function ListView() {
   const [showShare, setShowShare] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [navigateProduct, setNavigateProduct] = useState(null);
   const currentUserRef = useState(null);
 
@@ -78,6 +80,17 @@ export default function ListView() {
       status: newStatus,
       bought_by: newStatus === "bought" ? me.full_name || me.email : ""
     });
+    // Log to purchase history when marked as bought
+    if (newStatus === "bought") {
+      await base44.entities.PurchaseHistory.create({
+        list_id: listId,
+        item_name: item.name,
+        price: item.price || 0,
+        quantity: item.quantity || 1,
+        category: item.category || "אחר",
+        bought_by: me.full_name || me.email
+      });
+    }
     setItems(prev =>
       prev.map(i =>
         i.id === item.id ? { ...i, status: newStatus, bought_by: newStatus === "bought" ? me.full_name || me.email : "" } : i
@@ -166,6 +179,16 @@ export default function ListView() {
               onClick={() => setShowProfile(true)}
             >
               <User className="w-5 h-5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl"
+              title="הגדרות"
+              onClick={() => setShowSettings(true)}
+            >
+              <Settings className="w-5 h-5" />
             </Button>
 
             <Button
@@ -278,6 +301,12 @@ export default function ListView() {
         onOpenChange={setShowProfile}
         currentUser={currentUserRef[0]}
         onNameUpdated={handleNameUpdated}
+      />
+
+      <SettingsDialog
+        open={showSettings}
+        onOpenChange={setShowSettings}
+        list={list}
       />
 
       <NavigateToStoreDialog

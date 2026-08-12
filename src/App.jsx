@@ -9,6 +9,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Home from './pages/Home';
 import ListView from './pages/ListView';
 import JoinList from './pages/JoinList';
+import ShoppingHistory from './pages/ShoppingHistory';
+import ShoppingSummary from './pages/ShoppingSummary';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -39,6 +41,8 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Home />} />
       <Route path="/list/:listId" element={<ListView />} />
       <Route path="/join/:shareCode" element={<JoinList />} />
+      <Route path="/history/:listId" element={<ShoppingHistory />} />
+      <Route path="/summary/:listId" element={<ShoppingSummary />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
