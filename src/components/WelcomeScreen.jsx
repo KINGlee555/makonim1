@@ -2,9 +2,10 @@ import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { loadLocalName } from "@/lib/userName";
 
 export default function WelcomeScreen({ onNameSubmit }) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(loadLocalName());
 
   const handleSubmit = () => {
     if (!name.trim()) return;

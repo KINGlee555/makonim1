@@ -15,7 +15,14 @@ export default function JoinList() {
   }, [shareCode]);
 
   const joinList = async () => {
-    const me = await base44.auth.me();
+    let me;
+    try {
+      me = await base44.auth.me();
+    } catch {
+      // Not authenticated — send to login, then back to this join link
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
     // Fetch all lists and find by share_code manually (filter may not support nested queries)
     const allLists = await base44.entities.ShoppingList.list("-created_date", 100);
     const lists = allLists.filter(l => l.share_code === shareCode);

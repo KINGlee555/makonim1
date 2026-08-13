@@ -13,6 +13,7 @@ import ConnectedUsers from "../components/ConnectedUsers";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
 import { toast } from "@/components/ui/use-toast";
+import { loadLocalName, saveLocalName } from "@/lib/userName";
 
 
 export default function ListView() {
@@ -39,10 +40,25 @@ export default function ListView() {
 
   useEffect(() => {
     loadData();
-    base44.auth.me().then(me => { currentUserRef[1](me); });
+    base44.auth.me().then(me => {
+      currentUserRef[1](me);
+      // New user who joined via link without setting a name — restore or prompt
+      if (!me.full_name) {
+        const localName = loadLocalName();
+        if (localName) {
+          base44.auth.updateMe({ full_name: localName });
+          currentUserRef[1](prev => ({ ...prev, full_name: localName }));
+        } else {
+          setShowProfile(true);
+        }
+      } else {
+        saveLocalName(me.full_name);
+      }
+    });
   }, [loadData]);
 
   const handleNameUpdated = (newName) => {
+    saveLocalName(newName);
     currentUserRef[1](prev => ({ ...prev, full_name: newName }));
   };
 

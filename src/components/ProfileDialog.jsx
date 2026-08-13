@@ -4,14 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { saveLocalName, loadLocalName } from "@/lib/userName";
 
 export default function ProfileDialog({ open, onOpenChange, currentUser, onNameUpdated }) {
-  const [name, setName] = useState(currentUser?.full_name || "");
+  const [name, setName] = useState(currentUser?.full_name || loadLocalName());
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
     if (!name.trim()) return;
     setSaving(true);
+    saveLocalName(name.trim());
     await base44.auth.updateMe({ full_name: name.trim() });
     onNameUpdated(name.trim());
     setSaving(false);

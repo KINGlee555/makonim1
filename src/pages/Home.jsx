@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ShoppingCart } from "lucide-react";
 import WelcomeScreen from "../components/WelcomeScreen";
+import { loadLocalName, saveLocalName } from "@/lib/userName";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -16,8 +17,17 @@ export default function Home() {
     try {
       const me = await base44.auth.me();
       if (!me.full_name) {
-        setStatus("welcome");
+        // Try to restore name from localStorage (survives session resets)
+        const localName = loadLocalName();
+        if (localName) {
+          await base44.auth.updateMe({ full_name: localName });
+          const restored = await base44.auth.me();
+          await goToList(restored);
+        } else {
+          setStatus("welcome");
+        }
       } else {
+        saveLocalName(me.full_name);
         await goToList(me);
       }
     } catch {
@@ -46,6 +56,7 @@ export default function Home() {
   };
 
   const handleNameSubmit = async (name) => {
+    saveLocalName(name);
     try {
       await base44.auth.updateMe({ full_name: name });
     } catch {}
