@@ -184,7 +184,7 @@ export default function ListView() {
   return (
     <div className="min-h-screen bg-background pb-24" dir="rtl">
       <AppHeader
-        subtitle=""
+        userName={currentUserRef[0]?.full_name}
         rightAction={
           <div className="flex gap-2">
             <Button
