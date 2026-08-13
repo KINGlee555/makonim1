@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import { ArrowRight, BarChart3 } from "lucide-react";
 import { getProductEmoji } from "@/lib/productEmoji";
+import AppFooter from "../components/AppFooter";
 
 export default function ShoppingSummary() {
   const { listId } = useParams();
@@ -124,6 +125,7 @@ export default function ShoppingSummary() {
             )}
           </>
         )}
+        <AppFooter />
       </main>
     </div>
   );

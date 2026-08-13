@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ShoppingCart, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AppFooter from "../components/AppFooter";
 
 export default function JoinList() {
   const { shareCode } = useParams();
@@ -112,6 +113,7 @@ export default function JoinList() {
           </>
         )}
       </div>
+      <AppFooter />
     </div>
   );
 }

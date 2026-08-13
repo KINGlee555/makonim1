@@ -10,6 +10,7 @@ import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
 import ConnectedUsers from "../components/ConnectedUsers";
+import AppFooter from "../components/AppFooter";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
 import { toast } from "@/components/ui/use-toast";
@@ -295,6 +296,7 @@ export default function ListView() {
             </div>
           </div>
         )}
+        <AppFooter />
       </main>
 
       <QuickAddBar onOpenSearch={() => setShowSearch(true)} />
