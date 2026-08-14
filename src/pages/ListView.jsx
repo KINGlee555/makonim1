@@ -15,6 +15,7 @@ import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
 import { toast } from "@/components/ui/use-toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
+import { usePriceSync } from "@/hooks/usePriceSync";
 
 
 export default function ListView() {
@@ -28,6 +29,7 @@ export default function ListView() {
   const [showSettings, setShowSettings] = useState(false);
   const [navigateProduct, setNavigateProduct] = useState(null);
   const currentUserRef = useState(null);
+  const { syncing: priceSyncing } = usePriceSync();
 
   const loadData = useCallback(async () => {
     const [allLists, allItems] = await Promise.all([

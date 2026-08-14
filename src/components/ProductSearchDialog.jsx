@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { israeliProducts } from "@/lib/israeliProducts";
 import { base44 } from "@/api/base44Client";
 import { getProductEmoji } from "@/lib/productEmoji";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -35,19 +34,21 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
   const [allProducts, setAllProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
-  // Load products from database (with fallback to static catalog)
+  // Load products from database
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    setLoadingProducts(true);
     (async () => {
       try {
         const products = await base44.entities.Product.list("-name", 500);
-        if (!cancelled) {
-          setAllProducts(products.length > 0 ? products : israeliProducts);
-        }
+        if (!cancelled) setAllProducts(products);
       } catch {
-        if (!cancelled) setAllProducts(israeliProducts);
+        if (!cancelled) setAllProducts([]);
+      } finally {
+        if (!cancelled) setLoadingProducts(false);
       }
     })();
     return () => { cancelled = true; };
@@ -176,7 +177,14 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 pb-5 mt-3 space-y-2 min-h-0">
-          {results.length === 0 && !query && (
+          {loadingProducts && !query && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 text-primary animate-spin mb-3" />
+              <p className="text-muted-foreground text-base">טוען מוצרים...</p>
+            </div>
+          )}
+
+          {!loadingProducts && results.length === 0 && !query && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-14 h-14 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground text-base">חפש מוצר מהסופר</p>
