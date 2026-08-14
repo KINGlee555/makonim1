@@ -13,6 +13,7 @@ import ConnectedUsers from "../components/ConnectedUsers";
 import AppFooter from "../components/AppFooter";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
+import ListReader from "../components/ListReader";
 import { toast } from "@/components/ui/use-toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
@@ -236,11 +237,14 @@ export default function ListView() {
             <span className="text-base text-muted-foreground">{boughtItems.length} נקנו</span>
           </div>
           {items.length > 0 && (
-            <div className="mr-auto text-left">
-              <span className="text-sm text-muted-foreground">סה״כ: </span>
-              <span className="text-base font-bold text-primary">
-                ₪{items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
-              </span>
+            <div className="mr-auto flex items-center gap-3">
+              <ListReader items={items} />
+              <div className="text-left">
+                <span className="text-sm text-muted-foreground">סה״כ: </span>
+                <span className="text-base font-bold text-primary">
+                  ₪{items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
+                </span>
+              </div>
             </div>
           )}
         </div>

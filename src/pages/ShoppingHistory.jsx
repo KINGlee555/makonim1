@@ -6,6 +6,7 @@ import AppHeader from "../components/AppHeader";
 import { ArrowRight, ShoppingBag, TrendingDown } from "lucide-react";
 import { getProductEmoji } from "@/lib/productEmoji";
 import AppFooter from "../components/AppFooter";
+import ReceiptScanner from "../components/ReceiptScanner";
 
 export default function ShoppingHistory() {
   const { listId } = useParams();
@@ -46,8 +47,13 @@ export default function ShoppingHistory() {
       />
 
       <main className="max-w-lg mx-auto px-4 py-4">
-        <h1 className="text-2xl font-bold text-foreground mb-1">היסטוריית קניות</h1>
-        <p className="text-muted-foreground mb-4">כל הפריטים שנקנו ברשימה זו</p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground mb-1">היסטוריית קניות</h1>
+            <p className="text-muted-foreground">כל הפריטים שנקנו ברשימה זו</p>
+          </div>
+          <ReceiptScanner listId={listId} onScanned={loadHistory} />
+        </div>
 
         {/* Summary card */}
         <div className="bg-primary/10 rounded-2xl p-4 mb-6 flex items-center justify-between">
