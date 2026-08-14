@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { searchProducts } from "@/lib/israeliProducts";
+import { israeliProducts } from "@/lib/israeliProducts";
+import { base44 } from "@/api/base44Client";
 import { getProductEmoji } from "@/lib/productEmoji";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -33,12 +34,37 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
   const [userLocation, setUserLocation] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
+
+  // Load products from database (with fallback to static catalog)
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const products = await base44.entities.Product.list("-name", 500);
+        if (!cancelled) {
+          setAllProducts(products.length > 0 ? products : israeliProducts);
+        }
+      } catch {
+        if (!cancelled) setAllProducts(israeliProducts);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [open]);
 
   // Live search — updates results as you type, no need to press Enter
   const handleSearch = (value) => {
     const q = value !== undefined ? value : query;
     if (!q.trim()) { setResults([]); return; }
-    let res = searchProducts(q);
+    const ql = q.trim().toLowerCase();
+    let res = allProducts
+      .filter(p =>
+        p.name.toLowerCase().includes(ql) ||
+        p.category.toLowerCase().includes(ql) ||
+        (p.brand || "").toLowerCase().includes(ql)
+      )
+      .slice(0, 20);
     if (filterMode === "price") {
       res = [...res].sort((a, b) => a.price - b.price);
     }
