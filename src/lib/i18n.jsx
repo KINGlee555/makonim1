@@ -68,6 +68,7 @@ const translations = {
     "profile.placeholder": "הכנס את שמך...",
     "profile.save": "שמור שם",
     "profile.saving": "שומר...",
+    "profile.required": "חובה להזין שם כדי להמשיך",
 
     // SettingsDialog
     "settings.title": "הגדרות",
@@ -159,6 +160,14 @@ const translations = {
 
     // ConnectedUsers
     "users.live": "LIVE",
+    "users.dialogTitle": "מי מחובר?",
+    "users.members": "משתפים ברשימה",
+    "users.owner": "בעלים",
+    "users.inviteFamily": "הזמן בני משפחה",
+    "users.inviteDesc": "שתף את הקישור עם בני משפחה והם יצטרפו אוטומטית",
+    "share.copy": "העתק",
+    "share.copied": "הועתק",
+    "users.noName": "משתמש ללא שם",
 
     // Language names
     "lang.he": "עברית",
@@ -292,6 +301,7 @@ const translations = {
     "profile.placeholder": "Enter your name...",
     "profile.save": "Save Name",
     "profile.saving": "Saving...",
+    "profile.required": "A name is required to continue",
 
     // SettingsDialog
     "settings.title": "Settings",
@@ -383,6 +393,14 @@ const translations = {
 
     // ConnectedUsers
     "users.live": "LIVE",
+    "users.dialogTitle": "Who's Connected?",
+    "users.members": "List Members",
+    "users.owner": "Owner",
+    "users.inviteFamily": "Invite Family",
+    "users.inviteDesc": "Share the link with family and they'll join automatically",
+    "share.copy": "Copy",
+    "share.copied": "Copied",
+    "users.noName": "No Name",
 
     // Language names
     "lang.he": "עברית",
@@ -516,6 +534,7 @@ const translations = {
     "profile.placeholder": "Введите имя...",
     "profile.save": "Сохранить имя",
     "profile.saving": "Сохранение...",
+    "profile.required": "Необходимо ввести имя",
 
     // SettingsDialog
     "settings.title": "Настройки",
@@ -607,6 +626,14 @@ const translations = {
 
     // ConnectedUsers
     "users.live": "LIVE",
+    "users.dialogTitle": "Кто подключен?",
+    "users.members": "Участники списка",
+    "users.owner": "Владелец",
+    "users.inviteFamily": "Пригласить семью",
+    "users.inviteDesc": "Поделитесь ссылкой с семьёй — они присоединятся автоматически",
+    "share.copy": "Копировать",
+    "share.copied": "Скопировано",
+    "users.noName": "Без имени",
 
     // Language names
     "lang.he": "עברית",

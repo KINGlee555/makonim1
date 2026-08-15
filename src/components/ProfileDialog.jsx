@@ -7,7 +7,7 @@ import { base44 } from "@/api/base44Client";
 import { saveLocalName, loadLocalName } from "@/lib/userName";
 import { useT } from "@/lib/i18n";
 
-export default function ProfileDialog({ open, onOpenChange, currentUser, onNameUpdated }) {
+export default function ProfileDialog({ open, onOpenChange, currentUser, onNameUpdated, forceName }) {
   const t = useT();
   const [name, setName] = useState(currentUser?.full_name || loadLocalName());
   const [saving, setSaving] = useState(false);
@@ -22,9 +22,14 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
     onOpenChange(false);
   };
 
+  const handleOpenChange = (val) => {
+    if (!val && forceName && !name.trim()) return;
+    onOpenChange(val);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm mx-auto">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className={`max-w-sm mx-auto ${forceName ? "[&>button:last-child]:hidden" : ""}`}>
         <DialogHeader>
           <DialogTitle className="text-xl text-start">{t("profile.title")}</DialogTitle>
         </DialogHeader>
@@ -46,6 +51,9 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
             className="h-12 rounded-xl text-base"
             autoFocus
           />
+          {forceName && !name.trim() && (
+            <p className="text-sm text-destructive text-center">{t("profile.required")}</p>
+          )}
           <Button
             onClick={handleSave}
             disabled={!name.trim() || saving}
