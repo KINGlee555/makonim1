@@ -1,7 +1,10 @@
+import { useT } from "@/lib/i18n";
+
 export default function AppFooter() {
+  const t = useT();
   return (
-    <footer className="text-center py-4 text-xs text-muted-foreground/70" dir="rtl">
-      פותח ע״י אלן נוביצקי
+    <footer className="text-center py-4 text-xs text-muted-foreground">
+      {t("footer.credit")}
     </footer>
   );
 }

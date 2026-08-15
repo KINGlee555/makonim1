@@ -3,20 +3,20 @@ import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
-import { ArrowRight, ShoppingBag, TrendingDown } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { getProductEmoji } from "@/lib/productEmoji";
 import AppFooter from "../components/AppFooter";
 import ReceiptScanner from "../components/ReceiptScanner";
+import { useT } from "@/lib/i18n";
 
 export default function ShoppingHistory() {
   const { listId } = useParams();
   const navigate = useNavigate();
+  const t = useT();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadHistory();
-  }, [listId]);
+  useEffect(() => { loadHistory(); }, [listId]);
 
   const loadHistory = async () => {
     try {
@@ -27,8 +27,6 @@ export default function ShoppingHistory() {
   };
 
   const totalSpent = records.reduce((sum, r) => sum + (r.price || 0) * (r.quantity || 1), 0);
-
-  // Group by date
   const byDate = {};
   records.forEach(r => {
     const date = new Date(r.created_date).toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" });
@@ -37,7 +35,7 @@ export default function ShoppingHistory() {
   });
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background">
       <AppHeader
         rightAction={
           <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => navigate(`/list/${listId}`)}>
@@ -45,24 +43,22 @@ export default function ShoppingHistory() {
           </Button>
         }
       />
-
       <main className="max-w-lg mx-auto px-4 py-4">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-1">היסטוריית קניות</h1>
-            <p className="text-muted-foreground">כל הפריטים שנקנו ברשימה זו</p>
+            <h1 className="text-2xl font-bold text-foreground mb-1">{t("history.title")}</h1>
+            <p className="text-muted-foreground">{t("history.desc")}</p>
           </div>
           <ReceiptScanner listId={listId} onScanned={loadHistory} />
         </div>
 
-        {/* Summary card */}
         <div className="bg-primary/10 rounded-2xl p-4 mb-6 flex items-center justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">סה"כ הוצאות</p>
+            <p className="text-sm text-muted-foreground">{t("history.totalExpenses")}</p>
             <p className="text-2xl font-bold text-primary">₪{totalSpent.toFixed(2)}</p>
           </div>
-          <div className="text-left">
-            <p className="text-sm text-muted-foreground">פריטים שנקנו</p>
+          <div className="text-end">
+            <p className="text-sm text-muted-foreground">{t("history.itemsBought")}</p>
             <p className="text-2xl font-bold text-foreground">{records.length}</p>
           </div>
         </div>
@@ -76,8 +72,8 @@ export default function ShoppingHistory() {
             <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
               <ShoppingBag className="w-10 h-10 text-muted-foreground" />
             </div>
-            <p className="text-xl font-medium text-foreground mb-1">אין עדיין היסטוריה</p>
-            <p className="text-muted-foreground">פריטים שנקנו ונמחקו יופיעו כאן</p>
+            <p className="text-xl font-medium text-foreground mb-1">{t("history.noHistory")}</p>
+            <p className="text-muted-foreground">{t("history.noHistoryDesc")}</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -90,16 +86,14 @@ export default function ShoppingHistory() {
                       <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
                         <span className="text-xl">{getProductEmoji(r.item_name, r.category)}</span>
                       </div>
-                      <div className="flex-1 min-w0">
+                      <div className="flex-1 min-w-0">
                         <p className="font-medium text-foreground truncate">{r.item_name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {r.quantity > 1 ? `${r.quantity} יח' · ` : ""}₪{(r.price || 0).toFixed(2)}
+                          {r.quantity > 1 ? `${r.quantity} ${t("history.units")} · ` : ""}₪{(r.price || 0).toFixed(2)}
                           {r.bought_by ? ` · ${r.bought_by}` : ""}
                         </p>
                       </div>
-                      <span className="text-sm font-semibold text-primary">
-                        ₪{((r.price || 0) * (r.quantity || 1)).toFixed(2)}
-                      </span>
+                      <span className="text-sm font-semibold text-primary">₪{((r.price || 0) * (r.quantity || 1)).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>

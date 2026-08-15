@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export default function QuickAddBar({ onOpenSearch }) {
+  const t = useT();
   return (
     <div className="sticky bottom-0 bg-background/80 backdrop-blur-lg border-t border-border p-4">
       <div className="max-w-lg mx-auto">
@@ -10,7 +12,7 @@ export default function QuickAddBar({ onOpenSearch }) {
           onClick={onOpenSearch}
         >
           <Search className="w-6 h-6" />
-          חפש וגלה מוצרים
+          {t("quickAdd.search")}
         </Button>
       </div>
     </div>

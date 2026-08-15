@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Users } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export default function ConnectedUsers({ list }) {
+  const t = useT();
   const [userNames, setUserNames] = useState({});
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function ConnectedUsers({ list }) {
   const isShared = allEmails.length > 1;
 
   return (
-    <div className="flex items-center justify-between px-3 py-2 bg-primary/5 rounded-2xl mb-4" dir="rtl">
+    <div className="flex items-center justify-between px-3 py-2 bg-primary/5 rounded-2xl mb-4">
       <div className="flex items-center gap-2 flex-wrap flex-1">
         <Users className="w-4 h-4 text-primary flex-shrink-0" />
         {allEmails.map(email => (
@@ -33,9 +35,9 @@ export default function ConnectedUsers({ list }) {
         ))}
       </div>
       {isShared && (
-        <div className="flex items-center gap-1.5 flex-shrink-0 mr-2 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+        <div className="flex items-center gap-1.5 flex-shrink-0 ms-2 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse inline-block" />
-          LIVE
+          {t("users.live")}
         </div>
       )}
     </div>

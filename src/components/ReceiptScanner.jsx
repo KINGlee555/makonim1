@@ -3,8 +3,10 @@ import { ScanLine, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
+import { useT } from "@/lib/i18n";
 
 export default function ReceiptScanner({ listId, onScanned }) {
+  const t = useT();
   const [scanning, setScanning] = useState(false);
   const inputRef = useRef(null);
 
@@ -52,12 +54,12 @@ export default function ReceiptScanner({ listId, onScanned }) {
           }))
         );
         onScanned?.(items);
-        toast({ title: `${items.length} פריטים נוספו מהקבלה`, duration: 2000 });
+        toast({ title: t("history.receiptScanned", { count: items.length }), duration: 2000 });
       } else {
-        toast({ title: "לא זוהו פריטים בקבלה", variant: "destructive", duration: 2000 });
+        toast({ title: t("history.noItemsInReceipt"), variant: "destructive", duration: 2000 });
       }
     } catch {
-      toast({ title: "שגיאה בסריקת הקבלה", variant: "destructive", duration: 2000 });
+      toast({ title: t("history.receiptError"), variant: "destructive", duration: 2000 });
     } finally {
       setScanning(false);
     }
@@ -65,22 +67,10 @@ export default function ReceiptScanner({ listId, onScanned }) {
 
   return (
     <>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleScan}
-      />
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={scanning}
-        onClick={() => inputRef.current?.click()}
-        className="gap-2 rounded-xl"
-      >
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleScan} />
+      <Button variant="outline" size="sm" disabled={scanning} onClick={() => inputRef.current?.click()} className="gap-2 rounded-xl">
         {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <ScanLine className="w-4 h-4" />}
-        סרוק קבלה
+        {t("receipt.scan")}
       </Button>
     </>
   );

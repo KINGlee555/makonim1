@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { saveLocalName, loadLocalName } from "@/lib/userName";
+import { useT } from "@/lib/i18n";
 
 export default function ProfileDialog({ open, onOpenChange, currentUser, onNameUpdated }) {
+  const t = useT();
   const [name, setName] = useState(currentUser?.full_name || loadLocalName());
   const [saving, setSaving] = useState(false);
 
@@ -22,9 +24,9 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm mx-auto" dir="rtl">
+      <DialogContent className="max-w-sm mx-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl text-right">השם שלי ברשימה</DialogTitle>
+          <DialogTitle className="text-xl text-start">{t("profile.title")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
           <div className="flex items-center gap-3 bg-muted rounded-2xl p-4">
@@ -32,12 +34,12 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
               <User className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">כך ייראה שמך לשאר המשתתפים</p>
-              <p className="text-base font-semibold">{name || "שם לא הוגדר"}</p>
+              <p className="text-sm text-muted-foreground">{t("profile.preview")}</p>
+              <p className="text-base font-semibold">{name || t("profile.noName")}</p>
             </div>
           </div>
           <Input
-            placeholder="הכנס את שמך..."
+            placeholder={t("profile.placeholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSave()}
@@ -49,7 +51,7 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
             disabled={!name.trim() || saving}
             className="w-full h-12 rounded-xl text-base"
           >
-            {saving ? "שומר..." : "שמור שם"}
+            {saving ? t("profile.saving") : t("profile.save")}
           </Button>
         </div>
       </DialogContent>

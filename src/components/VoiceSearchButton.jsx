@@ -3,8 +3,10 @@ import { Mic, Loader2, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
+import { useT } from "@/lib/i18n";
 
 export default function VoiceSearchButton({ onResult }) {
+  const t = useT();
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const mediaRecorderRef = useRef(null);
@@ -18,14 +20,14 @@ export default function VoiceSearchButton({ onResult }) {
       recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
       recorder.onstop = async () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        stream.getTracks().forEach(t => t.stop());
+        stream.getTracks().forEach(track => track.stop());
         await transcribeAudio(blob);
       };
       recorder.start();
       mediaRecorderRef.current = recorder;
       setRecording(true);
     } catch {
-      toast({ title: "לא ניתן לגשת למיקרופון", variant: "destructive", duration: 2000 });
+      toast({ title: t("voice.micError"), variant: "destructive", duration: 2000 });
     }
   };
 
@@ -42,28 +44,16 @@ export default function VoiceSearchButton({ onResult }) {
       const transcript = await base44.integrations.Core.TranscribeAudio({ audio_url: file_url });
       onResult(transcript.trim());
     } catch {
-      toast({ title: "שגיאה בתמלול", variant: "destructive", duration: 2000 });
+      toast({ title: t("voice.transcribeError"), variant: "destructive", duration: 2000 });
     } finally {
       setTranscribing(false);
     }
   };
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={recording ? handleStop : handleStart}
-      disabled={transcribing}
-      className="h-12 w-12 rounded-2xl flex-shrink-0 border-2 border-primary/20"
-      title="חיפוש קולי"
-    >
-      {transcribing ? (
-        <Loader2 className="w-5 h-5 animate-spin" />
-      ) : recording ? (
-        <Square className="w-5 h-5 text-red-500 fill-red-500" />
-      ) : (
-        <Mic className="w-5 h-5 text-primary" />
-      )}
+    <Button variant="outline" size="icon" onClick={recording ? handleStop : handleStart} disabled={transcribing}
+      className="h-12 w-12 rounded-2xl flex-shrink-0 border-2 border-primary/20" title={t("voice.title")}>
+      {transcribing ? <Loader2 className="w-5 h-5 animate-spin" /> : recording ? <Square className="w-5 h-5 text-red-500 fill-red-500" /> : <Mic className="w-5 h-5 text-primary" />}
     </Button>
   );
 }

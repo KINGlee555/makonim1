@@ -3,8 +3,10 @@ import { ShoppingCart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { loadLocalName } from "@/lib/userName";
+import { useT } from "@/lib/i18n";
 
 export default function WelcomeScreen({ onNameSubmit }) {
+  const t = useT();
   const [name, setName] = useState(loadLocalName());
 
   const handleSubmit = () => {
@@ -13,17 +15,17 @@ export default function WelcomeScreen({ onNameSubmit }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-background" dir="rtl">
-      <div className="w-full max-w-sm px-6 text-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-background px-6 text-center">
+      <div className="w-full max-w-sm">
         <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mx-auto mb-6">
           <ShoppingCart className="w-10 h-10 text-primary-foreground" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">MaKonim</h1>
-        <p className="text-muted-foreground text-lg mb-8">רשימת קניות משותפת</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">{t("welcome.title")}</h1>
+        <p className="text-muted-foreground text-lg mb-8">{t("welcome.subtitle")}</p>
 
         <div className="space-y-4">
           <Input
-            placeholder="מה שמך?"
+            placeholder={t("welcome.namePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -35,7 +37,7 @@ export default function WelcomeScreen({ onNameSubmit }) {
             disabled={!name.trim()}
             className="w-full h-14 rounded-2xl text-lg"
           >
-            בוא נתחיל לקנות 🛒
+            {t("welcome.start")}
           </Button>
         </div>
       </div>

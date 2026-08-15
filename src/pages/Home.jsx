@@ -4,20 +4,19 @@ import { base44 } from "@/api/base44Client";
 import { ShoppingCart } from "lucide-react";
 import WelcomeScreen from "../components/WelcomeScreen";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
+import { useT } from "@/lib/i18n";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [status, setStatus] = useState("loading"); // loading | welcome | redirecting
+  const t = useT();
+  const [status, setStatus] = useState("loading");
 
-  useEffect(() => {
-    init();
-  }, []);
+  useEffect(() => { init(); }, []);
 
   const init = async () => {
     try {
       const me = await base44.auth.me();
       if (!me.full_name) {
-        // Try to restore name from localStorage (survives session resets)
         const localName = loadLocalName();
         if (localName) {
           await base44.auth.updateMe({ full_name: localName });
@@ -38,43 +37,32 @@ export default function Home() {
   const goToList = async (me) => {
     setStatus("redirecting");
     const allLists = await base44.entities.ShoppingList.list("-created_date", 50);
-    const myLists = allLists.filter(
-      l => l.created_by === me.email || (l.shared_with || []).includes(me.email)
-    );
-
+    const myLists = allLists.filter(l => l.created_by === me.email || (l.shared_with || []).includes(me.email));
     if (myLists.length > 0) {
       navigate(`/list/${myLists[0].id}`, { replace: true });
     } else {
       const shareCode = Math.random().toString(36).substring(2, 10);
-      const newList = await base44.entities.ShoppingList.create({
-        title: "הרשימה שלנו",
-        shared_with: [],
-        share_code: shareCode
-      });
+      const newList = await base44.entities.ShoppingList.create({ title: "הרשימה שלנו", shared_with: [], share_code: shareCode });
       navigate(`/list/${newList.id}`, { replace: true });
     }
   };
 
   const handleNameSubmit = async (name) => {
     saveLocalName(name);
-    try {
-      await base44.auth.updateMe({ full_name: name });
-    } catch {}
+    try { await base44.auth.updateMe({ full_name: name }); } catch {}
     const me = await base44.auth.me().catch(() => ({ email: "", full_name: name }));
     await goToList(me);
   };
 
-  if (status === "welcome") {
-    return <WelcomeScreen onNameSubmit={handleNameSubmit} />;
-  }
+  if (status === "welcome") return <WelcomeScreen onNameSubmit={handleNameSubmit} />;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center" dir="rtl">
+    <div className="fixed inset-0 flex items-center justify-center">
       <div className="text-center">
         <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4">
           <ShoppingCart className="w-8 h-8 text-primary-foreground animate-pulse" />
         </div>
-        <p className="text-lg text-muted-foreground">טוען...</p>
+        <p className="text-lg text-muted-foreground">{t("app.loading")}</p>
       </div>
     </div>
   );

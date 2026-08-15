@@ -4,11 +4,13 @@ import { base44 } from "@/api/base44Client";
 import { ShoppingCart, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppFooter from "../components/AppFooter";
+import { useT } from "@/lib/i18n";
 
 export default function JoinList() {
   const { shareCode } = useParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState("loading"); // loading, joining, success, error, already
+  const t = useT();
+  const [status, setStatus] = useState("loading");
   const [listTitle, setListTitle] = useState("");
 
   useEffect(() => {
@@ -20,14 +22,22 @@ export default function JoinList() {
     try {
       me = await base44.auth.me();
     } catch {
-      // Not authenticated — send to login, then back to this join link
-      base44.auth.redirectToLogin(window.location.href);
+      // Not authenticated — redirect to login with returnTo so we come back here
+      const currentPath = window.location.pathname + window.location.search;
+      window.location.href = '/login?returnTo=' + encodeURIComponent(currentPath);
       return;
     }
-    // Fetch all lists and find by share_code manually (filter may not support nested queries)
-    const allLists = await base44.entities.ShoppingList.list("-created_date", 100);
+
+    let allLists;
+    try {
+      allLists = await base44.entities.ShoppingList.list("-created_date", 100);
+    } catch {
+      setStatus("error");
+      return;
+    }
+
     const lists = allLists.filter(l => l.share_code === shareCode);
-    
+
     if (lists.length === 0) {
       setStatus("error");
       return;
@@ -51,13 +61,18 @@ export default function JoinList() {
 
     setStatus("joining");
     const updated = [...(list.shared_with || []), me.email];
-    await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
+    try {
+      await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
+    } catch {
+      setStatus("error");
+      return;
+    }
     setStatus("success");
     setTimeout(() => navigate(`/list/${list.id}`), 1500);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4" dir="rtl">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="text-center max-w-sm">
         <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mx-auto mb-6">
           <ShoppingCart className="w-10 h-10 text-primary-foreground" />
@@ -66,49 +81,49 @@ export default function JoinList() {
         {status === "loading" && (
           <>
             <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-xl text-muted-foreground">מחפש את הרשימה...</p>
+            <p className="text-xl text-muted-foreground">{t("join.searching")}</p>
           </>
         )}
 
         {status === "joining" && (
           <>
             <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-xl text-muted-foreground">מצטרף לרשימה...</p>
+            <p className="text-xl text-muted-foreground">{t("join.joining")}</p>
           </>
         )}
 
         {status === "success" && (
           <>
             <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">הצטרפת בהצלחה!</h2>
-            <p className="text-xl text-muted-foreground">לרשימה "{listTitle}"</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.success")}</h2>
+            <p className="text-xl text-muted-foreground">{t("join.joinedToList", { title: listTitle })}</p>
           </>
         )}
 
         {status === "already" && (
           <>
             <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">את/ה כבר ברשימה!</h2>
-            <p className="text-xl text-muted-foreground">מעביר לרשימה "{listTitle}"...</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.alreadyIn")}</h2>
+            <p className="text-xl text-muted-foreground">{t("join.movingTo", { title: listTitle })}</p>
           </>
         )}
 
         {status === "error" && (
           <>
-            <h2 className="text-2xl font-bold text-foreground mb-2">הרשימה לא נמצאה</h2>
-            <p className="text-lg text-muted-foreground mb-6">ייתכן שהקישור שגוי</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.notFound")}</h2>
+            <p className="text-lg text-muted-foreground mb-6">{t("join.notFoundDesc")}</p>
             <Button onClick={() => navigate("/")} className="h-14 px-8 rounded-2xl text-lg">
-              חזרה לדף הבית
+              {t("join.backHome")}
             </Button>
           </>
         )}
 
         {status === "full" && (
           <>
-            <h2 className="text-2xl font-bold text-foreground mb-2">הרשימה מלאה</h2>
-            <p className="text-lg text-muted-foreground mb-6">ניתן לשתף עד 5 אנשים</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.full")}</h2>
+            <p className="text-lg text-muted-foreground mb-6">{t("join.fullDesc")}</p>
             <Button onClick={() => navigate("/")} className="h-14 px-8 rounded-2xl text-lg">
-              חזרה לדף הבית
+              {t("join.backHome")}
             </Button>
           </>
         )}
