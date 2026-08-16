@@ -168,6 +168,8 @@ const translations = {
     "share.copy": "העתק",
     "share.copied": "הועתק",
     "users.noName": "משתמש ללא שם",
+    "users.listOwner": "בעל הרשימה",
+    "share.whatsapp": "שתף בוואטסאפ",
 
     // Language names
     "lang.he": "עברית",
@@ -401,6 +403,8 @@ const translations = {
     "share.copy": "Copy",
     "share.copied": "Copied",
     "users.noName": "No Name",
+    "users.listOwner": "List Owner",
+    "share.whatsapp": "Share via WhatsApp",
 
     // Language names
     "lang.he": "עברית",
@@ -634,6 +638,8 @@ const translations = {
     "share.copy": "Копировать",
     "share.copied": "Скопировано",
     "users.noName": "Без имени",
+    "users.listOwner": "Владелец списка",
+    "share.whatsapp": "Поделиться в WhatsApp",
 
     // Language names
     "lang.he": "עברית",

@@ -24,9 +24,8 @@ export default function ConnectedUsersDialog({ open, onOpenChange, list }) {
 
   const allEmails = [list?.created_by, ...(list?.shared_with || [])].filter(Boolean);
   const getLabel = (email) => {
-    const name = userNames[email] || email;
-    if (!name || name === "anonymous") return t("users.noName");
-    return name;
+    if (!email || email === "anonymous") return t("users.listOwner");
+    return userNames[email] || email;
   };
   const shareUrl = list ? `${window.location.origin}/join/${list.share_code}` : "";
 

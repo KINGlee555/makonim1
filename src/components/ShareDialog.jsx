@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Check, Mail, Send, Loader2, Link as LinkIcon } from "lucide-react";
+import { Copy, Check, Mail, Send, Loader2, Link as LinkIcon, MessageCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { base44 } from "@/api/base44Client";
 import { buildInvitationEmailBody, INVITATION_SUBJECT } from "@/lib/invitationEmail";
@@ -22,6 +22,11 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
     setCopied(true);
     toast({ title: t("share.linkCopied"), duration: 2000 });
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleWhatsApp = () => {
+    const text = `${list?.title || "הרשימה שלי"} - ${shareLink}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handleSendInvite = async () => {
@@ -107,6 +112,14 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
                 variant={copied ? "default" : "outline"}
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+              </Button>
+              <Button
+                onClick={handleWhatsApp}
+                className="h-12 w-12 rounded-xl flex-shrink-0"
+                variant="outline"
+                title={t("share.whatsapp")}
+              >
+                <MessageCircle className="w-5 h-5" />
               </Button>
             </div>
           </div>

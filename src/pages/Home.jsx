@@ -39,7 +39,9 @@ export default function Home() {
     const allLists = await base44.entities.ShoppingList.list("-created_date", 50);
     const myLists = allLists.filter(l => l.created_by === me.email || (l.shared_with || []).includes(me.email));
     if (myLists.length > 0) {
-      navigate(`/list/${myLists[0].id}`, { replace: true });
+      const ownedList = myLists.find(l => l.created_by === me.email);
+      const targetList = ownedList || myLists[0];
+      navigate(`/list/${targetList.id}`, { replace: true });
     } else {
       const shareCode = Math.random().toString(36).substring(2, 10);
       const newList = await base44.entities.ShoppingList.create({ title: "הרשימה שלנו", shared_with: [], share_code: shareCode });

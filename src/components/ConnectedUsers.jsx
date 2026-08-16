@@ -23,11 +23,10 @@ export default function ConnectedUsers({ list }) {
   const allEmails = [list?.created_by, ...(list?.shared_with || [])].filter(Boolean);
   if (allEmails.length === 0) return null;
 
-  // Never show "anonymous" — show placeholder if no real name set
+  // Show "List Owner" for anonymous creators, real name otherwise
   const getLabel = (email) => {
-    const name = userNames[email] || email;
-    if (!name || name === "anonymous") return t("users.noName");
-    return name;
+    if (!email || email === "anonymous") return t("users.listOwner");
+    return userNames[email] || email;
   };
   const isShared = allEmails.length > 1;
 
