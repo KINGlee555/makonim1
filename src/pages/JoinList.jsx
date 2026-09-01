@@ -24,7 +24,7 @@ export default function JoinList() {
     } catch {
       // Not authenticated — redirect to login with returnTo so we come back here
       const currentPath = window.location.pathname + window.location.search;
-      window.location.href = '/login?returnTo=' + encodeURIComponent(currentPath);
+      window.location.href = '/register?returnTo=' + encodeURIComponent(currentPath);
       return;
     }
 
