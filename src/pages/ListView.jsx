@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Share2, ShoppingCart, User, Settings } from "lucide-react";
@@ -32,6 +32,7 @@ export default function ListView() {
   const [showSettings, setShowSettings] = useState(false);
   const [navigateProduct, setNavigateProduct] = useState(null);
   const currentUserRef = useState(null);
+  const currentUserNameRef = useRef("");
   const { syncing: priceSyncing } = usePriceSync();
 
   const loadData = useCallback(async () => {
@@ -48,6 +49,7 @@ export default function ListView() {
     loadData();
     base44.auth.me().then(me => {
       currentUserRef[1](me);
+      currentUserNameRef.current = me.full_name || me.email || "";
       if (!me.full_name) {
         const localName = loadLocalName();
         if (localName) {
@@ -64,6 +66,7 @@ export default function ListView() {
 
   const handleNameUpdated = (newName) => {
     saveLocalName(newName);
+    currentUserNameRef.current = newName;
     currentUserRef[1](prev => ({ ...prev, full_name: newName }));
   };
 
@@ -88,9 +91,8 @@ export default function ListView() {
         setItems(prev => prev.some(i => i.id === event.data.id) ? prev : [event.data, ...prev]);
       } else if (event.type === "update") {
         if (event.data?.status === "bought" && event.data?.bought_by) {
-          const me = currentUserRef[0];
-          const myName = me?.full_name || me?.email || "";
-          if (event.data.bought_by !== myName) {
+          const myName = currentUserNameRef.current;
+          if (myName && event.data.bought_by !== myName) {
             const msg = t("list.boughtBy", { buyer: event.data.bought_by, name: event.data.name });
             toast({ title: msg, duration: 5000 });
             if ("Notification" in window && Notification.permission === "granted") {
@@ -124,7 +126,7 @@ export default function ListView() {
     setItems(prev => prev.filter(i => i.id !== item.id));
     toast({
       title: t("list.itemBoughtToast", { name: item.name }),
-      action: <ToastAction altText={t("list.undo")} onClick={() => handleUndoBought(item)}>{t("list.undo")}</ToastAction>,
+      action: <ToastAction onClick={() => handleUndoBought(item)}>{t("list.undo")}</ToastAction>,
       duration: 5000
     });
   };
