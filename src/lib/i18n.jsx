@@ -140,6 +140,11 @@ const translations = {
     // ProductItem
     "productItem.navigate": "ניווט",
     "productItem.undoBought": "בטל קנייה",
+    "productItem.bought": "קניתי",
+    "list.itemBoughtToast": "סימנת {name} כקנוי ✓",
+    "list.undo": "בטל",
+    "list.undone": "בוטל",
+    "list.boughtBy": "{buyer} קנה/ה {name} ✓",
 
     // QuickAddBar
     "quickAdd.search": "חפש וגלה מוצרים",
@@ -375,6 +380,11 @@ const translations = {
     // ProductItem
     "productItem.navigate": "Navigate",
     "productItem.undoBought": "Undo purchase",
+    "productItem.bought": "Bought",
+    "list.itemBoughtToast": "Marked {name} as bought ✓",
+    "list.undo": "Undo",
+    "list.undone": "Undone",
+    "list.boughtBy": "{buyer} bought {name} ✓",
 
     // QuickAddBar
     "quickAdd.search": "Search & Discover Products",
@@ -610,6 +620,11 @@ const translations = {
     // ProductItem
     "productItem.navigate": "Навигация",
     "productItem.undoBought": "Отменить покупку",
+    "productItem.bought": "Купил",
+    "list.itemBoughtToast": "Отмечено {name} как купленное ✓",
+    "list.undo": "Отменить",
+    "list.undone": "Отменено",
+    "list.boughtBy": "{buyer} купил(а) {name} ✓",
 
     // QuickAddBar
     "quickAdd.search": "Поиск продуктов",

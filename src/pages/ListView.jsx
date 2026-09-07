@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, Trash2, ShoppingCart, User, Settings } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -15,6 +15,7 @@ import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
 import ListReader from "../components/ListReader";
 import { toast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
 import { useT } from "@/lib/i18n";
@@ -75,34 +76,64 @@ export default function ListView() {
   }, [listId]);
 
   useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = base44.entities.ListItem.subscribe((event) => {
       if (event.data?.list_id !== listId && event.type !== "delete") return;
       if (event.type === "create") {
         setItems(prev => prev.some(i => i.id === event.data.id) ? prev : [event.data, ...prev]);
       } else if (event.type === "update") {
+        if (event.data?.status === "bought" && event.data?.bought_by) {
+          const me = currentUserRef[0];
+          const myName = me?.full_name || me?.email || "";
+          if (event.data.bought_by !== myName) {
+            const msg = t("list.boughtBy", { buyer: event.data.bought_by, name: event.data.name });
+            toast({ title: msg, duration: 5000 });
+            if ("Notification" in window && Notification.permission === "granted") {
+              new Notification("MaKonim", {
+                body: msg,
+                icon: "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/2d1599b0e_IMG_0820.jpeg"
+              });
+            }
+          }
+        }
         setItems(prev => prev.map(i => i.id === event.id ? event.data : i));
       } else if (event.type === "delete") {
         setItems(prev => prev.filter(i => i.id !== event.id));
       }
     });
     return unsubscribe;
-  }, [listId]);
+  }, [listId, t]);
 
   const handleToggleBought = async (item) => {
-    const newStatus = item.status === "bought" ? "pending" : "bought";
     const me = await base44.auth.me();
+    const buyerName = me.full_name || me.email;
     await base44.entities.ListItem.update(item.id, {
-      status: newStatus,
-      bought_by: newStatus === "bought" ? me.full_name || me.email : ""
+      status: "bought",
+      bought_by: buyerName
     });
-    if (newStatus === "bought") {
-      await base44.entities.PurchaseHistory.create({
-        list_id: listId, item_name: item.name, price: item.price || 0,
-        quantity: item.quantity || 1, category: item.category || "אחר",
-        bought_by: me.full_name || me.email
-      });
-    }
-    setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: newStatus, bought_by: newStatus === "bought" ? me.full_name || me.email : "" } : i));
+    await base44.entities.PurchaseHistory.create({
+      list_id: listId, item_name: item.name, price: item.price || 0,
+      quantity: item.quantity || 1, category: item.category || "אחר",
+      bought_by: buyerName
+    });
+    setItems(prev => prev.filter(i => i.id !== item.id));
+    toast({
+      title: t("list.itemBoughtToast", { name: item.name }),
+      action: <ToastAction altText={t("list.undo")} onClick={() => handleUndoBought(item)}>{t("list.undo")}</ToastAction>,
+      duration: 5000
+    });
+  };
+
+  const handleUndoBought = async (item) => {
+    await base44.entities.ListItem.update(item.id, { status: "pending", bought_by: "" });
+    const restored = { ...item, status: "pending", bought_by: "" };
+    setItems(prev => prev.some(i => i.id === item.id) ? prev : [restored, ...prev]);
+    toast({ title: t("list.undone"), duration: 2000 });
   };
 
   const handleUpdateQuantity = async (item, qty) => {
@@ -138,13 +169,6 @@ export default function ListView() {
     setItems(prev => prev.filter(i => i.id !== item.id));
   };
 
-  const handleClearBought = async () => {
-    const boughtItems = items.filter(i => i.status === "bought");
-    await Promise.all(boughtItems.map(i => base44.entities.ListItem.delete(i.id)));
-    setItems(prev => prev.filter(i => i.status !== "bought"));
-    toast({ title: t("list.clearedBought"), duration: 1500 });
-  };
-
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -164,7 +188,6 @@ export default function ListView() {
   }
 
   const pendingItems = items.filter(i => i.status !== "bought");
-  const boughtItems = items.filter(i => i.status === "bought");
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -192,17 +215,13 @@ export default function ListView() {
             <div className="w-3 h-3 rounded-full bg-primary" />
             <span className="text-base text-muted-foreground">{pendingItems.length} {t("list.toBuy")}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-            <span className="text-base text-muted-foreground">{boughtItems.length} {t("list.bought")}</span>
-          </div>
-          {items.length > 0 && (
+          {pendingItems.length > 0 && (
             <div className="ms-auto flex items-center gap-3">
-              <ListReader items={items} />
+              <ListReader items={pendingItems} />
               <div className="text-end">
                 <span className="text-sm text-muted-foreground">{t("list.total")} </span>
                 <span className="text-base font-bold text-primary">
-                  ₪{items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
+                  ₪{pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -218,7 +237,7 @@ export default function ListView() {
           </div>
         )}
 
-        {pendingItems.length === 0 && boughtItems.length === 0 && (
+        {pendingItems.length === 0 && (
           <div className="text-center py-16">
             <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
               <ShoppingCart className="w-10 h-10 text-muted-foreground" />
@@ -228,22 +247,6 @@ export default function ListView() {
           </div>
         )}
 
-        {boughtItems.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-3 px-2">
-              <h3 className="text-lg font-semibold text-muted-foreground">{t("list.boughtSection")}</h3>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive" onClick={handleClearBought}>
-                <Trash2 className="w-4 h-4 ml-1" />
-                {t("list.clear")}
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {boughtItems.map(item => (
-                <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought} onUpdateQuantity={handleUpdateQuantity} />
-              ))}
-            </div>
-          </div>
-        )}
         <AppFooter />
       </main>
 
