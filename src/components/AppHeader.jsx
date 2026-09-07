@@ -9,7 +9,7 @@ export default function AppHeader({ rightAction, userName }) {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between">
           <img
-            src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/d32242af8_IMG_0035.png"
+            src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/2d1599b0e_IMG_0820.jpeg"
             alt={t("app.name")}
             className="h-12 w-auto object-contain"
           />

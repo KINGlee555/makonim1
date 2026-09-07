@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShoppingCart } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { loadLocalName } from "@/lib/userName";
@@ -17,9 +17,11 @@ export default function WelcomeScreen({ onNameSubmit }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-background px-6 text-center">
       <div className="w-full max-w-sm">
-        <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mx-auto mb-6">
-          <ShoppingCart className="w-10 h-10 text-primary-foreground" />
-        </div>
+        <img
+          src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/2d1599b0e_IMG_0820.jpeg"
+          alt="MaKonim"
+          className="h-28 w-auto object-contain mx-auto mb-6"
+        />
         <h1 className="text-3xl font-bold text-foreground mb-2">{t("welcome.title")}</h1>
         <p className="text-muted-foreground text-lg mb-8">{t("welcome.subtitle")}</p>
 
