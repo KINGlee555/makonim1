@@ -111,65 +111,65 @@ export default function ListView() {
     return unsubscribe;
   }, [listId, t]);
 
-  const handleToggleBought = async (item) => {
-    const me = await base44.auth.me();
-    const buyerName = me.full_name || me.email;
-    await base44.entities.ListItem.update(item.id, {
-      status: "bought",
-      bought_by: buyerName
-    });
-    await base44.entities.PurchaseHistory.create({
-      list_id: listId, item_name: item.name, price: item.price || 0,
-      quantity: item.quantity || 1, category: item.category || "אחר",
-      bought_by: buyerName
-    });
+  const handleUndoBought = useCallback((item) => {
+    const restored = { ...item, status: "pending", bought_by: "" };
+    setItems(prev => prev.some(i => i.id === item.id) ? prev : [restored, ...prev]);
+    toast({ title: t("list.undone"), duration: 2000 });
+    base44.entities.ListItem.update(item.id, { status: "pending", bought_by: "" })
+      .catch(() => setItems(prev => prev.filter(i => i.id !== item.id)));
+  }, [t]);
+
+  const handleToggleBought = useCallback((item) => {
+    const buyerName = currentUserNameRef.current || "List Owner";
     setItems(prev => prev.filter(i => i.id !== item.id));
     toast({
       title: t("list.itemBoughtToast", { name: item.name }),
       action: <ToastAction onClick={() => handleUndoBought(item)}>{t("list.undo")}</ToastAction>,
       duration: 5000
     });
-  };
+    base44.entities.ListItem.update(item.id, { status: "bought", bought_by: buyerName })
+      .catch(() => setItems(prev => prev.some(i => i.id === item.id) ? prev : [{ ...item, status: "pending" }, ...prev]));
+    base44.entities.PurchaseHistory.create({
+      list_id: listId, item_name: item.name, price: item.price || 0,
+      quantity: item.quantity || 1, category: item.category || "אחר",
+      bought_by: buyerName
+    }).catch(() => {});
+  }, [t, listId, handleUndoBought]);
 
-  const handleUndoBought = async (item) => {
-    await base44.entities.ListItem.update(item.id, { status: "pending", bought_by: "" });
-    const restored = { ...item, status: "pending", bought_by: "" };
-    setItems(prev => prev.some(i => i.id === item.id) ? prev : [restored, ...prev]);
-    toast({ title: t("list.undone"), duration: 2000 });
-  };
-
-  const handleUpdateQuantity = async (item, qty) => {
-    await base44.entities.ListItem.update(item.id, { quantity: qty });
+  const handleUpdateQuantity = useCallback((item, qty) => {
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: qty } : i));
-  };
+    base44.entities.ListItem.update(item.id, { quantity: qty }).catch(() => {});
+  }, []);
 
-  const handleAddProduct = async (product) => {
+  const handleAddProduct = useCallback(async (product) => {
     const newItem = await base44.entities.ListItem.create({
       list_id: listId, name: product.name, price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
       status: "pending", quantity: 1
     });
-    setItems(prev => [newItem, ...prev]);
+    setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
     toast({ title: t("list.addedToList", { name: product.name }), duration: 1000 });
-  };
+  }, [t, listId]);
 
-  const handleAddUser = async (email) => {
+  const handleAddUser = useCallback(async (email) => {
     const updated = [...(list.shared_with || []), email];
     await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
     setList(prev => ({ ...prev, shared_with: updated }));
     toast({ title: t("list.userAdded", { email }), duration: 1500 });
-  };
+  }, [list, t]);
 
-  const handleRemoveUser = async (email) => {
+  const handleRemoveUser = useCallback(async (email) => {
     const updated = (list.shared_with || []).filter(e => e !== email);
     await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
     setList(prev => ({ ...prev, shared_with: updated }));
-  };
+  }, [list]);
 
-  const handleRemoveItem = async (item) => {
-    await base44.entities.ListItem.delete(item.id);
+  const handleRemoveItem = useCallback((item) => {
     setItems(prev => prev.filter(i => i.id !== item.id));
-  };
+    base44.entities.ListItem.delete(item.id).catch(() => {});
+  }, []);
+
+  const handleNavigate = useCallback((item) => setNavigateProduct(item), []);
 
   if (loading) {
     return (
@@ -234,7 +234,7 @@ export default function ListView() {
           <div className="space-y-2 mb-6">
             {pendingItems.map(item => (
               <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
-                onUpdateQuantity={handleUpdateQuantity} onNavigate={(item) => setNavigateProduct(item)} onRemove={handleRemoveItem} />
+                onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem} />
             ))}
           </div>
         )}

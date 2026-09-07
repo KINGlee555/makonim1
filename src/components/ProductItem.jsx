@@ -1,9 +1,10 @@
+import { memo } from "react";
 import { Plus, Minus, MapPin, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProductEmoji } from "@/lib/productEmoji";
 import { useT } from "@/lib/i18n";
 
-export default function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove }) {
+function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove }) {
   const t = useT();
 
   return (
@@ -52,3 +53,5 @@ export default function ProductItem({ item, onToggleBought, onUpdateQuantity, on
     </div>
   );
 }
+
+export default memo(ProductItem);
