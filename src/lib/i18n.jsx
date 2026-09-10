@@ -242,6 +242,77 @@ const translations = {
     "auth.reset.invalidLinkDesc": "קישור איפוס הסיסמה חסר או לא תקין",
     "auth.reset.requestNew": "בקש קישור חדש",
     "auth.reset.incomplete": "הקישור שהשתמשת בו נראה חלקי. אנא בקש אימייל חדש לאיפוס סיסמה.",
+
+    // Shopping Mode
+    "shoppingMode.title": "מצב קנייה",
+    "shoppingMode.exit": "יציאה",
+    "shoppingMode.skip": "דלג",
+    "shoppingMode.done": "סיימת את הרשימה! 🎉",
+    "shoppingMode.boughtCount": "קנית {count} פריטים",
+    "shoppingMode.skipped": "פריטים שדילגת",
+    "shoppingMode.swipeHint": "החלק ימינה ← קניתי · החלק שמאלה → דלג",
+
+    // Group by category
+    "list.groupByCategory": "קיבוץ",
+    "list.ungroup": "בטל קיבוץ",
+
+    // Basket Comparison
+    "basket.title": "השוואת סל",
+    "basket.cheapest": "הכי זול",
+    "basket.best": "מומלץ",
+    "basket.savings": "חוסך עד ₪{amount} לעומת היקר ביותר",
+    "basket.empty": "הרשימה ריקה",
+    "basket.disclaimer": "המחירים מוערכים ומבוססים על נתונים סימולטיביים",
+
+    // Templates
+    "templates.title": "תבניות",
+    "templates.desc": "בחר תבנית וכל המוצרים יתווספו בלחיצה אחת",
+    "templates.weekly": "קניות שבועיות",
+    "templates.bbq": "ברבקיו",
+    "templates.shabbat": "שבת",
+    "templates.breakfast": "ארוחת בוקר",
+    "templates.cleaning": "מוצרי ניקיון",
+    "templates.baby": "מוצרי תינוק",
+    "templates.added": "{count} פריטים נוספו לרשימה",
+    "templates.error": "שגיאה בהוספת פריטים",
+    "templates.items": "מוצרים",
+
+    // Barcode
+    "barcode.title": "סרוק ברקוד",
+    "barcode.scanning": "מצלם... כוון לברקוד",
+    "barcode.cameraError": "לא ניתן לגשת למצלמה",
+    "barcode.detected": "ברקוד זוהה",
+    "barcode.notSupported": "הדפדפן לא תומך בסריקת ברקוד. ניתן להקליד ידנית.",
+    "barcode.startCamera": "פתח מצלמה",
+    "barcode.manualPlaceholder": "הקלד מספר ברקוד...",
+    "barcode.manualDesc": "או הקלד מספר ברקוד ידנית",
+
+    // Recurring
+    "recurring.title": "פריטים חוזרים",
+
+    // Budget
+    "budget.title": "תקציב חודשי",
+    "budget.set": "הגדר תקציב",
+    "budget.remaining": "נשאר",
+    "budget.over": "חריגה!",
+    "budget.warning": "מתקרב למכסה",
+    "budget.placeholder": "₪ לחודש",
+    "budget.save": "שמור",
+    "budget.thisMonth": "החודש",
+
+    // Price History
+    "priceHistory.title": "מגמות מחירים",
+    "priceHistory.noData": "אין מספיק נתונים למגמות מחירים",
+
+    // Weekly Summary
+    "weekly.title": "סיכום שבועי",
+    "weekly.thisWeek": "השבוע",
+    "weekly.lastWeek": "שבוע שעבר",
+    "weekly.items": "פריטים",
+    "weekly.vsLastWeek": "לעומת שבוע שעבר",
+
+    // Active shopper
+    "active.nowShopping": "{name} קונה עכשיו",
   },
   en: {
     // App
@@ -482,6 +553,77 @@ const translations = {
     "auth.reset.invalidLinkDesc": "This password reset link is missing or invalid",
     "auth.reset.requestNew": "Request a new link",
     "auth.reset.incomplete": "The link you used appears to be incomplete. Please request a new password reset email.",
+
+    // Shopping Mode
+    "shoppingMode.title": "Shopping Mode",
+    "shoppingMode.exit": "Exit",
+    "shoppingMode.skip": "Skip",
+    "shoppingMode.done": "List complete! 🎉",
+    "shoppingMode.boughtCount": "Bought {count} items",
+    "shoppingMode.skipped": "items skipped",
+    "shoppingMode.swipeHint": "Swipe right → Bought · Swipe left ← Skip",
+
+    // Group by category
+    "list.groupByCategory": "Group",
+    "list.ungroup": "Ungroup",
+
+    // Basket Comparison
+    "basket.title": "Basket",
+    "basket.cheapest": "Cheapest",
+    "basket.best": "Best",
+    "basket.savings": "Save up to ₪{amount} vs most expensive",
+    "basket.empty": "List is empty",
+    "basket.disclaimer": "Prices are estimated and based on simulated data",
+
+    // Templates
+    "templates.title": "Templates",
+    "templates.desc": "Pick a template and all items will be added at once",
+    "templates.weekly": "Weekly Groceries",
+    "templates.bbq": "BBQ",
+    "templates.shabbat": "Shabbat",
+    "templates.breakfast": "Breakfast",
+    "templates.cleaning": "Cleaning Supplies",
+    "templates.baby": "Baby Products",
+    "templates.added": "{count} items added",
+    "templates.error": "Error adding items",
+    "templates.items": "items",
+
+    // Barcode
+    "barcode.title": "Barcode",
+    "barcode.scanning": "Scanning... point at barcode",
+    "barcode.cameraError": "Cannot access camera",
+    "barcode.detected": "Barcode detected",
+    "barcode.notSupported": "Browser doesn't support barcode scanning. You can type manually.",
+    "barcode.startCamera": "Open Camera",
+    "barcode.manualPlaceholder": "Type barcode number...",
+    "barcode.manualDesc": "Or type a barcode number manually",
+
+    // Recurring
+    "recurring.title": "Recurring Items",
+
+    // Budget
+    "budget.title": "Monthly Budget",
+    "budget.set": "Set Budget",
+    "budget.remaining": "Remaining",
+    "budget.over": "Over budget!",
+    "budget.warning": "Approaching limit",
+    "budget.placeholder": "₪ per month",
+    "budget.save": "Save",
+    "budget.thisMonth": "This month",
+
+    // Price History
+    "priceHistory.title": "Price Trends",
+    "priceHistory.noData": "Not enough data for price trends",
+
+    // Weekly Summary
+    "weekly.title": "Weekly Summary",
+    "weekly.thisWeek": "This Week",
+    "weekly.lastWeek": "Last Week",
+    "weekly.items": "items",
+    "weekly.vsLastWeek": "vs last week",
+
+    // Active shopper
+    "active.nowShopping": "{name} is shopping now",
   },
   ru: {
     // App

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Store, ClipboardList, ScanLine, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -19,6 +19,12 @@ import { ToastAction } from "@/components/ui/toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
 import { useT } from "@/lib/i18n";
+import { getProductEmoji } from "@/lib/productEmoji";
+import ShoppingMode from "../components/ShoppingMode";
+import BasketComparison from "../components/BasketComparison";
+import ListTemplates from "../components/ListTemplates";
+import BarcodeScanner from "../components/BarcodeScanner";
+import RecurringItems from "../components/RecurringItems";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -31,6 +37,12 @@ export default function ListView() {
   const [showProfile, setShowProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [navigateProduct, setNavigateProduct] = useState(null);
+  const [showShoppingMode, setShowShoppingMode] = useState(false);
+  const [showBasket, setShowBasket] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
+  const [groupByCategory, setGroupByCategory] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
   const { syncing: priceSyncing } = usePriceSync();
@@ -82,6 +94,10 @@ export default function ListView() {
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
     }
+  }, []);
+
+  useEffect(() => {
+    base44.entities.Product.list("-name", 500).then(setAllProducts).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -212,6 +228,16 @@ export default function ListView() {
 
       <main className="max-w-lg mx-auto px-4 py-4">
         <ConnectedUsers list={list} />
+
+        {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
+          <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-2xl px-4 py-2 mb-3">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-sm font-medium text-green-700">
+              {t("active.nowShopping", { name: (list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).join(", ") })}
+            </span>
+          </div>
+        )}
+
         <div className="flex items-center gap-4 mb-6 px-2">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-primary" />
@@ -231,12 +257,58 @@ export default function ListView() {
         </div>
 
         {pendingItems.length > 0 && (
-          <div className="space-y-2 mb-6">
-            {pendingItems.map(item => (
-              <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
-                onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem} />
-            ))}
-          </div>
+          <>
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
+              <Button onClick={() => setShowShoppingMode(true)} className="bg-primary text-primary-foreground rounded-xl px-4 flex items-center gap-1.5 flex-shrink-0">
+                <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowBasket(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Store className="w-4 h-4" />{t("basket.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowTemplates(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <ClipboardList className="w-4 h-4" />{t("templates.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowScanner(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <ScanLine className="w-4 h-4" />{t("barcode.title")}
+              </Button>
+              <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
+              </Button>
+            </div>
+
+            <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+
+            <div className="space-y-2 mb-6">
+              {groupByCategory
+                ? Object.entries(
+                    pendingItems.reduce((groups, item) => {
+                      const cat = item.category || t("summary.other");
+                      if (!groups[cat]) groups[cat] = [];
+                      groups[cat].push(item);
+                      return groups;
+                    }, {})
+                  ).map(([cat, catItems]) => (
+                    <div key={cat}>
+                      <div className="flex items-center gap-2 px-2 py-2">
+                        <span className="text-lg">{getProductEmoji("", cat)}</span>
+                        <span className="text-sm font-semibold text-muted-foreground">{cat}</span>
+                        <span className="text-xs text-muted-foreground">({catItems.length})</span>
+                      </div>
+                      <div className="space-y-2">
+                        {catItems.map(item => (
+                          <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
+                            onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem} />
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                : pendingItems.map(item => (
+                  <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
+                    onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem} />
+                ))
+              }
+            </div>
+          </>
         )}
 
         {pendingItems.length === 0 && (
@@ -259,6 +331,14 @@ export default function ListView() {
       <ProfileDialog open={showProfile} onOpenChange={setShowProfile} currentUser={currentUserRef[0]} onNameUpdated={handleNameUpdated} forceName={!currentUserRef[0]?.full_name} />
       <SettingsDialog open={showSettings} onOpenChange={setShowSettings} list={list} />
       <NavigateToStoreDialog open={!!navigateProduct} onOpenChange={(v) => !v && setNavigateProduct(null)} product={navigateProduct} />
+
+      {showShoppingMode && (
+        <ShoppingMode items={pendingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
+          userName={currentUserNameRef.current} listId={listId} />
+      )}
+      <BasketComparison open={showBasket} onOpenChange={setShowBasket} items={pendingItems} />
+      <ListTemplates open={showTemplates} onOpenChange={setShowTemplates} listId={listId} allProducts={allProducts} onAdded={loadData} />
+      <BarcodeScanner open={showScanner} onOpenChange={setShowScanner} onDetected={() => { setShowScanner(false); setShowSearch(true); }} />
     </div>
   );
 }

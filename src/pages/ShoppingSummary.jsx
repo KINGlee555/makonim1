@@ -7,6 +7,7 @@ import { ArrowRight, BarChart3 } from "lucide-react";
 import { getProductEmoji } from "@/lib/productEmoji";
 import AppFooter from "../components/AppFooter";
 import { useT } from "@/lib/i18n";
+import PriceHistoryChart from "../components/PriceHistoryChart";
 
 export default function ShoppingSummary() {
   const { listId } = useParams();
@@ -43,6 +44,15 @@ export default function ShoppingSummary() {
     byBuyer[buyer].total += (r.price || 0) * (r.quantity || 1);
   });
   const buyers = Object.entries(byBuyer).sort((a, b) => b[1].total - a[1].total);
+
+  const now = new Date();
+  const thisWeekStart = new Date(now); thisWeekStart.setDate(now.getDate() - 7);
+  const lastWeekStart = new Date(now); lastWeekStart.setDate(now.getDate() - 14);
+  const thisWeekRecords = records.filter(r => new Date(r.created_date) >= thisWeekStart);
+  const lastWeekRecords = records.filter(r => { const d = new Date(r.created_date); return d >= lastWeekStart && d < thisWeekStart; });
+  const thisWeekTotal = thisWeekRecords.reduce((sum, r) => sum + (r.price || 0) * (r.quantity || 1), 0);
+  const lastWeekTotal = lastWeekRecords.reduce((sum, r) => sum + (r.price || 0) * (r.quantity || 1), 0);
+  const weekChange = lastWeekTotal > 0 ? Math.round((thisWeekTotal - lastWeekTotal) / lastWeekTotal * 100) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,6 +119,30 @@ export default function ShoppingSummary() {
                 </div>
               </>
             )}
+
+            <h3 className="text-lg font-semibold text-foreground mb-3 mt-6">{t("weekly.title")}</h3>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-card border border-border rounded-2xl p-4">
+                <p className="text-sm text-muted-foreground">{t("weekly.thisWeek")}</p>
+                <p className="text-2xl font-bold text-primary">₪{thisWeekTotal.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">{thisWeekRecords.length} {t("weekly.items")}</p>
+              </div>
+              <div className="bg-card border border-border rounded-2xl p-4">
+                <p className="text-sm text-muted-foreground">{t("weekly.lastWeek")}</p>
+                <p className="text-2xl font-bold text-foreground">₪{lastWeekTotal.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">{lastWeekRecords.length} {t("weekly.items")}</p>
+              </div>
+            </div>
+            {weekChange !== null && (
+              <div className={`flex items-center gap-2 rounded-xl px-4 py-2 mb-6 ${weekChange > 0 ? "bg-red-50" : "bg-green-50"}`}>
+                <span className={`text-sm font-medium ${weekChange > 0 ? "text-red-600" : "text-green-600"}`}>
+                  {weekChange > 0 ? "↑" : "↓"} {Math.abs(weekChange)}% {t("weekly.vsLastWeek")}
+                </span>
+              </div>
+            )}
+
+            <h3 className="text-lg font-semibold text-foreground mb-3">{t("priceHistory.title")}</h3>
+            <PriceHistoryChart records={records} />
           </>
         )}
         <AppFooter />

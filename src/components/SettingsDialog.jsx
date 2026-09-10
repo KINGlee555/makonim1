@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
+import BudgetTracker from "./BudgetTracker";
 
 export default function SettingsDialog({ open, onOpenChange, list }) {
   const t = useT();
@@ -58,6 +59,8 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
               <p className="text-xs text-muted-foreground">{t("settings.pushInfo")}</p>
             </div>
           )}
+
+          <BudgetTracker listId={list.id} />
 
           <button
             onClick={() => navigate(`/history/${list.id}`)}
