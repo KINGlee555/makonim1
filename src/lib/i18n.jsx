@@ -388,6 +388,10 @@ const translations = {
     // Dark mode
     "header.darkMode": "מצב כהה",
     "header.lightMode": "מצב בהיר",
+
+    // Easy mode
+    "header.easyMode": "מצב גדול ונוח",
+    "header.normalMode": "חזור לגודל רגיל",
   },
   en: {
     // App
@@ -774,6 +778,10 @@ const translations = {
     // Dark mode
     "header.darkMode": "Dark mode",
     "header.lightMode": "Light mode",
+
+    // Easy mode
+    "header.easyMode": "Large & comfortable",
+    "header.normalMode": "Back to normal size",
   },
   ru: {
     // App
@@ -1089,6 +1097,10 @@ const translations = {
     // Dark mode
     "header.darkMode": "Тёмная тема",
     "header.lightMode": "Светлая тема",
+
+    // Easy mode
+    "header.easyMode": "Крупный и удобный",
+    "header.normalMode": "Обычный размер",
   },
 };
 

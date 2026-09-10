@@ -1,6 +1,7 @@
 import { useT } from "@/lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
 import DarkModeToggle from "./DarkModeToggle";
+import EasyModeToggle from "./EasyModeToggle";
 
 export default function AppHeader({ rightAction, userName }) {
   const t = useT();
@@ -15,6 +16,7 @@ export default function AppHeader({ rightAction, userName }) {
             className="h-12 w-auto object-contain"
           />
           <div className="flex items-center gap-1">
+            <EasyModeToggle />
             <DarkModeToggle />
             <LanguageSwitcher />
             {rightAction}
