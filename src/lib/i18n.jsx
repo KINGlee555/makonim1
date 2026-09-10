@@ -313,6 +313,81 @@ const translations = {
 
     // Active shopper
     "active.nowShopping": "{name} קונה עכשיו",
+
+    // Smart suggestions
+    "smart.title": "הצעות חכמות",
+    "smart.forgotHint": "שכחת משהו? קנית בעבר את הפריטים האלה",
+
+    // Shopping route
+    "route.title": "מסלול",
+    "route.selectChain": "בחר רשת",
+    "route.empty": "הרשימה ריקה",
+    "route.optimalPath": "מסלול אופטימלי בחנות",
+    "route.aislesCount": "{count} מעברים",
+    "route.items": "פריטים",
+
+    // Weekly menu
+    "menu.title": "תפריט שבועי",
+    "menu.addToList": "הוסף הכל לרשימה",
+    "menu.ingredients": "{count} מצרכים ייחודיים",
+    "menu.addedCount": "{count} פריטים נוספו",
+    "menu.day.ראשון": "יום ראשון",
+    "menu.day.שני": "יום שני",
+    "menu.day.שלישי": "יום שלישי",
+    "menu.day.רביעי": "יום רביעי",
+    "menu.day.חמישי": "יום חמישי",
+    "menu.day.שישי": "יום שישי",
+    "menu.day.שבת": "שבת",
+    "menu.meal.breakfast": "בוקר",
+    "menu.meal.lunch": "צהריים",
+    "menu.meal.dinner": "ערב",
+    "menu.meal.shabbat": "שבת",
+    "menu.meal.bbq": "ברבקיו",
+    "menu.meal.kids": "ילדים",
+
+    // Cost splitter
+    "split.title": "חלוקת עלויות",
+    "split.totalSpent": "סה״כ הוצאות",
+    "split.perPerson": "₪{amount} לאדם",
+    "split.byBuyer": "לפי קונה",
+    "split.paid": "שילם",
+    "split.owes": "חייב",
+    "split.settled": "סגור",
+    "split.addPayment": "הוסף תשלום",
+    "split.name": "שם",
+    "split.noData": "אין נתוני קנייה עדיין",
+
+    // Leaderboard
+    "leaderboard.title": "לוח מובילים",
+    "leaderboard.champion": "אלוף החיסכון",
+    "leaderboard.items": "פריטים",
+    "leaderboard.saved": "חיסכון",
+    "leaderboard.noData": "אין נתונים עדיין",
+
+    // Coupons & deals
+    "deals.title": "מבצעים",
+    "deals.copy": "העתק קופון",
+    "deals.copied": "קופון הועתק",
+    "deals.disclaimer": "המבצעים לדוגמה בלבד — מומלץ לבדוק באתר הרשת",
+
+    // Voice quick add
+    "voice.title": "הוספה קולית",
+    "voice.desc": "דבר את הרשימה שלך ונסדר אותה לפי החנות הקרובה",
+    "voice.start": "התחל דיבור",
+    "voice.stop": "עצור",
+    "voice.listening": "מקשיב...",
+    "voice.tapToSpeak": "לחץ לדיבור",
+    "voice.notSupported": "הדפדפן לא תומך בהקלטה קולית",
+    "voice.found": "זיהיתי {count} פריטים",
+    "voice.addAll": "הוסף הכל",
+    "voice.add": "הוסף",
+    "voice.addedAll": "{count} פריטים נוספו",
+    "voice.sortedByNearest": "מסודר לפי החנות הקרובה",
+    "voice.example": "למשל: ״תוסיף חלב ולחם ועגבניות״",
+
+    // Dark mode
+    "header.darkMode": "מצב כהה",
+    "header.lightMode": "מצב בהיר",
   },
   en: {
     // App
@@ -624,6 +699,81 @@ const translations = {
 
     // Active shopper
     "active.nowShopping": "{name} is shopping now",
+
+    // Smart suggestions
+    "smart.title": "Smart Suggestions",
+    "smart.forgotHint": "Forgot something? You've bought these before",
+
+    // Shopping route
+    "route.title": "Route",
+    "route.selectChain": "Select chain",
+    "route.empty": "List is empty",
+    "route.optimalPath": "Optimal store path",
+    "route.aislesCount": "{count} aisles",
+    "route.items": "items",
+
+    // Weekly menu
+    "menu.title": "Weekly Menu",
+    "menu.addToList": "Add all to list",
+    "menu.ingredients": "{count} unique ingredients",
+    "menu.addedCount": "{count} items added",
+    "menu.day.ראשון": "Sunday",
+    "menu.day.שני": "Monday",
+    "menu.day.שלישי": "Tuesday",
+    "menu.day.רביעי": "Wednesday",
+    "menu.day.חמישי": "Thursday",
+    "menu.day.שישי": "Friday",
+    "menu.day.שבת": "Saturday",
+    "menu.meal.breakfast": "Breakfast",
+    "menu.meal.lunch": "Lunch",
+    "menu.meal.dinner": "Dinner",
+    "menu.meal.shabbat": "Shabbat",
+    "menu.meal.bbq": "BBQ",
+    "menu.meal.kids": "Kids",
+
+    // Cost splitter
+    "split.title": "Cost Split",
+    "split.totalSpent": "Total Spent",
+    "split.perPerson": "₪{amount} per person",
+    "split.byBuyer": "By Buyer",
+    "split.paid": "Paid",
+    "split.owes": "Owes",
+    "split.settled": "Settled",
+    "split.addPayment": "Add Payment",
+    "split.name": "Name",
+    "split.noData": "No purchase data yet",
+
+    // Leaderboard
+    "leaderboard.title": "Leaderboard",
+    "leaderboard.champion": "Savings Champion",
+    "leaderboard.items": "items",
+    "leaderboard.saved": "saved",
+    "leaderboard.noData": "No data yet",
+
+    // Coupons & deals
+    "deals.title": "Deals",
+    "deals.copy": "Copy coupon",
+    "deals.copied": "Coupon copied",
+    "deals.disclaimer": "Sample deals only — verify on chain's website",
+
+    // Voice quick add
+    "voice.title": "Voice Add",
+    "voice.desc": "Speak your list and we'll sort by nearest store",
+    "voice.start": "Start speaking",
+    "voice.stop": "Stop",
+    "voice.listening": "Listening...",
+    "voice.tapToSpeak": "Tap to speak",
+    "voice.notSupported": "Browser doesn't support voice input",
+    "voice.found": "Found {count} items",
+    "voice.addAll": "Add all",
+    "voice.add": "Add",
+    "voice.addedAll": "{count} items added",
+    "voice.sortedByNearest": "Sorted by nearest store",
+    "voice.example": "e.g. \"Add milk and bread and tomatoes\"",
+
+    // Dark mode
+    "header.darkMode": "Dark mode",
+    "header.lightMode": "Light mode",
   },
   ru: {
     // App
@@ -864,6 +1014,81 @@ const translations = {
     "auth.reset.invalidLinkDesc": "Ссылка для сброса отсутствует или недействительна",
     "auth.reset.requestNew": "Запросить новую ссылку",
     "auth.reset.incomplete": "Ссылка неполная. Пожалуйста, запросите новое письмо для сброса пароля.",
+
+    // Smart suggestions
+    "smart.title": "Умные подсказки",
+    "smart.forgotHint": "Что-то забыли? Вы покупали это раньше",
+
+    // Shopping route
+    "route.title": "Маршрут",
+    "route.selectChain": "Выберите сеть",
+    "route.empty": "Список пуст",
+    "route.optimalPath": "Оптимальный маршрут по магазину",
+    "route.aislesCount": "{count} проходов",
+    "route.items": "товаров",
+
+    // Weekly menu
+    "menu.title": "Меню недели",
+    "menu.addToList": "Добавить всё",
+    "menu.ingredients": "{count} уникальных ингредиентов",
+    "menu.addedCount": "{count} товаров добавлено",
+    "menu.day.ראשון": "Воскресенье",
+    "menu.day.שני": "Понедельник",
+    "menu.day.שלישי": "Вторник",
+    "menu.day.רביעי": "Среда",
+    "menu.day.חמישי": "Четверг",
+    "menu.day.שישי": "Пятница",
+    "menu.day.שבת": "Суббота",
+    "menu.meal.breakfast": "Завтрак",
+    "menu.meal.lunch": "Обед",
+    "menu.meal.dinner": "Ужин",
+    "menu.meal.shabbat": "Шаббат",
+    "menu.meal.bbq": "Барбекю",
+    "menu.meal.kids": "Детское",
+
+    // Cost splitter
+    "split.title": "Разделить расходы",
+    "split.totalSpent": "Всего потрачено",
+    "split.perPerson": "₪{amount} на человека",
+    "split.byBuyer": "По покупателю",
+    "split.paid": "Заплачено",
+    "split.owes": "Должен",
+    "split.settled": "Расчёт",
+    "split.addPayment": "Добавить платёж",
+    "split.name": "Имя",
+    "split.noData": "Нет данных о покупках",
+
+    // Leaderboard
+    "leaderboard.title": "Рейтинг",
+    "leaderboard.champion": "Чемпион экономии",
+    "leaderboard.items": "товаров",
+    "leaderboard.saved": "сэкономлено",
+    "leaderboard.noData": "Нет данных",
+
+    // Coupons & deals
+    "deals.title": "Акции",
+    "deals.copy": "Скопировать купон",
+    "deals.copied": "Купон скопирован",
+    "deals.disclaimer": "Образцы акций — проверьте на сайте сети",
+
+    // Voice quick add
+    "voice.title": "Голосовой ввод",
+    "voice.desc": "Назовите список, и мы отсортируем по ближайшему магазину",
+    "voice.start": "Начать",
+    "voice.stop": "Стоп",
+    "voice.listening": "Слушаю...",
+    "voice.tapToSpeak": "Нажмите для записи",
+    "voice.notSupported": "Браузер не поддерживает голосовой ввод",
+    "voice.found": "Найдено {count} товаров",
+    "voice.addAll": "Добавить всё",
+    "voice.add": "Добавить",
+    "voice.addedAll": "{count} товаров добавлено",
+    "voice.sortedByNearest": "Отсортировано по ближайшему магазину",
+    "voice.example": "напр. «Добавь молоко и хлеб и помидоры»",
+
+    // Dark mode
+    "header.darkMode": "Тёмная тема",
+    "header.lightMode": "Светлая тема",
   },
 };
 

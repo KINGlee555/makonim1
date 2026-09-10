@@ -1,11 +1,12 @@
 import { useT } from "@/lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
+import DarkModeToggle from "./DarkModeToggle";
 
 export default function AppHeader({ rightAction, userName }) {
   const t = useT();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-primary/10 shadow-sm px-4 py-2">
+    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-lg border-b border-primary/10 shadow-sm px-4 py-2" role="banner">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between">
           <img
@@ -14,6 +15,7 @@ export default function AppHeader({ rightAction, userName }) {
             className="h-12 w-auto object-contain"
           />
           <div className="flex items-center gap-1">
+            <DarkModeToggle />
             <LanguageSwitcher />
             {rightAction}
           </div>

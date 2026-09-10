@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Store, ClipboardList, ScanLine, Layers } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Store, ClipboardList, ScanLine, Layers, Route, CalendarDays, Receipt, Trophy, Tag, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -25,6 +25,13 @@ import BasketComparison from "../components/BasketComparison";
 import ListTemplates from "../components/ListTemplates";
 import BarcodeScanner from "../components/BarcodeScanner";
 import RecurringItems from "../components/RecurringItems";
+import SmartSuggestions from "../components/SmartSuggestions";
+import ShoppingRoute from "../components/ShoppingRoute";
+import WeeklyMenu from "../components/WeeklyMenu";
+import CostSplitter from "../components/CostSplitter";
+import Leaderboard from "../components/Leaderboard";
+import CouponsDeals from "../components/CouponsDeals";
+import VoiceQuickAdd from "../components/VoiceQuickAdd";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -41,6 +48,12 @@ export default function ListView() {
   const [showBasket, setShowBasket] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  const [showRoute, setShowRoute] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showSplit, setShowSplit] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showDeals, setShowDeals] = useState(false);
+  const [showVoice, setShowVoice] = useState(false);
   const [groupByCategory, setGroupByCategory] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
   const currentUserRef = useState(null);
@@ -167,6 +180,21 @@ export default function ListView() {
     toast({ title: t("list.addedToList", { name: product.name }), duration: 1000 });
   }, [t, listId]);
 
+  const handleAddMultiple = useCallback(async (products) => {
+    const items = products.map(p => ({
+      list_id: listId, name: p.name, price: p.price || 0,
+      image_url: p.image_url || "", category: p.category || "אחר",
+      status: "pending", quantity: 1
+    }));
+    try {
+      const created = await base44.entities.ListItem.bulkCreate(items);
+      setItems(prev => [...created, ...prev]);
+      toast({ title: t("menu.addedCount", { count: created.length }), duration: 2000 });
+    } catch {
+      toast({ title: t("templates.error"), variant: "destructive" });
+    }
+  }, [t, listId]);
+
   const handleAddUser = useCallback(async (email) => {
     const updated = [...(list.shared_with || []), email];
     await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
@@ -271,12 +299,31 @@ export default function ListView() {
               <Button variant="outline" onClick={() => setShowScanner(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
                 <ScanLine className="w-4 h-4" />{t("barcode.title")}
               </Button>
+              <Button variant="outline" onClick={() => setShowRoute(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Route className="w-4 h-4" />{t("route.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowMenu(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <CalendarDays className="w-4 h-4" />{t("menu.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowDeals(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Tag className="w-4 h-4" />{t("deals.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowSplit(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Receipt className="w-4 h-4" />{t("split.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowLeaderboard(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Trophy className="w-4 h-4" />{t("leaderboard.title")}
+              </Button>
+              <Button variant="outline" onClick={() => setShowVoice(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+                <Mic className="w-4 h-4" />{t("voice.title")}
+              </Button>
               <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
                 <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
               </Button>
             </div>
 
             <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+            <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
 
             <div className="space-y-2 mb-6">
               {groupByCategory
@@ -339,6 +386,12 @@ export default function ListView() {
       <BasketComparison open={showBasket} onOpenChange={setShowBasket} items={pendingItems} />
       <ListTemplates open={showTemplates} onOpenChange={setShowTemplates} listId={listId} allProducts={allProducts} onAdded={loadData} />
       <BarcodeScanner open={showScanner} onOpenChange={setShowScanner} onDetected={() => { setShowScanner(false); setShowSearch(true); }} />
+      <ShoppingRoute open={showRoute} onOpenChange={setShowRoute} items={pendingItems} />
+      <WeeklyMenu open={showMenu} onOpenChange={setShowMenu} onGenerate={handleAddMultiple} />
+      <CostSplitter open={showSplit} onOpenChange={setShowSplit} listId={listId} list={list} />
+      <Leaderboard open={showLeaderboard} onOpenChange={setShowLeaderboard} listId={listId} />
+      <CouponsDeals open={showDeals} onOpenChange={setShowDeals} items={pendingItems} />
+      <VoiceQuickAdd open={showVoice} onOpenChange={setShowVoice} onAddProduct={handleAddProduct} allProducts={allProducts} />
     </div>
   );
 }

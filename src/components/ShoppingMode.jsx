@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Check, SkipForward, ShoppingBag } from "lucide-react";
+import { X, Check, SkipForward, ShoppingBag, Maximize2 } from "lucide-react";
+import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
 import { getProductEmoji } from "@/lib/productEmoji";
 import { base44 } from "@/api/base44Client";
@@ -10,6 +11,18 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
   const t = useT();
   const [index, setIndex] = useState(0);
   const [boughtCount, setBoughtCount] = useState(0);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    // Request fullscreen on mount for distraction-free shopping
+    const elem = containerRef.current;
+    if (elem && elem.requestFullscreen) {
+      elem.requestFullscreen().catch(() => {});
+    }
+    return () => {
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    };
+  }, []);
 
   useEffect(() => {
     if (!userName || !listId) return;
@@ -62,11 +75,15 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
   }
 
   if (index >= items.length) {
+    // Confetti celebration
+    if (boughtCount > 0) {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#3d8c97", "#d1f2f3", "#f5c98a", "#b5f59c"] });
+      setTimeout(() => confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0 } }), 200);
+      setTimeout(() => confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1 } }), 400);
+    }
     return (
-      <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center">
-        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-          <ShoppingBag className="w-12 h-12 text-primary" />
-        </div>
+      <div ref={containerRef} className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center">
+        <div className="text-6xl mb-4 animate-bounce">🎉</div>
         <h2 className="text-2xl font-bold text-foreground mb-2">{t("shoppingMode.done")}</h2>
         <p className="text-muted-foreground mb-1">{t("shoppingMode.boughtCount", { count: boughtCount })}</p>
         <p className="text-muted-foreground mb-6">{items.length - boughtCount} {t("shoppingMode.skipped")}</p>
@@ -80,7 +97,7 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
   const progress = (index / items.length) * 100;
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex flex-col">
+    <div ref={containerRef} className="fixed inset-0 bg-background z-50 flex flex-col">
       <div className="pt-4 px-4">
         <div className="flex items-center justify-between mb-2">
           <Button variant="ghost" size="icon" onClick={onExit} className="rounded-xl"><X className="w-5 h-5" /></Button>
