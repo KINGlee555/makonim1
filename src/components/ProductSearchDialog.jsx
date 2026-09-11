@@ -107,7 +107,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md mx-auto max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl">
+      <DialogContent className="max-w-md mx-auto max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl !flex">
         <DialogHeader className="px-5 pt-5 pb-3">
           <DialogTitle className="text-xl font-bold text-start">{t("search.title")}</DialogTitle>
         </DialogHeader>
@@ -166,7 +166,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                     const isAdded = addedIds.has(product.name);
                     const emoji = getProductEmoji(product.name, product.category);
                     return (
-                      <div key={idx} className={`rounded-2xl border transition-all flex items-center gap-3 p-3 ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}>
+                      <div key={idx} onClick={() => !isAdded && handleAdd(product)}
+                        className={`rounded-2xl border transition-all flex items-center gap-3 p-3 cursor-pointer active:scale-[0.98] ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card hover:border-primary/30"}`}>
                         <div className="w-[52px] h-[52px] rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
                           {product.image_url ? (
                             <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-xl"
@@ -180,10 +181,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                             <span className="text-sm font-bold text-primary">₪{product.price.toFixed(2)}</span>
                           </div>
                         </div>
-                        <button onClick={() => !isAdded && handleAdd(product)}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isAdded ? "bg-primary text-primary-foreground" : "border-2 border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isAdded ? "bg-primary text-primary-foreground" : "border-2 border-primary/30 text-primary"}`}>
                           {isAdded ? <CheckCircle className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                        </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -209,7 +209,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, userLocation) : null;
             return (
               <div key={idx} className={`rounded-2xl border transition-all overflow-hidden ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}>
-                <div className="flex items-center gap-3 p-3">
+                <div onClick={() => !isAdded && handleAdd(product)}
+                  className="flex items-center gap-3 p-3 cursor-pointer active:scale-[0.98] hover:bg-accent/5">
                   <div className="w-[52px] h-[52px] rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.name} className="w-full h-full object-cover"
@@ -224,10 +225,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
                       <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{product.category}</span>
                     </div>
                   </div>
-                  <button onClick={() => !isAdded && handleAdd(product)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isAdded ? "bg-primary text-primary-foreground" : "border-2 border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${isAdded ? "bg-primary text-primary-foreground" : "border-2 border-primary/30 text-primary"}`}>
                     {isAdded ? <CheckCircle className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                  </button>
+                  </div>
                 </div>
                 {nearbyStores && (
                   <div className="px-3 pb-3 flex gap-2 overflow-x-auto">

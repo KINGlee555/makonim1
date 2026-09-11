@@ -149,7 +149,7 @@ export const israeliProducts = [
   { name: "לאפה", category: "לחם ומאפים", price: 7.90, brand: "", image_url: "" },
   { name: "טורטייה", category: "לחם ומאפים", price: 9.90, brand: "", image_url: "" },
   { name: "בגט", category: "לחם ומאפים", price: 5.90, brand: "", image_url: "" },
-  { name: "ציאבטה", category: "לחם ומאפים", price: 8.90, brand: "", image_url: "" },
+  { name: "ג'בטה", category: "לחם ומאפים", price: 8.90, brand: "", image_url: "" },
   { name: "קרואסון", category: "לחם ומאפים", price: 5.90, brand: "", image_url: "" },
   { name: "בורקס גבינה", category: "לחם ומאפים", price: 5.90, brand: "", image_url: "" },
   { name: "בורקס תפוח אדמה", category: "לחם ומאפים", price: 5.90, brand: "", image_url: "" },
