@@ -255,6 +255,7 @@ const translations = {
     // Group by category
     "list.groupByCategory": "קיבוץ",
     "list.ungroup": "בטל קיבוץ",
+    "list.moreFeatures": "עוד כלים",
 
     // Basket Comparison
     "basket.title": "השוואת סל",
@@ -645,6 +646,7 @@ const translations = {
     // Group by category
     "list.groupByCategory": "Group",
     "list.ungroup": "Ungroup",
+    "list.moreFeatures": "More Tools",
 
     // Basket Comparison
     "basket.title": "Basket",
@@ -1026,6 +1028,7 @@ const translations = {
     // Smart suggestions
     "smart.title": "Умные подсказки",
     "smart.forgotHint": "Что-то забыли? Вы покупали это раньше",
+    "list.moreFeatures": "Ещё инструменты",
 
     // Shopping route
     "route.title": "Маршрут",

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Store, ClipboardList, ScanLine, Layers, Route, CalendarDays, Receipt, Trophy, Tag, Mic } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -32,6 +32,7 @@ import CostSplitter from "../components/CostSplitter";
 import Leaderboard from "../components/Leaderboard";
 import CouponsDeals from "../components/CouponsDeals";
 import VoiceQuickAdd from "../components/VoiceQuickAdd";
+import FeatureMenu from "../components/FeatureMenu";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -286,40 +287,24 @@ export default function ListView() {
 
         {pendingItems.length > 0 && (
           <>
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
+            <div className="flex gap-2 mb-4">
               <Button onClick={() => setShowShoppingMode(true)} className="bg-primary text-primary-foreground rounded-xl px-4 flex items-center gap-1.5 flex-shrink-0">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowBasket(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <Store className="w-4 h-4" />{t("basket.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowTemplates(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <ClipboardList className="w-4 h-4" />{t("templates.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowScanner(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <ScanLine className="w-4 h-4" />{t("barcode.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowRoute(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <Route className="w-4 h-4" />{t("route.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowMenu(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <CalendarDays className="w-4 h-4" />{t("menu.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowDeals(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <Tag className="w-4 h-4" />{t("deals.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowSplit(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <Receipt className="w-4 h-4" />{t("split.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowLeaderboard(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <Trophy className="w-4 h-4" />{t("leaderboard.title")}
-              </Button>
-              <Button variant="outline" onClick={() => setShowVoice(true)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
-                <Mic className="w-4 h-4" />{t("voice.title")}
               </Button>
               <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
                 <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
               </Button>
+              <FeatureMenu
+                onOpenBasket={() => setShowBasket(true)}
+                onOpenTemplates={() => setShowTemplates(true)}
+                onOpenScanner={() => setShowScanner(true)}
+                onOpenRoute={() => setShowRoute(true)}
+                onOpenMenu={() => setShowMenu(true)}
+                onOpenDeals={() => setShowDeals(true)}
+                onOpenSplit={() => setShowSplit(true)}
+                onOpenLeaderboard={() => setShowLeaderboard(true)}
+                onOpenVoice={() => setShowVoice(true)}
+              />
             </div>
 
             <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
@@ -371,7 +356,7 @@ export default function ListView() {
         <AppFooter />
       </main>
 
-      <QuickAddBar onOpenSearch={() => setShowSearch(true)} />
+      <QuickAddBar onOpenSearch={() => setShowSearch(true)} onOpenScanner={() => setShowScanner(true)} onOpenVoice={() => setShowVoice(true)} />
 
       <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} />
       <ProductSearchDialog open={showSearch} onOpenChange={setShowSearch} onAddProduct={handleAddProduct} />
