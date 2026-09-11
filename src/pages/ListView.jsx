@@ -15,7 +15,6 @@ import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
 import ListReader from "../components/ListReader";
 import { toast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
 import { useT } from "@/lib/i18n";
@@ -55,10 +54,12 @@ export default function ListView() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showDeals, setShowDeals] = useState(false);
   const [showVoice, setShowVoice] = useState(false);
-  const [groupByCategory, setGroupByCategory] = useState(false);
+  const [groupByCategory, setGroupByCategory] = useState(true);
   const [allProducts, setAllProducts] = useState([]);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
+  const itemsRef = useRef([]);
+  itemsRef.current = items;
   const { syncing: priceSyncing } = usePriceSync();
 
   const loadData = useCallback(async () => {
@@ -120,19 +121,6 @@ export default function ListView() {
       if (event.type === "create") {
         setItems(prev => prev.some(i => i.id === event.data.id) ? prev : [event.data, ...prev]);
       } else if (event.type === "update") {
-        if (event.data?.status === "bought" && event.data?.bought_by) {
-          const myName = currentUserNameRef.current;
-          if (myName && event.data.bought_by !== myName) {
-            const msg = t("list.boughtBy", { buyer: event.data.bought_by, name: event.data.name });
-            toast({ title: msg, duration: 5000 });
-            if ("Notification" in window && Notification.permission === "granted") {
-              new Notification("MaKonim", {
-                body: msg,
-                icon: "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/2d1599b0e_IMG_0820.jpeg"
-              });
-            }
-          }
-        }
         setItems(prev => prev.map(i => i.id === event.id ? event.data : i));
       } else if (event.type === "delete") {
         setItems(prev => prev.filter(i => i.id !== event.id));
@@ -144,19 +132,13 @@ export default function ListView() {
   const handleUndoBought = useCallback((item) => {
     const restored = { ...item, status: "pending", bought_by: "" };
     setItems(prev => prev.some(i => i.id === item.id) ? prev : [restored, ...prev]);
-    toast({ title: t("list.undone"), duration: 2000 });
     base44.entities.ListItem.update(item.id, { status: "pending", bought_by: "" })
       .catch(() => setItems(prev => prev.filter(i => i.id !== item.id)));
-  }, [t]);
+  }, []);
 
   const handleToggleBought = useCallback((item) => {
     const buyerName = currentUserNameRef.current || "List Owner";
     setItems(prev => prev.filter(i => i.id !== item.id));
-    toast({
-      title: t("list.itemBoughtToast", { name: item.name }),
-      action: <ToastAction onClick={() => handleUndoBought(item)}>{t("list.undo")}</ToastAction>,
-      duration: 5000
-    });
     base44.entities.ListItem.update(item.id, { status: "bought", bought_by: buyerName })
       .catch(() => setItems(prev => prev.some(i => i.id === item.id) ? prev : [{ ...item, status: "pending" }, ...prev]));
     base44.entities.PurchaseHistory.create({
@@ -164,7 +146,7 @@ export default function ListView() {
       quantity: item.quantity || 1, category: item.category || "אחר",
       bought_by: buyerName
     }).catch(() => {});
-  }, [t, listId, handleUndoBought]);
+  }, [listId]);
 
   const handleUpdateQuantity = useCallback((item, qty) => {
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: qty } : i));
@@ -172,14 +154,21 @@ export default function ListView() {
   }, []);
 
   const handleAddProduct = useCallback(async (product) => {
+    // Prevent duplicates: if item already exists, increment quantity
+    const existing = itemsRef.current.find(i => i.name === product.name && i.status === "pending");
+    if (existing) {
+      const newQty = (existing.quantity || 1) + 1;
+      setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty } : i));
+      base44.entities.ListItem.update(existing.id, { quantity: newQty }).catch(() => {});
+      return;
+    }
     const newItem = await base44.entities.ListItem.create({
       list_id: listId, name: product.name, price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
       status: "pending", quantity: 1
     });
     setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
-    toast({ title: t("list.addedToList", { name: product.name }), duration: 1000 });
-  }, [t, listId]);
+  }, [listId]);
 
   const handleAddMultiple = useCallback(async (products) => {
     const items = products.map(p => ({
@@ -190,18 +179,16 @@ export default function ListView() {
     try {
       const created = await base44.entities.ListItem.bulkCreate(items);
       setItems(prev => [...created, ...prev]);
-      toast({ title: t("menu.addedCount", { count: created.length }), duration: 2000 });
     } catch {
       toast({ title: t("templates.error"), variant: "destructive" });
     }
-  }, [t, listId]);
+  }, [listId]);
 
   const handleAddUser = useCallback(async (email) => {
     const updated = [...(list.shared_with || []), email];
     await base44.entities.ShoppingList.update(list.id, { shared_with: updated });
     setList(prev => ({ ...prev, shared_with: updated }));
-    toast({ title: t("list.userAdded", { email }), duration: 1500 });
-  }, [list, t]);
+  }, [list]);
 
   const handleRemoveUser = useCallback(async (email) => {
     const updated = (list.shared_with || []).filter(e => e !== email);

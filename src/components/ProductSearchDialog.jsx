@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles } from "lucide-react";
 import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
+import { essentialProductNames } from "@/lib/essentialProducts";
 
 const SUPERMARKETS = [
   { name: "שופרסל", chain: "shufersal" },
@@ -58,14 +59,31 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     let cancelled = false;
     (async () => {
       try {
+        // Essentials: basic items every household buys, matched from DB
+        const essentials = essentialProductNames
+          .map(name => allProducts.find(p => p.name === name))
+          .filter(Boolean);
+
+        // History-based suggestions
         const history = await base44.entities.PurchaseHistory.list("-created_date", 100);
         if (cancelled) return;
         const freq = {};
         history.forEach(h => { freq[h.item_name] = (freq[h.item_name] || 0) + 1; });
-        const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10)
-          .map(([name]) => allProducts.find(p => p.name === name)).filter(Boolean).slice(0, 5);
-        if (!cancelled) setSuggestions(sorted);
-      } catch { if (!cancelled) setSuggestions([]); }
+        const historyItems = Object.entries(freq).sort((a, b) => b[1] - a[1])
+          .map(([name]) => allProducts.find(p => p.name === name))
+          .filter(Boolean)
+          .filter(p => !essentials.some(e => e.name === p.name));
+
+        // Merge: essentials first, then history, dedup, limit to 8
+        const merged = [...essentials, ...historyItems].slice(0, 8);
+        if (!cancelled) setSuggestions(merged);
+      } catch {
+        // Even if history fails, show essentials
+        const essentials = essentialProductNames
+          .map(name => allProducts.find(p => p.name === name))
+          .filter(Boolean).slice(0, 8);
+        if (!cancelled) setSuggestions(essentials);
+      }
     })();
     return () => { cancelled = true; };
   }, [open, allProducts]);
