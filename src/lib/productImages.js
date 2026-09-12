@@ -35,7 +35,8 @@ const exactPhotos = [
   [/חלב(?!ון)|יוגורט/, pexels(248412)]
 ];
 
-export function getProductImageUrl(name = "") {
+export function getProductImageUrl(name = "", category = "") {
+  if (category === "חטיפים ומתוקים") return "";
   const value = name.toLowerCase();
   return exactPhotos.find(([pattern]) => pattern.test(value))?.[1] || "";
 }

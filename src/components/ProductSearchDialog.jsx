@@ -10,17 +10,17 @@ import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { searchCatalog, normalizeProductText } from "@/lib/productSearch";
-import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
+import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 
 const CATEGORIES = [
   { id: "all", label: "הכל" },
+  { id: "חטיפים ומתוקים", label: "חטיפים" },
   { id: "פירות וירקות", label: "פירות וירקות" },
   { id: "מוצרי חלב", label: "חלבי" },
   { id: "בשר ודגים", label: "בשרי" },
   { id: "לחם ומאפים", label: "לחם" },
   { id: "שימורים", label: "יבשים" },
   { id: "תבלינים", label: "תבלינים" },
-  { id: "חטיפים ומתוקים", label: "חטיפים" },
   { id: "משקאות", label: "משקאות" },
   { id: "קפואים", label: "קפואים" },
   { id: "ניקיון", label: "ניקיון" },
@@ -48,18 +48,33 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [remoteProducts, setRemoteProducts] = useState([]);
+  const [remoteCategoryProducts, setRemoteCategoryProducts] = useState([]);
   const [remoteLoading, setRemoteLoading] = useState(false);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [visibleLimit, setVisibleLimit] = useState(48);
   const deferredQuery = useDeferredValue(query);
   const searchableProducts = useMemo(() => {
     const unique = new Map();
-    [...remoteProducts, ...allProducts].forEach(product => {
+    [...remoteProducts, ...remoteCategoryProducts, ...allProducts].forEach(product => {
       const key = normalizeProductText(product.name);
       if (!unique.has(key)) unique.set(key, product);
     });
     return [...unique.values()];
-  }, [allProducts, remoteProducts]);
-  const results = useMemo(() => searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price")
-    .filter(product => product.image_verified && product.image_url), [searchableProducts, deferredQuery, filterMode]);
+  }, [allProducts, remoteProducts, remoteCategoryProducts]);
+  const allResults = useMemo(() => {
+    if (normalizeProductText(deferredQuery)) {
+      return searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price")
+        .filter(product => product.image_verified && product.image_url);
+    }
+    if (selectedCategory === "חטיפים ומתוקים") {
+      return remoteCategoryProducts.filter(product => product.image_verified && product.image_url);
+    }
+    if (selectedCategory !== "all") {
+      return searchableProducts.filter(product => product.category === selectedCategory && product.image_verified && product.image_url);
+    }
+    return [];
+  }, [searchableProducts, remoteCategoryProducts, deferredQuery, selectedCategory, filterMode]);
+  const results = useMemo(() => normalizeProductText(deferredQuery) ? allResults : allResults.slice(0, visibleLimit), [allResults, deferredQuery, visibleLimit]);
 
   useEffect(() => {
     if (!open) return;
@@ -87,6 +102,21 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     });
     return () => { cancelled = true; };
   }, [open, deferredQuery]);
+
+  useEffect(() => {
+    if (!open || normalizeProductText(deferredQuery) || selectedCategory !== "חטיפים ומתוקים") {
+      setCategoryLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setCategoryLoading(true);
+    browseRemoteCategory(selectedCategory).then(products => {
+      if (!cancelled) setRemoteCategoryProducts(products);
+    }).finally(() => {
+      if (!cancelled) setCategoryLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [open, deferredQuery, selectedCategory]);
 
   useEffect(() => {
     if (!open || loadingProducts || allProducts.length === 0) return;
@@ -117,7 +147,10 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   }, [open, allProducts, loadingProducts]);
 
   const handleVoiceResult = (text) => setQuery(text);
-  const handleCategoryChange = (category) => setSelectedCategory(category);
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setVisibleLimit(48);
+  };
 
   const requestLocation = () => {
     if (!navigator.geolocation) { setLocationError(t("search.locationUnsupported")); return; }
@@ -138,7 +171,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setRemoteProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -207,6 +240,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
+                aria-pressed={selectedCategory === cat.id}
                 onClick={() => handleCategoryChange(cat.id)}
                 className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all active:scale-95 ${
                   selectedCategory === cat.id
@@ -238,7 +272,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
         <div className="flex-1 overflow-y-auto px-5 pb-5 mt-3 min-h-0">
           {/* Loading skeleton grid */}
-          {loadingProducts && !query && (
+          {(loadingProducts || categoryLoading) && !query && (
             <div className="grid grid-cols-2 gap-3">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="rounded-2xl bg-card border border-border/50 overflow-hidden">
@@ -253,7 +287,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           )}
 
           {/* Suggestions grid */}
-          {!loadingProducts && results.length === 0 && !query && filteredSuggestions.length > 0 && (
+          {!loadingProducts && !categoryLoading && results.length === 0 && !query && filteredSuggestions.length > 0 && (
             <div className="animate-fade-in">
               <div className="flex items-center gap-2 mb-3 px-1">
                 <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
@@ -274,6 +308,12 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </div>
           )}
 
+          {!query && allResults.length > results.length && (
+            <button onClick={() => setVisibleLimit(limit => limit + 48)} className="mt-4 w-full rounded-2xl bg-secondary py-3 font-semibold text-secondary-foreground">
+              {t("search.loadMore")}
+            </button>
+          )}
+
           {remoteLoading && query && results.length === 0 && (
             <div className="flex items-center justify-center py-12 text-muted-foreground" role="status">
               <Loader2 className="h-6 w-6 animate-spin" />
@@ -289,7 +329,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           )}
 
           {/* Empty state */}
-          {!loadingProducts && results.length === 0 && !query && filteredSuggestions.length === 0 && (
+          {!loadingProducts && !categoryLoading && results.length === 0 && !query && filteredSuggestions.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-14 h-14 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground text-base">{t("search.searchPrompt")}</p>

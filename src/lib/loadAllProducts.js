@@ -4,7 +4,7 @@ import { curatedProducts } from "@/lib/curatedProducts";
 import { getProductImageUrl } from "@/lib/productImages";
 import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
 
-const CACHE_KEY = "makonim-product-catalog-v4";
+const CACHE_KEY = "makonim-product-catalog-v5";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 const memoryCatalogs = new Map();
 const pendingLoads = new Map();

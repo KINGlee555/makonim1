@@ -18,3 +18,17 @@ export async function searchRemoteCatalog(query) {
   memoryCache.set(normalized, products);
   return products;
 }
+
+export async function browseRemoteCategory(category) {
+  const key = `category:${category}`;
+  if (memoryCache.has(key)) return memoryCache.get(key);
+  if (!pending.has(key)) {
+    pending.set(key, base44.functions.invoke("searchProductCatalog", { category })
+      .then(response => (response.data?.products || []).map(prepareProduct))
+      .catch(() => [])
+      .finally(() => pending.delete(key)));
+  }
+  const products = await pending.get(key);
+  memoryCache.set(key, products);
+  return products;
+}

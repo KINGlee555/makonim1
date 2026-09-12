@@ -11,6 +11,28 @@ function categoryFor(tags) {
   return "שימורים";
 }
 
+function mapProducts(rawProducts, forcedCategory = "") {
+  const seen = new Set();
+  return rawProducts.flatMap((product) => {
+    const name = String(product.product_name_he || product.product_name || product.generic_name_he || "").trim();
+    const image = String(product.image_front_url || product.image_url || "").replace(/^http:/, "https:");
+    const code = String(product.code || "");
+    if (!name || !image || !code || seen.has(code)) return [];
+    seen.add(code);
+    return [{
+      id: `off-${code}`,
+      barcode: code,
+      name,
+      brand: String(product.brands || "").split(",")[0].trim(),
+      category: forcedCategory || categoryFor(product.categories_tags),
+      price: 0,
+      image_url: image,
+      image_verified: true,
+      catalog_source: "open_food_facts"
+    }];
+  });
+}
+
 export default async function(req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
@@ -18,41 +40,51 @@ export default async function(req: Request): Promise<Response> {
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
     const body = await req.json();
     const query = String(body?.query || "").trim().slice(0, 60);
+    const category = String(body?.category || "");
+    const browseIsraeliSnacks = category === "חטיפים ומתוקים" && query.length < 2;
     const limit = Math.min(Math.max(Number(body?.limit) || 36, 8), 60);
-    if (query.length < 2) return Response.json({ products: [] });
+    const fields = "code,product_name,product_name_he,generic_name_he,brands,image_front_url,image_url,categories_tags";
+    if (!browseIsraeliSnacks && query.length < 2) return Response.json({ products: [] });
+
+    if (browseIsraeliSnacks) {
+      const params = new URLSearchParams({
+        categories_tags_en: "snacks", countries_tags_en: "israel", page: "1", page_size: "250", sort_by: "unique_scans_n", fields
+      });
+      const catalogUrl = `https://world.openfoodfacts.org/api/v2/search?${params}`;
+      let response = await fetch(catalogUrl, {
+        headers: { "User-Agent": "MaKonim/1.0 (Israeli snack catalog)" }
+      });
+      if (!response.ok) {
+        response = await fetch(catalogUrl, {
+          headers: { "User-Agent": "MaKonim/1.0 (Israeli snack catalog retry)" }
+        });
+      }
+      if (!response.ok) return Response.json({ error: "Catalog unavailable" }, { status: 502 });
+      const data = await response.json();
+      const rawProducts = [...(data.products || [])];
+      if (Number(data.count) > 250) {
+        params.set("page", "2");
+        const nextResponse = await fetch(`https://world.openfoodfacts.org/api/v2/search?${params}`, {
+          headers: { "User-Agent": "MaKonim/1.0 (Israeli snack catalog)" }
+        });
+        if (nextResponse.ok) {
+          const nextData = await nextResponse.json();
+          rawProducts.push(...(nextData.products || []));
+        }
+      }
+      const products = mapProducts(rawProducts, "חטיפים ומתוקים");
+      return Response.json({ products, total: Number(data.count) || products.length });
+    }
 
     const params = new URLSearchParams({
-      search_terms: query,
-      search_simple: "1",
-      action: "process",
-      json: "1",
-      page_size: String(limit),
-      fields: "code,product_name,product_name_he,generic_name_he,brands,image_front_url,image_url,categories_tags"
+      search_terms: query, search_simple: "1", action: "process", json: "1", page_size: String(limit), fields
     });
     const response = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?${params}`, {
       headers: { "User-Agent": "MaKonim/1.0 (product catalog search)" }
     });
     if (!response.ok) return Response.json({ error: "Catalog unavailable" }, { status: 502 });
     const data = await response.json();
-    const seen = new Set();
-    const products = (data.products || []).flatMap((product) => {
-      const name = String(product.product_name_he || product.product_name || product.generic_name_he || "").trim();
-      const image = String(product.image_front_url || product.image_url || "").replace(/^http:/, "https:");
-      const code = String(product.code || "");
-      if (!name || !image || !code || seen.has(code)) return [];
-      seen.add(code);
-      return [{
-        id: `off-${code}`,
-        barcode: code,
-        name,
-        brand: String(product.brands || "").split(",")[0].trim(),
-        category: categoryFor(product.categories_tags),
-        price: 0,
-        image_url: image,
-        image_verified: true,
-        catalog_source: "open_food_facts"
-      }];
-    });
+    const products = mapProducts(data.products || []);
     return Response.json({ products, total: Number(data.count) || products.length });
   } catch (error) {
     return Response.json({ error: error instanceof Error ? error.message : "Catalog search failed" }, { status: 500 });
