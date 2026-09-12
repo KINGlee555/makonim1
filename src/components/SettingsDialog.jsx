@@ -89,12 +89,12 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
           </div>
 
           {pushEnabled && (
-            <div className="bg-primary/5 rounded-xl p-3 animate-slide-up">
-              <div className="flex items-center gap-1.5 mb-1.5">
+            <div className="w-full max-w-full mx-auto bg-primary/5 rounded-xl p-3 animate-slide-up overflow-hidden">
+              <div className="flex items-center justify-center gap-1.5 mb-1.5">
                 <Info className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                 <span className="text-xs font-medium text-primary">{t("settings.pushNotifications")}</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed block">{t("settings.pushInfo")}</p>
+              <p dir="rtl" className="block w-full max-w-full text-center text-xs text-muted-foreground leading-relaxed break-words [overflow-wrap:anywhere]">{t("settings.pushInfo")}</p>
             </div>
           )}
 
@@ -109,7 +109,7 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
                 <p className="text-sm text-muted-foreground truncate">בחר את הסופר שלך לניווט מהיר</p>
               </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            <div className="flex flex-wrap justify-center gap-2 pb-1">
               <button
                 onClick={() => handleSelectStore("")}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-sm font-medium border transition-all whitespace-nowrap ${

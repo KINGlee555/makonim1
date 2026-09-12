@@ -1,72 +1,52 @@
 import { memo } from "react";
 import { Plus, Minus, MapPin, Check } from "lucide-react";
-import { getProductEmoji } from "@/lib/productEmoji";
-import { getProductImageUrl } from "@/lib/productImages";
+import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 
 function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, className }) {
   const t = useT();
-  const emoji = getProductEmoji(item.name, item.category);
-  const imgUrl = item.image_url || getProductImageUrl(item.name, item.category);
-
   return (
-    <div className={`group flex items-center gap-3 p-2.5 rounded-2xl bg-card shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98] animate-slide-up ${className || ""}`}>
-      {/* Image — tap to navigate to store */}
-      <div
-        className="w-16 h-16 rounded-xl bg-muted overflow-hidden flex-shrink-0 cursor-pointer relative"
-        onClick={() => onNavigate && onNavigate(item)}
-      >
-        {imgUrl ? (
-          <img src={imgUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:28px">${emoji}</span>`; }} />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-3xl">{emoji}</div>
-        )}
-        {onNavigate && (
-          <div className="absolute bottom-0.5 right-0.5 w-5 h-5 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center">
-            <MapPin className="w-3 h-3 text-white" />
-          </div>
-        )}
-      </div>
-
-      {/* Info + quantity */}
-      <div className="flex-1 min-w-0">
-        <p className="text-base font-semibold truncate text-foreground">{item.name}</p>
-        <div className="flex items-center gap-2 mt-0.5">
-          {item.price > 0 && (
-            <span className="text-sm font-bold text-accent">₪{Number(item.price).toFixed(2)}</span>
-          )}
-          {item.category && (
-            <span className="text-xs text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">{item.category}</span>
-          )}
-        </div>
-        {/* Quantity controls */}
-        <div className="flex items-center gap-1.5 mt-2">
-          <button
-            onClick={() => { if ((item.quantity || 1) <= 1) { onRemove && onRemove(item); } else { onUpdateQuantity(item, (item.quantity || 1) - 1); } }}
-            className="w-7 h-7 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center transition-all active:scale-90"
-          >
-            <Minus className="w-3.5 h-3.5 text-muted-foreground" />
-          </button>
-          <span className="w-8 text-center text-base font-bold text-foreground">{item.quantity || 1}</span>
-          <button
-            onClick={() => onUpdateQuantity(item, (item.quantity || 1) + 1)}
-            className="w-7 h-7 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all active:scale-90"
-          >
-            <Plus className="w-3.5 h-3.5 text-primary" />
-          </button>
-        </div>
-      </div>
-
-      {/* Bought button — gradient circle */}
+    <article className={`group grid grid-cols-[5rem_minmax(0,1fr)] gap-3 rounded-xl border border-primary/10 bg-card p-2.5 shadow-sm transition-shadow hover:shadow-md animate-slide-up ${className || ""}`}>
       <button
-        onClick={() => onToggleBought(item)}
-        className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-md hover:shadow-lg flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
-        title={t("productItem.bought")}
+        type="button"
+        className="relative h-20 w-20 overflow-hidden rounded-lg bg-secondary"
+        onClick={() => onNavigate && onNavigate(item)}
+        aria-label={item.name}
       >
-        <Check className="w-5 h-5" />
+        <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} className="h-full w-full transition-transform duration-300 group-hover:scale-105" />
+        {onNavigate && (
+          <span className="absolute bottom-1 end-1 flex h-6 w-6 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
+            <MapPin className="h-3.5 w-3.5" />
+          </span>
+        )}
       </button>
-    </div>
+
+      <div className="min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h3 className="truncate text-base font-bold text-foreground">{item.name}</h3>
+            <p className="text-sm text-muted-foreground">{item.category || ""}</p>
+          </div>
+          {item.price > 0 && <span className="whitespace-nowrap text-base font-bold text-foreground">₪{Number(item.price).toFixed(2)}</span>}
+        </div>
+
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <div className="flex items-center overflow-hidden rounded-lg bg-secondary">
+            <button onClick={() => { if ((item.quantity || 1) <= 1) { onRemove && onRemove(item); } else { onUpdateQuantity(item, (item.quantity || 1) - 1); } }} className="flex h-9 w-10 items-center justify-center text-secondary-foreground" aria-label="הפחתה">
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="w-8 text-center text-base font-bold text-foreground">{item.quantity || 1}</span>
+            <button onClick={() => onUpdateQuantity(item, (item.quantity || 1) + 1)} className="flex h-9 w-10 items-center justify-center text-primary" aria-label="הוספה">
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+          <button onClick={() => onToggleBought(item)} className="flex h-9 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm" title={t("productItem.bought")}>
+            <Check className="h-4 w-4" />
+            {t("productItem.bought")}
+          </button>
+        </div>
+      </div>
+    </article>
   );
 }
 

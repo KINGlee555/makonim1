@@ -34,9 +34,11 @@ export default function ConnectedUsers({ list }) {
 
   return (
     <>
-      <div className="flex items-center justify-between px-3 py-2 bg-muted/40 rounded-xl mb-4 animate-fade-in">
-        <div className="flex items-center gap-2 flex-wrap flex-1">
-          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+      <section className="mb-4 animate-fade-in">
+        <h2 className="mb-2 text-lg font-bold text-foreground">{t("users.connected")}</h2>
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-transparent px-1 py-1">
+        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
             <Users className="w-3.5 h-3.5 text-primary" />
           </div>
           {allEmails.map(email => {
@@ -60,7 +62,8 @@ export default function ConnectedUsers({ list }) {
             {t("users.live")}
           </button>
         )}
-      </div>
+        </div>
+      </section>
       <ConnectedUsersDialog open={showDialog} onOpenChange={setShowDialog} list={list} />
     </>
   );

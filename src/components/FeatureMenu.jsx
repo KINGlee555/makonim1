@@ -21,7 +21,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScann
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+        <Button className="h-11 w-full rounded-lg bg-primary px-2 text-primary-foreground shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
           <LayoutGrid className="w-4 h-4" />
           {t("list.moreFeatures")}
         </Button>

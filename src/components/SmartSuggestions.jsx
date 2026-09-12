@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Plus, TrendingDown, Bell } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { getProductEmoji } from "@/lib/productEmoji";
+import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 
 export default function SmartSuggestions({ listId, currentItems, onAddProduct }) {
@@ -45,26 +45,20 @@ export default function SmartSuggestions({ listId, currentItems, onAddProduct })
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="mb-4">
+    <section className="mb-0">
       <div className="flex items-center gap-2 mb-2 px-1">
         <Sparkles className="w-4 h-4 text-primary" />
-        <p className="text-sm font-medium text-muted-foreground">{t("smart.title")}</p>
+        <h2 className="text-lg font-bold text-foreground">{t("smart.title")}</h2>
       </div>
-      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-3">
-        <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-          <Bell className="w-3 h-3" />{t("smart.forgotHint")}
-        </p>
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {suggestions.map(s => (
-            <button key={s.name} onClick={() => onAddProduct({ name: s.name, price: 0, category: "אחר", image_url: "" })}
-              className="flex-shrink-0 flex items-center gap-1.5 bg-card border border-primary/20 rounded-full px-3 py-1.5 text-sm hover:bg-primary/10 transition-colors">
-              <span>{getProductEmoji(s.name, "")}</span>
-              <span className="text-foreground">{s.name}</span>
-              <Plus className="w-3 h-3 text-primary" />
-            </button>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 gap-2">
+        {suggestions.slice(0, 2).map(s => (
+          <button key={s.name} onClick={() => onAddProduct({ name: s.name, price: 0, category: "אחר", image_url: "" })} className="flex min-w-0 items-center gap-2 rounded-xl border border-primary/10 bg-card p-2 text-start shadow-sm">
+            <ProductPhoto name={s.name} category="אחר" className="h-12 w-12 flex-shrink-0 rounded-lg" />
+            <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{s.name}</span>
+            <Plus className="h-4 w-4 flex-shrink-0 text-primary" />
+          </button>
+        ))}
       </div>
-    </div>
+    </section>
   );
 }

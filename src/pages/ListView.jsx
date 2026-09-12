@@ -259,6 +259,7 @@ export default function ListView() {
   return (
     <div className="min-h-screen bg-background pb-24">
       <AppHeader
+        listView
         userName={currentUserRef[0]?.full_name}
         rightAction={
           <div className="flex gap-2">
@@ -276,45 +277,51 @@ export default function ListView() {
       />
 
       <main className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4">
+        <section className="rounded-2xl border border-primary/10 bg-card p-4 shadow-md shadow-primary/5 mb-4 animate-slide-up" aria-label={t("list.total")}>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">{t("list.toBuy")}</p>
+              <p className="text-3xl font-bold leading-none text-foreground mt-1">{pendingItems.length}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">{t("list.total")}</p>
+              <p className="text-3xl font-bold leading-none text-foreground mt-1">₪{pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}</p>
+            </div>
+          </div>
+          <div className="h-2 rounded-full bg-secondary overflow-hidden my-3">
+            <div className="h-full w-full rounded-full bg-primary/35" />
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground truncate">{list.title}</p>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button onClick={handleRefresh} className="h-9 min-w-16 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm flex items-center justify-center gap-1.5">
+                <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
+                {t("list.refresh")}
+              </button>
+              <ListReader items={pendingItems} />
+            </div>
+          </div>
+        </section>
+
         <ConnectedUsers list={list} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
-          <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-2xl px-4 py-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-sm font-medium text-green-700">
+          <div className="flex items-center gap-2 bg-secondary border border-primary/15 rounded-xl px-4 py-2 mb-4">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-sm font-medium text-secondary-foreground">
               {t("active.nowShopping", { name: (list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).join(", ") })}
             </span>
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-4 px-1 animate-fade-in">
-          <div className="flex items-center gap-2">
-            <button onClick={handleRefresh} className="w-8 h-8 rounded-full bg-card shadow-sm flex items-center justify-center active:scale-90 transition-all hover:shadow-md">
-              <RefreshCw className={`w-3.5 h-3.5 text-primary ${refreshing ? "animate-refresh" : ""}`} />
-            </button>
-            <span className="text-2xl font-bold text-foreground">{pendingItems.length}</span>
-            <span className="text-sm text-muted-foreground font-medium">{t("list.toBuy")}</span>
-          </div>
-          {pendingItems.length > 0 && (
-            <div className="flex items-center gap-3">
-              <ListReader items={pendingItems} />
-              <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-3 py-1.5">
-                <span className="text-xs text-muted-foreground font-medium">{t("list.total")}</span>
-                <span className="text-base font-bold text-primary">
-                  ₪{pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
         {pendingItems.length > 0 && (
           <>
-            <div className="flex gap-2 mb-5 animate-slide-up">
-              <Button onClick={() => setShowShoppingMode(true)} className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl px-4 h-10 flex items-center gap-1.5 flex-shrink-0 shadow-sm hover:shadow-md transition-all">
+            <h2 className="text-lg font-bold text-foreground mb-2 px-1">{t("list.primaryActions")}</h2>
+            <div className="grid grid-cols-3 gap-2 mb-5 animate-slide-up">
+              <Button onClick={() => setShowShoppingMode(true)} className="h-11 rounded-lg bg-primary text-primary-foreground px-2 shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
               </Button>
-              <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-xl px-3 h-10 flex items-center gap-1.5 flex-shrink-0 transition-all">
+              <Button variant="default" onClick={() => setGroupByCategory(g => !g)} className="h-11 rounded-lg bg-primary text-primary-foreground px-2 shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
                 <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
               </Button>
               <FeatureMenu
@@ -330,10 +337,12 @@ export default function ListView() {
               />
             </div>
 
-            <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
-            <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+            <div className="grid gap-4 md:grid-cols-2 mb-5">
+              <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+              <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+            </div>
 
-            <div key={groupByCategory ? "grouped" : "ungrouped"} className="space-y-2 mb-6 animate-fade-in">
+            <div key={groupByCategory ? "grouped" : "ungrouped"} className="space-y-4 mb-6 animate-fade-in">
               {groupByCategory
                 ? Object.entries(
                     pendingItems.reduce((groups, item) => {
@@ -343,11 +352,12 @@ export default function ListView() {
                       return groups;
                     }, {})
                   ).map(([cat, catItems]) => (
-                    <div key={cat}>
-                      <div className="category-header flex items-center gap-2 px-2 py-2 animate-fade-in">
-                        <span className="text-lg">{getProductEmoji("", cat)}</span>
-                        <span className="text-sm font-bold text-foreground">{cat}</span>
-                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">({catItems.length})</span>
+                    <section key={cat}>
+                      <div className="category-header flex items-end justify-between gap-3 px-1 pb-2 border-b border-primary/10 mb-2">
+                        <div>
+                          <h2 className="text-xl font-bold text-foreground">{cat}</h2>
+                          <p className="text-sm text-muted-foreground">{catItems.length} {t("list.toBuy")}</p>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         {catItems.map(item => (
@@ -356,7 +366,7 @@ export default function ListView() {
                             className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                         ))}
                       </div>
-                    </div>
+                    </section>
                   ))
                 : pendingItems.map(item => (
                   <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
