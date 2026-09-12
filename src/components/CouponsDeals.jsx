@@ -4,6 +4,7 @@ import { Tag, Percent, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/components/ui/use-toast";
+import ChainLogo from "@/components/ChainLogo";
 
 // Simulated deals based on common Israeli supermarket promotions
 const DEALS = [
@@ -54,7 +55,9 @@ export default function CouponsDeals({ open, onOpenChange, items }) {
                 <span className="text-3xl">{deal.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-foreground text-sm line-clamp-1">{deal.product}</p>
-                  <p className="text-xs text-muted-foreground">{deal.store}</p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <ChainLogo name={deal.store} size={14} />{deal.store}
+                  </p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-sm font-bold text-primary">₪{deal.dealPrice.toFixed(2)}</span>
                     <span className="text-xs text-muted-foreground line-through">₪{deal.originalPrice.toFixed(2)}</span>

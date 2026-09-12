@@ -9,6 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 import BudgetTracker from "./BudgetTracker";
 import { SUPERMARKET_NAMES, getPreferredSupermarket, setPreferredSupermarket } from "@/lib/supermarkets";
+import ChainLogo from "@/components/ChainLogo";
 
 export default function SettingsDialog({ open, onOpenChange, list }) {
   const t = useT();
@@ -127,6 +128,7 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
                   }`}
                 >
                   {preferredStore === name && <Check className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <ChainLogo name={name} size={16} />
                   <span className="whitespace-nowrap">{name}</span>
                 </button>
               ))}

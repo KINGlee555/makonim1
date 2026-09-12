@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Scale } from "lucide-react";
 import { CHAINS, getSimulatedPrice } from "@/lib/chainPrices";
 import { useT } from "@/lib/i18n";
+import ChainLogo from "@/components/ChainLogo";
 
 export default function PriceCompareTable({ open, onOpenChange, items }) {
   const t = useT();
@@ -60,7 +61,9 @@ export default function PriceCompareTable({ open, onOpenChange, items }) {
                       <td className="p-1.5 font-semibold text-foreground">{row.name}</td>
                       <td className="p-1.5 text-center">
                         <span className="block font-bold text-primary">₪{row.min.toFixed(2)}</span>
-                        <span className="block text-xs text-muted-foreground">{row.best}</span>
+                        <span className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                          <ChainLogo name={row.best} size={14} />{row.best}
+                        </span>
                       </td>
                       <td className="p-1.5 text-center text-foreground">₪{row.max.toFixed(2)}</td>
                       <td className="p-1.5 text-center font-bold text-destructive">₪{row.diff.toFixed(2)}</td>
@@ -72,7 +75,9 @@ export default function PriceCompareTable({ open, onOpenChange, items }) {
                     <td className="p-1.5 font-bold text-foreground">{t("compare.total")}</td>
                     <td className="p-1.5 text-center">
                       <span className="block font-bold text-primary">₪{totals[0].total.toFixed(2)}</span>
-                      <span className="block text-xs text-muted-foreground">{totals[0].name}</span>
+                      <span className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                        <ChainLogo name={totals[0].name} size={14} />{totals[0].name}
+                      </span>
                     </td>
                     <td className="p-1.5 text-center text-foreground">₪{totals[totals.length - 1].total.toFixed(2)}</td>
                     <td className="p-1.5 text-center font-bold text-destructive">

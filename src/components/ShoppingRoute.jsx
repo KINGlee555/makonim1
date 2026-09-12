@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Route, MapPin, Check } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import ProductPhoto from "@/components/ProductPhoto";
+import ChainLogo from "@/components/ChainLogo";
 import { groupItemsByAisle, getAisleLabel, SUPERMARKET_CHAINS } from "@/lib/supermarketLayouts";
 import { useState } from "react";
 
@@ -28,8 +29,8 @@ export default function ShoppingRoute({ open, onOpenChange, items }) {
             {SUPERMARKET_CHAINS.map(chain => (
               <button key={chain.id} onClick={() => setSelectedChain(chain.id)}
                 aria-label={chain.name}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-sm font-medium transition-all ${selectedChain === chain.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                {chain.name}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all ${selectedChain === chain.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                <ChainLogo name={chain.name} size={16} />{chain.name}
               </button>
             ))}
           </div>

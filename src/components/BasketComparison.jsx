@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Crown, Store, TrendingDown } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { CHAINS, getSimulatedPrice } from "@/lib/chainPrices";
+import ChainLogo from "@/components/ChainLogo";
 
 export default function BasketComparison({ open, onOpenChange, items }) {
   const t = useT();
@@ -35,7 +36,9 @@ export default function BasketComparison({ open, onOpenChange, items }) {
                 <Crown className="w-6 h-6 text-primary flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">{t("basket.cheapest")}</p>
-                  <p className="text-lg font-bold text-primary">{cheapest.name}</p>
+                  <p className="text-lg font-bold text-primary flex items-center gap-2">
+                    <ChainLogo name={cheapest.name} size={20} />{cheapest.name}
+                  </p>
                 </div>
                 <p className="text-2xl font-bold text-primary">₪{cheapest.total.toFixed(2)}</p>
               </div>
@@ -49,7 +52,7 @@ export default function BasketComparison({ open, onOpenChange, items }) {
                 {chainTotals.map((chain, idx) => (
                   <div key={chain.name} className={`flex items-center justify-between rounded-2xl p-3 border ${idx === 0 ? "border-primary bg-primary/5" : "border-border bg-card"}`}>
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold ${chain.color}`}>{chain.name.charAt(0)}</div>
+                      <ChainLogo name={chain.name} size={40} className="rounded-xl" />
                       <span className="font-medium text-foreground">{chain.name}</span>
                       {idx === 0 && <Badge className="bg-primary text-primary-foreground text-xs">{t("basket.best")}</Badge>}
                     </div>

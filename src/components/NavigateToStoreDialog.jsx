@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Car, PersonStanding, Loader2, Store } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { SUPERMARKETS, SUPERMARKET_NAMES, getPreferredSupermarket } from "@/lib/supermarkets";
+import ChainLogo from "@/components/ChainLogo";
 
 function getNearestStore(productName) {
   // Use preferred supermarket if set
@@ -51,7 +52,9 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
             <div>
               <p className="text-sm text-muted-foreground">{t("navigate.recommended")}</p>
               <p className="font-bold text-foreground">{product?.name}</p>
-              <p className="text-primary font-semibold text-sm mt-0.5">🏪 {store}</p>
+              <p className="text-primary font-semibold text-sm mt-0.5 flex items-center gap-1.5">
+                <ChainLogo name={store} size={16} />{store}
+              </p>
             </div>
           </div>
 
@@ -66,13 +69,13 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
                 <button
                   key={name}
                   onClick={() => setSelectedStore(name)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-sm font-medium border transition-all ${
+                  className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border transition-all ${
                     (selectedStore || store) === name
                       ? "bg-primary text-primary-foreground border-primary"
                       : "border-border bg-card hover:border-primary/30"
                   }`}
                 >
-                  {name}
+                  <ChainLogo name={name} size={16} />{name}
                 </button>
               ))}
             </div>
