@@ -53,7 +53,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const searchableProducts = useMemo(() => {
     const unique = new Map();
     [...remoteProducts, ...allProducts].forEach(product => {
-      const key = `${normalizeProductText(product.name)}|${normalizeProductText(product.brand)}`;
+      const key = normalizeProductText(product.name);
       if (!unique.has(key)) unique.set(key, product);
     });
     return [...unique.values()];

@@ -9,6 +9,7 @@ export default function ProductPhoto({ name, category, imageUrl, className = "" 
   const [src, setSrc] = useState(imageUrl || fallbackUrl || "");
   const [failed, setFailed] = useState(false);
   const [checking, setChecking] = useState(!imageUrl && !fallbackUrl);
+  const [triedRemote, setTriedRemote] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -16,6 +17,7 @@ export default function ProductPhoto({ name, category, imageUrl, className = "" 
     setSrc(initial);
     setFailed(false);
     setChecking(!initial);
+    setTriedRemote(!initial);
     if (!initial && name) {
       searchRemoteCatalog(name).then(products => {
         if (cancelled) return;
@@ -49,8 +51,21 @@ export default function ProductPhoto({ name, category, imageUrl, className = "" 
         if (event.currentTarget.naturalWidth < 80 || event.currentTarget.naturalHeight < 80) setFailed(true);
       }}
       onError={() => {
-        if (src !== fallbackUrl && fallbackUrl) setSrc(fallbackUrl);
-        else setFailed(true);
+        if (src !== fallbackUrl && fallbackUrl) {
+          setSrc(fallbackUrl);
+        } else if (!triedRemote && name) {
+          setTriedRemote(true);
+          setChecking(true);
+          searchRemoteCatalog(name).then(products => {
+            const target = normalizeProductText(name);
+            const alternate = products.find(product => normalizeProductText(product.name) === target && product.image_url !== src)
+              || products.find(product => product.image_url !== src);
+            if (alternate?.image_url) { setSrc(alternate.image_url); setFailed(false); }
+            else setFailed(true);
+          }).finally(() => setChecking(false));
+        } else {
+          setFailed(true);
+        }
       }}
     />
   );

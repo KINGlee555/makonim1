@@ -5,7 +5,7 @@ const exactPhotos = [
   [/מלפפון/, pexels(2329440)],
   [/תפוח אדמה|תפוחי אדמה/, pexels(2286776)],
   [/תפוח/, pexels(209439)],
-  [/בננ/, pexels(16214622)],
+  [/בננ/, "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=600&q=80"],
   [/גזר/, pexels(143133)],
   [/בצל/, pexels(4197447)],
   [/שום/, pexels(1392585)],
