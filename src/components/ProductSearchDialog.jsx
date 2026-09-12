@@ -94,13 +94,15 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     const normalized = normalizeProductText(deferredQuery);
     if (!open || normalized.length < 2) { setRemoteProducts([]); setRemoteLoading(false); return; }
     let cancelled = false;
-    setRemoteLoading(true);
-    searchRemoteCatalog(normalized).then(products => {
-      if (!cancelled) setRemoteProducts(products);
-    }).finally(() => {
-      if (!cancelled) setRemoteLoading(false);
-    });
-    return () => { cancelled = true; };
+    const timer = window.setTimeout(() => {
+      setRemoteLoading(true);
+      searchRemoteCatalog(normalized).then(products => {
+        if (!cancelled) setRemoteProducts(products);
+      }).finally(() => {
+        if (!cancelled) setRemoteLoading(false);
+      });
+    }, 250);
+    return () => { cancelled = true; window.clearTimeout(timer); };
   }, [open, deferredQuery]);
 
   useEffect(() => {

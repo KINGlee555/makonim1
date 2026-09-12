@@ -3,6 +3,13 @@ import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
 
 const memoryCache = new Map();
 const pending = new Map();
+const MAX_CACHED_QUERIES = 100;
+
+function remember(key, products) {
+  if (memoryCache.size >= MAX_CACHED_QUERIES) memoryCache.delete(memoryCache.keys().next().value);
+  memoryCache.set(key, products);
+  return products;
+}
 
 export async function searchRemoteCatalog(query) {
   const normalized = normalizeProductText(query);
@@ -15,8 +22,7 @@ export async function searchRemoteCatalog(query) {
       .finally(() => pending.delete(normalized)));
   }
   const products = await pending.get(normalized);
-  memoryCache.set(normalized, products);
-  return products;
+  return remember(normalized, products);
 }
 
 export async function browseRemoteCategory(category) {
@@ -29,6 +35,5 @@ export async function browseRemoteCategory(category) {
       .finally(() => pending.delete(key)));
   }
   const products = await pending.get(key);
-  memoryCache.set(key, products);
-  return products;
+  return remember(key, products);
 }
