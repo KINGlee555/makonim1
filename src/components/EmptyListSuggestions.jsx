@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Sparkles, Plus } from "lucide-react";
+import { Sparkles, Plus, Check } from "lucide-react";
 import { getProductEmoji } from "@/lib/productEmoji";
 import { getProductImageUrl } from "@/lib/productImages";
 import { essentialProductNames } from "@/lib/essentialProducts";
-import { useT } from "@/lib/i18n";
 
 export default function EmptyListSuggestions({ onAddProduct }) {
-  const t = useT();
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [addedNames, setAddedNames] = useState(new Set());
@@ -18,11 +16,10 @@ export default function EmptyListSuggestions({ onAddProduct }) {
       try {
         const products = await base44.entities.Product.list("-name", 500);
         if (cancelled) return;
-        // Use essentials as "AI suggestions" — these are the most common household items
         const items = essentialProductNames
           .map(name => products.find(p => p.name === name))
           .filter(Boolean)
-          .slice(0, 6);
+          .slice(0, 8);
         if (!cancelled) { setSuggestions(items); setLoading(false); }
       } catch {
         if (!cancelled) setLoading(false);
@@ -36,16 +33,38 @@ export default function EmptyListSuggestions({ onAddProduct }) {
     setAddedNames(prev => new Set([...prev, product.name]));
   };
 
-  if (loading || suggestions.length === 0) return null;
+  if (loading) {
+    return (
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <div className="w-7 h-7 rounded-full bg-primary/10" />
+          <div className="h-4 w-32 rounded bg-muted shimmer" />
+        </div>
+        <div className="flex gap-3 overflow-hidden">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex-shrink-0 w-32 rounded-2xl bg-card border border-border/50 p-3">
+              <div className="w-full h-16 rounded-xl bg-muted shimmer mb-2" />
+              <div className="h-3 rounded bg-muted shimmer mb-1.5" />
+              <div className="h-3 w-12 rounded bg-muted shimmer" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (suggestions.length === 0) return null;
 
   return (
-    <div className="mb-4">
-      <div className="flex items-center gap-2 mb-3 px-2">
-        <Sparkles className="w-4 h-4 text-primary" />
-        <p className="text-sm font-medium text-muted-foreground">הצעות חכמות להתחלה</p>
+    <div className="mb-6 animate-fade-in">
+      <div className="flex items-center gap-2 mb-3 px-1">
+        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+          <Sparkles className="w-4 h-4 text-primary" />
+        </div>
+        <p className="text-sm font-bold text-foreground">הצעות חכמות להתחלה</p>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-        {suggestions.map((product) => {
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x scrollbar-hide">
+        {suggestions.map((product, idx) => {
           const isAdded = addedNames.has(product.name);
           const emoji = getProductEmoji(product.name, product.category);
           const imgUrl = getProductImageUrl(product.name, product.category);
@@ -54,24 +73,26 @@ export default function EmptyListSuggestions({ onAddProduct }) {
               key={product.name}
               onClick={() => !isAdded && handleAdd(product)}
               disabled={isAdded}
-              className={`flex-shrink-0 w-28 rounded-2xl border p-2.5 text-center transition-all active:scale-95 ${
-                isAdded ? "border-primary/30 bg-primary/5 opacity-60" : "border-border bg-card hover:border-primary/30"
+              className={`flex-shrink-0 w-32 rounded-2xl border p-3 text-start transition-all active:scale-95 snap-start animate-slide-up stagger-${Math.min(idx + 1, 6)} ${
+                isAdded ? "border-primary/30 bg-primary/5 opacity-60" : "border-border/50 bg-card shadow-sm hover:shadow-md hover:border-primary/30"
               }`}
             >
-              <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mx-auto mb-1.5 overflow-hidden">
+              <div className="w-full h-16 rounded-xl bg-muted overflow-hidden mb-2 flex items-center justify-center">
                 {imgUrl ? (
                   <img src={imgUrl} alt={product.name} className="w-full h-full object-cover"
-                    onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:24px">${emoji}</span>`; }} />
+                    onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:28px">${emoji}</span>`; }} />
                 ) : (
-                  <span className="text-2xl">{emoji}</span>
+                  <span className="text-3xl">{emoji}</span>
                 )}
               </div>
-              <p className="text-xs font-medium text-foreground line-clamp-1">{product.name}</p>
-              <p className="text-xs text-primary font-semibold">₪{product.price.toFixed(2)}</p>
-              <div className={`mt-1 w-6 h-6 rounded-full flex items-center justify-center mx-auto ${
-                isAdded ? "bg-primary text-primary-foreground" : "border border-primary/30 text-primary"
-              }`}>
-                {isAdded ? <span className="text-xs">✓</span> : <Plus className="w-3.5 h-3.5" />}
+              <p className="text-sm font-semibold text-foreground line-clamp-1">{product.name}</p>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-sm text-primary font-bold">₪{product.price.toFixed(2)}</p>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                  isAdded ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                }`}>
+                  {isAdded ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                </div>
               </div>
             </button>
           );

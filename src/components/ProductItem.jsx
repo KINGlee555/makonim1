@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Plus, Minus, MapPin, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { getProductEmoji } from "@/lib/productEmoji";
 import { getProductImageUrl } from "@/lib/productImages";
 import { useT } from "@/lib/i18n";
@@ -11,55 +10,62 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
   const imgUrl = item.image_url || getProductImageUrl(item.name, item.category);
 
   return (
-    <div className="flex items-center gap-2 p-3 rounded-2xl border bg-card border-border transition-all duration-300 hover:shadow-md">
-      {/* Image + Info — tap to navigate to store */}
+    <div className="group flex items-center gap-3 p-3 rounded-3xl bg-card shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98] animate-slide-up">
+      {/* Image — tap to navigate to store */}
       <div
-        className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+        className="w-16 h-16 rounded-2xl bg-muted overflow-hidden flex-shrink-0 cursor-pointer relative"
         onClick={() => onNavigate && onNavigate(item)}
       >
-        <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
-          {imgUrl ? (
-            <img src={imgUrl} alt={item.name} className="w-full h-full object-cover"
-              onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:24px">${emoji}</span>`; }} />
-          ) : (
-            <span className="text-2xl">{emoji}</span>
+        {imgUrl ? (
+          <img src={imgUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:28px">${emoji}</span>`; }} />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-3xl">{emoji}</div>
+        )}
+        {onNavigate && (
+          <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center">
+            <MapPin className="w-3 h-3 text-white" />
+          </div>
+        )}
+      </div>
+
+      {/* Info + quantity */}
+      <div className="flex-1 min-w-0">
+        <p className="text-base font-semibold truncate text-foreground">{item.name}</p>
+        <div className="flex items-center gap-2 mt-1">
+          {item.price > 0 && (
+            <span className="text-sm font-bold text-primary">₪{Number(item.price).toFixed(2)}</span>
+          )}
+          {item.category && (
+            <span className="text-xs text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">{item.category}</span>
           )}
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-lg font-medium truncate text-foreground">{item.name}</p>
-          <div className="flex items-center gap-2 mt-0.5">
-            {item.price > 0 && <span className="text-sm font-semibold text-primary">₪{Number(item.price).toFixed(2)}</span>}
-            {item.category && <span className="text-xs text-muted-foreground">· {item.category}</span>}
-            {onNavigate && (
-              <span className="text-xs text-primary/50 flex items-center gap-0.5 flex-shrink-0">
-                <MapPin className="w-3 h-3" />
-              </span>
-            )}
-          </div>
+        {/* Quantity controls */}
+        <div className="flex items-center gap-1.5 mt-2">
+          <button
+            onClick={() => { if ((item.quantity || 1) <= 1) { onRemove && onRemove(item); } else { onUpdateQuantity(item, (item.quantity || 1) - 1); } }}
+            className="w-7 h-7 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center transition-all active:scale-90"
+          >
+            <Minus className="w-3.5 h-3.5 text-muted-foreground" />
+          </button>
+          <span className="w-8 text-center text-base font-bold text-foreground">{item.quantity || 1}</span>
+          <button
+            onClick={() => onUpdateQuantity(item, (item.quantity || 1) + 1)}
+            className="w-7 h-7 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all active:scale-90"
+          >
+            <Plus className="w-3.5 h-3.5 text-primary" />
+          </button>
         </div>
       </div>
 
-      {/* Quantity controls */}
-      <div className="flex items-center gap-0.5 flex-shrink-0">
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full"
-          onClick={() => { if ((item.quantity || 1) <= 1) { onRemove && onRemove(item); } else { onUpdateQuantity(item, (item.quantity || 1) - 1); } }}>
-          <Minus className="w-4 h-4" />
-        </Button>
-        <span className="w-7 text-center text-lg font-semibold">{item.quantity || 1}</span>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full"
-          onClick={() => onUpdateQuantity(item, (item.quantity || 1) + 1)}>
-          <Plus className="w-4 h-4" />
-        </Button>
-      </div>
-
-      {/* Bought button — prominent checkmark */}
-      <Button
+      {/* Bought button — gradient circle */}
+      <button
         onClick={() => onToggleBought(item)}
-        className="h-12 w-12 rounded-full p-0 flex-shrink-0"
+        className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-md hover:shadow-lg flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
         title={t("productItem.bought")}
       >
         <Check className="w-5 h-5" />
-      </Button>
+      </button>
     </div>
   );
 }

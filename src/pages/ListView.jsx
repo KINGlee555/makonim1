@@ -214,8 +214,16 @@ export default function ListView() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+      <div className="min-h-screen bg-background">
+        <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+          <div className="h-12 rounded-2xl bg-muted shimmer" />
+          <div className="h-20 rounded-2xl bg-muted shimmer" />
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-20 rounded-3xl bg-card border border-border/50 shimmer" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -263,16 +271,16 @@ export default function ListView() {
           </div>
         )}
 
-        <div className="flex items-center gap-4 mb-6 px-2">
+        <div className="flex items-center justify-between mb-4 px-1 animate-fade-in">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-primary" />
-            <span className="text-base text-muted-foreground">{pendingItems.length} {t("list.toBuy")}</span>
+            <span className="text-2xl font-bold text-foreground">{pendingItems.length}</span>
+            <span className="text-sm text-muted-foreground font-medium">{t("list.toBuy")}</span>
           </div>
           {pendingItems.length > 0 && (
-            <div className="ms-auto flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <ListReader items={pendingItems} />
-              <div className="text-end">
-                <span className="text-sm text-muted-foreground">{t("list.total")} </span>
+              <div className="flex items-center gap-1.5 bg-primary/8 rounded-full px-3 py-1.5">
+                <span className="text-xs text-muted-foreground font-medium">{t("list.total")}</span>
                 <span className="text-base font-bold text-primary">
                   ₪{pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
                 </span>
@@ -283,11 +291,11 @@ export default function ListView() {
 
         {pendingItems.length > 0 && (
           <>
-            <div className="flex gap-2 mb-4">
-              <Button onClick={() => setShowShoppingMode(true)} className="bg-primary text-primary-foreground rounded-xl px-4 flex items-center gap-1.5 flex-shrink-0">
+            <div className="flex gap-2 mb-5 animate-slide-up">
+              <Button onClick={() => setShowShoppingMode(true)} className="bg-gradient-to-r from-primary to-primary/85 text-primary-foreground rounded-2xl px-4 h-11 flex items-center gap-1.5 flex-shrink-0 shadow-sm hover:shadow-md transition-all">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
               </Button>
-              <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-xl px-3 flex items-center gap-1.5 flex-shrink-0">
+              <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-2xl px-3 h-11 flex items-center gap-1.5 flex-shrink-0 transition-all">
                 <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
               </Button>
               <FeatureMenu
@@ -317,10 +325,10 @@ export default function ListView() {
                     }, {})
                   ).map(([cat, catItems]) => (
                     <div key={cat}>
-                      <div className="category-header flex items-center gap-2 px-2 py-2">
+                      <div className="category-header flex items-center gap-2 px-2 py-2 animate-fade-in">
                         <span className="text-lg">{getProductEmoji("", cat)}</span>
-                        <span className="text-sm font-semibold text-muted-foreground">{cat}</span>
-                        <span className="text-xs text-muted-foreground">({catItems.length})</span>
+                        <span className="text-sm font-bold text-foreground">{cat}</span>
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">({catItems.length})</span>
                       </div>
                       <div className="space-y-2">
                         {catItems.map(item => (
@@ -340,14 +348,14 @@ export default function ListView() {
         )}
 
         {pendingItems.length === 0 && (
-          <div className="py-8">
+          <div className="py-4 animate-fade-in">
             <EmptyListSuggestions onAddProduct={handleAddProduct} />
-            <div className="text-center py-8">
-              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                <ShoppingCart className="w-10 h-10 text-muted-foreground" />
+            <div className="text-center py-10">
+              <div className="w-20 h-20 rounded-full bg-primary/8 flex items-center justify-center mx-auto mb-4 animate-float">
+                <ShoppingCart className="w-10 h-10 text-primary/60" />
               </div>
-              <p className="text-xl font-medium text-foreground mb-1">{t("list.empty")}</p>
-              <p className="text-muted-foreground text-lg">{t("list.emptyDesc")}</p>
+              <p className="text-xl font-bold text-foreground mb-1">{t("list.empty")}</p>
+              <p className="text-muted-foreground text-base">{t("list.emptyDesc")}</p>
             </div>
           </div>
         )}

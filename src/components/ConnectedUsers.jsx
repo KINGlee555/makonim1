@@ -23,7 +23,6 @@ export default function ConnectedUsers({ list }) {
   const allEmails = [list?.created_by, ...(list?.shared_with || [])].filter(Boolean);
   if (allEmails.length === 0) return null;
 
-  // Show "List Owner" for anonymous creators, real name otherwise
   const getLabel = (email) => {
     if (!email || email === "anonymous") return t("users.listOwner");
     return userNames[email] || email;
@@ -32,11 +31,13 @@ export default function ConnectedUsers({ list }) {
 
   return (
     <>
-      <div className="flex items-center justify-between px-3 py-2 bg-primary/5 rounded-2xl mb-4">
+      <div className="flex items-center justify-between px-3 py-2.5 bg-card rounded-2xl mb-4 shadow-sm animate-fade-in">
         <div className="flex items-center gap-2 flex-wrap flex-1">
-          <Users className="w-4 h-4 text-primary flex-shrink-0" />
+          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Users className="w-4 h-4 text-primary" />
+          </div>
           {allEmails.map(email => (
-            <span key={email} className="text-sm text-primary font-medium bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap">
+            <span key={email} className="text-xs text-foreground font-medium bg-muted px-2.5 py-1 rounded-full whitespace-nowrap">
               {getLabel(email)}
             </span>
           ))}
@@ -44,9 +45,9 @@ export default function ConnectedUsers({ list }) {
         {isShared && (
           <button
             onClick={() => setShowDialog(true)}
-            className="flex items-center gap-1.5 flex-shrink-0 ms-2 bg-green-500 hover:bg-green-600 transition-colors text-white text-xs font-bold px-2.5 py-1 rounded-full cursor-pointer"
+            className="flex items-center gap-1.5 flex-shrink-0 ms-2 bg-green-500/10 hover:bg-green-500/20 transition-colors text-green-600 text-xs font-bold px-2.5 py-1 rounded-full cursor-pointer"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse inline-block" />
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse-soft inline-block" />
             {t("users.live")}
           </button>
         )}
