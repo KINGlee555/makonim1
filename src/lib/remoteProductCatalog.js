@@ -6,6 +6,8 @@ const pending = new Map();
 const MAX_CACHED_QUERIES = 100;
 
 function remember(key, products) {
+  // Never cache an empty result — a temporary catalog hiccup would otherwise hide products for the whole session
+  if (products.length === 0) return products;
   if (memoryCache.size >= MAX_CACHED_QUERIES) memoryCache.delete(memoryCache.keys().next().value);
   memoryCache.set(key, products);
   return products;
