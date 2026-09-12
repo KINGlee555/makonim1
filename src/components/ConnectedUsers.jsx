@@ -34,17 +34,17 @@ export default function ConnectedUsers({ list }) {
 
   return (
     <>
-      <div className="flex items-center justify-between px-3 py-2.5 bg-card rounded-2xl mb-4 shadow-sm animate-fade-in">
+      <div className="flex items-center justify-between px-3 py-2 bg-muted/40 rounded-xl mb-4 animate-fade-in">
         <div className="flex items-center gap-2 flex-wrap flex-1">
-          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Users className="w-4 h-4 text-primary" />
+          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Users className="w-3.5 h-3.5 text-primary" />
           </div>
           {allEmails.map(email => {
             const photo = getPhoto(email);
             return (
-              <span key={email} className="text-xs text-foreground font-medium bg-muted px-2.5 py-1 rounded-full whitespace-nowrap flex items-center gap-1.5">
+              <span key={email} className="text-xs text-foreground font-medium bg-card px-2 py-1 rounded-full whitespace-nowrap flex items-center gap-1.5 shadow-sm">
                 {photo && (
-                  <img src={photo} alt="" className="w-5 h-5 rounded-full object-cover" />
+                  <img src={photo} alt="" className="w-4 h-4 rounded-full object-cover" />
                 )}
                 {getLabel(email)}
               </span>

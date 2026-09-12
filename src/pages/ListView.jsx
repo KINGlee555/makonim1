@@ -232,11 +232,11 @@ export default function ListView() {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 space-y-4">
-          <div className="h-12 rounded-2xl bg-muted shimmer" />
-          <div className="h-20 rounded-2xl bg-muted shimmer" />
+          <div className="h-10 rounded-xl bg-muted shimmer" />
+          <div className="h-16 rounded-xl bg-muted shimmer" />
           <div className="space-y-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-3xl bg-card border border-border/50 shimmer" />
+              <div key={i} className="h-20 rounded-2xl bg-card shimmer" />
             ))}
           </div>
         </div>
@@ -289,8 +289,8 @@ export default function ListView() {
 
         <div className="flex items-center justify-between mb-4 px-1 animate-fade-in">
           <div className="flex items-center gap-2">
-            <button onClick={handleRefresh} className="w-9 h-9 rounded-full bg-card shadow-sm flex items-center justify-center active:scale-90 transition-all hover:shadow-md">
-              <RefreshCw className={`w-4 h-4 text-primary ${refreshing ? "animate-refresh" : ""}`} />
+            <button onClick={handleRefresh} className="w-8 h-8 rounded-full bg-card shadow-sm flex items-center justify-center active:scale-90 transition-all hover:shadow-md">
+              <RefreshCw className={`w-3.5 h-3.5 text-primary ${refreshing ? "animate-refresh" : ""}`} />
             </button>
             <span className="text-2xl font-bold text-foreground">{pendingItems.length}</span>
             <span className="text-sm text-muted-foreground font-medium">{t("list.toBuy")}</span>
@@ -298,7 +298,7 @@ export default function ListView() {
           {pendingItems.length > 0 && (
             <div className="flex items-center gap-3">
               <ListReader items={pendingItems} />
-              <div className="flex items-center gap-1.5 bg-primary/8 rounded-full px-3 py-1.5">
+              <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-3 py-1.5">
                 <span className="text-xs text-muted-foreground font-medium">{t("list.total")}</span>
                 <span className="text-base font-bold text-primary">
                   ₪{pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}
@@ -311,10 +311,10 @@ export default function ListView() {
         {pendingItems.length > 0 && (
           <>
             <div className="flex gap-2 mb-5 animate-slide-up">
-              <Button onClick={() => setShowShoppingMode(true)} className="bg-gradient-to-r from-primary to-primary/85 text-primary-foreground rounded-2xl px-4 h-11 flex items-center gap-1.5 flex-shrink-0 shadow-sm hover:shadow-md transition-all">
+              <Button onClick={() => setShowShoppingMode(true)} className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl px-4 h-10 flex items-center gap-1.5 flex-shrink-0 shadow-sm hover:shadow-md transition-all">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
               </Button>
-              <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-2xl px-3 h-11 flex items-center gap-1.5 flex-shrink-0 transition-all">
+              <Button variant={groupByCategory ? "default" : "outline"} onClick={() => setGroupByCategory(g => !g)} className="rounded-xl px-3 h-10 flex items-center gap-1.5 flex-shrink-0 transition-all">
                 <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
               </Button>
               <FeatureMenu
@@ -371,12 +371,12 @@ export default function ListView() {
         {pendingItems.length === 0 && (
           <div className="py-4 animate-fade-in">
             <EmptyListSuggestions onAddProduct={handleAddProduct} />
-            <div className="text-center py-10">
-              <div className="w-20 h-20 rounded-full bg-primary/8 flex items-center justify-center mx-auto mb-4 animate-float">
-                <ShoppingCart className="w-10 h-10 text-primary/60" />
+            <div className="text-center py-12">
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 animate-float">
+                <ShoppingCart className="w-10 h-10 text-primary/50" />
               </div>
               <p className="text-xl font-bold text-foreground mb-1">{t("list.empty")}</p>
-              <p className="text-muted-foreground text-base">{t("list.emptyDesc")}</p>
+              <p className="text-muted-foreground text-sm">{t("list.emptyDesc")}</p>
             </div>
           </div>
         )}
