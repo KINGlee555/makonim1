@@ -188,12 +188,12 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     const nearest = nearbyStores?.[0];
     return (
       <div key={product.name + idx} onClick={() => !isAdded && handleAdd(product)}
-        className={`rounded-2xl bg-card shadow-sm overflow-hidden cursor-pointer transition-all active:scale-95 animate-slide-up ${
-          isAdded ? "ring-2 ring-primary" : "hover:shadow-md"
+        className={`flex flex-col rounded-3xl border-2 bg-card overflow-hidden cursor-pointer transition-all active:scale-95 animate-slide-up ${
+          isAdded ? "border-primary shadow-lg shadow-primary/20" : "border-border/60 shadow-sm hover:border-primary/40 hover:shadow-md"
         }`}
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
-        <div className="relative h-32 bg-muted">
-          <ProductPhoto name={product.name} category={product.category} imageUrl={product.image_url} className="h-full w-full" />
+        <div className="relative h-36 bg-white p-2 flex items-center justify-center">
+          <ProductPhoto name={product.name} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" />
           <button onClick={(event) => { event.stopPropagation(); onToggleFavorite(product); }} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${product.name}`} className="absolute start-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
             <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />
           </button>
@@ -209,12 +209,12 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             {isAdded ? <CheckCircle className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
           </div>
         </div>
-        <div className="p-2.5">
-          <p className="text-sm font-semibold text-foreground line-clamp-1">{product.name}</p>
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-sm font-bold text-primary">{product.price > 0 ? `₪${product.price.toFixed(2)}` : "מחיר לא זמין"}</span>
-            {product.brand && <span className="text-xs text-muted-foreground truncate max-w-[60%]">{product.brand}</span>}
-          </div>
+        <div className="flex flex-1 flex-col items-center justify-center gap-1 px-2.5 py-3 text-center">
+          <p className="w-full text-sm font-bold leading-tight text-foreground line-clamp-2">{product.name}</p>
+          {product.brand && <span className="w-full truncate text-xs text-muted-foreground">{product.brand}</span>}
+          <span className="mt-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-extrabold text-primary">
+            {product.price > 0 ? `₪${product.price.toFixed(2)}` : "מחיר לא זמין"}
+          </span>
         </div>
       </div>
     );
