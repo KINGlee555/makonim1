@@ -38,6 +38,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScann
           {features.map((f, i) => (
             <button
               key={i}
+              data-testid={`feature-${i}`}
               onClick={() => { setOpen(false); window.setTimeout(() => f.onClick(), 260); }}
               className="flex flex-col items-center gap-2 p-4 rounded-2xl border bg-card hover:bg-accent transition-colors active:scale-95"
             >
