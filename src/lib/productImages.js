@@ -140,6 +140,11 @@ export function hasSpecificProductImage(name = "") {
   return Boolean(findSpecificPhoto(name));
 }
 
+// Keyword-matched photo only — no generic category shot
+export function getSpecificProductImage(name = "") {
+  return findSpecificPhoto(name);
+}
+
 export function getProductImageUrl(name = "", category = "") {
   return findSpecificPhoto(name) || categoryPhotos[category] || categoryPhotos["אחר"];
 }
