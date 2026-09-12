@@ -38,6 +38,7 @@ import CategoryOrderDialog from "../components/CategoryOrderDialog";
 import { loadCategoryOrder, sortByCategoryOrder } from "@/lib/categoryOrder";
 import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
+import ChangePhotoDialog from "../components/ChangePhotoDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import FavoritesSection from "../components/FavoritesSection";
 import NearbyDeals from "../components/NearbyDeals";
@@ -77,6 +78,7 @@ export default function ListView() {
   const [allProducts, setAllProducts] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
+  const [photoItem, setPhotoItem] = useState(null);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
   const itemsRef = useRef([]);
@@ -452,7 +454,7 @@ export default function ListView() {
                         {catItems.map(item => (
                           <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
                             onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                            onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite}
+                            onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
                             isFavorite={favorites.some(favorite => favorite.name === item.name)}
                             className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                         ))}
@@ -462,7 +464,7 @@ export default function ListView() {
                 : pendingItems.map(item => (
                   <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
                     onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                    onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite}
+                    onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
                     isFavorite={favorites.some(favorite => favorite.name === item.name)}
                     className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                 ))
@@ -506,6 +508,8 @@ export default function ListView() {
         onRenamed={(title) => setList(prev => ({ ...prev, title }))} />
       <NavigateToStoreDialog open={!!navigateProduct} onOpenChange={(v) => !v && setNavigateProduct(null)} product={navigateProduct} />
       <ItemDetailsDialog item={editingItem} onClose={() => setEditingItem(null)} onSave={handleUpdateDetails} />
+      <ChangePhotoDialog item={photoItem} onClose={() => setPhotoItem(null)}
+        onSaved={(id, url) => setItems(prev => prev.map(i => (i.id === id ? { ...i, image_url: url } : i)))} />
 
       {showShoppingMode && (
         <ShoppingMode items={pendingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
