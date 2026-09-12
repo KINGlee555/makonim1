@@ -2,10 +2,13 @@ import { memo } from "react";
 import { Plus, Minus, MapPin, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProductEmoji } from "@/lib/productEmoji";
+import { getProductImageUrl } from "@/lib/productImages";
 import { useT } from "@/lib/i18n";
 
 function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove }) {
   const t = useT();
+  const emoji = getProductEmoji(item.name, item.category);
+  const imgUrl = item.image_url || getProductImageUrl(item.name, item.category);
 
   return (
     <div className="flex items-center gap-2 p-3 rounded-2xl border bg-card border-border transition-all duration-300 hover:shadow-md">
@@ -15,11 +18,11 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
         onClick={() => onNavigate && onNavigate(item)}
       >
         <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
-          {item.image_url ? (
-            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover"
-              onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:24px">${getProductEmoji(item.name, item.category)}</span>`; }} />
+          {imgUrl ? (
+            <img src={imgUrl} alt={item.name} className="w-full h-full object-cover"
+              onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:24px">${emoji}</span>`; }} />
           ) : (
-            <span className="text-2xl">{getProductEmoji(item.name, item.category)}</span>
+            <span className="text-2xl">{emoji}</span>
           )}
         </div>
         <div className="flex-1 min-w-0">

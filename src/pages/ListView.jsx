@@ -32,6 +32,7 @@ import Leaderboard from "../components/Leaderboard";
 import CouponsDeals from "../components/CouponsDeals";
 import VoiceQuickAdd from "../components/VoiceQuickAdd";
 import FeatureMenu from "../components/FeatureMenu";
+import EmptyListSuggestions from "../components/EmptyListSuggestions";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -71,6 +72,14 @@ export default function ListView() {
     setItems(allItems);
     setLoading(false);
   }, [listId]);
+
+  // Silent refresh every 5 seconds — keeps all participants in sync
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [loadData]);
 
   useEffect(() => {
     loadData();
@@ -308,7 +317,7 @@ export default function ListView() {
                     }, {})
                   ).map(([cat, catItems]) => (
                     <div key={cat}>
-                      <div className="flex items-center gap-2 px-2 py-2">
+                      <div className="category-header flex items-center gap-2 px-2 py-2">
                         <span className="text-lg">{getProductEmoji("", cat)}</span>
                         <span className="text-sm font-semibold text-muted-foreground">{cat}</span>
                         <span className="text-xs text-muted-foreground">({catItems.length})</span>
@@ -331,12 +340,15 @@ export default function ListView() {
         )}
 
         {pendingItems.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart className="w-10 h-10 text-muted-foreground" />
+          <div className="py-8">
+            <EmptyListSuggestions onAddProduct={handleAddProduct} />
+            <div className="text-center py-8">
+              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                <ShoppingCart className="w-10 h-10 text-muted-foreground" />
+              </div>
+              <p className="text-xl font-medium text-foreground mb-1">{t("list.empty")}</p>
+              <p className="text-muted-foreground text-lg">{t("list.emptyDesc")}</p>
             </div>
-            <p className="text-xl font-medium text-foreground mb-1">{t("list.empty")}</p>
-            <p className="text-muted-foreground text-lg">{t("list.emptyDesc")}</p>
           </div>
         )}
 

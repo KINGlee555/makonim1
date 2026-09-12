@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { getProductEmoji } from "@/lib/productEmoji";
+import { getProductImageUrl } from "@/lib/productImages";
+import { SUPERMARKETS } from "@/lib/supermarkets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,14 +11,20 @@ import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 
-const SUPERMARKETS = [
-  { name: "שופרסל", chain: "shufersal" },
-  { name: "רמי לוי", chain: "rami_levy" },
-  { name: "מגא בול", chain: "mega" },
-  { name: "יוחננוף", chain: "yochananof" },
-  { name: "ויקטורי", chain: "victory" },
-  { name: "קשת טעמים", chain: "keshet" },
-  { name: "חצי חינם", chain: "hatzi_hinam" },
+// Israeli supermarket-style categories
+const CATEGORIES = [
+  { id: "all", label: "הכל" },
+  { id: "פירות וירקות", label: "פירות וירקות" },
+  { id: "מוצרי חלב", label: "חלבי" },
+  { id: "בשר ודגים", label: "בשרי" },
+  { id: "לחם ומאפים", label: "לחם" },
+  { id: "שימורים", label: "יבשים" },
+  { id: "תבלינים", label: "תבלינים" },
+  { id: "חטיפים ומתוקים", label: "חטיפים" },
+  { id: "משקאות", label: "משקאות" },
+  { id: "קפואים", label: "קפואים" },
+  { id: "ניקיון", label: "ניקיון" },
+  { id: "היגיינה", label: "היגיינה" },
 ];
 
 function getSimulatedStores(productName, userLocation) {
@@ -39,6 +47,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
   const [allProducts, setAllProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [suggestions, setSuggestions] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
     if (!open) return;
@@ -59,12 +68,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     let cancelled = false;
     (async () => {
       try {
-        // Essentials: basic items every household buys, matched from DB
         const essentials = essentialProductNames
           .map(name => allProducts.find(p => p.name === name))
           .filter(Boolean);
-
-        // History-based suggestions
         const history = await base44.entities.PurchaseHistory.list("-created_date", 100);
         if (cancelled) return;
         const freq = {};
@@ -73,12 +79,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
           .map(([name]) => allProducts.find(p => p.name === name))
           .filter(Boolean)
           .filter(p => !essentials.some(e => e.name === p.name));
-
-        // Merge: essentials first, then history, dedup, limit to 8
         const merged = [...essentials, ...historyItems].slice(0, 8);
         if (!cancelled) setSuggestions(merged);
       } catch {
-        // Even if history fails, show essentials
         const essentials = essentialProductNames
           .map(name => allProducts.find(p => p.name === name))
           .filter(Boolean).slice(0, 8);
@@ -94,11 +97,28 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     const q = value !== undefined ? value : query;
     if (!q.trim()) { setResults([]); return; }
     const ql = q.trim().toLowerCase();
-    let res = allProducts.filter(p =>
-      p.name.toLowerCase().includes(ql) || p.category.toLowerCase().includes(ql) || (p.brand || "").toLowerCase().includes(ql)
-    ).slice(0, 20);
+    let res = allProducts.filter(p => {
+      const matches = p.name.toLowerCase().includes(ql) || p.category.toLowerCase().includes(ql) || (p.brand || "").toLowerCase().includes(ql);
+      const catMatch = selectedCategory === "all" || p.category === selectedCategory;
+      return matches && catMatch;
+    }).slice(0, 20);
     if (filterMode === "price") res = [...res].sort((a, b) => a.price - b.price);
     setResults(res);
+  };
+
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    // Re-filter results if there's a query
+    if (query.trim()) {
+      const ql = query.trim().toLowerCase();
+      let res = allProducts.filter(p => {
+        const matches = p.name.toLowerCase().includes(ql) || p.category.toLowerCase().includes(ql) || (p.brand || "").toLowerCase().includes(ql);
+        const catMatch = cat === "all" || p.category === cat;
+        return matches && catMatch;
+      }).slice(0, 20);
+      if (filterMode === "price") res = [...res].sort((a, b) => a.price - b.price);
+      setResults(res);
+    }
   };
 
   const requestLocation = () => {
@@ -120,8 +140,25 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setResults([]); setAddedIds(new Set()); setLocationError(""); }
+    if (!val) { setQuery(""); setResults([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); }
   };
+
+  const renderProductImage = (product) => {
+    const emoji = getProductEmoji(product.name, product.category);
+    const imgUrl = product.image_url || getProductImageUrl(product.name, product.category);
+    if (imgUrl) {
+      return (
+        <img src={imgUrl} alt={product.name} className="w-full h-full object-cover"
+          onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:22px">${emoji}</span>`; }} />
+      );
+    }
+    return <span className="text-2xl">{emoji}</span>;
+  };
+
+  // Filter suggestions by category
+  const filteredSuggestions = selectedCategory === "all"
+    ? suggestions
+    : suggestions.filter(p => p.category === selectedCategory);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -139,6 +176,23 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             <Button onClick={() => handleSearch()} className="h-12 w-12 rounded-2xl flex-shrink-0 bg-primary hover:bg-primary/90">
               <Search className="w-5 h-5" />
             </Button>
+          </div>
+
+          {/* Category filter — horizontal scrollable */}
+          <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryChange(cat.id)}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-sm font-medium border transition-all ${
+                  selectedCategory === cat.id
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/30"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
 
           <div className="flex gap-2 bg-muted rounded-2xl p-1">
@@ -173,24 +227,20 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
           )}
 
           {!loadingProducts && results.length === 0 && !query && (
-            suggestions.length > 0 ? (
+            filteredSuggestions.length > 0 ? (
               <div>
                 <div className="flex items-center gap-2 mb-3 px-1">
                   <Sparkles className="w-4 h-4 text-primary" />
                   <p className="text-sm font-medium text-muted-foreground">{t("search.suggestions")}</p>
                 </div>
                 <div className="space-y-2">
-                  {suggestions.map((product, idx) => {
+                  {filteredSuggestions.map((product, idx) => {
                     const isAdded = addedIds.has(product.name);
-                    const emoji = getProductEmoji(product.name, product.category);
                     return (
                       <div key={idx} onClick={() => !isAdded && handleAdd(product)}
                         className={`rounded-2xl border transition-all flex items-center gap-3 p-3 cursor-pointer active:scale-[0.98] ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card hover:border-primary/30"}`}>
-                        <div className="w-[52px] h-[52px] rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-                          {product.image_url ? (
-                            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover rounded-xl"
-                              onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:22px">${emoji}</span>`; }} />
-                          ) : (<span className="text-2xl">{emoji}</span>)}
+                        <div className="w-[52px] h-[52px] rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {renderProductImage(product)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-base font-semibold text-foreground line-clamp-1">{product.name}</p>
@@ -223,17 +273,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
           {results.map((product, idx) => {
             const isAdded = addedIds.has(product.name);
-            const emoji = getProductEmoji(product.name, product.category);
             const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, userLocation) : null;
             return (
               <div key={idx} className={`rounded-2xl border transition-all overflow-hidden ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}>
                 <div onClick={() => !isAdded && handleAdd(product)}
                   className="flex items-center gap-3 p-3 cursor-pointer active:scale-[0.98] hover:bg-accent/5">
                   <div className="w-[52px] h-[52px] rounded-xl bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover"
-                        onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:22px">${emoji}</span>`; }} />
-                    ) : (<span className="text-2xl">{emoji}</span>)}
+                    {renderProductImage(product)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-base font-semibold text-foreground line-clamp-1">{product.name}</p>

@@ -127,6 +127,28 @@ html.easy-mode .text-2xl {
   font-size: 1.75rem;
 }
 
+/* In easy mode, keep category headers and small labels readable, not oversized */
+html.easy-mode .text-sm {
+  font-size: 1rem;
+}
+
+html.easy-mode .text-xs {
+  font-size: 0.9rem;
+}
+
+/* Category headers in list view — don't scale up in easy mode */
+html.easy-mode .category-header {
+  font-size: 1rem !important;
+}
+
+/* Prevent text overflow in easy mode */
+html.easy-mode .truncate {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 html.easy-mode .h-8 {
   height: 3rem;
 }

@@ -1,30 +1,27 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MapPin, Car, PersonStanding, Loader2 } from "lucide-react";
+import { MapPin, Car, PersonStanding, Loader2, Store } from "lucide-react";
 import { useT } from "@/lib/i18n";
-
-const SUPERMARKETS = [
-  "שופרסל",
-  "רמי לוי",
-  "מגא בול",
-  "יוחננוף",
-  "ויקטורי",
-  "חצי חינם",
-];
+import { SUPERMARKETS, SUPERMARKET_NAMES, getPreferredSupermarket } from "@/lib/supermarkets";
 
 function getNearestStore(productName) {
+  // Use preferred supermarket if set
+  const preferred = getPreferredSupermarket();
+  if (preferred) return preferred;
+  // Otherwise pick based on product name
   const seed = productName.charCodeAt(0);
-  return SUPERMARKETS[seed % SUPERMARKETS.length];
+  return SUPERMARKET_NAMES[seed % SUPERMARKET_NAMES.length];
 }
 
 export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
   const t = useT();
   const [loading, setLoading] = useState(false);
+  const [selectedStore, setSelectedStore] = useState("");
 
   const navigate = (mode) => {
     setLoading(true);
-    const store = getNearestStore(product?.name || "");
+    const store = selectedStore || getNearestStore(product?.name || "");
     const destination = encodeURIComponent(`${store} ${t("navigate.supermarket")}`);
 
     let url;
@@ -39,7 +36,8 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
     onOpenChange(false);
   };
 
-  const store = product ? getNearestStore(product.name) : "";
+  const preferred = getPreferredSupermarket();
+  const store = selectedStore || (product ? getNearestStore(product.name) : "");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -55,6 +53,32 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
               <p className="font-bold text-foreground">{product?.name}</p>
               <p className="text-primary font-semibold text-sm mt-0.5">🏪 {store}</p>
             </div>
+          </div>
+
+          {/* Supermarket selector */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Store className="w-4 h-4 text-primary" />
+              <p className="text-sm font-medium text-muted-foreground">בחר סופר</p>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {SUPERMARKET_NAMES.map((name) => (
+                <button
+                  key={name}
+                  onClick={() => setSelectedStore(name)}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-sm font-medium border transition-all ${
+                    (selectedStore || store) === name
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border bg-card hover:border-primary/30"
+                  }`}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+            {preferred && !selectedStore && (
+              <p className="text-xs text-primary/60 mt-1">הסופר המועדף עליך: {preferred}</p>
+            )}
           </div>
 
           <p className="text-sm text-muted-foreground text-center">{t("navigate.howToArrive")}</p>

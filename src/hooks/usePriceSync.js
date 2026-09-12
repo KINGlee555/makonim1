@@ -3,18 +3,20 @@ import { base44 } from "@/api/base44Client";
 
 const BATCH_SIZE = 20;
 const STALE_THRESHOLD_HOURS = 20;
+const SYNC_HOUR = 7; // 7 AM daily price refresh
 
 /**
  * Daily price sync — runs on app load.
- * Checks if any product prices are stale (older than ~20 hours).
- * If so, updates the stalest batch via InvokeLLM with web search.
- * This provides daily price refresh without a backend workflow.
+ * Checks if it's past 7 AM and prices haven't been synced since last 7 AM.
+ * If stale, updates the stalest batch via InvokeLLM with web search.
+ * Also sets a timer to sync at the next 7 AM if the app stays open.
  */
 export function usePriceSync() {
   const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    let syncTimer = null;
 
     const checkAndSync = async () => {
       try {
@@ -24,10 +26,18 @@ export function usePriceSync() {
 
         const oldest = products[0];
         const oldestDate = new Date(oldest.last_updated || oldest.created_date);
-        const hoursSinceUpdate = (Date.now() - oldestDate.getTime()) / (1000 * 60 * 60);
+        const now = new Date();
 
-        // Not stale enough — skip
-        if (hoursSinceUpdate < STALE_THRESHOLD_HOURS) return;
+        // Calculate today's 7 AM
+        const today7am = new Date(now);
+        today7am.setHours(SYNC_HOUR, 0, 0, 0);
+
+        // If we haven't passed 7 AM today, check if prices are from before yesterday's 7 AM
+        // If we have passed 7 AM today, check if prices are from before today's 7 AM
+        const lastSyncBoundary = now >= today7am ? today7am : new Date(today7am.getTime() - 24 * 60 * 60 * 1000);
+
+        // If prices were updated after the last sync boundary, they're fresh
+        if (oldestDate >= lastSyncBoundary) return;
 
         if (cancelled) return;
         setSyncing(true);
@@ -35,7 +45,7 @@ export function usePriceSync() {
         const productNames = products.map(p => p.name);
 
         const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `Search the web for current average prices in Israeli supermarkets (Shufersal, Rami Levi, Victory, Yochananof, Osher Ad, Mega) for these grocery products. Return the average retail price in NIS (₪) for each product based on current online prices. If you cannot find an exact match, estimate based on similar products. Products: ${JSON.stringify(productNames)}`,
+          prompt: `Search the web for current average prices in Israeli supermarkets (Shufersal, Rami Levi, Victory, Yochananof, Osher Ad, Mega, Tiv Taam, Yenot Bitan, Coop, Osher Ad) for these grocery products. Return the average retail price in NIS (₪) for each product based on current online prices. If you cannot find an exact match, estimate based on similar products. Products: ${JSON.stringify(productNames)}`,
           add_context_from_internet: true,
           model: "gemini_3_flash",
           response_json_schema: {
@@ -86,8 +96,26 @@ export function usePriceSync() {
       }
     };
 
+    // Schedule next 7 AM sync
+    const scheduleNextSync = () => {
+      const now = new Date();
+      const next7am = new Date(now);
+      next7am.setHours(SYNC_HOUR, 0, 0, 0);
+      if (next7am <= now) next7am.setDate(next7am.getDate() + 1);
+      const msUntil7am = next7am - now;
+      syncTimer = setTimeout(() => {
+        checkAndSync();
+        scheduleNextSync(); // Schedule the next one
+      }, msUntil7am);
+    };
+
     checkAndSync();
-    return () => { cancelled = true; };
+    scheduleNextSync();
+
+    return () => {
+      cancelled = true;
+      if (syncTimer) clearTimeout(syncTimer);
+    };
   }, []);
 
   return { syncing };
