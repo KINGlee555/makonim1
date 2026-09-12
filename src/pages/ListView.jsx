@@ -127,7 +127,7 @@ export default function ListView() {
   }, []);
 
   useEffect(() => {
-    loadAllProducts().then(setAllProducts).catch(() => {});
+    loadAllProducts(1000).then(setAllProducts).catch(() => {});
   }, []);
 
   useEffect(() => {
