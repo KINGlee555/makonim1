@@ -30,6 +30,9 @@ const translations = {
     "list.clearedBought": "המוצרים שנקנו נמחקו",
     "list.addedToList": "{name} נוסף לרשימה",
     "list.userAdded": "{email} נוסף לרשימה",
+    "list.refresh": "רענון",
+    "list.primaryActions": "פעולות ראשיות",
+    "users.connected": "משתמשים מחוברים",
 
     // ProductSearchDialog
     "search.title": "חיפוש מוצרים",
@@ -428,6 +431,9 @@ const translations = {
     "list.clearedBought": "Bought items cleared",
     "list.addedToList": "{name} added to list",
     "list.userAdded": "{email} added to list",
+    "list.refresh": "Refresh",
+    "list.primaryActions": "Main actions",
+    "users.connected": "Connected users",
 
     // ProductSearchDialog
     "search.title": "Search Products",
@@ -826,6 +832,9 @@ const translations = {
     "list.clearedBought": "Купленные товары удалены",
     "list.addedToList": "{name} добавлен в список",
     "list.userAdded": "{email} добавлен в список",
+    "list.refresh": "Обновить",
+    "list.primaryActions": "Основные действия",
+    "users.connected": "Подключённые пользователи",
 
     // ProductSearchDialog
     "search.title": "Поиск продуктов",
