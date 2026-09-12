@@ -9,7 +9,8 @@ import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
-import { searchCatalog } from "@/lib/productSearch";
+import { searchCatalog, normalizeProductText } from "@/lib/productSearch";
+import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 
 const CATEGORIES = [
   { id: "all", label: "הכל" },
@@ -46,8 +47,19 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [remoteProducts, setRemoteProducts] = useState([]);
+  const [remoteLoading, setRemoteLoading] = useState(false);
   const deferredQuery = useDeferredValue(query);
-  const results = useMemo(() => searchCatalog(allProducts, deferredQuery, selectedCategory, filterMode === "price"), [allProducts, deferredQuery, selectedCategory, filterMode]);
+  const searchableProducts = useMemo(() => {
+    const unique = new Map();
+    [...remoteProducts, ...allProducts].forEach(product => {
+      const key = `${normalizeProductText(product.name)}|${normalizeProductText(product.brand)}`;
+      if (!unique.has(key)) unique.set(key, product);
+    });
+    return [...unique.values()];
+  }, [allProducts, remoteProducts]);
+  const results = useMemo(() => searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price")
+    .filter(product => product.image_verified && product.image_url), [searchableProducts, deferredQuery, filterMode]);
 
   useEffect(() => {
     if (!open) return;
@@ -62,6 +74,19 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     })();
     return () => { cancelled = true; };
   }, [open]);
+
+  useEffect(() => {
+    const normalized = normalizeProductText(deferredQuery);
+    if (!open || normalized.length < 2) { setRemoteProducts([]); setRemoteLoading(false); return; }
+    let cancelled = false;
+    setRemoteLoading(true);
+    searchRemoteCatalog(normalized).then(products => {
+      if (!cancelled) setRemoteProducts(products);
+    }).finally(() => {
+      if (!cancelled) setRemoteLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [open, deferredQuery]);
 
   useEffect(() => {
     if (!open || loadingProducts || allProducts.length === 0) return;
@@ -113,7 +138,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -249,14 +274,14 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </div>
           )}
 
-          {loadingProducts && query && (
+          {remoteLoading && query && results.length === 0 && (
             <div className="flex items-center justify-center py-12 text-muted-foreground" role="status">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           )}
 
           {/* No results */}
-          {results.length === 0 && query && !loadingProducts && (
+          {results.length === 0 && query && !loadingProducts && !remoteLoading && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-14 h-14 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground text-base">{t("search.noResults")}</p>

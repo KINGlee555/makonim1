@@ -4,7 +4,7 @@ import { curatedProducts } from "@/lib/curatedProducts";
 import { getProductImageUrl } from "@/lib/productImages";
 import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
 
-const CACHE_KEY = "makonim-product-catalog-v3";
+const CACHE_KEY = "makonim-product-catalog-v4";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 const memoryCatalogs = new Map();
 const pendingLoads = new Map();
@@ -22,7 +22,10 @@ function buildCatalog(remoteProducts) {
   [...curatedProducts, ...israeliProducts, ...remoteProducts].forEach(product => {
     if (!product?.name || !product?.category || typeof product.price !== "number") return;
     const key = `${normalizeProductText(product.name)}|${normalizeProductText(product.brand)}`;
-    if (!unique.has(key)) unique.set(key, prepareProduct({ ...product, image_url: product.image_url || getProductImageUrl(product.name, product.category) }));
+    if (!unique.has(key)) {
+      const imageUrl = product.image_url || getProductImageUrl(product.name, product.category);
+      unique.set(key, prepareProduct({ ...product, image_url: imageUrl, image_verified: Boolean(product.image_verified || imageUrl) }));
+    }
   });
   return [...unique.values()];
 }
@@ -33,7 +36,7 @@ async function fetchCatalog(maxProducts) {
   const products = buildCatalog(remote);
   if (maxProducts >= 5000) {
     try {
-      const compact = products.map(({ name, category, brand, price, image_url, curated }) => ({ name, category, brand, price, image_url, curated }));
+      const compact = products.map(({ name, category, brand, price, image_url, image_verified, curated }) => ({ name, category, brand, price, image_url, image_verified, curated }));
       localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), products: compact }));
     } catch { /* storage limits must not block search */ }
   }

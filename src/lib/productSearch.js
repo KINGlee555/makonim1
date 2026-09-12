@@ -17,9 +17,14 @@ export function searchCatalog(products, query, category, byPrice) {
   if (!normalized) return [];
   const terms = normalized.split(" ");
   return products
-    .filter(product => (category === "all" || product.category === category) && terms.every(term => product._search.includes(term)))
-    .map(product => ({ product, score: product._name === normalized ? 0 : product._name.startsWith(normalized) ? 1 : product._name.includes(normalized) ? 2 : 3 }))
+    .filter(product => terms.every(term => product._search.includes(term)))
+    .map(product => {
+      const words = product._name.split(" ");
+      const startsWithWord = words.some(word => word.startsWith(normalized));
+      const score = product._name === normalized ? 0 : product._name.startsWith(normalized) ? 1 : startsWithWord ? 2 : product._name.includes(normalized) ? 3 : 4;
+      return { product, score };
+    })
     .sort((a, b) => a.score - b.score || (byPrice ? (a.product.price || Number.MAX_VALUE) - (b.product.price || Number.MAX_VALUE) : 0) || a.product.name.localeCompare(b.product.name, "he"))
-    .slice(0, 24)
+    .slice(0, 48)
     .map(entry => entry.product);
 }
