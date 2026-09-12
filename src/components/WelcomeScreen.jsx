@@ -32,6 +32,7 @@ export default function WelcomeScreen({ onNameSubmit }) {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             className="h-14 rounded-2xl text-lg text-center"
+            maxLength={64}
             autoFocus
           />
           <Button

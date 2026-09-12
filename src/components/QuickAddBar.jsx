@@ -5,7 +5,7 @@ export default function QuickAddBar({ onOpenSearch, onOpenScanner, onOpenVoice }
   const t = useT();
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
-      <div className="max-w-lg mx-auto px-4 pb-4 pt-2">
+      <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 pb-4 pt-2">
         <div className="pointer-events-auto flex gap-2 p-2 rounded-3xl bg-card/95 backdrop-blur-xl shadow-lg border border-border/50 animate-slide-up">
           <button
             onClick={onOpenSearch}

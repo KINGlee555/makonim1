@@ -9,7 +9,7 @@ export default function AppHeader({ rightAction, userName }) {
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50 shadow-sm animate-fade-in" role="banner">
-      <div className="max-w-lg mx-auto px-4 py-3">
+      <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-sm">

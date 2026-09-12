@@ -27,6 +27,7 @@ export default function CreateListDialog({ open, onOpenChange, onCreate }) {
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             className="h-14 rounded-xl text-lg"
+            maxLength={64}
             autoFocus
           />
           <Button

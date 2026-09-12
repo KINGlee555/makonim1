@@ -4,7 +4,8 @@
   "properties": {
     "title": {
       "type": "string",
-      "description": "\u05e9\u05dd \u05d4\u05e8\u05e9\u05d9\u05de\u05d4"
+      "description": "\u05e9\u05dd \u05d4\u05e8\u05e9\u05d9\u05de\u05d4",
+      "maxLength": 64
     },
     "shared_with": {
       "type": "array",

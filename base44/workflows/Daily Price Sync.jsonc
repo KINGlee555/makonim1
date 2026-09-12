@@ -1,0 +1,45 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_price_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_prices": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncPrices",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "\u05e1\u05e0\u05db\u05e8\u05d5\u05df \u05de\u05d7\u05d9\u05e8\u05d9\u05dd \u05d9\u05d5\u05de\u05d9",
+            "description": "\u05e2\u05d3\u05db\u05d5\u05df \u05de\u05d7\u05d9\u05e8\u05d9 \u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05de\u05d4\u05e1\u05d5\u05e4\u05e8\u05d9\u05dd"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 7 * * *",
+      "one_time_date": null,
+      "timezone": "Asia/Jerusalem",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Syncs product prices across Israeli supermarkets every day at 7 AM",
+  "name": "Daily Price Sync"
+}

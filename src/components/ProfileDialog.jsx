@@ -49,6 +49,7 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSave()}
             className="h-12 rounded-xl text-base"
+            maxLength={64}
             autoFocus
           />
           {forceName && !name.trim() && (

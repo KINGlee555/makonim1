@@ -231,7 +231,7 @@ export default function ListView() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
+        <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 space-y-4">
           <div className="h-12 rounded-2xl bg-muted shimmer" />
           <div className="h-20 rounded-2xl bg-muted shimmer" />
           <div className="space-y-2">
@@ -275,7 +275,7 @@ export default function ListView() {
         }
       />
 
-      <main className="max-w-lg mx-auto px-4 py-4">
+      <main className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4">
         <ConnectedUsers list={list} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
