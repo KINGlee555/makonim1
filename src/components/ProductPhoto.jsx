@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Package } from "lucide-react";
 import { getProductImageUrl } from "@/lib/productImages";
 
@@ -6,6 +6,11 @@ export default function ProductPhoto({ name, category, imageUrl, className = "" 
   const fallbackUrl = getProductImageUrl(name, category);
   const [src, setSrc] = useState(imageUrl || fallbackUrl || "");
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setSrc(imageUrl || fallbackUrl || "");
+    setFailed(false);
+  }, [imageUrl, fallbackUrl]);
 
   if (!src || failed) {
     return (
@@ -21,6 +26,7 @@ export default function ProductPhoto({ name, category, imageUrl, className = "" 
       alt={name}
       className={`object-cover ${className}`}
       loading="lazy"
+      decoding="async"
       onError={() => {
         if (src !== fallbackUrl && fallbackUrl) setSrc(fallbackUrl);
         else setFailed(true);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
@@ -9,6 +9,7 @@ import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
+import { searchCatalog } from "@/lib/productSearch";
 
 const CATEGORIES = [
   { id: "all", label: "הכל" },
@@ -36,7 +37,6 @@ function getSimulatedStores(productName, userLocation) {
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, favorites = [], onToggleFavorite }) {
   const t = useT();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
   const [addedIds, setAddedIds] = useState(new Set());
   const [filterMode, setFilterMode] = useState("price");
   const [userLocation, setUserLocation] = useState(null);
@@ -46,6 +46,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const deferredQuery = useDeferredValue(query);
+  const results = useMemo(() => searchCatalog(allProducts, deferredQuery, selectedCategory, filterMode === "price"), [allProducts, deferredQuery, selectedCategory, filterMode]);
 
   useEffect(() => {
     if (!open) return;
@@ -89,38 +91,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     return () => { cancelled = true; };
   }, [open, allProducts, loadingProducts]);
 
-  const handleVoiceResult = (text) => { setQuery(text); handleSearch(text); };
-
-  const handleSearch = (value) => {
-    const q = value !== undefined ? value : query;
-    if (!q.trim()) { setResults([]); return; }
-    const ql = q.trim().toLowerCase();
-    let res = allProducts.filter(p => {
-      const matches = p.name.toLowerCase().includes(ql) || p.category.toLowerCase().includes(ql) || (p.brand || "").toLowerCase().includes(ql);
-      const catMatch = selectedCategory === "all" || p.category === selectedCategory;
-      return matches && catMatch;
-    }).slice(0, 20);
-    if (filterMode === "price") res = [...res].sort((a, b) => a.price - b.price);
-    setResults(res);
-  };
-
-  useEffect(() => {
-    if (open && query.trim() && allProducts.length > 0) handleSearch(query);
-  }, [allProducts]);
-
-  const handleCategoryChange = (cat) => {
-    setSelectedCategory(cat);
-    if (query.trim()) {
-      const ql = query.trim().toLowerCase();
-      let res = allProducts.filter(p => {
-        const matches = p.name.toLowerCase().includes(ql) || p.category.toLowerCase().includes(ql) || (p.brand || "").toLowerCase().includes(ql);
-        const catMatch = cat === "all" || p.category === cat;
-        return matches && catMatch;
-      }).slice(0, 20);
-      if (filterMode === "price") res = [...res].sort((a, b) => a.price - b.price);
-      setResults(res);
-    }
-  };
+  const handleVoiceResult = (text) => setQuery(text);
+  const handleCategoryChange = (category) => setSelectedCategory(category);
 
   const requestLocation = () => {
     if (!navigator.geolocation) { setLocationError(t("search.locationUnsupported")); return; }
@@ -133,15 +105,15 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   };
 
   const handleFilterChange = (mode) => {
-    if (mode === "location" && !userLocation) { requestLocation(); } else { setFilterMode(mode); }
-    if (results.length > 0) { let res = [...results]; if (mode === "price") res.sort((a, b) => a.price - b.price); setResults(res); }
+    if (mode === "location" && !userLocation) requestLocation();
+    else setFilterMode(mode);
   };
 
   const handleAdd = (product) => { onAddProduct(product); setAddedIds(prev => new Set([...prev, product.name])); };
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setResults([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); }
+    if (!val) { setQuery(""); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -179,7 +151,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
         <div className="p-2.5">
           <p className="text-sm font-semibold text-foreground line-clamp-1">{product.name}</p>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-sm font-bold text-primary">₪{product.price.toFixed(2)}</span>
+            <span className="text-sm font-bold text-primary">{product.price > 0 ? `₪${product.price.toFixed(2)}` : "מחיר לא זמין"}</span>
             {product.brand && <span className="text-xs text-muted-foreground truncate max-w-[60%]">{product.brand}</span>}
           </div>
         </div>
@@ -200,7 +172,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
         <div className="px-5 space-y-3">
           <div className="flex gap-2">
             <Input placeholder={t("search.placeholder")} value={query}
-              onChange={(e) => { setQuery(e.target.value); handleSearch(e.target.value); }}
+              onChange={(e) => setQuery(e.target.value)}
               className="h-12 rounded-2xl text-base border-2 border-primary/20 focus-visible:border-primary" autoFocus />
             <VoiceSearchButton onResult={handleVoiceResult} />
           </div>

@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Mic, Square, Plus, Check, MapPin, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { getProductEmoji } from "@/lib/productEmoji";
+import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/components/ui/use-toast";
 
@@ -193,7 +193,7 @@ export default function VoiceQuickAdd({ open, onOpenChange, onAddProduct, allPro
                 const isAdded = addedNames.has(item.parsedName);
                 return (
                   <div key={idx} className={`rounded-2xl border p-3 flex items-center gap-3 ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}>
-                    <span className="text-2xl">{getProductEmoji(item.name, item.category)}</span>
+                    <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} className="h-11 w-11 flex-shrink-0 rounded-xl" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-foreground line-clamp-1">{item.name}</p>
                       {item.store && (

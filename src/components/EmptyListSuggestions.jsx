@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Sparkles, Plus, Check } from "lucide-react";
-import { getProductEmoji } from "@/lib/productEmoji";
-import { getProductImageUrl } from "@/lib/productImages";
+import ProductPhoto from "@/components/ProductPhoto";
 import { essentialProductNames } from "@/lib/essentialProducts";
 
 export default function EmptyListSuggestions({ onAddProduct }) {
@@ -68,8 +67,6 @@ export default function EmptyListSuggestions({ onAddProduct }) {
       <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x scrollbar-hide">
         {suggestions.map((product, idx) => {
           const isAdded = addedNames.has(product.name);
-          const emoji = getProductEmoji(product.name, product.category);
-          const imgUrl = getProductImageUrl(product.name, product.category);
           return (
             <button
               key={product.name}
@@ -81,12 +78,7 @@ export default function EmptyListSuggestions({ onAddProduct }) {
             >
               {/* Full-bleed image with floating price badge */}
               <div className="relative w-full h-[120px] bg-muted overflow-hidden">
-                {imgUrl ? (
-                  <img src={imgUrl} alt={product.name} className="w-full h-full object-cover"
-                    onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:40px">${emoji}</span>`; }} />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl">{emoji}</div>
-                )}
+                <ProductPhoto name={product.name} category={product.category} imageUrl={product.image_url} className="h-full w-full" />
                 {/* Price badge floating on image */}
                 <div className="absolute bottom-2 right-2 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
                   ₪{product.price.toFixed(2)}

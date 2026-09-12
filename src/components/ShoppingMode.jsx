@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Check, SkipForward, ShoppingBag, Maximize2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
-import { getProductEmoji } from "@/lib/productEmoji";
+import ProductPhoto from "@/components/ProductPhoto";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 
@@ -93,7 +93,6 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
   }
 
   const item = items[index];
-  const emoji = getProductEmoji(item.name, item.category);
   const progress = (index / items.length) * 100;
 
   return (
@@ -126,13 +125,7 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
             }}
             className="w-full max-w-sm bg-card border-2 border-border rounded-3xl p-8 shadow-lg cursor-grab active:cursor-grabbing select-none"
           >
-            <div className="w-32 h-32 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-6 overflow-hidden">
-              {item.image_url ? (
-                <img src={item.image_url} alt={item.name} className="w-full h-full object-cover rounded-2xl" />
-              ) : (
-                <span className="text-6xl">{emoji}</span>
-              )}
-            </div>
+            <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} className="mx-auto mb-6 h-32 w-32 rounded-2xl" />
             <h2 className="text-2xl font-bold text-center text-foreground mb-2">{item.name}</h2>
             {item.category && <p className="text-center text-muted-foreground mb-4">{item.category}</p>}
             <div className="flex items-center justify-center gap-4 mb-2">
