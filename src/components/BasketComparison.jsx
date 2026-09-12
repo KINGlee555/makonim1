@@ -3,22 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Crown, Store, TrendingDown } from "lucide-react";
 import { useT } from "@/lib/i18n";
-
-const CHAINS = [
-  { name: "שופרסל", color: "bg-red-100 text-red-700" },
-  { name: "רמי לוי", color: "bg-green-100 text-green-700" },
-  { name: "מגא בול", color: "bg-blue-100 text-blue-700" },
-  { name: "יוחננוף", color: "bg-orange-100 text-orange-700" },
-  { name: "ויקטורי", color: "bg-purple-100 text-purple-700" },
-  { name: "קשת טעמים", color: "bg-yellow-100 text-yellow-700" },
-  { name: "חצי חינם", color: "bg-pink-100 text-pink-700" },
-];
-
-function getSimulatedPrice(productName, basePrice, chainIndex) {
-  const seed = productName.charCodeAt(0) + productName.charCodeAt(productName.length - 1) + chainIndex * 13;
-  const variation = ((seed % 30) - 15) / 100;
-  return basePrice * (1 + variation);
-}
+import { CHAINS, getSimulatedPrice } from "@/lib/chainPrices";
 
 export default function BasketComparison({ open, onOpenChange, items }) {
   const t = useT();

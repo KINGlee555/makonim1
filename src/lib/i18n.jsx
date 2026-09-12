@@ -359,6 +359,15 @@ const translations = {
     // Smart suggestions
     "smart.title": "הצעות חכמות",
     "smart.forgotHint": "שכחת משהו? קנית בעבר את הפריטים האלה",
+    "compare.open": "השוואת מחירים",
+    "compare.title": "השוואת מחירים בין רשתות",
+    "compare.product": "מוצר",
+    "compare.cheapestChain": "הזול ביותר",
+    "compare.priciest": "היקר ביותר",
+    "compare.diff": "הפרש",
+    "compare.total": "סה״כ",
+    "compare.potentialSaving": "אפשר לחסוך עד",
+    "compare.empty": "הוסיפו מוצרים עם מחיר כדי להשוות",
 
     // Shopping route
     "route.title": "מסלול",
@@ -791,6 +800,15 @@ const translations = {
     // Smart suggestions
     "smart.title": "Smart Suggestions",
     "smart.forgotHint": "Forgot something? You've bought these before",
+    "compare.open": "Compare prices",
+    "compare.title": "Price comparison between chains",
+    "compare.product": "Product",
+    "compare.cheapestChain": "Cheapest",
+    "compare.priciest": "Most expensive",
+    "compare.diff": "Difference",
+    "compare.total": "Total",
+    "compare.potentialSaving": "You could save up to",
+    "compare.empty": "Add products with prices to compare",
 
     // Shopping route
     "route.title": "Route",
@@ -1141,6 +1159,15 @@ const translations = {
     // Smart suggestions
     "smart.title": "Умные подсказки",
     "smart.forgotHint": "Что-то забыли? Вы покупали это раньше",
+    "compare.open": "Сравнить цены",
+    "compare.title": "Сравнение цен по сетям",
+    "compare.product": "Товар",
+    "compare.cheapestChain": "Дешевле всего",
+    "compare.priciest": "Дороже всего",
+    "compare.diff": "Разница",
+    "compare.total": "Итого",
+    "compare.potentialSaving": "Можно сэкономить до",
+    "compare.empty": "Добавьте товары с ценами для сравнения",
     "list.moreFeatures": "Ещё инструменты",
 
     // Shopping route

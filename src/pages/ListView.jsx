@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil, ClipboardList } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil, ClipboardList, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -21,6 +21,7 @@ import { useT } from "@/lib/i18n";
 import { getProductEmoji } from "@/lib/productEmoji";
 import ShoppingMode from "../components/ShoppingMode";
 import BasketComparison from "../components/BasketComparison";
+import PriceCompareTable from "../components/PriceCompareTable";
 import ListTemplates from "../components/ListTemplates";
 import BarcodeScanner from "../components/BarcodeScanner";
 import RecurringItems from "../components/RecurringItems";
@@ -57,6 +58,7 @@ export default function ListView() {
   const [navigateProduct, setNavigateProduct] = useState(null);
   const [showShoppingMode, setShowShoppingMode] = useState(false);
   const [showBasket, setShowBasket] = useState(false);
+  const [showPriceCompare, setShowPriceCompare] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showRename, setShowRename] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
@@ -376,6 +378,11 @@ export default function ListView() {
           <ClipboardList className="me-2 h-5 w-5" />{t("templates.open")}
         </Button>
 
+        <Button onClick={() => setShowPriceCompare(true)}
+          className="mb-4 h-12 w-full rounded-2xl bg-primary text-base font-bold text-primary-foreground shadow-sm">
+          <Scale className="me-2 h-5 w-5" />{t("compare.open")}
+        </Button>
+
         <ConnectedUsers list={list} />
 
         <FavoritesSection favorites={favorites} onAdd={handleAddProduct} onRemove={handleToggleFavorite} />
@@ -505,6 +512,7 @@ export default function ListView() {
           userName={currentUserNameRef.current} listId={listId} />
       )}
       <BasketComparison open={showBasket} onOpenChange={setShowBasket} items={pendingItems} />
+      <PriceCompareTable open={showPriceCompare} onOpenChange={setShowPriceCompare} items={pendingItems} />
       <ListTemplates open={showTemplates} onOpenChange={setShowTemplates} listId={listId} allProducts={allProducts} onAdded={loadData} />
       <BarcodeScanner open={showScanner} onOpenChange={setShowScanner} onDetected={() => { setShowScanner(false); setShowSearch(true); }} />
       <ShoppingRoute open={showRoute} onOpenChange={setShowRoute} items={pendingItems} />
