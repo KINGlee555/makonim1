@@ -33,6 +33,8 @@ import CouponsDeals from "../components/CouponsDeals";
 import VoiceQuickAdd from "../components/VoiceQuickAdd";
 import FeatureMenu from "../components/FeatureMenu";
 import EmptyListSuggestions from "../components/EmptyListSuggestions";
+import ItemDetailsDialog from "../components/ItemDetailsDialog";
+import UnavailableItem from "../components/UnavailableItem";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -59,6 +61,7 @@ export default function ListView() {
   const [removingIds, setRemovingIds] = useState(new Set());
   const [refreshing, setRefreshing] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
+  const [editingItem, setEditingItem] = useState(null);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
   const itemsRef = useRef([]);
@@ -168,19 +171,34 @@ export default function ListView() {
     base44.entities.ListItem.update(item.id, { quantity: qty }).catch(() => {});
   }, []);
 
+  const handleUpdateDetails = useCallback((item, details) => {
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...details } : i));
+    base44.entities.ListItem.update(item.id, details).catch(() => {});
+  }, []);
+
+  const handleUnavailable = useCallback((item) => {
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: "unavailable" } : i));
+    base44.entities.ListItem.update(item.id, { status: "unavailable" }).catch(() => {});
+  }, []);
+
+  const handleRestore = useCallback((item) => {
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: "pending" } : i));
+    base44.entities.ListItem.update(item.id, { status: "pending" }).catch(() => {});
+  }, []);
+
   const handleAddProduct = useCallback(async (product) => {
     // Prevent duplicates: if item already exists, increment quantity
-    const existing = itemsRef.current.find(i => i.name === product.name && i.status === "pending");
+    const existing = itemsRef.current.find(i => i.name === product.name && i.status !== "bought");
     if (existing) {
       const newQty = (existing.quantity || 1) + 1;
-      setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty } : i));
-      base44.entities.ListItem.update(existing.id, { quantity: newQty }).catch(() => {});
+      setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty, status: "pending" } : i));
+      base44.entities.ListItem.update(existing.id, { quantity: newQty, status: "pending" }).catch(() => {});
       return;
     }
     const newItem = await base44.entities.ListItem.create({
       list_id: listId, name: product.name, price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
-      status: "pending", quantity: 1
+      status: "pending", quantity: 1, unit: "unit", note: ""
     });
     setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
   }, [listId]);
@@ -254,7 +272,8 @@ export default function ListView() {
     );
   }
 
-  const pendingItems = items.filter(i => i.status !== "bought");
+  const pendingItems = items.filter(i => !i.status || i.status === "pending");
+  const unavailableItems = items.filter(i => i.status === "unavailable");
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -363,6 +382,7 @@ export default function ListView() {
                         {catItems.map(item => (
                           <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
                             onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                            onEdit={setEditingItem} onUnavailable={handleUnavailable}
                             className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                         ))}
                       </div>
@@ -371,6 +391,7 @@ export default function ListView() {
                 : pendingItems.map(item => (
                   <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
                     onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                    onEdit={setEditingItem} onUnavailable={handleUnavailable}
                     className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                 ))
               }
@@ -378,7 +399,14 @@ export default function ListView() {
           </>
         )}
 
-        {pendingItems.length === 0 && (
+        {unavailableItems.length > 0 && (
+          <section className="mb-6 space-y-2 animate-fade-in">
+            <h2 className="px-1 text-lg font-bold text-muted-foreground">{t("list.unavailable")}</h2>
+            {unavailableItems.map(item => <UnavailableItem key={item.id} item={item} onRestore={handleRestore} />)}
+          </section>
+        )}
+
+        {pendingItems.length === 0 && unavailableItems.length === 0 && (
           <div className="py-4 animate-fade-in">
             <EmptyListSuggestions onAddProduct={handleAddProduct} />
             <div className="text-center py-12">
@@ -401,6 +429,7 @@ export default function ListView() {
       <ProfileDialog open={showProfile} onOpenChange={setShowProfile} currentUser={currentUserRef[0]} onNameUpdated={handleNameUpdated} forceName={!currentUserRef[0]?.full_name} />
       <SettingsDialog open={showSettings} onOpenChange={setShowSettings} list={list} />
       <NavigateToStoreDialog open={!!navigateProduct} onOpenChange={(v) => !v && setNavigateProduct(null)} product={navigateProduct} />
+      <ItemDetailsDialog item={editingItem} onClose={() => setEditingItem(null)} onSave={handleUpdateDetails} />
 
       {showShoppingMode && (
         <ShoppingMode items={pendingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}

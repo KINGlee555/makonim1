@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { Plus, Minus, MapPin, Check } from "lucide-react";
+import { Plus, Minus, MapPin, Check, Pencil, CircleSlash2 } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 
-function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, className }) {
+function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onUnavailable, className }) {
   const t = useT();
   return (
     <article className={`group grid grid-cols-[5rem_minmax(0,1fr)] gap-3 rounded-xl border border-primary/10 bg-card p-2.5 shadow-sm transition-shadow hover:shadow-md animate-slide-up ${className || ""}`}>
@@ -25,7 +25,8 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h3 className="truncate text-base font-bold text-foreground">{item.name}</h3>
-            <p className="text-sm text-muted-foreground">{item.category || ""}</p>
+            <p className="text-sm text-muted-foreground">{item.category || ""} · {t(`unit.${item.unit || "unit"}`)}</p>
+            {item.note && <p className="mt-0.5 truncate text-xs font-medium text-primary">{item.note}</p>}
           </div>
           {item.price > 0 && <span className="whitespace-nowrap text-base font-bold text-foreground">₪{Number(item.price).toFixed(2)}</span>}
         </div>
@@ -44,6 +45,10 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
             <Check className="h-4 w-4" />
             {t("productItem.bought")}
           </button>
+        </div>
+        <div className="mt-1.5 flex justify-end gap-4">
+          <button onClick={() => onEdit(item)} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><Pencil className="h-3.5 w-3.5" />{t("productItem.edit")}</button>
+          <button onClick={() => onUnavailable(item)} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><CircleSlash2 className="h-3.5 w-3.5" />{t("productItem.notFound")}</button>
         </div>
       </div>
     </article>
