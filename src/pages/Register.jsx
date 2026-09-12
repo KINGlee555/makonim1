@@ -59,7 +59,7 @@ export default function Register() {
             </InputOTPGroup>
           </InputOTP>
         </div>
-        <Button className="w-full h-12 font-medium" onClick={handleVerify} disabled={loading || otpCode.length < 6}>
+        <Button className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-primary/20" onClick={handleVerify} disabled={loading || otpCode.length < 6}>
           {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("auth.register.verifying")}</>) : t("auth.register.verify")}
         </Button>
         <p className="text-center text-sm text-muted-foreground mt-4">
@@ -88,17 +88,17 @@ export default function Register() {
           <Label htmlFor="email">{t("auth.register.email")}</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-            <Input id="email" type="email" autoComplete="email" autoFocus placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
+            <Input id="email" type="email" autoComplete="email" autoFocus placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12 rounded-xl border-primary/15 bg-secondary/20" required />
           </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">{t("auth.register.password")}</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-            <Input id="password" type="password" autoComplete="new-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12" required />
+            <Input id="password" type="password" autoComplete="new-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12 rounded-xl border-primary/15 bg-secondary/20" required />
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-primary/20" disabled={loading}>
           {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("auth.register.loading")}</>) : t("auth.register.submit")}
         </Button>
       </form>

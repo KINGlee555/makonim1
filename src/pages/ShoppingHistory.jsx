@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import { getProductEmoji } from "@/lib/productEmoji";
+import ProductPhoto from "@/components/ProductPhoto";
 import AppFooter from "../components/AppFooter";
 import ReceiptScanner from "../components/ReceiptScanner";
 import { useT } from "@/lib/i18n";
@@ -43,8 +43,8 @@ export default function ShoppingHistory() {
           </Button>
         }
       />
-      <main className="max-w-lg mx-auto px-4 py-4">
-        <div className="flex items-center justify-between mb-4">
+      <main className="responsive-container mx-auto px-4 py-6 sm:py-8">
+        <div className="flex items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-1">{t("history.title")}</h1>
             <p className="text-muted-foreground">{t("history.desc")}</p>
@@ -52,7 +52,7 @@ export default function ShoppingHistory() {
           <ReceiptScanner listId={listId} onScanned={loadHistory} />
         </div>
 
-        <div className="bg-primary/10 rounded-2xl p-4 mb-6 flex items-center justify-between">
+        <div className="bg-card border border-primary/15 rounded-3xl p-5 mb-7 flex items-center justify-between shadow-lg shadow-primary/10">
           <div>
             <p className="text-sm text-muted-foreground">{t("history.totalExpenses")}</p>
             <p className="text-2xl font-bold text-primary">₪{totalSpent.toFixed(2)}</p>
@@ -82,10 +82,8 @@ export default function ShoppingHistory() {
                 <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-2">{date}</h3>
                 <div className="space-y-2">
                   {items.map(r => (
-                    <div key={r.id} className="flex items-center gap-3 bg-card border border-border rounded-2xl p-3">
-                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">{getProductEmoji(r.item_name, r.category)}</span>
-                      </div>
+                    <div key={r.id} className="flex items-center gap-3 bg-card border border-primary/10 rounded-2xl p-3 shadow-sm">
+                      <ProductPhoto name={r.item_name} category={r.category} className="w-12 h-12 rounded-xl flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-foreground truncate">{r.item_name}</p>
                         <p className="text-xs text-muted-foreground">

@@ -16,7 +16,7 @@ export default function CreateListDialog({ open, onOpenChange, onCreate }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md mx-auto" dir="rtl">
+      <DialogContent className="max-w-md mx-auto rounded-3xl border-primary/15 p-6 shadow-2xl" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-xl text-right">רשימה חדשה</DialogTitle>
         </DialogHeader>
@@ -26,13 +26,13 @@ export default function CreateListDialog({ open, onOpenChange, onCreate }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-            className="h-14 rounded-xl text-lg"
+            className="h-14 rounded-2xl border-primary/20 bg-secondary/30 text-lg"
             maxLength={64}
             autoFocus
           />
           <Button
             onClick={handleCreate}
-            className="w-full h-14 rounded-xl text-lg font-semibold"
+            className="w-full h-14 rounded-2xl text-lg font-semibold shadow-lg shadow-primary/20"
             disabled={!title.trim()}
           >
             <Plus className="w-5 h-5 ml-2" />

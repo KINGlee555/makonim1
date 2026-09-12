@@ -72,9 +72,10 @@ export default function JoinList() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="text-center max-w-sm">
-        <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mx-auto mb-6">
+    <div className="min-h-screen bg-secondary/30 px-4 py-10">
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+        <div className="text-center w-full max-w-md bg-card border border-primary/15 rounded-3xl p-8 shadow-xl shadow-primary/10">
+        <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/20">
           <ShoppingCart className="w-10 h-10 text-primary-foreground" />
         </div>
 
@@ -127,6 +128,7 @@ export default function JoinList() {
             </Button>
           </>
         )}
+        </div>
       </div>
       <AppFooter />
     </div>

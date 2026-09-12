@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import { ArrowRight, BarChart3 } from "lucide-react";
-import { getProductEmoji } from "@/lib/productEmoji";
+import ProductPhoto from "@/components/ProductPhoto";
 import AppFooter from "../components/AppFooter";
 import { useT } from "@/lib/i18n";
 import PriceHistoryChart from "../components/PriceHistoryChart";
@@ -63,7 +63,7 @@ export default function ShoppingSummary() {
           </Button>
         }
       />
-      <main className="max-w-lg mx-auto px-4 py-4">
+      <main className="responsive-container mx-auto px-4 py-6 sm:py-8">
         <h1 className="text-2xl font-bold text-foreground mb-1">{t("summary.title")}</h1>
         <p className="text-muted-foreground mb-4">{t("summary.desc")}</p>
 
@@ -81,18 +81,18 @@ export default function ShoppingSummary() {
           </div>
         ) : (
           <>
-            <div className="bg-primary text-primary-foreground rounded-2xl p-5 mb-6">
+            <div className="bg-primary text-primary-foreground rounded-3xl p-6 mb-7 shadow-xl shadow-primary/20">
               <p className="text-sm opacity-90">{t("summary.totalSpent")}</p>
               <p className="text-4xl font-bold">₪{totalSpent.toFixed(2)}</p>
               <p className="text-sm opacity-90 mt-1">{records.length} {t("summary.itemsBought")}</p>
             </div>
 
             <h3 className="text-lg font-semibold text-foreground mb-3">{t("summary.byCategory")}</h3>
-            <div className="space-y-3 mb-6">
+            <div className="space-y-3 mb-6 bg-card border border-primary/10 rounded-3xl p-5 shadow-sm">
               {categories.map(([cat, data]) => (
                 <div key={cat}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-foreground">{getProductEmoji("", cat)} {cat}</span>
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <span className="flex items-center gap-2 text-sm font-medium text-foreground"><ProductPhoto name="" category={cat} className="w-8 h-8 rounded-lg" />{cat}</span>
                     <span className="text-sm font-semibold text-primary">₪{data.total.toFixed(2)}</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -108,7 +108,7 @@ export default function ShoppingSummary() {
                 <h3 className="text-lg font-semibold text-foreground mb-3">{t("summary.byBuyer")}</h3>
                 <div className="space-y-2">
                   {buyers.map(([buyer, data]) => (
-                    <div key={buyer} className="flex items-center justify-between bg-card border border-border rounded-2xl p-3">
+                    <div key={buyer} className="flex items-center justify-between bg-card border border-primary/10 rounded-2xl p-4 shadow-sm">
                       <div>
                         <p className="font-medium text-foreground">{buyer}</p>
                         <p className="text-xs text-muted-foreground">{data.count} {t("summary.items")}</p>
@@ -122,12 +122,12 @@ export default function ShoppingSummary() {
 
             <h3 className="text-lg font-semibold text-foreground mb-3 mt-6">{t("weekly.title")}</h3>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-card border border-border rounded-2xl p-4">
+              <div className="bg-card border border-primary/10 rounded-2xl p-4 shadow-sm">
                 <p className="text-sm text-muted-foreground">{t("weekly.thisWeek")}</p>
                 <p className="text-2xl font-bold text-primary">₪{thisWeekTotal.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">{thisWeekRecords.length} {t("weekly.items")}</p>
               </div>
-              <div className="bg-card border border-border rounded-2xl p-4">
+              <div className="bg-card border border-primary/10 rounded-2xl p-4 shadow-sm">
                 <p className="text-sm text-muted-foreground">{t("weekly.lastWeek")}</p>
                 <p className="text-2xl font-bold text-foreground">₪{lastWeekTotal.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">{lastWeekRecords.length} {t("weekly.items")}</p>

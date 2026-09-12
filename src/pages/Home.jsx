@@ -60,12 +60,12 @@ export default function Home() {
   if (status === "welcome") return <WelcomeScreen onNameSubmit={handleNameSubmit} />;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-secondary/30">
+      <div className="text-center bg-card border border-primary/15 rounded-3xl px-12 py-10 shadow-xl shadow-primary/10">
+        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
           <ShoppingCart className="w-8 h-8 text-primary-foreground animate-pulse" />
         </div>
-        <p className="text-lg text-muted-foreground">{t("app.loading")}</p>
+        <p className="text-lg font-medium text-muted-foreground">{t("app.loading")}</p>
       </div>
     </div>
   );

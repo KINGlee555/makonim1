@@ -30,7 +30,7 @@ export default function PriceHistoryChart({ records }) {
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-4">
+    <div className="bg-card border border-primary/10 rounded-3xl p-4 shadow-sm">
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={chartData}>
           <XAxis dataKey="date" tick={{ fontSize: 11 }} />

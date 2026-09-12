@@ -6,7 +6,7 @@ export default function ListCard({ list, itemCount, boughtCount }) {
   
   return (
     <Link to={`/list/${list.id}`} className="block">
-      <div className="bg-card rounded-2xl border border-border p-5 hover:shadow-lg transition-all duration-300 active:scale-[0.98]">
+      <div className="bg-card rounded-3xl border border-primary/10 p-5 shadow-sm hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 active:scale-[0.98]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
