@@ -32,6 +32,9 @@ import Leaderboard from "../components/Leaderboard";
 import CouponsDeals from "../components/CouponsDeals";
 import VoiceQuickAdd from "../components/VoiceQuickAdd";
 import FeatureMenu from "../components/FeatureMenu";
+import DealCalculator from "../components/DealCalculator";
+import CategoryOrderDialog from "../components/CategoryOrderDialog";
+import { loadCategoryOrder, sortByCategoryOrder } from "@/lib/categoryOrder";
 import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import UnavailableItem from "../components/UnavailableItem";
@@ -64,6 +67,9 @@ export default function ListView() {
   const [showDeals, setShowDeals] = useState(false);
   const [showVoice, setShowVoice] = useState(false);
   const [groupByCategory, setGroupByCategory] = useState(true);
+  const [showDealCalculator, setShowDealCalculator] = useState(false);
+  const [showCategoryOrder, setShowCategoryOrder] = useState(false);
+  const [categoryOrder, setCategoryOrder] = useState(loadCategoryOrder);
   const [removingIds, setRemovingIds] = useState(new Set());
   const [refreshing, setRefreshing] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
@@ -405,6 +411,8 @@ export default function ListView() {
                 onOpenSplit={() => setShowSplit(true)}
                 onOpenLeaderboard={() => setShowLeaderboard(true)}
                 onOpenVoice={() => setShowVoice(true)}
+                onOpenDealCalculator={() => setShowDealCalculator(true)}
+                onOpenCategoryOrder={() => setShowCategoryOrder(true)}
               />
             </div>
 
@@ -422,7 +430,10 @@ export default function ListView() {
                       groups[cat].push(item);
                       return groups;
                     }, {})
-                  ).map(([cat, catItems]) => (
+                  ).sort(([a], [b]) => {
+                    const sorted = sortByCategoryOrder([a, b], categoryOrder);
+                    return sorted[0] === a ? -1 : 1;
+                  }).map(([cat, catItems]) => (
                     <section key={cat}>
                       <div className="category-header flex items-end justify-between gap-3 px-1 pb-2 border-b border-primary/10 mb-2">
                         <div>
@@ -501,6 +512,8 @@ export default function ListView() {
       <CostSplitter open={showSplit} onOpenChange={setShowSplit} listId={listId} list={list} />
       <Leaderboard open={showLeaderboard} onOpenChange={setShowLeaderboard} listId={listId} />
       <CouponsDeals open={showDeals} onOpenChange={setShowDeals} items={pendingItems} />
+      <DealCalculator open={showDealCalculator} onOpenChange={setShowDealCalculator} />
+      <CategoryOrderDialog open={showCategoryOrder} onOpenChange={setShowCategoryOrder} onSaved={setCategoryOrder} />
       <VoiceQuickAdd open={showVoice} onOpenChange={setShowVoice} onAddProduct={handleAddProduct} allProducts={allProducts} />
     </div>
   );

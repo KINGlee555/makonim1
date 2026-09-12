@@ -1,9 +1,9 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic } from "lucide-react";
+import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice }) {
+export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder }) {
   const t = useT();
 
   const features = [
@@ -16,6 +16,8 @@ export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScann
     { icon: Receipt, label: t("split.title"), onClick: onOpenSplit, color: "text-teal-500" },
     { icon: Trophy, label: t("leaderboard.title"), onClick: onOpenLeaderboard, color: "text-amber-500" },
     { icon: Mic, label: t("voice.title"), onClick: onOpenVoice, color: "text-pink-500" },
+    { icon: Calculator, label: "מחשבון מבצעים", onClick: onOpenDealCalculator, color: "text-emerald-600" },
+    { icon: ArrowUpDown, label: "סדר המחלקות", onClick: onOpenCategoryOrder, color: "text-indigo-500" },
   ];
 
   return (
