@@ -88,7 +88,7 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
           {/* Proximity Share — AirDrop / Nearby Share */}
           <button
             onClick={handleProximityShare}
-            className="w-full flex items-center gap-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-2xl p-4 shadow-sm hover:shadow-md transition-all active:scale-95"
+            className="mx-auto flex w-full max-w-sm items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-4 text-primary-foreground shadow-sm hover:shadow-md transition-all active:scale-95"
           >
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
               <Radio className="w-5 h-5" />

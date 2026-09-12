@@ -98,20 +98,20 @@ export default function ConnectedUsersDialog({ open, onOpenChange, list }) {
             {/* Proximity share button */}
             <button
               onClick={handleProximityShare}
-              className="w-full flex items-center gap-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-2xl p-3 shadow-sm hover:shadow-md transition-all active:scale-95 mb-2"
+              className="mx-auto mb-2 flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-3 text-primary-foreground shadow-sm hover:shadow-md transition-all active:scale-95"
             >
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                 <Radio className="w-4 h-4" />
               </div>
-              <span className="font-bold text-sm flex-1 text-start">{t("share.proximity")}</span>
+              <span className="text-center text-sm font-bold">{t("share.proximity")}</span>
             </button>
-            <div className="flex gap-2">
-              <div className="flex-1 min-w-0 px-3 py-2.5 bg-muted rounded-xl text-sm text-muted-foreground truncate">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+              <div className="min-w-0 truncate rounded-xl bg-muted px-3 py-2.5 text-sm text-muted-foreground">
                 {shareUrl}
               </div>
-              <Button onClick={handleCopyLink} className="rounded-xl flex-shrink-0">
+              <Button onClick={handleCopyLink} className="h-10 flex-shrink-0 rounded-xl px-3 text-xs">
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {copied ? t("share.copied") : t("share.copy")}
+                <span className="hidden sm:inline">{copied ? t("share.copied") : t("share.copy")}</span>
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2">{t("users.inviteDesc")}</p>

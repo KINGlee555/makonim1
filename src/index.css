@@ -83,10 +83,17 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-background text-foreground font-rubik antialiased;
+    width: 100%;
+    max-width: 100%;
     -webkit-tap-highlight-color: transparent;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   /* Smooth scrolling */
@@ -336,6 +343,32 @@ html.dark.easy-mode {
 /* Ensure all text in dialog sections is fully visible */
 [role="dialog"] .dialog-section {
   overflow: hidden;
+}
+
+/* Keep dialog text compact enough for narrow screens, including Easy Mode */
+html.easy-mode [role="dialog"] {
+  font-size: 1rem;
+}
+
+html.easy-mode [role="dialog"] button,
+html.easy-mode [role="dialog"] .text-sm {
+  font-size: 0.875rem;
+}
+
+html.easy-mode [role="dialog"] .text-xs {
+  font-size: 0.75rem;
+}
+
+html.easy-mode [role="dialog"] .text-base {
+  font-size: 1rem;
+}
+
+html.easy-mode [role="dialog"] .text-lg {
+  font-size: 1.125rem;
+}
+
+html.easy-mode [role="dialog"] .text-xl {
+  font-size: 1.25rem;
 }
 
 /* Responsive container — wider on tablet/desktop */
