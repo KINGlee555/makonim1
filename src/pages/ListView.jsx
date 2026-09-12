@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -37,6 +37,8 @@ import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import FavoritesSection from "../components/FavoritesSection";
 import NearbyDeals from "../components/NearbyDeals";
+import RenameListDialog from "../components/RenameListDialog";
+import RegisteredUsersCount from "../components/RegisteredUsersCount";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 
 export default function ListView() {
@@ -53,6 +55,7 @@ export default function ListView() {
   const [showShoppingMode, setShowShoppingMode] = useState(false);
   const [showBasket, setShowBasket] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showRename, setShowRename] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRoute, setShowRoute] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -347,7 +350,11 @@ export default function ListView() {
             <div className="h-full w-full rounded-full bg-primary/35" />
           </div>
           <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground truncate">{list.title}</p>
+            <button onClick={() => setShowRename(true)} title={t("rename.button")}
+              className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-muted-foreground">
+              <span className="truncate">{list.title}</span>
+              <Pencil className="h-4 w-4 flex-shrink-0 text-primary" />
+            </button>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button onClick={handleRefresh} className="h-9 min-w-16 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm flex items-center justify-center gap-1.5">
                 <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
@@ -357,6 +364,11 @@ export default function ListView() {
             </div>
           </div>
         </section>
+
+        <Button onClick={() => setShowTemplates(true)}
+          className="mb-4 h-12 w-full rounded-2xl bg-secondary text-base font-bold text-secondary-foreground shadow-sm hover:bg-secondary/80">
+          <ClipboardList className="me-2 h-5 w-5" />{t("templates.open")}
+        </Button>
 
         <ConnectedUsers list={list} />
 
@@ -461,6 +473,7 @@ export default function ListView() {
           </div>
         )}
 
+        <RegisteredUsersCount />
         <AppFooter />
       </main>
 
@@ -471,6 +484,8 @@ export default function ListView() {
         favorites={favorites} onToggleFavorite={handleToggleFavorite} />
       <ProfileDialog open={showProfile} onOpenChange={setShowProfile} currentUser={currentUserRef[0]} onNameUpdated={handleNameUpdated} forceName={!currentUserRef[0]?.full_name} />
       <SettingsDialog open={showSettings} onOpenChange={setShowSettings} list={list} />
+      <RenameListDialog open={showRename} onOpenChange={setShowRename} list={list}
+        onRenamed={(title) => setList(prev => ({ ...prev, title }))} />
       <NavigateToStoreDialog open={!!navigateProduct} onOpenChange={(v) => !v && setNavigateProduct(null)} product={navigateProduct} />
       <ItemDetailsDialog item={editingItem} onClose={() => setEditingItem(null)} onSave={handleUpdateDetails} />
 

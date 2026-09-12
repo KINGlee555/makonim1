@@ -308,6 +308,16 @@ const translations = {
     "templates.added": "{count} פריטים נוספו לרשימה",
     "templates.error": "שגיאה בהוספת פריטים",
     "templates.items": "מוצרים",
+    "templates.chag": "קניות לחג",
+    "templates.hygiene": "היגיינה וטיפוח",
+    "templates.pets": "חיות מחמד",
+    "templates.party": "מסיבה",
+    "templates.open": "רשימות מוכנות",
+    "rename.title": "שינוי שם הרשימה",
+    "rename.placeholder": "לדוגמה: קניות לחג",
+    "rename.save": "שמור שם",
+    "rename.button": "שנה שם רשימה",
+    "stats.registeredUsers": "סך המשתמשים הרשומים באפליקציה: {count}",
 
     // Barcode
     "barcode.title": "סרוק ברקוד",
@@ -730,6 +740,16 @@ const translations = {
     "templates.added": "{count} items added",
     "templates.error": "Error adding items",
     "templates.items": "items",
+    "templates.chag": "Holiday Shopping",
+    "templates.hygiene": "Hygiene & Care",
+    "templates.pets": "Pet Supplies",
+    "templates.party": "Party",
+    "templates.open": "Ready Lists",
+    "rename.title": "Rename List",
+    "rename.placeholder": "e.g. Holiday Shopping",
+    "rename.save": "Save Name",
+    "rename.button": "Rename list",
+    "stats.registeredUsers": "Total registered users in the app: {count}",
 
     // Barcode
     "barcode.title": "Barcode",

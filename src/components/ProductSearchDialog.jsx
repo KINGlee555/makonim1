@@ -25,6 +25,7 @@ const CATEGORIES = [
   { id: "קפואים", label: "קפואים" },
   { id: "ניקיון", label: "ניקיון" },
   { id: "היגיינה", label: "היגיינה" },
+  { id: "חיות מחמד", label: "חיות מחמד" },
 ];
 
 function getSimulatedStores(productName, userLocation) {
