@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { Plus, Minus, MapPin, Check, Pencil, CircleSlash2 } from "lucide-react";
+import { Plus, Minus, MapPin, Check, Pencil, CircleSlash2, Star } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 
-function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onUnavailable, className }) {
+function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onUnavailable, onToggleFavorite, isFavorite, className }) {
   const t = useT();
   return (
     <article className={`group grid grid-cols-[5rem_minmax(0,1fr)] gap-3 rounded-xl border border-primary/10 bg-card p-2.5 shadow-sm transition-shadow hover:shadow-md animate-slide-up ${className || ""}`}>
@@ -46,7 +46,8 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
             {t("productItem.bought")}
           </button>
         </div>
-        <div className="mt-1.5 flex justify-end gap-4">
+        <div className="mt-1.5 flex justify-end gap-3">
+          <button onClick={() => onToggleFavorite(item)} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${item.name}`} className={`flex items-center gap-1 text-xs font-medium ${isFavorite ? "text-primary" : "text-muted-foreground"}`}><Star className={`h-3.5 w-3.5 ${isFavorite ? "fill-primary" : ""}`} />{isFavorite ? t("favorites.saved") : t("favorites.save")}</button>
           <button onClick={() => onEdit(item)} aria-label={`${t("productItem.edit")}: ${item.name}`} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><Pencil className="h-3.5 w-3.5" />{t("productItem.edit")}</button>
           <button onClick={() => onUnavailable(item)} aria-label={`${t("productItem.notFound")}: ${item.name}`} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><CircleSlash2 className="h-3.5 w-3.5" />{t("productItem.notFound")}</button>
         </div>

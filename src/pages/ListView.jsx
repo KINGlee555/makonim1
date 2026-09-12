@@ -35,6 +35,7 @@ import FeatureMenu from "../components/FeatureMenu";
 import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import UnavailableItem from "../components/UnavailableItem";
+import FavoritesSection from "../components/FavoritesSection";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 
 export default function ListView() {
@@ -62,20 +63,25 @@ export default function ListView() {
   const [removingIds, setRemovingIds] = useState(new Set());
   const [refreshing, setRefreshing] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
   const itemsRef = useRef([]);
   itemsRef.current = items;
+  const favoritesRef = useRef([]);
+  favoritesRef.current = favorites;
   const { syncing: priceSyncing } = usePriceSync();
 
   const loadData = useCallback(async () => {
-    const [allLists, allItems] = await Promise.all([
+    const [allLists, allItems, allFavorites] = await Promise.all([
       base44.entities.ShoppingList.filter({ id: listId }),
-      base44.entities.ListItem.filter({ list_id: listId }, "-created_date", 200)
+      base44.entities.ListItem.filter({ list_id: listId }, "-created_date", 200),
+      base44.entities.FavoriteProduct.filter({ list_id: listId }, "-created_date", 100)
     ]);
     if (allLists.length > 0) setList(allLists[0]);
     setItems(allItems);
+    setFavorites(allFavorites);
     setLoading(false);
   }, [listId]);
 
@@ -144,6 +150,19 @@ export default function ListView() {
     return unsubscribe;
   }, [listId, t]);
 
+  useEffect(() => {
+    const unsubscribe = base44.entities.FavoriteProduct.subscribe((event) => {
+      if (event.type === "delete") {
+        setFavorites(prev => prev.filter(favorite => favorite.id !== event.id));
+      } else if (event.data?.list_id === listId) {
+        setFavorites(prev => event.type === "create"
+          ? (prev.some(favorite => favorite.id === event.data.id) ? prev : [event.data, ...prev])
+          : prev.map(favorite => favorite.id === event.id ? event.data : favorite));
+      }
+    });
+    return unsubscribe;
+  }, [listId]);
+
   const handleUndoBought = useCallback((item) => {
     const restored = { ...item, status: "pending", bought_by: "" };
     setItems(prev => prev.some(i => i.id === item.id) ? prev : [restored, ...prev]);
@@ -186,6 +205,21 @@ export default function ListView() {
     await base44.entities.ListItem.update(item.id, { status: "pending" });
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: "pending" } : i));
   }, []);
+
+  const handleToggleFavorite = useCallback(async (product) => {
+    const existing = favoritesRef.current.find(favorite => favorite.name === product.name);
+    if (existing) {
+      await base44.entities.FavoriteProduct.delete(existing.id);
+      setFavorites(prev => prev.filter(favorite => favorite.id !== existing.id));
+      return;
+    }
+    const favorite = await base44.entities.FavoriteProduct.create({
+      list_id: listId, name: product.name, price: product.price || 0,
+      image_url: product.image_url || "", category: product.category || "אחר",
+      brand: product.brand || ""
+    });
+    setFavorites(prev => prev.some(item => item.id === favorite.id) ? prev : [favorite, ...prev]);
+  }, [listId]);
 
   const handleAddProduct = useCallback(async (product) => {
     // Prevent duplicates: if item already exists, increment quantity
@@ -325,6 +359,8 @@ export default function ListView() {
 
         <ConnectedUsers list={list} />
 
+        <FavoritesSection favorites={favorites} onAdd={handleAddProduct} onRemove={handleToggleFavorite} />
+
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
           <div className="flex items-center gap-2 bg-secondary border border-primary/15 rounded-xl px-4 py-2 mb-4">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -383,7 +419,8 @@ export default function ListView() {
                         {catItems.map(item => (
                           <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
                             onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                            onEdit={setEditingItem} onUnavailable={handleUnavailable}
+                            onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite}
+                            isFavorite={favorites.some(favorite => favorite.name === item.name)}
                             className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                         ))}
                       </div>
@@ -392,7 +429,8 @@ export default function ListView() {
                 : pendingItems.map(item => (
                   <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
                     onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                    onEdit={setEditingItem} onUnavailable={handleUnavailable}
+                    onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite}
+                    isFavorite={favorites.some(favorite => favorite.name === item.name)}
                     className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                 ))
               }
@@ -426,7 +464,8 @@ export default function ListView() {
       <QuickAddBar onOpenSearch={() => setShowSearch(true)} onOpenScanner={() => setShowScanner(true)} onOpenVoice={() => setShowVoice(true)} />
 
       <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} />
-      <ProductSearchDialog open={showSearch} onOpenChange={setShowSearch} onAddProduct={handleAddProduct} />
+      <ProductSearchDialog open={showSearch} onOpenChange={setShowSearch} onAddProduct={handleAddProduct}
+        favorites={favorites} onToggleFavorite={handleToggleFavorite} />
       <ProfileDialog open={showProfile} onOpenChange={setShowProfile} currentUser={currentUserRef[0]} onNameUpdated={handleNameUpdated} forceName={!currentUserRef[0]?.full_name} />
       <SettingsDialog open={showSettings} onOpenChange={setShowSettings} list={list} />
       <NavigateToStoreDialog open={!!navigateProduct} onOpenChange={(v) => !v && setNavigateProduct(null)} product={navigateProduct} />

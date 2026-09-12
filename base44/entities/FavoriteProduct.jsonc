@@ -1,0 +1,35 @@
+{
+  "name": "FavoriteProduct",
+  "type": "object",
+  "properties": {
+    "list_id": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05e8\u05e9\u05d9\u05de\u05ea \u05d4\u05e7\u05e0\u05d9\u05d5\u05ea \u05d4\u05de\u05e9\u05e4\u05d7\u05ea\u05d9\u05ea"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e6\u05e8 \u05d4\u05de\u05d5\u05e2\u05d3\u05e3"
+    },
+    "price": {
+      "type": "number",
+      "default": 0
+    },
+    "category": {
+      "type": "string",
+      "default": "\u05d0\u05d7\u05e8"
+    },
+    "brand": {
+      "type": "string",
+      "default": ""
+    },
+    "image_url": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "list_id",
+    "name"
+  ]
+}

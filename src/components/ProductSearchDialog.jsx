@@ -4,7 +4,7 @@ import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, X } from "lucide-react";
+import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, X, Star } from "lucide-react";
 import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
@@ -33,7 +33,7 @@ function getSimulatedStores(productName, userLocation) {
   }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)).slice(0, 3);
 }
 
-export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }) {
+export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, favorites = [], onToggleFavorite }) {
   const t = useT();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -150,6 +150,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
   const renderProductCard = (product, idx) => {
     const isAdded = addedIds.has(product.name);
+    const isFavorite = favorites.some(favorite => favorite.name === product.name);
     const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, userLocation) : null;
     const nearest = nearbyStores?.[0];
     return (
@@ -160,6 +161,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
         <div className="relative h-32 bg-muted">
           <ProductPhoto name={product.name} category={product.category} imageUrl={product.image_url} className="h-full w-full" />
+          <button onClick={(event) => { event.stopPropagation(); onToggleFavorite(product); }} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${product.name}`} className="absolute start-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
+            <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />
+          </button>
           {nearest && (
             <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium text-primary shadow-sm flex items-center gap-1">
               <MapPin className="w-3 h-3" />
