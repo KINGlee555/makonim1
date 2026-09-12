@@ -9,6 +9,7 @@ import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkl
 import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
+import { loadAllProducts } from "@/lib/loadAllProducts";
 
 const CATEGORIES = [
   { id: "all", label: "הכל" },
@@ -53,7 +54,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     setLoadingProducts(true);
     (async () => {
       try {
-        const products = await base44.entities.Product.list("-name", 500);
+        const products = await loadAllProducts();
         if (!cancelled) setAllProducts(products);
       } catch { if (!cancelled) setAllProducts([]); }
       finally { if (!cancelled) setLoadingProducts(false); }
@@ -103,6 +104,10 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
     if (filterMode === "price") res = [...res].sort((a, b) => a.price - b.price);
     setResults(res);
   };
+
+  useEffect(() => {
+    if (open && query.trim() && allProducts.length > 0) handleSearch(query);
+  }, [allProducts]);
 
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
@@ -188,7 +193,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md mx-auto max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl !flex animate-scale-in">
+      <DialogContent className="w-[calc(100%-1rem)] max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl !flex animate-scale-in">
         <DialogHeader className="px-5 pt-5 pb-3 flex-row items-center justify-between space-y-0">
           <DialogTitle className="text-xl font-bold">{t("search.title")}</DialogTitle>
           <button onClick={() => handleClose(false)} className="w-8 h-8 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center transition-all active:scale-90">

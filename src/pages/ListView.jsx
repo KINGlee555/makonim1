@@ -35,6 +35,7 @@ import FeatureMenu from "../components/FeatureMenu";
 import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import UnavailableItem from "../components/UnavailableItem";
+import { loadAllProducts } from "@/lib/loadAllProducts";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -126,7 +127,7 @@ export default function ListView() {
   }, []);
 
   useEffect(() => {
-    base44.entities.Product.list("-name", 500).then(setAllProducts).catch(() => {});
+    loadAllProducts().then(setAllProducts).catch(() => {});
   }, []);
 
   useEffect(() => {
