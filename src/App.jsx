@@ -11,6 +11,8 @@ import { LanguageProvider } from '@/lib/i18n';
 import Home from './pages/Home';
 import ListView from './pages/ListView';
 import JoinList from './pages/JoinList';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import ShoppingHistory from './pages/ShoppingHistory';
 import ShoppingSummary from './pages/ShoppingSummary';
 import Login from './pages/Login';
@@ -18,7 +20,8 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
-const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password"];
+// Public pages: reachable without login (auth pages + trust pages)
+const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact"];
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -58,6 +61,8 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/" element={<Home />} />
       <Route path="/list/:listId" element={<ListView />} />
       <Route path="/join/:shareCode" element={<JoinList />} />
