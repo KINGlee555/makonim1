@@ -4,13 +4,13 @@ import { getProductEmoji } from "@/lib/productEmoji";
 import { getProductImageUrl } from "@/lib/productImages";
 import { useT } from "@/lib/i18n";
 
-function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove }) {
+function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, className }) {
   const t = useT();
   const emoji = getProductEmoji(item.name, item.category);
   const imgUrl = item.image_url || getProductImageUrl(item.name, item.category);
 
   return (
-    <div className="group flex items-center gap-3 p-3 rounded-3xl bg-card shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98] animate-slide-up">
+    <div className={`group flex items-center gap-3 p-3 rounded-3xl bg-card shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98] animate-slide-up ${className || ""}`}>
       {/* Image — tap to navigate to store */}
       <div
         className="w-16 h-16 rounded-2xl bg-muted overflow-hidden flex-shrink-0 cursor-pointer relative"

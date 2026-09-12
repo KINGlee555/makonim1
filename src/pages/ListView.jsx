@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -56,6 +56,8 @@ export default function ListView() {
   const [showDeals, setShowDeals] = useState(false);
   const [showVoice, setShowVoice] = useState(false);
   const [groupByCategory, setGroupByCategory] = useState(true);
+  const [removingIds, setRemovingIds] = useState(new Set());
+  const [refreshing, setRefreshing] = useState(false);
   const [allProducts, setAllProducts] = useState([]);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
@@ -147,7 +149,11 @@ export default function ListView() {
 
   const handleToggleBought = useCallback((item) => {
     const buyerName = currentUserNameRef.current || "List Owner";
-    setItems(prev => prev.filter(i => i.id !== item.id));
+    setRemovingIds(prev => new Set([...prev, item.id]));
+    setTimeout(() => {
+      setItems(prev => prev.filter(i => i.id !== item.id));
+      setRemovingIds(prev => { const n = new Set(prev); n.delete(item.id); return n; });
+    }, 300);
     base44.entities.ListItem.update(item.id, { status: "bought", bought_by: buyerName })
       .catch(() => setItems(prev => prev.some(i => i.id === item.id) ? prev : [{ ...item, status: "pending" }, ...prev]));
     base44.entities.PurchaseHistory.create({
@@ -206,11 +212,21 @@ export default function ListView() {
   }, [list]);
 
   const handleRemoveItem = useCallback((item) => {
-    setItems(prev => prev.filter(i => i.id !== item.id));
+    setRemovingIds(prev => new Set([...prev, item.id]));
+    setTimeout(() => {
+      setItems(prev => prev.filter(i => i.id !== item.id));
+      setRemovingIds(prev => { const n = new Set(prev); n.delete(item.id); return n; });
+    }, 300);
     base44.entities.ListItem.delete(item.id).catch(() => {});
   }, []);
 
   const handleNavigate = useCallback((item) => setNavigateProduct(item), []);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    setTimeout(() => setRefreshing(false), 600);
+  }, [loadData]);
 
   if (loading) {
     return (
@@ -273,6 +289,9 @@ export default function ListView() {
 
         <div className="flex items-center justify-between mb-4 px-1 animate-fade-in">
           <div className="flex items-center gap-2">
+            <button onClick={handleRefresh} className="w-9 h-9 rounded-full bg-card shadow-sm flex items-center justify-center active:scale-90 transition-all hover:shadow-md">
+              <RefreshCw className={`w-4 h-4 text-primary ${refreshing ? "animate-refresh" : ""}`} />
+            </button>
             <span className="text-2xl font-bold text-foreground">{pendingItems.length}</span>
             <span className="text-sm text-muted-foreground font-medium">{t("list.toBuy")}</span>
           </div>
@@ -314,7 +333,7 @@ export default function ListView() {
             <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
             <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
 
-            <div className="space-y-2 mb-6">
+            <div key={groupByCategory ? "grouped" : "ungrouped"} className="space-y-2 mb-6 animate-fade-in">
               {groupByCategory
                 ? Object.entries(
                     pendingItems.reduce((groups, item) => {
@@ -333,14 +352,16 @@ export default function ListView() {
                       <div className="space-y-2">
                         {catItems.map(item => (
                           <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
-                            onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem} />
+                            onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                            className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                         ))}
                       </div>
                     </div>
                   ))
                 : pendingItems.map(item => (
                   <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
-                    onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem} />
+                    onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                    className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                 ))
               }
             </div>

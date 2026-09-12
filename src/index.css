@@ -143,6 +143,16 @@
   100% { transform: scale(1); }
 }
 
+@keyframes slideOut {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to { opacity: 0; transform: translateX(-80px) scale(0.9); }
+}
+
+@keyframes refreshSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .animate-fade-in { animation: fadeIn 0.3s ease-out; }
 .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
 .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -151,6 +161,8 @@
 .animate-pulse-soft { animation: pulseSoft 2s ease-in-out infinite; }
 .animate-bounce-in { animation: bounceIn 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 .animate-checkmark { animation: checkmarkPop 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.animate-slide-out { animation: slideOut 0.3s ease-out forwards; }
+.animate-refresh { animation: refreshSpin 0.8s linear infinite; }
 
 /* Shimmer skeleton */
 .shimmer {
