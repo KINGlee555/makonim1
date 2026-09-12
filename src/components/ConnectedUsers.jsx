@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Users } from "lucide-react";
+import { Users, User as UserIcon } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import ConnectedUsersDialog from "./ConnectedUsersDialog";
 
 export default function ConnectedUsers({ list }) {
   const t = useT();
-  const [userNames, setUserNames] = useState({});
+  const [userData, setUserData] = useState({});
   const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
@@ -15,8 +15,10 @@ export default function ConnectedUsers({ list }) {
     if (allEmails.length === 0) return;
     base44.entities.User.list().then(allUsers => {
       const map = {};
-      allUsers.forEach(u => { map[u.email] = u.full_name || u.email; });
-      setUserNames(map);
+      allUsers.forEach(u => {
+        map[u.email] = { name: u.full_name || u.email, photo: u.profile_image_url || "" };
+      });
+      setUserData(map);
     }).catch(() => {});
   }, [list]);
 
@@ -25,8 +27,9 @@ export default function ConnectedUsers({ list }) {
 
   const getLabel = (email) => {
     if (!email || email === "anonymous") return t("users.listOwner");
-    return userNames[email] || email;
+    return userData[email]?.name || email;
   };
+  const getPhoto = (email) => userData[email]?.photo || "";
   const isShared = allEmails.length > 1;
 
   return (
@@ -36,11 +39,17 @@ export default function ConnectedUsers({ list }) {
           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
             <Users className="w-4 h-4 text-primary" />
           </div>
-          {allEmails.map(email => (
-            <span key={email} className="text-xs text-foreground font-medium bg-muted px-2.5 py-1 rounded-full whitespace-nowrap">
-              {getLabel(email)}
-            </span>
-          ))}
+          {allEmails.map(email => {
+            const photo = getPhoto(email);
+            return (
+              <span key={email} className="text-xs text-foreground font-medium bg-muted px-2.5 py-1 rounded-full whitespace-nowrap flex items-center gap-1.5">
+                {photo && (
+                  <img src={photo} alt="" className="w-5 h-5 rounded-full object-cover" />
+                )}
+                {getLabel(email)}
+              </span>
+            );
+          })}
         </div>
         {isShared && (
           <button

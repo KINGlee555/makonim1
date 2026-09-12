@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Check, Mail, Send, Loader2, Link as LinkIcon, MessageCircle } from "lucide-react";
+import { Copy, Check, Mail, Send, Loader2, Link as LinkIcon, MessageCircle, Radio } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { base44 } from "@/api/base44Client";
 import { buildInvitationEmailBody, INVITATION_SUBJECT } from "@/lib/invitationEmail";
@@ -27,6 +27,25 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
   const handleWhatsApp = () => {
     const text = `${list?.title || "הרשימה שלי"} - ${shareLink}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  // Proximity share — uses Web Share API (AirDrop on iOS, Nearby Share on Android)
+  const handleProximityShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: list?.title || t("app.name"),
+          text: t("share.shareNote"),
+          url: shareLink,
+        });
+      } catch (e) {
+        // User cancelled — silently ignore
+      }
+    } else {
+      // Fallback: copy link
+      handleCopy();
+      toast({ title: t("share.proximityUnsupported"), duration: 3000 });
+    }
   };
 
   const handleSendInvite = async () => {
@@ -66,6 +85,26 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
         </DialogHeader>
 
         <div className="space-y-5 pt-2">
+          {/* Proximity Share — AirDrop / Nearby Share */}
+          <button
+            onClick={handleProximityShare}
+            className="w-full flex items-center gap-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-2xl p-4 shadow-sm hover:shadow-md transition-all active:scale-95"
+          >
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+              <Radio className="w-5 h-5" />
+            </div>
+            <div className="text-start flex-1 min-w-0">
+              <p className="font-bold text-base">{t("share.proximity")}</p>
+              <p className="text-sm text-primary-foreground/80">{t("share.proximityDesc")}</p>
+            </div>
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground">{t("share.or")}</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
           <div>
             <label className="text-base font-medium text-foreground mb-2 flex items-center gap-2">
               <Mail className="w-4 h-4 text-primary" />

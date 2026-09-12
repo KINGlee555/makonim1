@@ -69,6 +69,8 @@ const translations = {
     "profile.save": "שמור שם",
     "profile.saving": "שומר...",
     "profile.required": "חובה להזין שם כדי להמשיך",
+    "profile.addPhoto": "הוסף תמונה",
+    "profile.changePhoto": "שנה תמונה",
 
     // SettingsDialog
     "settings.title": "הגדרות",
@@ -175,6 +177,9 @@ const translations = {
     "users.noName": "משתמש ללא שם",
     "users.listOwner": "בעל הרשימה",
     "share.whatsapp": "שתף בוואטסאפ",
+    "share.proximity": "שיתוף בקרבה",
+    "share.proximityDesc": "קרב את הפלאפון למכשיר השני — AirDrop / Nearby Share",
+    "share.proximityUnsupported": "הדפדפן לא תומך בשיתוף בקרבה, הקישור הועתק",
 
     // Language names
     "lang.he": "עברית",
@@ -460,6 +465,8 @@ const translations = {
     "profile.save": "Save Name",
     "profile.saving": "Saving...",
     "profile.required": "A name is required to continue",
+    "profile.addPhoto": "Add Photo",
+    "profile.changePhoto": "Change Photo",
 
     // SettingsDialog
     "settings.title": "Settings",
@@ -566,6 +573,9 @@ const translations = {
     "users.noName": "No Name",
     "users.listOwner": "List Owner",
     "share.whatsapp": "Share via WhatsApp",
+    "share.proximity": "Proximity Share",
+    "share.proximityDesc": "Bring phones close — AirDrop / Nearby Share",
+    "share.proximityUnsupported": "Browser doesn't support proximity share, link copied",
 
     // Language names
     "lang.he": "עברית",
@@ -851,6 +861,8 @@ const translations = {
     "profile.save": "Сохранить имя",
     "profile.saving": "Сохранение...",
     "profile.required": "Необходимо ввести имя",
+    "profile.addPhoto": "Добавить фото",
+    "profile.changePhoto": "Изменить фото",
 
     // SettingsDialog
     "settings.title": "Настройки",
@@ -957,6 +969,9 @@ const translations = {
     "users.noName": "Без имени",
     "users.listOwner": "Владелец списка",
     "share.whatsapp": "Поделиться в WhatsApp",
+    "share.proximity": "Передача рядом",
+    "share.proximityDesc": "Поднесите телефоны — AirDrop / Nearby Share",
+    "share.proximityUnsupported": "Браузер не поддерживает передачу рядом, ссылка скопирована",
 
     // Language names
     "lang.he": "עברית",
