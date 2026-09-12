@@ -7,7 +7,7 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
       <div className="w-full max-w-md">
         <div className="text-center mb-7">
           <img
-            src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/2d1599b0e_IMG_0820.jpeg"
+            src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/77de857b8_generated_image.png"
             alt="MaKonim"
             className="h-20 w-auto object-contain mx-auto mb-4"
           />

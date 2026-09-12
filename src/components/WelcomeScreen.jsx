@@ -21,7 +21,7 @@ export default function WelcomeScreen({ onNameSubmit }) {
         <div className="w-full max-w-md">
           <div className="bg-card border border-primary/15 rounded-3xl p-7 sm:p-9 shadow-xl shadow-primary/10">
             <img
-              src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/2d1599b0e_IMG_0820.jpeg"
+              src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/77de857b8_generated_image.png"
               alt="MaKonim"
               className="h-24 w-auto object-contain mx-auto mb-5"
             />

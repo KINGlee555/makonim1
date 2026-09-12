@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ShoppingCart, Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppFooter from "../components/AppFooter";
 import { useT } from "@/lib/i18n";
@@ -75,9 +75,11 @@ export default function JoinList() {
     <div className="min-h-screen bg-secondary/30 px-4 py-10">
       <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
         <div className="text-center w-full max-w-md bg-card border border-primary/15 rounded-3xl p-8 shadow-xl shadow-primary/10">
-        <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/20">
-          <ShoppingCart className="w-10 h-10 text-primary-foreground" />
-        </div>
+        <img
+          src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/77de857b8_generated_image.png"
+          alt="MaKonim logo"
+          className="w-20 h-20 rounded-3xl object-cover mx-auto mb-6 shadow-lg shadow-primary/20"
+        />
 
         {status === "loading" && (
           <>

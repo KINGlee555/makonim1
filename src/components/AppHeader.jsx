@@ -1,4 +1,3 @@
-import { ShoppingCart } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
 import DarkModeToggle from "./DarkModeToggle";
@@ -13,9 +12,11 @@ export default function AppHeader({ rightAction, userName, listView = false }) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <span className={`${listView ? "text-xl" : "text-base"} font-bold text-foreground tracking-tight`}>MaKonim</span>
-            <div className={`${listView ? "w-8 h-8 bg-transparent" : "w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-sm"} flex items-center justify-center`}>
-              <ShoppingCart className={`${listView ? "w-5 h-5 text-primary" : "w-4 h-4 text-white"}`} />
-            </div>
+            <img
+              src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/77de857b8_generated_image.png"
+              alt="MaKonim logo"
+              className="w-9 h-9 rounded-xl object-cover"
+            />
           </div>
           <div className="flex items-center gap-0.5 min-w-0">
             <EasyModeToggle />
