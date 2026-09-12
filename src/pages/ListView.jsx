@@ -176,14 +176,14 @@ export default function ListView() {
     base44.entities.ListItem.update(item.id, details).catch(() => {});
   }, []);
 
-  const handleUnavailable = useCallback((item) => {
+  const handleUnavailable = useCallback(async (item) => {
+    await base44.entities.ListItem.update(item.id, { status: "unavailable" });
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: "unavailable" } : i));
-    base44.entities.ListItem.update(item.id, { status: "unavailable" }).catch(() => {});
   }, []);
 
-  const handleRestore = useCallback((item) => {
+  const handleRestore = useCallback(async (item) => {
+    await base44.entities.ListItem.update(item.id, { status: "pending" });
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, status: "pending" } : i));
-    base44.entities.ListItem.update(item.id, { status: "pending" }).catch(() => {});
   }, []);
 
   const handleAddProduct = useCallback(async (product) => {

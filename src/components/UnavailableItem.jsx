@@ -11,7 +11,7 @@ export default function UnavailableItem({ item, onRestore }) {
         <h3 className="truncate font-bold text-muted-foreground">{item.name}</h3>
         <p className="text-xs text-muted-foreground">{t("productItem.unavailable")}</p>
       </div>
-      <button onClick={() => onRestore(item)} className="flex h-10 items-center gap-1.5 rounded-xl bg-card px-3 text-sm font-semibold text-primary shadow-sm">
+      <button onClick={() => onRestore(item)} aria-label={`${t("productItem.restore")}: ${item.name}`} className="flex h-10 items-center gap-1.5 rounded-xl bg-card px-3 text-sm font-semibold text-primary shadow-sm">
         <RotateCcw className="h-4 w-4" />{t("productItem.restore")}
       </button>
     </article>

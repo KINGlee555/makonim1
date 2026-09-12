@@ -47,8 +47,8 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
           </button>
         </div>
         <div className="mt-1.5 flex justify-end gap-4">
-          <button onClick={() => onEdit(item)} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><Pencil className="h-3.5 w-3.5" />{t("productItem.edit")}</button>
-          <button onClick={() => onUnavailable(item)} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><CircleSlash2 className="h-3.5 w-3.5" />{t("productItem.notFound")}</button>
+          <button onClick={() => onEdit(item)} aria-label={`${t("productItem.edit")}: ${item.name}`} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><Pencil className="h-3.5 w-3.5" />{t("productItem.edit")}</button>
+          <button onClick={() => onUnavailable(item)} aria-label={`${t("productItem.notFound")}: ${item.name}`} className="flex items-center gap-1 text-xs font-medium text-muted-foreground"><CircleSlash2 className="h-3.5 w-3.5" />{t("productItem.notFound")}</button>
         </div>
       </div>
     </article>
