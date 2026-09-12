@@ -38,10 +38,10 @@ export default function CategoryOrderDialog({ open, onOpenChange, onSaved }) {
             <div key={category} className="flex items-center gap-2 rounded-2xl bg-card border p-2.5">
               <span className="w-7 h-7 flex-shrink-0 rounded-full bg-secondary text-secondary-foreground text-sm font-bold flex items-center justify-center">{index + 1}</span>
               <span className="flex-1 text-base font-medium truncate">{category}</span>
-              <button onClick={() => move(index, -1)} aria-label={`העלה ${category}`} className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
+              <button onClick={() => move(index, -1)} aria-label={`העלה ${category}`} className="pointer-events-auto w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
                 <ChevronUp className="w-4 h-4" />
               </button>
-              <button onClick={() => move(index, 1)} aria-label={`הורד ${category}`} className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
+              <button onClick={() => move(index, 1)} aria-label={`הורד ${category}`} className="pointer-events-auto w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
                 <ChevronDown className="w-4 h-4" />
               </button>
             </div>

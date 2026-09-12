@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown } from "lucide-react";
@@ -5,6 +6,7 @@ import { useT } from "@/lib/i18n";
 
 export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder }) {
   const t = useT();
+  const [open, setOpen] = useState(false);
 
   const features = [
     { icon: Store, label: t("basket.title"), onClick: onOpenBasket, color: "text-blue-500" },
@@ -21,7 +23,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScann
   ];
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button className="h-11 w-full rounded-lg bg-primary px-2 text-primary-foreground shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
           <LayoutGrid className="w-4 h-4" />
@@ -36,7 +38,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScann
           {features.map((f, i) => (
             <button
               key={i}
-              onClick={() => f.onClick()}
+              onClick={() => { setOpen(false); window.setTimeout(() => f.onClick(), 260); }}
               className="flex flex-col items-center gap-2 p-4 rounded-2xl border bg-card hover:bg-accent transition-colors active:scale-95"
             >
               <div className={`w-12 h-12 rounded-xl bg-muted flex items-center justify-center ${f.color}`}>
