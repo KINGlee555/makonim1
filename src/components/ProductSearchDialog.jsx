@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { getProductEmoji } from "@/lib/productEmoji";
-import { getProductImageUrl } from "@/lib/productImages";
+import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -63,7 +62,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || loadingProducts || allProducts.length === 0) return;
     let cancelled = false;
     (async () => {
       try {
@@ -88,7 +87,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
       }
     })();
     return () => { cancelled = true; };
-  }, [open, allProducts]);
+  }, [open, allProducts, loadingProducts]);
 
   const handleVoiceResult = (text) => { setQuery(text); handleSearch(text); };
 
@@ -151,8 +150,6 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
 
   const renderProductCard = (product, idx) => {
     const isAdded = addedIds.has(product.name);
-    const emoji = getProductEmoji(product.name, product.category);
-    const imgUrl = product.image_url || getProductImageUrl(product.name, product.category);
     const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, userLocation) : null;
     const nearest = nearbyStores?.[0];
     return (
@@ -162,12 +159,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
         }`}
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
         <div className="relative h-32 bg-muted">
-          {imgUrl ? (
-            <img src={imgUrl} alt={product.name} className="w-full h-full object-cover"
-              onError={(e) => { e.target.style.display = "none"; e.target.parentNode.innerHTML = `<span style="font-size:36px">${emoji}</span>`; }} />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-4xl">{emoji}</div>
-          )}
+          <ProductPhoto name={product.name} category={product.category} imageUrl={product.image_url} className="h-full w-full" />
           {nearest && (
             <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium text-primary shadow-sm flex items-center gap-1">
               <MapPin className="w-3 h-3" />
@@ -281,8 +273,15 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct }
             </div>
           )}
 
+          {loadingProducts && query && (
+            <div className="flex items-center justify-center gap-2 py-12 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>{t("common.loading")}</span>
+            </div>
+          )}
+
           {/* No results */}
-          {results.length === 0 && query && (
+          {results.length === 0 && query && !loadingProducts && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-14 h-14 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground text-base">{t("search.noResults")}</p>
