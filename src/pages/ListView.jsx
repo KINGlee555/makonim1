@@ -36,6 +36,7 @@ import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import FavoritesSection from "../components/FavoritesSection";
+import NearbyDeals from "../components/NearbyDeals";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 
 export default function ListView() {
@@ -360,6 +361,8 @@ export default function ListView() {
         <ConnectedUsers list={list} />
 
         <FavoritesSection favorites={favorites} onAdd={handleAddProduct} onRemove={handleToggleFavorite} />
+
+        <NearbyDeals onAddProduct={handleAddProduct} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
           <div className="flex items-center gap-2 bg-secondary border border-primary/15 rounded-xl px-4 py-2 mb-4">
