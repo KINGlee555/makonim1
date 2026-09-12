@@ -130,8 +130,16 @@ const categoryPhotos = {
   "אחר": pexels(264636),
 };
 
-export function getProductImageUrl(name = "", category = "") {
+function findSpecificPhoto(name = "") {
   const value = name.toLowerCase();
-  const match = exactPhotos.find(([pattern]) => pattern.test(value))?.[1];
-  return match || categoryPhotos[category] || categoryPhotos["אחר"];
+  return exactPhotos.find(([pattern]) => pattern.test(value))?.[1] || "";
+}
+
+// True only when the photo really matches the product itself (not a generic category shot)
+export function hasSpecificProductImage(name = "") {
+  return Boolean(findSpecificPhoto(name));
+}
+
+export function getProductImageUrl(name = "", category = "") {
+  return findSpecificPhoto(name) || categoryPhotos[category] || categoryPhotos["אחר"];
 }

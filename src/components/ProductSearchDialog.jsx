@@ -102,7 +102,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
       }).finally(() => {
         if (!cancelled) setRemoteLoading(false);
       });
-    }, 250);
+    }, 120);
     return () => { cancelled = true; window.clearTimeout(timer); };
   }, [open, deferredQuery]);
 

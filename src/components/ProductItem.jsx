@@ -24,7 +24,7 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
       <div className="min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="truncate text-base font-bold text-foreground">{item.name}</h3>
+            <h3 className="product-name line-clamp-2 break-words text-base font-bold leading-snug text-foreground">{item.name}</h3>
             <p className="text-sm text-muted-foreground">{item.category || ""} · {t(`unit.${item.unit || "unit"}`)}</p>
             {item.note && <p className="mt-0.5 truncate text-xs font-medium text-primary">{item.note}</p>}
           </div>

@@ -49,9 +49,9 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
         <div className="space-y-4 pt-1">
           <div className="bg-primary/8 rounded-2xl p-4 flex items-start gap-3">
             <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-            <div>
+            <div className="min-w-0">
               <p className="text-sm text-muted-foreground">{t("navigate.recommended")}</p>
-              <p className="font-bold text-foreground">{product?.name}</p>
+              <p className="font-bold text-foreground break-words">{product?.name}</p>
               <p className="text-primary font-semibold text-sm mt-0.5 flex items-center gap-1.5">
                 <ChainLogo name={store} size={16} />{store}
               </p>
@@ -64,18 +64,18 @@ export default function NavigateToStoreDialog({ open, onOpenChange, product }) {
               <Store className="w-4 h-4 text-primary" />
               <p className="text-sm font-medium text-muted-foreground">בחר סופר</p>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="grid grid-cols-2 gap-2">
               {SUPERMARKET_NAMES.map((name) => (
                 <button
                   key={name}
                   onClick={() => setSelectedStore(name)}
-                  className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border transition-all ${
+                  className={`flex min-w-0 items-center justify-center gap-1.5 px-2 py-1.5 rounded-xl text-xs font-medium border transition-all ${
                     (selectedStore || store) === name
                       ? "bg-primary text-primary-foreground border-primary"
                       : "border-border bg-card hover:border-primary/30"
                   }`}
                 >
-                  <ChainLogo name={name} size={16} />{name}
+                  <ChainLogo name={name} size={16} /><span className="truncate">{name}</span>
                 </button>
               ))}
             </div>

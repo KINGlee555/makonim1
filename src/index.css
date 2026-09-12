@@ -247,6 +247,12 @@ html.easy-mode .text-xs {
   font-size: 0.9rem;
 }
 
+/* Product names stay readable in easy mode — never blow up and hide the text */
+html.easy-mode .product-name {
+  font-size: 1.05rem !important;
+  line-height: 1.35;
+}
+
 /* Category headers in list view — don't scale up in easy mode */
 html.easy-mode .category-header {
   font-size: 1rem !important;

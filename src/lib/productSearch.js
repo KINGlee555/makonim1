@@ -43,9 +43,11 @@ export function searchCatalog(products, query, category, byPrice) {
     buckets[score].push(product);
   }
 
+  // Real barcode-catalog products (authentic photo + brand + size) always rank above generic entries
+  const sourceRank = product => (product.catalog_source === "open_food_facts" ? 0 : 1);
   const compare = byPrice
-    ? (a, b) => (a.price || Number.MAX_VALUE) - (b.price || Number.MAX_VALUE) || a.name.localeCompare(b.name, "he")
-    : (a, b) => a.name.localeCompare(b.name, "he");
+    ? (a, b) => sourceRank(a) - sourceRank(b) || (a.price || Number.MAX_VALUE) - (b.price || Number.MAX_VALUE) || a.name.localeCompare(b.name, "he")
+    : (a, b) => sourceRank(a) - sourceRank(b) || a.name.localeCompare(b.name, "he");
   const results = [];
   for (const bucket of buckets) {
     bucket.sort(compare);

@@ -14,16 +14,23 @@ function categoryFor(tags) {
 function mapProducts(rawProducts, forcedCategory = "") {
   const seen = new Set();
   return rawProducts.flatMap((product) => {
-    const name = String(product.product_name_he || product.product_name || product.generic_name_he || "").trim();
+    const baseName = String(product.product_name_he || product.product_name || product.generic_name_he || "").trim();
     const image = String(product.image_front_url || product.image_url || "").replace(/^http:/, "https:");
     const code = String(product.code || "");
-    if (!name || !image || !code || seen.has(code)) return [];
+    if (!baseName || !image || !code || seen.has(code)) return [];
     seen.add(code);
+    const brand = String(product.brands || "").split(",")[0].trim();
+    const quantity = String(product.quantity || "").trim();
+    // Precise display name: product + brand + package size (e.g. "חלב טרי 1% תנובה 1 ליטר")
+    const parts = [baseName];
+    if (brand && !baseName.includes(brand)) parts.push(brand);
+    if (quantity && !baseName.includes(quantity)) parts.push(quantity);
+    const name = parts.join(" ").slice(0, 64);
     return [{
       id: `off-${code}`,
       barcode: code,
       name,
-      brand: String(product.brands || "").split(",")[0].trim(),
+      brand,
       category: forcedCategory || categoryFor(product.categories_tags),
       price: 0,
       image_url: image,
@@ -43,7 +50,7 @@ export default async function(req: Request): Promise<Response> {
     const category = String(body?.category || "");
     const browseIsraeliSnacks = category === "חטיפים ומתוקים" && query.length < 2;
     const limit = Math.min(Math.max(Number(body?.limit) || 36, 8), 60);
-    const fields = "code,product_name,product_name_he,generic_name_he,brands,image_front_url,image_url,categories_tags";
+    const fields = "code,product_name,product_name_he,generic_name_he,brands,quantity,image_front_url,image_url,categories_tags";
     if (!browseIsraeliSnacks && query.length < 2) return Response.json({ products: [] });
 
     if (browseIsraeliSnacks) {
@@ -79,10 +86,11 @@ export default async function(req: Request): Promise<Response> {
     const params = new URLSearchParams({
       search_terms: query, search_simple: "1", action: "process", json: "1", page_size: String(limit), fields
     });
-    const response = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?${params}`, {
-      headers: { "User-Agent": "MaKonim/1.0 (product catalog search)" }
-    });
-    if (!response.ok) return Response.json({ error: "Catalog unavailable" }, { status: 502 });
+    const searchUrl = `https://world.openfoodfacts.org/cgi/search.pl?${params}`;
+    const headers = { "User-Agent": "MaKonim/1.0 (product catalog search)" };
+    let response = await fetch(searchUrl, { headers });
+    if (!response.ok) response = await fetch(searchUrl, { headers });
+    if (!response.ok) return Response.json({ products: [], total: 0 });
     const data = await response.json();
     const products = mapProducts(data.products || []);
     return Response.json({ products, total: Number(data.count) || products.length });
