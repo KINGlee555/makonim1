@@ -340,6 +340,42 @@ html.dark.easy-mode {
   min-width: 0;
 }
 
+/* Leave room for the close button so titles never sit under it */
+[role="dialog"] > div:first-child {
+  padding-inline-end: 1.75rem;
+}
+
+/* Keep every dialog element inside the window — no horizontal scrolling */
+[role="dialog"] * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Buttons and rows wrap instead of overflowing sideways */
+[role="dialog"] button {
+  white-space: normal;
+  height: auto;
+  min-height: 2.75rem;
+}
+
+[role="dialog"] .flex:not(.flex-col):not(.overflow-x-auto) {
+  flex-wrap: wrap;
+}
+
+/* Horizontal pill rows stay scrollable without wrapping */
+[role="dialog"] .overflow-x-auto {
+  flex-wrap: nowrap;
+}
+
+[role="dialog"] .overflow-x-auto > * {
+  flex-shrink: 0;
+}
+
+/* Grids never exceed the dialog width */
+[role="dialog"] .grid {
+  width: 100%;
+}
+
 /* Ensure all text in dialog sections is fully visible */
 [role="dialog"] .dialog-section {
   overflow: hidden;
