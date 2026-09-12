@@ -312,23 +312,30 @@ html.dark.easy-mode {
 
 /* Fix text overflow in dialogs and modals */
 [role="dialog"] {
-  overflow: hidden auto;
-  max-height: 90vh;
-  max-width: calc(100vw - 1.5rem) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  max-height: 88vh;
 }
 
 [role="dialog"] p,
 [role="dialog"] span,
 [role="dialog"] h1,
 [role="dialog"] h2,
-[role="dialog"] h3 {
+[role="dialog"] h3,
+[role="dialog"] div {
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
 /* Allow flex children in dialogs to shrink so text wraps instead of clipping */
-[role="dialog"] .flex > * {
+[role="dialog"] .flex > *,
+[role="dialog"] .flex {
   min-width: 0;
+}
+
+/* Ensure all text in dialog sections is fully visible */
+[role="dialog"] .dialog-section {
+  overflow: hidden;
 }
 
 /* Responsive container — wider on tablet/desktop */

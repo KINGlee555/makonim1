@@ -84,6 +84,8 @@ const translations = {
     "settings.summary": "סיכום קניות",
     "settings.summaryDesc": "סה\"כ הוצאות ופילוח לפי קטגוריה",
     "settings.error": "שגיאה בעדכון הגדרות",
+    "settings.favorite": "רשימה מועדפת",
+    "settings.favoriteDesc": "סמן כמועדפת לגישה מהירה",
 
     // NavigateToStoreDialog
     "navigate.title": "ניווט לסופר",
@@ -480,6 +482,8 @@ const translations = {
     "settings.summary": "Shopping Summary",
     "settings.summaryDesc": "Total expenses and category breakdown",
     "settings.error": "Settings update error",
+    "settings.favorite": "Favorite List",
+    "settings.favoriteDesc": "Mark as favorite for quick access",
 
     // NavigateToStoreDialog
     "navigate.title": "Navigate to Store",
@@ -876,6 +880,8 @@ const translations = {
     "settings.summary": "Сводка покупок",
     "settings.summaryDesc": "Всего расходов и разбивка по категориям",
     "settings.error": "Ошибка обновления настроек",
+    "settings.favorite": "Избранный список",
+    "settings.favoriteDesc": "Отметить как избранный для быстрого доступа",
 
     // NavigateToStoreDialog
     "navigate.title": "Навигация к магазину",

@@ -37,36 +37,36 @@ export default function BudgetTracker({ listId }) {
   return (
     <div className="bg-muted/50 rounded-2xl p-4">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
           <Wallet className="w-5 h-5 text-primary" />
         </div>
-        <div>
-          <p className="font-semibold text-foreground">{t("budget.title")}</p>
-          <p className="text-sm text-muted-foreground">{t("budget.thisMonth")}</p>
+        <div className="min-w-0">
+          <p className="font-semibold text-foreground truncate">{t("budget.title")}</p>
+          <p className="text-sm text-muted-foreground truncate">{t("budget.thisMonth")}</p>
         </div>
       </div>
       {budget > 0 ? (
         <>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 gap-2">
             <span className="text-2xl font-bold text-foreground">₪{spent.toFixed(2)}</span>
-            <span className="text-sm text-muted-foreground">/ ₪{budget.toFixed(2)}</span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">/ ₪{budget.toFixed(2)}</span>
           </div>
           <div className="h-3 bg-muted rounded-full overflow-hidden mb-2">
             <div className={`h-full ${barColor} rounded-full transition-all`} style={{ width: `${pct}%` }} />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             {isOver ? (
-              <span className="text-sm text-red-500 font-medium flex items-center gap-1">
-                <AlertTriangle className="w-4 h-4" /> {t("budget.over")} ₪{Math.abs(remaining).toFixed(2)}
+              <span className="text-sm text-red-500 font-medium flex items-center gap-1 min-w-0">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" /> <span className="truncate">{t("budget.over")} ₪{Math.abs(remaining).toFixed(2)}</span>
               </span>
             ) : isWarning ? (
-              <span className="text-sm text-yellow-600 font-medium flex items-center gap-1">
-                <TrendingUp className="w-4 h-4" /> {t("budget.warning")}
+              <span className="text-sm text-yellow-600 font-medium flex items-center gap-1 min-w-0">
+                <TrendingUp className="w-4 h-4 flex-shrink-0" /> <span className="truncate">{t("budget.warning")}</span>
               </span>
             ) : (
-              <span className="text-sm text-muted-foreground">{t("budget.remaining")}: ₪{remaining.toFixed(2)}</span>
+              <span className="text-sm text-muted-foreground truncate">{t("budget.remaining")}: ₪{remaining.toFixed(2)}</span>
             )}
-            <button onClick={() => { setInputBudget(budget.toString()); setBudget(0); }} className="text-xs text-primary underline">{t("budget.set")}</button>
+            <button onClick={() => { setInputBudget(budget.toString()); setBudget(0); }} className="text-xs text-primary underline whitespace-nowrap flex-shrink-0">{t("budget.set")}</button>
           </div>
         </>
       ) : (
