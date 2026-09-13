@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil, ClipboardList, Scale } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -9,7 +9,7 @@ import ProductItem from "../components/ProductItem";
 import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
-import ConnectedUsers from "../components/ConnectedUsers";
+import ListExtras from "../components/ListExtras";
 import AppFooter from "../components/AppFooter";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
@@ -24,7 +24,6 @@ import BasketComparison from "../components/BasketComparison";
 import PriceCompareTable from "../components/PriceCompareTable";
 import ListTemplates from "../components/ListTemplates";
 import BarcodeScanner from "../components/BarcodeScanner";
-import RecurringItems from "../components/RecurringItems";
 import SmartSuggestions from "../components/SmartSuggestions";
 import ShoppingRoute from "../components/ShoppingRoute";
 import WeeklyMenu from "../components/WeeklyMenu";
@@ -40,10 +39,7 @@ import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import ChangePhotoDialog from "../components/ChangePhotoDialog";
 import UnavailableItem from "../components/UnavailableItem";
-import FavoritesSection from "../components/FavoritesSection";
-import NearbyDeals from "../components/NearbyDeals";
 import RenameListDialog from "../components/RenameListDialog";
-import RegisteredUsersCount from "../components/RegisteredUsersCount";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 
 export default function ListView() {
@@ -375,21 +371,8 @@ export default function ListView() {
           </div>
         </section>
 
-        <Button onClick={() => setShowTemplates(true)}
-          className="mb-4 h-12 w-full rounded-2xl bg-secondary text-base font-bold text-secondary-foreground shadow-sm hover:bg-secondary/80">
-          <ClipboardList className="me-2 h-5 w-5" />{t("templates.open")}
-        </Button>
-
-        <Button onClick={() => setShowPriceCompare(true)}
-          className="mb-4 h-12 w-full rounded-2xl bg-primary text-base font-bold text-primary-foreground shadow-sm">
-          <Scale className="me-2 h-5 w-5" />{t("compare.open")}
-        </Button>
-
-        <ConnectedUsers list={list} />
-
-        <FavoritesSection favorites={favorites} onAdd={handleAddProduct} onRemove={handleToggleFavorite} />
-
-        <NearbyDeals onAddProduct={handleAddProduct} />
+        <ListExtras list={list} listId={listId} items={items} favorites={favorites}
+          onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
           <div className="flex items-center gap-2 bg-secondary border border-primary/15 rounded-xl px-4 py-2 mb-4">
@@ -402,7 +385,6 @@ export default function ListView() {
 
         {pendingItems.length > 0 && (
           <>
-            <h2 className="text-lg font-bold text-foreground mb-2 px-1">{t("list.primaryActions")}</h2>
             <div className="grid grid-cols-3 gap-2 mb-5 animate-slide-up">
               <Button onClick={() => setShowShoppingMode(true)} className="h-11 rounded-lg bg-primary text-primary-foreground px-2 shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
@@ -412,6 +394,7 @@ export default function ListView() {
               </Button>
               <FeatureMenu
                 onOpenBasket={() => setShowBasket(true)}
+                onOpenPriceCompare={() => setShowPriceCompare(true)}
                 onOpenTemplates={() => setShowTemplates(true)}
                 onOpenScanner={() => setShowScanner(true)}
                 onOpenRoute={() => setShowRoute(true)}
@@ -425,8 +408,7 @@ export default function ListView() {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 mb-5">
-              <RecurringItems listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+            <div className="mb-5">
               <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
             </div>
 
@@ -493,7 +475,6 @@ export default function ListView() {
           </div>
         )}
 
-        <RegisteredUsersCount />
         <AppFooter />
       </main>
 

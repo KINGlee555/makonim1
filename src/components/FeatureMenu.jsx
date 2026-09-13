@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown } from "lucide-react";
+import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-export default function FeatureMenu({ onOpenBasket, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
   const features = [
+    { icon: Scale, label: t("compare.open"), onClick: onOpenPriceCompare, color: "text-primary" },
     { icon: Store, label: t("basket.title"), onClick: onOpenBasket, color: "text-blue-500" },
     { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates, color: "text-primary" },
     { icon: ScanLine, label: t("barcode.title"), onClick: onOpenScanner, color: "text-purple-500" },
