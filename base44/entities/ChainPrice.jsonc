@@ -1,0 +1,27 @@
+{
+  "name": "ChainPrice",
+  "type": "object",
+  "properties": {
+    "chain": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05e8\u05e9\u05ea (shufersal, rami_levy, ...)"
+    },
+    "barcode": {
+      "type": "string",
+      "description": "\u05d1\u05e8\u05e7\u05d5\u05d3 \u05d4\u05de\u05d5\u05e6\u05e8"
+    },
+    "price": {
+      "type": "number",
+      "description": "\u05de\u05d7\u05d9\u05e8 \u05de\u05d3\u05e3 \u05d1\u05e9\u05e7\u05dc\u05d9\u05dd \u05dc\u05e4\u05d9 \u05e7\u05d5\u05d1\u05e5 \u05e9\u05e7\u05d9\u05e4\u05d5\u05ea \u05d4\u05de\u05d7\u05d9\u05e8\u05d9\u05dd (0 = \u05dc\u05d0 \u05e0\u05de\u05e6\u05d0 \u05d1\u05e8\u05e9\u05ea)"
+    },
+    "day": {
+      "type": "string",
+      "description": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05e7\u05d5\u05d1\u05e5 (YYYY-MM-DD) \u05dc\u05d6\u05d9\u05d4\u05d5\u05d9 \u05de\u05d7\u05d9\u05e8\u05d9\u05dd \u05de\u05d9\u05d5\u05e9\u05e0\u05d9\u05dd"
+    }
+  },
+  "required": [
+    "chain",
+    "barcode",
+    "day"
+  ]
+}
