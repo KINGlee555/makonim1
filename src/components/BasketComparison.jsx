@@ -1,23 +1,16 @@
-import { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Store, TrendingDown } from "lucide-react";
+import { Crown, Store, TrendingDown, Loader2 } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { CHAINS, getSimulatedPrice } from "@/lib/chainPrices";
+import { useChainPrices } from "@/hooks/useChainPrices";
 import ChainLogo from "@/components/ChainLogo";
 
 export default function BasketComparison({ open, onOpenChange, items }) {
   const t = useT();
+  const { loading, error, totals, matched, coverage, day } = useChainPrices(items, open);
 
-  const chainTotals = useMemo(() => {
-    return CHAINS.map((chain, idx) => {
-      const total = items.reduce((sum, item) => sum + getSimulatedPrice(item.name, item.price || 0, idx) * (item.quantity || 1), 0);
-      return { ...chain, total, index: idx };
-    }).sort((a, b) => a.total - b.total);
-  }, [items]);
-
-  const cheapest = chainTotals[0];
-  const savings = chainTotals[chainTotals.length - 1].total - cheapest.total;
+  const cheapest = totals[0];
+  const savings = totals.length > 1 ? totals[totals.length - 1].total - cheapest.total : 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -30,6 +23,13 @@ export default function BasketComparison({ open, onOpenChange, items }) {
         <div className="flex-1 overflow-y-auto px-1">
           {items.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">{t("basket.empty")}</p>
+          ) : loading ? (
+            <div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
+              <Loader2 className="w-7 h-7 animate-spin text-primary" />
+              <p className="text-sm">{t("basket.loading")}</p>
+            </div>
+          ) : totals.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">{error ? t("basket.error") : t("basket.noMatch")}</p>
           ) : (
             <>
               <div className="bg-primary/10 rounded-2xl p-4 mb-4 flex items-center gap-3">
@@ -49,18 +49,26 @@ export default function BasketComparison({ open, onOpenChange, items }) {
                 </div>
               )}
               <div className="space-y-2">
-                {chainTotals.map((chain, idx) => (
-                  <div key={chain.name} className={`flex items-center justify-between rounded-2xl p-3 border ${idx === 0 ? "border-primary bg-primary/5" : "border-border bg-card"}`}>
-                    <div className="flex items-center gap-3">
-                      <ChainLogo name={chain.name} size={40} className="rounded-xl" />
-                      <span className="font-medium text-foreground">{chain.name}</span>
-                      {idx === 0 && <Badge className="bg-primary text-primary-foreground text-xs">{t("basket.best")}</Badge>}
+                {totals.map((chain, idx) => (
+                  <div key={chain.id} className={`flex items-center justify-between gap-2 rounded-2xl p-3 border ${idx === 0 ? "border-primary bg-primary/5" : "border-border bg-card"}`}>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <ChainLogo name={chain.name} size={40} className="rounded-xl flex-shrink-0" />
+                      <div className="min-w-0">
+                        <span className="font-medium text-foreground">{chain.name}</span>
+                        {chain.covered < matched && (
+                          <p className="text-xs text-muted-foreground">{t("basket.coverage", { found: chain.covered, total: matched })}</p>
+                        )}
+                      </div>
+                      {idx === 0 && <Badge className="bg-primary text-primary-foreground text-xs flex-shrink-0">{t("basket.best")}</Badge>}
                     </div>
-                    <span className={`text-lg font-bold ${idx === 0 ? "text-primary" : "text-foreground"}`}>₪{chain.total.toFixed(2)}</span>
+                    <span className={`text-lg font-bold flex-shrink-0 ${idx === 0 ? "text-primary" : "text-foreground"}`}>₪{chain.total.toFixed(2)}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground text-center mt-4">{t("basket.disclaimer")}</p>
+              {coverage < matched && <p className="text-xs text-muted-foreground text-center mt-4">{t("basket.partial", { matched, coverage })}</p>}
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                {t("basket.disclaimer")}{day ? ` · ${t("basket.updated", { day })}` : ""}
+              </p>
             </>
           )}
         </div>

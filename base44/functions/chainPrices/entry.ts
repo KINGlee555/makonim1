@@ -1,7 +1,8 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { CHAINS, pricesForBarcodes } from "../../shared/priceTransparency.ts";
+import { searchPriceCatalog } from "../../shared/shufersalPrices.ts";
 
-// Real shelf prices per chain for a basket of barcodes, straight from the official
+// Real shelf prices per chain for a basket, straight from the official
 // price-transparency feeds. Every resolved (chain, barcode, day) is stored, so the
 // heavy file read happens at most once per chain per day — later baskets are DB reads.
 export default async function (req: Request): Promise<Response> {
@@ -10,10 +11,29 @@ export default async function (req: Request): Promise<Response> {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
+    const started = Date.now();
     const body = await req.json();
-    const barcodes = [...new Set((Array.isArray(body?.barcodes) ? body.barcodes : [])
-      .map((code: any) => String(code || "").trim()).filter(Boolean))].slice(0, 60);
-    if (!barcodes.length) return Response.json({ chains: [], barcodes: [] });
+    const rawItems: any[] = Array.isArray(body?.items) ? body.items
+      : (Array.isArray(body?.barcodes) ? body.barcodes.map((code: any) => ({ barcode: code })) : []);
+
+    // Items we know the barcode of are exact; the rest are matched by name.
+    const items: { name: string; barcode: string }[] = [];
+    for (const raw of rawItems.slice(0, 50)) {
+      const name = String(raw?.name || "").trim().slice(0, 64);
+      let barcode = String(raw?.barcode || "").trim();
+      if (!barcode && name) {
+        try {
+          barcode = (await searchPriceCatalog(name, 1))[0]?.code || "";
+        } catch (error) {
+          console.error("barcode lookup failed", name, error instanceof Error ? error.message : error);
+        }
+      }
+      if (barcode) items.push({ name, barcode });
+    }
+
+    const barcodes = [...new Set(items.map((item) => item.barcode))];
+    console.log("timing ms", { resolve: Date.now() - started, items: items.length, barcodes: barcodes.length });
+    if (!barcodes.length) return Response.json({ items: [], chains: [] });
 
     const day = new Date().toISOString().slice(0, 10);
     const cached = await base44.asServiceRole.entities.ChainPrice.filter(
@@ -50,7 +70,7 @@ export default async function (req: Request): Promise<Response> {
       return { id: chain.id, name: chain.name, prices, found: Object.keys(prices).length };
     }).filter((chain) => chain.found > 0);
 
-    return Response.json({ day, barcodes, chains });
+    return Response.json({ day, items, chains });
   } catch (error) {
     console.error("chainPrices", error);
     return Response.json({ error: error instanceof Error ? error.message : "Chain price lookup failed" }, { status: 500 });

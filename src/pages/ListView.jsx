@@ -241,7 +241,8 @@ export default function ListView() {
       return;
     }
     const newItem = await base44.entities.ListItem.create({
-      list_id: listId, name: product.name, price: product.price || 0,
+      list_id: listId, name: product.name, barcode: product.barcode || "",
+      price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
       status: "pending", quantity: 1, unit: "unit", note: ""
     });
@@ -250,7 +251,7 @@ export default function ListView() {
 
   const handleAddMultiple = useCallback(async (products) => {
     const items = products.map(p => ({
-      list_id: listId, name: p.name, price: p.price || 0,
+      list_id: listId, name: p.name, barcode: p.barcode || "", price: p.price || 0,
       image_url: p.image_url || "", category: p.category || "אחר",
       status: "pending", quantity: 1
     }));

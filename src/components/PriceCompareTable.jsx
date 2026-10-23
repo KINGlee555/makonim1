@@ -1,29 +1,12 @@
-import { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Scale } from "lucide-react";
-import { CHAINS, getSimulatedPrice } from "@/lib/chainPrices";
+import { Scale, Loader2 } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { useChainPrices } from "@/hooks/useChainPrices";
 import ChainLogo from "@/components/ChainLogo";
 
 export default function PriceCompareTable({ open, onOpenChange, items }) {
   const t = useT();
-
-  const rows = useMemo(() => items
-    .filter(item => (item.price || 0) > 0)
-    .map(item => {
-      const prices = CHAINS.map((chain, idx) => ({
-        chain: chain.name,
-        price: getSimulatedPrice(item.name, item.price || 0, idx) * (item.quantity || 1)
-      }));
-      const min = Math.min(...prices.map(p => p.price));
-      const max = Math.max(...prices.map(p => p.price));
-      return { name: item.name, prices, min, max, diff: max - min, best: prices.find(p => p.price === min).chain };
-    }), [items]);
-
-  const totals = useMemo(() => CHAINS.map((chain, idx) => ({
-    name: chain.name,
-    total: rows.reduce((sum, row) => sum + row.prices[idx].price, 0)
-  })).sort((a, b) => a.total - b.total), [rows]);
+  const { loading, error, rows, totals, matched, day } = useChainPrices(items, open);
 
   const totalSaving = rows.reduce((sum, row) => sum + row.diff, 0);
 
@@ -36,10 +19,20 @@ export default function PriceCompareTable({ open, onOpenChange, items }) {
           </DialogTitle>
         </DialogHeader>
 
-        {rows.length === 0 ? (
-          <p className="py-8 text-center text-muted-foreground">{t("compare.empty")}</p>
+        {items.length === 0 || rows.length === 0 ? (
+          <p className="py-8 text-center text-muted-foreground">
+            {loading ? t("compare.loading")
+              : items.length === 0 ? t("compare.empty")
+              : error ? t("basket.error")
+              : t("basket.noMatch")}
+          </p>
         ) : (
           <div className="flex-1 space-y-4 overflow-y-auto">
+            {loading && (
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />{t("compare.loading")}
+              </div>
+            )}
             <div className="rounded-2xl bg-primary/10 p-3 text-center">
               <p className="text-sm text-muted-foreground">{t("compare.potentialSaving")}</p>
               <p className="text-2xl font-bold text-primary">₪{totalSaving.toFixed(2)}</p>
@@ -57,7 +50,7 @@ export default function PriceCompareTable({ open, onOpenChange, items }) {
                 </thead>
                 <tbody>
                   {rows.map(row => (
-                    <tr key={row.name} className="border-t border-border">
+                    <tr key={row.id} className="border-t border-border">
                       <td className="p-1.5 font-semibold text-foreground">{row.name}</td>
                       <td className="p-1.5 text-center">
                         <span className="block font-bold text-primary">₪{row.min.toFixed(2)}</span>
@@ -88,7 +81,10 @@ export default function PriceCompareTable({ open, onOpenChange, items }) {
               </table>
             </div>
 
-            <p className="text-center text-xs text-muted-foreground">{t("basket.disclaimer")}</p>
+            <p className="text-center text-xs text-muted-foreground">{t("compare.matched", { matched, total: items.length })}</p>
+            <p className="text-center text-xs text-muted-foreground">
+              {t("basket.disclaimer")}{day ? ` · ${t("basket.updated", { day })}` : ""}
+            </p>
           </div>
         )}
       </DialogContent>

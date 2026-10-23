@@ -1,16 +1,24 @@
+import { base44 } from "@/api/base44Client";
+
+// Every chain that publishes an official price-transparency feed, in display order.
 export const CHAINS = [
-  { name: "שופרסל", color: "bg-red-100 text-red-700" },
-  { name: "רמי לוי", color: "bg-green-100 text-green-700" },
-  { name: "מגא בול", color: "bg-blue-100 text-blue-700" },
-  { name: "יוחננוף", color: "bg-orange-100 text-orange-700" },
-  { name: "ויקטורי", color: "bg-purple-100 text-purple-700" },
-  { name: "קשת טעמים", color: "bg-yellow-100 text-yellow-700" },
-  { name: "חצי חינם", color: "bg-pink-100 text-pink-700" },
+  { id: "shufersal", name: "שופרסל" },
+  { id: "rami_levy", name: "רמי לוי" },
+  { id: "yohananof", name: "יוחננוף" },
+  { id: "osher_ad", name: "אושר עד" },
+  { id: "tiv_taam", name: "טיב טעם" },
+  { id: "keshet", name: "קשת טעמים" },
+  { id: "fresh_market", name: "פרש מרקט" },
+  { id: "stop_market", name: "סטופ מרקט" },
+  { id: "politzer", name: "פוליצר" },
+  { id: "salach_dabach", name: "סאלח דבאח" }
 ];
 
-// Deterministic estimated price per chain — same product always gets the same spread
-export function getSimulatedPrice(productName, basePrice, chainIndex) {
-  const seed = productName.charCodeAt(0) + productName.charCodeAt(productName.length - 1) + chainIndex * 13;
-  const variation = ((seed % 30) - 15) / 100;
-  return basePrice * (1 + variation);
+// Real shelf prices for a basket: items with a barcode are matched exactly,
+// the rest are matched by name against the chains' price files.
+export async function fetchChainPrices(items) {
+  const response = await base44.functions.invoke("chainPrices", {
+    items: items.map((item) => ({ name: item.name, barcode: item.barcode || "" }))
+  });
+  return response.data || {};
 }

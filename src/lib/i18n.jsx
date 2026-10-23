@@ -294,7 +294,13 @@ const translations = {
     "basket.best": "מומלץ",
     "basket.savings": "חוסך עד ₪{amount} לעומת היקר ביותר",
     "basket.empty": "הרשימה ריקה",
-    "basket.disclaimer": "המחירים מוערכים ומבוססים על נתונים סימולטיביים",
+    "basket.disclaimer": "מחירים אמתיים מקבצי שקיפות המחירים הרשמיים",
+    "basket.updated": "עודכן {day}",
+    "basket.loading": "בודק מחירים ברשתות...",
+    "basket.error": "לא הצלחנו לטעון מחירים כרגע, נסו שוב",
+    "basket.noMatch": "לא נמצאו מחירים למוצרים ברשימה",
+    "basket.coverage": "{found} מתוך {total} מוצרים",
+    "basket.partial": "לחלק מהמוצרים לא נמצא מחיר בכל הרשתות · הושוו {matched} מוצרים, {coverage} מהם בכל הרשתות",
 
     // Templates
     "templates.title": "תבניות",
@@ -368,6 +374,8 @@ const translations = {
     "compare.total": "סה״כ",
     "compare.potentialSaving": "אפשר לחסוך עד",
     "compare.empty": "הוסיפו מוצרים עם מחיר כדי להשוות",
+    "compare.loading": "בודק מחירים ברשתות...",
+    "compare.matched": "הושוו {matched} מתוך {total} מוצרים",
 
     // Shopping route
     "route.title": "מסלול",
@@ -735,7 +743,13 @@ const translations = {
     "basket.best": "Best",
     "basket.savings": "Save up to ₪{amount} vs most expensive",
     "basket.empty": "List is empty",
-    "basket.disclaimer": "Prices are estimated and based on simulated data",
+    "basket.disclaimer": "Real prices from the official price transparency files",
+    "basket.updated": "Updated {day}",
+    "basket.loading": "Checking prices at the chains...",
+    "basket.error": "Could not load prices right now, please try again",
+    "basket.noMatch": "No prices found for the items in this list",
+    "basket.coverage": "{found} of {total} items",
+    "basket.partial": "Some items are not sold everywhere · compared {matched} items, {coverage} of them at every chain",
 
     // Templates
     "templates.title": "Templates",
@@ -809,6 +823,8 @@ const translations = {
     "compare.total": "Total",
     "compare.potentialSaving": "You could save up to",
     "compare.empty": "Add products with prices to compare",
+    "compare.loading": "Checking prices at the chains...",
+    "compare.matched": "Compared {matched} of {total} items",
 
     // Shopping route
     "route.title": "Route",
@@ -1168,6 +1184,20 @@ const translations = {
     "compare.total": "Итого",
     "compare.potentialSaving": "Можно сэкономить до",
     "compare.empty": "Добавьте товары с ценами для сравнения",
+    "compare.loading": "Проверяем цены в сетях...",
+    "compare.matched": "Сравнено {matched} из {total} товаров",
+    "basket.disclaimer": "Реальные цены из официальных файлов прозрачности цен",
+    "basket.updated": "Обновлено {day}",
+    "basket.loading": "Проверяем цены в сетях...",
+    "basket.error": "Не удалось загрузить цены, попробуйте ещё раз",
+    "basket.noMatch": "Цены для товаров списка не найдены",
+    "basket.coverage": "{found} из {total} товаров",
+    "basket.partial": "Часть товаров есть не во всех сетях · сравнено {matched} товаров, {coverage} из них во всех сетях",
+    "basket.title": "Сравнение корзины",
+    "basket.cheapest": "Дешевле всего",
+    "basket.best": "Лучший",
+    "basket.savings": "Экономия до ₪{amount} по сравнению с самой дорогой",
+    "basket.empty": "Список пуст",
     "list.moreFeatures": "Ещё инструменты",
 
     // Shopping route
