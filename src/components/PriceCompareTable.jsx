@@ -6,7 +6,7 @@ import ChainLogo from "@/components/ChainLogo";
 
 export default function PriceCompareTable({ open, onOpenChange, items }) {
   const t = useT();
-  const { loading, error, rows, totals, matched, day } = useChainPrices(items, open);
+  const { loading, error, rows, totals, matched, day, refreshing } = useChainPrices(items, open);
 
   const totalSaving = rows.reduce((sum, row) => sum + row.diff, 0);
 
@@ -28,9 +28,9 @@ export default function PriceCompareTable({ open, onOpenChange, items }) {
           </p>
         ) : (
           <div className="flex-1 space-y-4 overflow-y-auto">
-            {loading && (
+            {refreshing && (
               <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />{t("compare.loading")}
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />{t("basket.more")}
               </div>
             )}
             <div className="rounded-2xl bg-primary/10 p-3 text-center">

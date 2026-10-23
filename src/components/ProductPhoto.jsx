@@ -3,6 +3,7 @@ import { Package } from "lucide-react";
 import { getProductImageUrl, getSpecificProductImage } from "@/lib/productImages";
 import { detectBrand, pickBestPhoto } from "@/lib/productPhotoMatch";
 import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
+import { getCachedPhoto, cachePhoto } from "@/lib/photoCache";
 
 // Looks the product up in the barcode catalog; with a named brand it also retries a
 // brand-focused query so e.g. "שמנת 15% יטבתה" still lands on the real Yotvata carton.
@@ -16,21 +17,24 @@ async function findBrandPhoto(name, brand, excludeUrl = "") {
   for (const query of queries) {
     const products = await searchRemoteCatalog(query || "");
     const match = pickBestPhoto(products, name, excludeUrl);
-    if (match?.image_url) return match;
+    if (match?.image_url) {
+      cachePhoto(name, match.image_url);
+      return match;
+    }
   }
   return null;
 }
 
-// Photo priority: the product's own catalog photo → a real brand-matched catalog photo →
-// a keyword-matched photo → a generic category photo (only when no brand was named).
+// Photo priority: the product's own catalog photo → the photo already matched for this
+// name → a real brand-matched catalog photo → a generic category photo.
 export default function ProductPhoto({ name, category, imageUrl, className = "" }) {
   const brand = detectBrand(name);
   const localUrl = brand
     ? getSpecificProductImage(name)
     : getProductImageUrl(name, category);
-  const [src, setSrc] = useState(imageUrl || "");
+  const [src, setSrc] = useState(imageUrl || getCachedPhoto(name) || "");
   const [failed, setFailed] = useState(false);
-  const [checking, setChecking] = useState(!imageUrl);
+  const [checking, setChecking] = useState(!imageUrl && !src);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,7 +46,14 @@ export default function ProductPhoto({ name, category, imageUrl, className = "" 
       return () => { cancelled = true; };
     }
 
-    // No stored photo — look for the real product photo in the barcode catalog
+    const remembered = getCachedPhoto(name);
+    if (remembered) {
+      setSrc(remembered);
+      setChecking(false);
+      return () => { cancelled = true; };
+    }
+
+    // Not seen before — look for the real product photo in the barcode catalog
     setSrc(localUrl || "");
     setChecking(true);
     findBrandPhoto(name, brand).then(match => {

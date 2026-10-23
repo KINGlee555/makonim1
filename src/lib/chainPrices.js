@@ -14,11 +14,17 @@ export const CHAINS = [
   { id: "salach_dabach", name: "סאלח דבאח" }
 ];
 
+// The chains most products are sold at are asked for first, so the comparison shows
+// real prices within seconds; the rest fill in right after.
+export const FAST_CHAINS = ["shufersal", "rami_levy", "yohananof", "osher_ad"];
+export const OTHER_CHAINS = CHAINS.map(chain => chain.id).filter(id => !FAST_CHAINS.includes(id));
+
 // Real shelf prices for a basket: items with a barcode are matched exactly,
 // the rest are matched by name against the chains' price files.
-export async function fetchChainPrices(items) {
+export async function fetchChainPrices(items, chains) {
   const response = await base44.functions.invoke("chainPrices", {
-    items: items.map((item) => ({ name: item.name, barcode: item.barcode || "" }))
+    items: items.map(item => ({ name: item.name, barcode: item.barcode || "" })),
+    chains
   });
   return response.data || {};
 }

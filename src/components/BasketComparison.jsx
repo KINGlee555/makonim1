@@ -7,7 +7,7 @@ import ChainLogo from "@/components/ChainLogo";
 
 export default function BasketComparison({ open, onOpenChange, items }) {
   const t = useT();
-  const { loading, error, totals, matched, coverage, day } = useChainPrices(items, open);
+  const { loading, error, totals, matched, coverage, day, refreshing } = useChainPrices(items, open);
 
   const cheapest = totals[0];
   const savings = totals.length > 1 ? totals[totals.length - 1].total - cheapest.total : 0;
@@ -46,6 +46,11 @@ export default function BasketComparison({ open, onOpenChange, items }) {
                 <div className="flex items-center gap-2 bg-green-50 rounded-xl px-4 py-2 mb-4">
                   <TrendingDown className="w-4 h-4 text-green-600" />
                   <p className="text-sm text-green-700 font-medium">{t("basket.savings", { amount: savings.toFixed(2) })}</p>
+                </div>
+              )}
+              {refreshing && (
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-3">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />{t("basket.more")}
                 </div>
               )}
               <div className="space-y-2">

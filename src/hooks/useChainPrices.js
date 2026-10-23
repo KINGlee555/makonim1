@@ -1,39 +1,92 @@
-import { useEffect, useMemo, useState } from "react";
-import { CHAINS, fetchChainPrices } from "@/lib/chainPrices";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { CHAINS, FAST_CHAINS, OTHER_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
 
-// Real per-chain pricing for the current basket.
-// Returns one row per item that at least one chain has a price for, plus the
-// basket total each chain would cost (over the items that chain carries).
+// Answers are kept in memory for a while: reopening the comparison inside the same
+// visit is instant and never hits the network again.
+const CACHE_TTL_MS = 15 * 60 * 1000;
+const cache = new Map();
+
+const empty = { loading: false, error: false, day: "", chains: [], barcodes: {} };
+
+const barcodesOf = (data) => {
+  const map = {};
+  for (const entry of data.items || []) if (entry.name && entry.barcode) map[entry.name] = entry.barcode;
+  return map;
+};
+
+const merge = (first, second) => ({
+  loading: false, error: false,
+  day: second.day || first.day || "",
+  chains: [...(first.chains || []), ...(second.chains || [])].filter(
+    (chain, index, all) => all.findIndex(other => other.id === chain.id) === index
+  ),
+  barcodes: { ...barcodesOf(first), ...barcodesOf(second) }
+});
+
+// Real per-chain pricing for the current basket, in two quick rounds so the first
+// prices appear fast. Returns one row per item at least one chain has a price for,
+// plus what the basket would cost at each chain.
 export function useChainPrices(items, enabled) {
-  const key = items.map(item => `${item.id || item.name}:${item.quantity || 1}:${item.barcode || ""}`).join("|");
-  const [state, setState] = useState({ loading: false, error: false, day: "", chains: [], barcodes: {} });
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+  const signature = useMemo(
+    () => items.map(item => `${item.barcode || item.name}:${item.quantity || 1}`).join("|"),
+    [items]
+  );
+  const [state, setState] = useState(empty);
+  const [refreshing, setRefreshing] = useState(false);
+  const saved = useRef(false);
 
   useEffect(() => {
-    if (!enabled || !items.length) {
-      setState({ loading: false, error: false, day: "", chains: [], barcodes: {} });
+    if (!enabled || !itemsRef.current.length) return;
+    const hit = cache.get(signature);
+    if (hit && Date.now() - hit.at < CACHE_TTL_MS) {
+      setState(hit.data);
+      setRefreshing(false);
       return;
     }
     let cancelled = false;
-    setState(prev => ({ ...prev, loading: true, error: false }));
-    fetchChainPrices(items)
-      .then(data => {
+    const basket = itemsRef.current;
+    setState({ ...empty, loading: true });
+    setRefreshing(false);
+    (async () => {
+      try {
+        const first = await fetchChainPrices(basket, FAST_CHAINS);
         if (cancelled) return;
-        const barcodes = {};
-        for (const entry of data.items || []) if (entry.name && !barcodes[entry.name]) barcodes[entry.name] = entry.barcode;
-        setState({ loading: false, error: false, day: data.day || "", chains: data.chains || [], barcodes });
-      })
-      .catch(() => {
-        if (!cancelled) setState({ loading: false, error: true, day: "", chains: [], barcodes: {} });
-      });
+        setState({ loading: false, error: false, day: first.day || "", chains: first.chains || [], barcodes: barcodesOf(first) });
+        setRefreshing(true);
+        const rest = await fetchChainPrices(basket, OTHER_CHAINS);
+        if (cancelled) return;
+        const merged = merge(first, rest);
+        setState(merged);
+        setRefreshing(false);
+        cache.set(signature, { at: Date.now(), data: merged });
+      } catch {
+        if (cancelled) return;
+        setState({ ...empty, error: true });
+        setRefreshing(false);
+      }
+    })();
     return () => { cancelled = true; };
-  }, [key, enabled]);
+  }, [signature, enabled]);
+
+  // Learn the barcode of items that only had a name — the next visit is a direct lookup.
+  useEffect(() => {
+    if (saved.current || !Object.keys(state.barcodes).length) return;
+    saved.current = true;
+    const updates = itemsRef.current
+      .filter(item => item.id && !item.barcode && state.barcodes[item.name])
+      .map(item => ({ id: item.id, barcode: state.barcodes[item.name] }));
+    if (updates.length) base44.entities.ListItem.bulkUpdate(updates).catch(() => {});
+  }, [state.barcodes]);
 
   const comparison = useMemo(() => {
     const rows = items.map(item => {
-      const barcode = item.barcode || state.barcodes[item.name] || "";
+      const key = item.barcode || item.name;
       const quantity = item.quantity || 1;
-      const prices = CHAINS
-        .map(chain => ({ chain, price: state.chains.find(c => c.id === chain.id)?.prices?.[barcode] }))
+      const prices = state.chains
+        .map(chain => ({ chain, price: chain.prices?.[key] }))
         .filter(entry => entry.price > 0)
         .map(entry => ({ chain: entry.chain.name, chainId: entry.chain.id, unit: entry.price, total: entry.price * quantity }));
       if (!prices.length) return null;
@@ -56,7 +109,7 @@ export function useChainPrices(items, enabled) {
     }).filter(chain => chain.covered > 0).sort((a, b) => a.total - b.total);
 
     return { rows, totals, matched: rows.length, coverage: totals.length ? Math.max(...totals.map(chain => chain.covered)) : 0 };
-  }, [items, state.barcodes, state.chains]);
+  }, [items, state.chains]);
 
-  return { ...state, ...comparison };
+  return { ...state, refreshing, ...comparison };
 }

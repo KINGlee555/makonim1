@@ -17,6 +17,7 @@ import ListReader from "../components/ListReader";
 import { toast } from "@/components/ui/use-toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
+import { useWarmChainPrices } from "@/hooks/useWarmChainPrices";
 import { useT } from "@/lib/i18n";
 import { getProductEmoji } from "@/lib/productEmoji";
 import ShoppingMode from "../components/ShoppingMode";
@@ -82,6 +83,8 @@ export default function ListView() {
   const favoritesRef = useRef([]);
   favoritesRef.current = favorites;
   const { syncing: priceSyncing } = usePriceSync();
+  // Prepares real chain prices in the background so comparisons open instantly
+  useWarmChainPrices(items);
 
   const loadData = useCallback(async () => {
     const [allLists, allItems, allFavorites] = await Promise.all([

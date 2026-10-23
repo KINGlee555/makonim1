@@ -2,9 +2,11 @@
 // Shufersal publishes on its own portal; the rest publish through the shared
 // publishedprices.co.il (Cerberus) portal with a per-chain username and no password.
 //
-// Memory discipline: a chain's daily price file is ~10MB of XML. We never keep a
-// full catalog in memory — we stream it once, pull out only the barcodes we were
-// asked about, and throw the rest away.
+// Memory & speed discipline: a chain's daily file can be tens of MB of XML. We stream
+// it, pull out only the barcodes (and names) we were asked about, and throw the rest
+// away — the whole file is never held in memory and the answer is one pass.
+
+import { normalizeText } from "./shufersalPrices.ts";
 
 const UA = { "User-Agent": "MaKonim/1.0 (price transparency)" };
 const CERBERUS = "https://url.publishedprices.co.il";
@@ -96,19 +98,103 @@ export async function chainPriceFile(chain: Chain) {
 
 const tag = (block: string, name: string) => (block.match(new RegExp(`<${name}>([^<]*)</${name}>`)) || [])[1]?.trim() || "";
 
-// One pass over the chain's daily file, keeping only the requested barcodes.
-export async function pricesForBarcodes(chain: Chain, barcodes: Set<string>) {
+const SIZE_WORDS = new Set(["גרם", "גר", "גרמים", "קג", "קילו", "קילוגרם", "מל", "ליטר", "ל", "יח", "יחידה", "מינון", "אריזה", "משקל"]);
+
+// A product name becomes: the words that identify it, the biggest number (usually the
+// pack size) and the normalized form used to compare against the file.
+type NameQuery = {
+  key: string;
+  terms: string[];
+  longest: string;
+  number: string;
+  score: number;
+  length: number;
+  match: { code: string; price: number } | null;
+};
+
+function nameQuery(key: string): NameQuery {
+  const tokens = normalizeText(key).split(" ").filter(Boolean);
+  const terms: string[] = [];
+  let number = "";
+  for (const token of tokens) {
+    if (/^\d+$/.test(token)) {
+      if (token.length >= 3) number = token;
+      else terms.push(token);
+      continue;
+    }
+    if (SIZE_WORDS.has(token)) continue;
+    terms.push(token);
+  }
+  const kept = terms.length ? terms : tokens;
+  return {
+    key, terms: kept, number, score: 0, length: Number.MAX_SAFE_INTEGER, match: null,
+    longest: kept.reduce((longest, term) => (term.length > longest.length ? term : longest), kept[0] || "")
+  };
+}
+
+// One pass over the chain's daily file. `barcodes` are matched exactly, `names` are
+// matched inside the same pass, so no second copy of any catalog is loaded.
+export async function pricesForItems(chain: Chain, barcodes: Set<string>, names: string[]) {
   const file = await chainPriceFile(chain);
   const response = await fetch(file.url, { headers: file.headers });
   if (!response.ok || !response.body) throw new Error(`${chain.id}: price file ${response.status}`);
-  const xml = await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text();
-  const prices = new Map<string, number>();
-  for (const block of xml.split("<Item>")) {
-    if (prices.size === barcodes.size) break;
+
+  const found = new Map<string, { price: number; code: string }>();
+  const queries = names.map(nameQuery).filter((query) => query.longest);
+  const wanted = barcodes.size + queries.length;
+
+  const consume = (block: string) => {
     const code = tag(block, "ItemCode");
-    if (!code || !barcodes.has(code) || prices.has(code)) continue;
+    if (!code) return;
     const price = Number(tag(block, "ItemPrice"));
-    if (price > 0) prices.set(code, price);
+    if (!(price > 0)) return;
+    if (barcodes.has(code)) {
+      if (!found.has(code)) found.set(code, { price, code });
+      return;
+    }
+    if (!queries.length) return;
+    const product = tag(block, "ItemName");
+    if (!product) return;
+    const brand = tag(block, "ManufacturerName");
+    const lower = `${product} ${brand}`.toLowerCase();
+    for (const query of queries) {
+      if (query.match && query.score >= 3) continue;
+      if (!lower.includes(query.longest)) continue;
+      const normalized = normalizeText(`${product} ${brand}`);
+      if (!query.terms.every((term) => normalized.includes(term))) continue;
+      const quantity = Number(tag(block, "Quantity"));
+      const score = query.number ? (quantity === Number(query.number) ? 3 : 2) : 1;
+      if (score > query.score || (score === query.score && normalized.length < query.length)) {
+        query.score = score;
+        query.length = normalized.length;
+        query.match = { code, price };
+      }
+    }
+  };
+
+  const reader = response.body.pipeThrough(new DecompressionStream("gzip")).getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let searching = true;
+  while (searching) {
+    const chunk = await reader.read();
+    if (chunk.done) {
+      if (buffer) consume(buffer.slice(buffer.indexOf("<Item>") + 6));
+      break;
+    }
+    buffer += decoder.decode(chunk.value, { stream: true });
+    let end = buffer.indexOf("</Item>");
+    while (end !== -1) {
+      const block = buffer.slice(buffer.indexOf("<Item>"), end);
+      buffer = buffer.slice(end + 7);
+      consume(block);
+      end = buffer.indexOf("</Item>");
+    }
+    // Everything asked for was resolved — no reason to keep reading the file.
+    if (found.size + queries.filter((query) => query.match).length >= wanted) searching = false;
   }
-  return { prices, day: file.day };
+  reader.cancel().catch(() => {});
+
+  for (const query of queries) if (query.match) found.set(query.key, query.match);
+  return { prices: found, day: file.day };
 }
