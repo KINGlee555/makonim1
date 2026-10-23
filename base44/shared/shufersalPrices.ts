@@ -1,7 +1,7 @@
 // Official price-transparency feed (חוק שקיפות המחירים): Shufersal publishes a full
 // price file per branch every night. We load the Shufersal Online branch (413) once,
 // keep it in memory for a few hours and search it by Hebrew name.
-const LISTING_URL = "https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=2&storeId=413";
+const LISTING_URL = "https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=2&storeId=413&sort=Time&order=desc";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 let cache = { loadedAt: 0, items: [] as any[], byCode: new Map<string, any>(), loading: null as Promise<void> | null };
@@ -30,12 +30,20 @@ function tag(xml: string, name: string) {
   return match ? match[1].trim() : "";
 }
 
+// The file names carry a YYYYMMDD-HHMMSS stamp, so the newest one sorts first.
+const stamp = (url: string) => (url.match(/(\d{8}-\d{6})/) || ["", ""])[1];
+
 async function loadPriceFile() {
-  const listing = await fetch(LISTING_URL, { headers: { "User-Agent": "MaKonim/1.0" } });
+  // The listing page builds its file table asynchronously, so the links only come back
+  // when the request carries the site's own cache-buster parameter.
+  const listing = await fetch(`${LISTING_URL}&__swhg=${Date.now()}`, {
+    headers: { "User-Agent": "MaKonim/1.0", "X-Requested-With": "XMLHttpRequest" }
+  });
   const html = await listing.text();
-  const link = html.match(/href="(https:\/\/pricesprodpublic[^"]+pricefull[^"]+)"/i);
-  if (!link) throw new Error("Shufersal price file link not found");
-  const fileUrl = link[1].replace(/&amp;/g, "&");
+  const links = [...html.matchAll(/href="(https:\/\/pricesprodpublic[^"]+pricefull[^"]+)"/gi)]
+    .map((match) => match[1].replace(/&amp;/g, "&"));
+  const fileUrl = links.sort((a, b) => stamp(b).localeCompare(stamp(a)))[0];
+  if (!fileUrl) throw new Error("Shufersal price file link not found");
   const response = await fetch(fileUrl);
   if (!response.ok || !response.body) throw new Error(`Shufersal price file ${response.status}`);
   const xml = await new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).text();

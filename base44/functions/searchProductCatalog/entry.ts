@@ -42,7 +42,13 @@ async function imagesForCodes(base44: any, codes: string[]) {
     }
   }));
   if (resolved.length) {
-    await base44.asServiceRole.entities.CatalogImage.bulkCreate(resolved.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
+    // Two lookups can reach the same new barcode at the same time; the second insert is
+    // refused as a duplicate and can simply be ignored.
+    try {
+      await base44.asServiceRole.entities.CatalogImage.bulkCreate(resolved.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
+    } catch (error) {
+      console.error("catalog image store skipped", error instanceof Error ? error.message : error);
+    }
   }
   return images;
 }
