@@ -25,11 +25,16 @@ export default function ItemDetailsDialog({ item, onClose, onSave }) {
 
   const byWeight = isWeight(unit);
 
+  // מעבר בין גרמים לק״ג שומר על אותה כמות בדיוק; מעבר אחר ליחידת משקל מתחיל מקילו
   const changeUnit = (next) => {
+    const amount = Number(quantity) || 0;
+    if (next === "gram" && unit === "kg") setQuantity(Math.round(amount * 1000) || 1000);
+    else if (next === "kg" && unit === "gram") setQuantity(Math.max(0.1, Math.round((amount / 1000) * 100) / 100));
+    else if (next === "gram" && amount < 10) setQuantity(1000);
     setUnit(next);
-    // מעבר ליחידת משקל: כמות בודדת אינה הגיונית בגרמים
-    if (next === "gram" && quantity < 10) setQuantity(1000);
   };
+  // הכמות שהמשתמש מקליד נשמרת ביחידה שנבחרה — בגרמים או בק״ג
+  const amountFor = (grams) => (unit === "kg" ? grams / 1000 : grams);
 
   const save = () => {
     const details = { note: note.trim(), unit, quantity: Number(quantity) || 1 };
@@ -49,19 +54,19 @@ export default function ItemDetailsDialog({ item, onClose, onSave }) {
           </select>
         </label>
 
-        {unit === "gram" && (
+        {byWeight && (
           <div className="space-y-2">
-            <span className="text-sm font-semibold">{t("itemDetails.weight")}</span>
+            <span className="text-sm font-semibold">{unit === "kg" ? t("itemDetails.weightKg") : t("itemDetails.weight")}</span>
             <div className="flex flex-wrap gap-2">
               {WEIGHT_PICKS.map((grams) => (
-                <button key={grams} type="button" onClick={() => setQuantity(grams)}
-                  aria-pressed={Number(quantity) === grams}
-                  className={`rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold ${Number(quantity) === grams ? "bg-primary text-primary-foreground" : "bg-background"}`}>
-                  {grams >= 1000 ? `${grams / 1000} ${t("unit.kg")}` : `${grams} ${t("unit.gram")}`}
+                <button key={grams} type="button" onClick={() => setQuantity(amountFor(grams))}
+                  aria-pressed={Number(quantity) === amountFor(grams)}
+                  className={`rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold ${Number(quantity) === amountFor(grams) ? "bg-primary text-primary-foreground" : "bg-background"}`}>
+                  {unit === "kg" ? `${grams / 1000} ${t("unit.kg")}` : `${grams} ${t("unit.gram")}`}
                 </button>
               ))}
             </div>
-            <Input type="number" inputMode="numeric" value={quantity} min={1}
+            <Input type="number" inputMode="decimal" step={unit === "kg" ? "0.1" : "1"} value={quantity} min={unit === "kg" ? 0.1 : 1}
               onChange={(event) => setQuantity(Number(event.target.value))} className="h-12 rounded-xl" />
           </div>
         )}

@@ -443,6 +443,7 @@ export default function ListView() {
                       <ListItemRow key={item.id} item={item} index={itemIndex} onToggleBought={handleToggleBought}
                         onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                         onEdit={setEditingItem} onSetReminder={setReminderItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                        onUpdateDetails={handleUpdateDetails}
                         onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                         onPhotoFound={handlePhotoFound}
                         isFavorite={favorites.some(favorite => favorite.name === item.name)}
@@ -456,6 +457,7 @@ export default function ListView() {
                   <ListItemRow key={item.id} item={item} index={index} onToggleBought={handleToggleBought}
                     onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                     onEdit={setEditingItem} onSetReminder={setReminderItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                    onUpdateDetails={handleUpdateDetails}
                     onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                     onPhotoFound={handlePhotoFound}
                     isFavorite={favorites.some(favorite => favorite.name === item.name)}
