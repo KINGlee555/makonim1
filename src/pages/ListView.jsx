@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, RefreshCw, Pencil } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, RefreshCw, Pencil, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -44,6 +44,7 @@ import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import ChangePhotoDialog from "../components/ChangePhotoDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import RenameListDialog from "../components/RenameListDialog";
+import ParticipantsDialog from "../components/ParticipantsDialog";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { categoryImage, categoryTone } from "@/lib/marketPalette";
 import { lineCost, quantityStep } from "@/lib/units";
@@ -64,6 +65,7 @@ export default function ListView() {
   const [showPriceCompare, setShowPriceCompare] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showRename, setShowRename] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRoute, setShowRoute] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -341,6 +343,16 @@ export default function ListView() {
     );
   }
 
+  // רק המזמין — בעל הרשימה — מנהל את רשימת המשתתפים
+  // רשימות ותיקות נשמרו בלי בעל מזוהה (anonymous) — כמו בשכבת המשתמשים, הן נחשבות של המשתמש
+  const me = currentUserRef[0];
+  const isOwner = !!me && (
+    list.created_by_id === me.id ||
+    list.created_by === me.email ||
+    !list.created_by ||
+    list.created_by === "anonymous"
+  );
+
   const pendingItems = items.filter(i => !i.status || i.status === "pending");
   const unavailableItems = items.filter(i => i.status === "unavailable");
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
@@ -407,6 +419,12 @@ export default function ListView() {
                   <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
                   {t("list.refresh")}
                 </button>
+                {isOwner && (
+                  <button onClick={() => setShowParticipants(true)} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-blue px-4 text-[15px] font-black text-white">
+                    <Users className="w-4 h-4" />
+                    {t("participants.button")}
+                  </button>
+                )}
                 <ListReader items={pendingItems} />
               </div>
             </div>
@@ -521,6 +539,8 @@ export default function ListView() {
       <QuickAddBar onOpenSearch={() => setShowSearch(true)} onOpenScanner={() => setShowScanner(true)} onOpenVoice={() => setShowVoice(true)} />
 
       <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} />
+      <ParticipantsDialog open={showParticipants} onOpenChange={setShowParticipants} list={list}
+        currentUser={currentUserRef[0]} onUpdated={(patch) => setList(prev => ({ ...prev, ...patch }))} />
       <ProductSearchDialog open={showSearch} onOpenChange={setShowSearch} onAddProduct={handleAddProduct}
         favorites={favorites} onToggleFavorite={handleToggleFavorite} />
       <ProfileDialog open={showProfile} onOpenChange={setShowProfile} currentUser={currentUserRef[0]} onNameUpdated={handleNameUpdated} forceName={!currentUserRef[0]?.full_name} />

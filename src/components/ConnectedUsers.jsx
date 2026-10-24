@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Users, User as UserIcon } from "lucide-react";
+import { Users, User as UserIcon, Phone } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import ConnectedUsersDialog from "./ConnectedUsersDialog";
 
@@ -23,14 +23,15 @@ export default function ConnectedUsers({ list }) {
   }, [list]);
 
   const allEmails = [list?.created_by, ...(list?.shared_with || [])].filter(Boolean);
-  if (allEmails.length === 0) return null;
+  const phones = list?.invited_phones || [];
+  if (allEmails.length === 0 && phones.length === 0) return null;
 
   const getLabel = (email) => {
     if (!email || email === "anonymous") return t("users.listOwner");
     return userData[email]?.name || email;
   };
   const getPhoto = (email) => userData[email]?.photo || "";
-  const isShared = allEmails.length > 1;
+  const isShared = allEmails.length + phones.length > 1;
 
   return (
     <>
@@ -52,6 +53,12 @@ export default function ConnectedUsers({ list }) {
               </span>
             );
           })}
+          {phones.map(phone => (
+            <span key={phone} className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-card px-2 py-1 text-xs font-medium text-foreground shadow-sm">
+              <Phone className="h-3 w-3 text-primary" />
+              {phone}
+            </span>
+          ))}
         </div>
         {isShared && (
           <button
