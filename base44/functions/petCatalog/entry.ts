@@ -2,52 +2,100 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.54";
 
 // קטלוג חנויות החיות — נטען מהאתר של כל חנות ונשמר אצלנו, כך שחיפוש, מבצעים
 // ושקים גדולים עובדים מהר ובאופן זהה לכל המשפחה. נשמרים רק מוצרים עם תמונה אמיתית.
+// shopify = החנות מפרסמת products.json;  woo = חנות ווקומרס עם Store API פתוח.
 const STORES = [
-  { id: "anipet", name: "אניפט", feed: "https://www.anipet.co.il/products.json", site: "https://www.anipet.co.il" },
+  { id: "anipet", name: "אניפט", kind: "shopify", feed: "https://www.anipet.co.il/products.json", site: "https://www.anipet.co.il" },
+  { id: "petbest", name: "פט-בסט", kind: "woo", feed: "https://petbest.co.il/wp-json/wc/store/v1/products", site: "https://petbest.co.il" },
+  { id: "toppet", name: "טופ פט", kind: "woo", feed: "https://www.toppet.co.il/wp-json/wc/store/v1/products", site: "https://www.toppet.co.il" },
+  { id: "petmarket", name: "פט מרקט", kind: "woo", feed: "https://www.petmarket.co.il/wp-json/wc/store/v1/products", site: "https://www.petmarket.co.il" },
+  { id: "petpoint", name: "פט פוינט", kind: "shopify", feed: "https://www.petpoint.co.il/products.json", site: "https://www.petpoint.co.il" },
+  { id: "petfastgo", name: "פטפסטגו", kind: "shopify", feed: "https://www.petfastgo.co.il/products.json", site: "https://www.petfastgo.co.il" },
+  { id: "superpet", name: "סופר פט", kind: "woo", feed: "https://www.superpet.co.il/wp-json/wc/store/v1/products", site: "https://www.superpet.co.il" },
 ];
 
-const PAGE_SIZE = 250;
-const PAGES_PER_CALL = 4;
-const WRITE_BATCH = 400;
+const PAGE_SIZE = { shopify: 250, woo: 100 };
+const PAGES_PER_CALL = 5;
+const WRITE_BATCH = 500;
 const LOOKUP_BATCH = 250;
 const FRESH_HOURS = 12;
+const PET_CATEGORY = "חיות מחמד";
+
+// שם נקי בלי תגיות HTML — חלק מהחנויות מפרסמות שם עם עיצוב
+const cleanName = (value: any) => String(value || "")
+  .replace(/<[^>]*>/g, " ")
+  .replace(/&[a-z#0-9]+;/gi, " ")
+  .replace(/\s+/g, " ")
+  .trim()
+  .slice(0, 120);
 
 const sizeFromName = (name: string) => {
   const match = name.match(/(\d+(?:[.,]\d+)?)\s*(ק["׳'’]?ג|קילו|קג|kg|גרם|גר|מ"ל|ליטר)/i);
   return match ? match[0].replace(/\s+/g, " ").trim() : "";
 };
 
-const rowFromProduct = (store: any, product: any) => {
+const brandOf = (product: any) => {
+  const brand = Array.isArray(product?.brands) ? product.brands[0]?.name : "";
+  if (brand) return String(brand).slice(0, 60);
+  const attribute = (product?.attributes || []).find((item: any) => /מותג|brand/i.test(item?.name || ""));
+  const term = attribute?.terms?.[0]?.name;
+  return String(term || product?.vendor || "").slice(0, 60);
+};
+
+const baseRow = (store: any, name: string, productId: any, price: number, was: number, image: string, url: string, barcode: string, available: boolean, brand: string) => ({
+  store: store.id,
+  store_name: store.name,
+  product_id: String(productId || name),
+  name,
+  brand,
+  category: PET_CATEGORY,
+  size_label: sizeFromName(name),
+  price,
+  was_price: was > price ? was : 0,
+  discount_pct: was > price ? Math.round((1 - price / was) * 100) : 0,
+  image_url: image,
+  url: url || store.site,
+  barcode,
+  available,
+});
+
+const rowFromShopify = (store: any, product: any) => {
   const image = product?.images?.[0]?.src || "";
   if (!image) return null;
   const variant = (product.variants || []).find((item: any) => item && item.available) || product.variants?.[0] || {};
   const price = Number(variant.price);
   if (!(price > 0)) return null;
   const was = Number(variant.compare_at_price) || 0;
-  const name = String(product.title || "").replace(/\s+/g, " ").trim().slice(0, 120);
+  const name = cleanName(product.title);
   if (!name) return null;
-  return {
-    store: store.id,
-    store_name: store.name,
-    product_id: String(product.id || product.handle || name),
-    name,
-    brand: String(product.vendor || "").slice(0, 60),
-    category: "חיות מחמד",
-    size_label: sizeFromName(name),
-    price,
-    was_price: was > price ? was : 0,
-    discount_pct: was > price ? Math.round((1 - price / was) * 100) : 0,
-    image_url: image,
-    url: product.handle ? `${store.site}/products/${product.handle}` : store.site,
-    barcode: String(variant.barcode || ""),
-    available: variant.available !== false,
-  };
+  const url = product.handle ? `${store.site}/products/${product.handle}` : store.site;
+  return baseRow(store, name, product.id || product.handle, price, was, image, url, String(variant.barcode || ""), variant.available !== false, brandOf(product));
+};
+
+const rowFromWoo = (store: any, product: any) => {
+  const image = product?.images?.[0]?.src || product?.images?.[0]?.thumbnail || "";
+  if (!image) return null;
+  // ווקומרס מחזיר מחיר ביחידות הקטנות של המטבע — לפי מה שהחנות מצהירה
+  const minor = Number(product?.prices?.currency_minor_unit);
+  const scale = 10 ** (Number.isFinite(minor) ? minor : 2);
+  const price = Number(product?.prices?.price) / scale;
+  const regular = Number(product?.prices?.regular_price) / scale;
+  if (!(price > 0)) return null;
+  const was = product?.on_sale && regular > price ? regular : 0;
+  const name = cleanName(product?.name);
+  if (!name) return null;
+  return baseRow(store, name, product.id || product.slug, price, was, image, product?.permalink || store.site, String(product?.sku || ""), product?.is_in_stock !== false, brandOf(product));
 };
 
 const batches = (rows: any[], size: number) => {
   const out: any[][] = [];
   for (let index = 0; index < rows.length; index += size) out.push(rows.slice(index, index + size));
   return out;
+};
+
+// מצב הסנכרון של כל חנות — כדי שטעינה שנקטעה באמצע תמשיך מהדף שנעצר בו
+const syncState = async (base44: any, store: any) => {
+  const rows = await base44.asServiceRole.entities.PetSync.filter({ store: store.id }, "-created_date", 1);
+  return rows?.[0] || null;
 };
 
 export default async function (req: Request): Promise<Response> {
@@ -58,36 +106,46 @@ export default async function (req: Request): Promise<Response> {
 
     const body = await req.json().catch(() => ({}));
     const store = STORES.find((item) => item.id === body?.store) || STORES[0];
+    const size = PAGE_SIZE[store.kind as keyof typeof PAGE_SIZE] || 250;
     let page = Number(body?.from_page) || 0;
 
-    // קריאה בלי from_page רק בודקת אם הקטלוג טרי — ואם כן אין מה לטעון שוב
+    const sync = await syncState(base44, store);
+    const storedTotal = await base44.asServiceRole.entities.PetProduct.count({ store: store.id });
+    const syncedAt = sync?.last_run ? new Date(sync.last_run).getTime() : 0;
+
+    // קריאה בלי from_page רק בודקת אם הקטלוג שלם וטרי — ואם כן אין מה לטעון שוב.
+    // חנות שנקטעה באמצע ממשיכה מהדף שעצרנו בו, ולכן היא לא נחשבת מוכנה.
     if (!page) {
-      // הקטלוג נחשב טרי רק אם גם המוצרים הוותיקים בו טריים — כך טעינה שנעצרה באמצע משלימה את עצמה
-      const oldest = await base44.asServiceRole.entities.PetProduct.filter({ store: store.id }, "updated_date", 1);
-      const total = await base44.asServiceRole.entities.PetProduct.count({ store: store.id });
-      const last = oldest?.[0]?.updated_date ? new Date(oldest[0].updated_date).getTime() : 0;
-      if (total > 0 && last && Date.now() - last < FRESH_HOURS * 3600 * 1000) {
-        return Response.json({ store: store.id, store_name: store.name, skip: true, total, updated_at: oldest[0].updated_date });
+      const fresh = sync?.done && storedTotal > 0 && syncedAt && Date.now() - syncedAt < FRESH_HOURS * 3600 * 1000;
+      if (fresh) {
+        return Response.json({ store: store.id, store_name: store.name, skip: true, total: storedTotal, updated_at: sync.last_run });
       }
-      page = 1;
+      page = sync && !sync.done ? (Number(sync.next_page) || 1) : 1;
     }
 
     const rows: any[] = [];
     let done = false;
+    let published = 0;
     for (let step = 0; step < PAGES_PER_CALL; step += 1) {
-      const response = await fetch(`${store.feed}?limit=${PAGE_SIZE}&page=${page}`, {
+      const url = store.kind === "woo"
+        ? `${store.feed}?per_page=${size}&page=${page}`
+        : `${store.feed}?limit=${size}&page=${page}`;
+      const response = await fetch(url, {
         headers: { "user-agent": "MaKonim pet catalog", "accept-language": "he-IL" },
         signal: AbortSignal.timeout(20000),
       });
       if (!response.ok) throw new Error(`${store.name}: ${response.status}`);
+      if (!published) published = Number(response.headers.get("x-wp-total")) || 0;
       const payload = await response.json();
-      const products = Array.isArray(payload?.products) ? payload.products : [];
+      const products = store.kind === "woo"
+        ? (Array.isArray(payload) ? payload : [])
+        : (Array.isArray(payload?.products) ? payload.products : []);
       products.forEach((product: any) => {
-        const row = rowFromProduct(store, product);
+        const row = store.kind === "woo" ? rowFromWoo(store, product) : rowFromShopify(store, product);
         if (row) rows.push(row);
       });
       page += 1;
-      if (products.length < PAGE_SIZE) {
+      if (products.length < size) {
         done = true;
         break;
       }
@@ -108,6 +166,9 @@ export default async function (req: Request): Promise<Response> {
     for (const batch of batches(toUpdate, WRITE_BATCH)) await base44.asServiceRole.entities.PetProduct.bulkUpdate(batch);
 
     const total = await base44.asServiceRole.entities.PetProduct.count({ store: store.id });
+    const state = { next_page: done ? 1 : page, published, done, last_run: new Date().toISOString() };
+    if (sync) await base44.asServiceRole.entities.PetSync.update(sync.id, state);
+    else await base44.asServiceRole.entities.PetSync.create({ store: store.id, ...state });
     console.log("petCatalog", { store: store.id, page, done, created: toCreate.length, updated: toUpdate.length, total });
     return Response.json({
       store: store.id,

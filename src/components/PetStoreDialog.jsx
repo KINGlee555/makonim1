@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Check, ExternalLink, Loader2, Navigation, Package, PawPrint, Plus, Search, Tag } from "lucide-react";
@@ -12,6 +12,12 @@ const MODES = [
   { id: "big", key: "pet.mode.big", icon: Package },
 ];
 
+const TURN_KEY = "makonim_pet_store_turn";
+// בכל פתיחה מתקדמים בקטלוג של חנות אחת-שתיים בלבד — כדי לא להעמיס על החנויות
+// ועל השרת, והחיפוש מתעדכן עם כל מה שכבר נטען
+const CHUNKS_PER_STORE = 6;
+const STORES_PER_OPEN = 2;
+
 export default function PetStoreDialog({ open, onOpenChange, onAddProduct }) {
   const t = useT();
   const [store, setStore] = useState("all");
@@ -21,24 +27,54 @@ export default function PetStoreDialog({ open, onOpenChange, onAddProduct }) {
   const [loading, setLoading] = useState(false);
   const [building, setBuilding] = useState(null);
   const [addedIds, setAddedIds] = useState([]);
+  const [catalogVersion, setCatalogVersion] = useState(0);
+  const buildingRef = useRef(false);
 
-  // הטעינה מהחנויות קורית בפתיחה, ואחר כך מתחדשת לבד פעם בחצי יום
-  const ensureCatalog = useCallback(async () => {
-    for (const petStore of PET_STORES.filter(item => item.live)) {
-      let fromPage = 0;
-      for (let step = 0; step < 6; step += 1) {
-        setBuilding({ name: petStore.name, count: 0 });
-        const response = await base44.functions.invoke("petCatalog", {
-          store: petStore.id,
-          ...(fromPage ? { from_page: fromPage } : {}),
-        });
-        const data = response?.data || {};
-        if (!data.total && !data.created && !data.updated && data.done !== false) break;
-        setBuilding({ name: petStore.name, count: data.total || 0 });
-        fromPage = data.next_page || 0;
-        if (data.skip || data.done || !fromPage) break;
+  // הטעינה מהחנויות מתקדמת חנות-חנות וממשיכה מאיפה שעצרה, כדי שקטלוג
+  // שנקטע באמצע יושלם בפתיחה הבאה
+  const ensureCatalog = useCallback(async (storeFilter) => {
+    if (buildingRef.current) return;
+    buildingRef.current = true;
+    try {
+      const stores = PET_STORES.filter(item => item.live);
+      const stored = localStorage.getItem(TURN_KEY) || "";
+      const pending = stored.endsWith("!");
+      const storedId = pending ? stored.slice(0, -1) : stored;
+      const found = stores.findIndex(item => item.id === storedId);
+      const startIndex = found < 0 ? 0 : Math.max(0, found + (pending ? 0 : 1));
+      const rotation = [...stores.slice(startIndex), ...stores.slice(0, startIndex)];
+      const order = storeFilter !== "all" ? stores.filter(item => item.id === storeFilter) : rotation;
+
+      for (const petStore of order.slice(0, STORES_PER_OPEN)) {
+        let fromPage = 0;
+        let chunks = 0;
+        let total = 0;
+        let finished = false;
+        for (let step = 0; step < CHUNKS_PER_STORE; step += 1) {
+          setBuilding({ name: petStore.name, count: total });
+          const response = await base44.functions.invoke("petCatalog", {
+            store: petStore.id,
+            ...(fromPage ? { from_page: fromPage } : {}),
+          });
+          const data = response?.data || {};
+          total = data.total || total;
+          if (data.skip || data.error) {
+            finished = true;
+            break;
+          }
+          chunks += 1;
+          fromPage = data.next_page || 0;
+          if (data.done || !fromPage) {
+            finished = true;
+            break;
+          }
+        }
+        setBuilding(null);
+        if (chunks > 0) setCatalogVersion(version => version + 1);
+        localStorage.setItem(TURN_KEY, finished ? petStore.id : `${petStore.id}!`);
       }
-      setBuilding(null);
+    } finally {
+      buildingRef.current = false;
     }
   }, []);
 
@@ -66,19 +102,24 @@ export default function PetStoreDialog({ open, onOpenChange, onAddProduct }) {
     setLoading(false);
   }, []);
 
-  // בכל פתיחה הקטלוג נבדק — אם הוא טרי זו בדיקה זולה, ואם לא הוא מתעדכן
+  // פתיחה: מציגים מיד מה שכבר נטען, והקטלוג ממשיך להיטען ברקע
   useEffect(() => {
     if (!open) return;
-    ensureCatalog()
-      .catch(() => {})
-      .then(() => runSearch(query, store, mode));
-  }, [open, ensureCatalog, runSearch]);
+    runSearch(query, store, mode);
+    ensureCatalog(store).catch(() => {});
+  }, [open]);
+
+  // בחירת חנות מתחילה לטעון אותה מיד
+  useEffect(() => {
+    if (!open || store === "all") return;
+    ensureCatalog(store).catch(() => {});
+  }, [open, store, ensureCatalog]);
 
   useEffect(() => {
     if (!open) return;
     const timer = setTimeout(() => runSearch(query, store, mode), 300);
     return () => clearTimeout(timer);
-  }, [open, query, store, mode, runSearch]);
+  }, [open, query, store, mode, catalogVersion, runSearch]);
 
   const handleAdd = (product) => {
     onAddProduct({
@@ -96,6 +137,10 @@ export default function PetStoreDialog({ open, onOpenChange, onAddProduct }) {
     ? rows.reduce((min, item) => (item.price < min.price ? item : min), rows[0])
     : null;
   const chosenStore = PET_STORES.find(item => item.id === store);
+  // ניווט לחנויות שמופיעות בתוצאות, ואם אין תוצאות — לחנויות שאין להן מחירים אצלנו
+  const navStores = rows.length
+    ? [...new Set(rows.map(item => item.store))].map(id => PET_STORES.find(item => item.id === id)).filter(Boolean).slice(0, 4)
+    : PET_STORES.filter(item => !item.live);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -233,20 +278,22 @@ export default function PetStoreDialog({ open, onOpenChange, onAddProduct }) {
             </>
           )}
 
-          <div className="flex flex-wrap gap-1.5 border-t border-ui-line-soft pt-3">
-            {PET_STORES.map(petStore => (
-              <a
-                key={petStore.id}
-                href={wazeUrl(petStore.nav)}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-ui-line px-3 py-1.5 text-[13px] text-ui-ink"
-              >
-                <Navigation className="h-3.5 w-3.5 text-ui-accent" />
-                {t("pet.nav", { store: petStore.name })}
-              </a>
-            ))}
-          </div>
+          {navStores.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 border-t border-ui-line-soft pt-3">
+              {navStores.map(petStore => (
+                <a
+                  key={petStore.id}
+                  href={wazeUrl(petStore.nav || petStore.name)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-ui-line px-3 py-1.5 text-[13px] text-ui-ink"
+                >
+                  <Navigation className="h-3.5 w-3.5 text-ui-accent" />
+                  {t("pet.nav", { store: petStore.name })}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

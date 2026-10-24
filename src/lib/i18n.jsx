@@ -745,7 +745,7 @@ const translations = {
 
     // חנויות חיות מחמד — קטלוג חי עם תמונות, מחירים ומבצעים
     "pet.title": "מוצרים לחנות חיות",
-    "pet.hint": "מוצרים אמיתיים עם תמונות, מחירים ומבצעים — ישירות מהחנויות",
+    "pet.hint": "מחירים חיים מ־7 חנויות חיות בישראל — תמונות, מבצעים ושקים גדולים, ישירות מהחנויות",
     "pet.search": "חפשו מוצר לחנות החיות",
     "pet.allStores": "כל החנויות",
     "pet.mode.all": "הכל",
@@ -1508,7 +1508,7 @@ const translations = {
 
     // Pet stores — a live catalog with photos, prices and deals
     "pet.title": "Pet store products",
-    "pet.hint": "Real products with photos, prices and deals, straight from the stores",
+    "pet.hint": "Live prices from 7 Israeli pet stores, with photos, deals and big bags",
     "pet.search": "Search a pet product",
     "pet.allStores": "All stores",
     "pet.mode.all": "All",
@@ -2196,7 +2196,7 @@ const translations = {
 
     // Зоомагазины — живой каталог с фото, ценами и скидками
     "pet.title": "Товары зоомагазинов",
-    "pet.hint": "Реальные товары с фото, ценами и скидками — прямо из магазинов",
+    "pet.hint": "Живые цены из 7 израильских зоомагазинов — фото, скидки и большие мешки",
     "pet.search": "Поиск товара для питомца",
     "pet.allStores": "Все магазины",
     "pet.mode.all": "Все",
