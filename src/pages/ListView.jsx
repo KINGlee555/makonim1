@@ -13,10 +13,12 @@ import AppFooter from "../components/AppFooter";
 import NavigateToStoreDialog from "../components/NavigateToStoreDialog";
 import SettingsDialog from "../components/SettingsDialog";
 import ListReader from "../components/ListReader";
+import SharedWithStrip from "../components/SharedWithStrip";
 import { toast } from "@/components/ui/use-toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
 import { useWarmChainPrices } from "@/hooks/useWarmChainPrices";
+import { useListPresence } from "@/hooks/useListPresence";
 import { useT } from "@/lib/i18n";
 import ShoppingMode from "../components/ShoppingMode";
 import BasketComparison from "../components/BasketComparison";
@@ -109,6 +111,8 @@ export default function ListView() {
   useItemReminders(items);
   // מבצעים אמיתיים מהרשתות עבור המוצרים ברשימה
   const chainDeals = useChainDeals(items);
+  // מי נמצא איתך ברשימה — נוכחות חיה, מתעדכנת כל חצי דקה
+  const presence = useListPresence(listId, currentUserRef[0]);
 
   const loadData = useCallback(async () => {
     const [allLists, allItems, allFavorites] = await Promise.all([
@@ -199,6 +203,16 @@ export default function ListView() {
     });
     return unsubscribe;
   }, [listId]);
+
+  // מי שפותח את הרשימה מסמן "ראיתי" על המוצרים — כדי שיהיה ברור למי כבר יצא לראות
+  useEffect(() => {
+    const viewer = currentUserRef[0]?.full_name;
+    if (!listId || !viewer) return;
+    const unseen = items.filter(item => !(item.viewed_by || []).includes(viewer));
+    if (unseen.length === 0) return;
+    base44.entities.ListItem.bulkUpdate(unseen.map(item => ({ id: item.id, viewed_by: [...(item.viewed_by || []), viewer] })))
+      .catch(() => {});
+  }, [items, listId, currentUserRef[0]?.full_name]);
 
   const handleUndoBought = useCallback((item) => {
     const restored = { ...item, status: "pending", bought_by: "" };
@@ -402,6 +416,8 @@ export default function ListView() {
       />
 
       <main className="mx-auto w-full max-w-[760px] px-5 pb-[110px] sm:px-7">
+        <SharedWithStrip list={list} members={presence.members} myEmail={currentUserRef[0]?.email} onOpen={() => setShowShare(true)} />
+
         <div className={uiEnter}>
           <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
         </div>
@@ -430,6 +446,7 @@ export default function ListView() {
                         onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                         onPhotoFound={handlePhotoFound}
                         isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                        viewerName={currentUserRef[0]?.full_name}
                         className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                     ))}
                   </section>
@@ -442,6 +459,7 @@ export default function ListView() {
                     onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                     onPhotoFound={handlePhotoFound}
                     isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                    viewerName={currentUserRef[0]?.full_name}
                     className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                 ))
               )}

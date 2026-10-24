@@ -37,15 +37,27 @@ export default function Home() {
   const goToList = async (me) => {
     setStatus("redirecting");
     const allLists = await base44.entities.ShoppingList.list("-created_date", 50);
-    const myLists = allLists.filter(l => l.created_by === me.email || (l.shared_with || []).includes(me.email));
+    // הרשימה שלי: מה שרשום על שמי, מה ששיתפתי, או רשימה שנוצרה לפני שנשמר הבעלים —
+    // כדי לחזור תמיד לאותה רשימה משותפת במקום לפתוח רשימה חדשה בכל כניסה
+    const myLists = allLists.filter(l =>
+      l.owner_email === me.email ||
+      l.created_by === me.email ||
+      (l.shared_with || []).includes(me.email) ||
+      !l.created_by || l.created_by === "anonymous"
+    );
     if (myLists.length > 0) {
       const favoriteList = myLists.find(l => l.is_favorite);
-      const ownedList = myLists.find(l => l.created_by === me.email);
+      const ownedList = myLists.find(l => l.owner_email === me.email || l.created_by === me.email);
       const targetList = favoriteList || ownedList || myLists[0];
       navigate(`/list/${targetList.id}`, { replace: true });
     } else {
       const shareCode = Math.random().toString(36).substring(2, 10);
-      const newList = await base44.entities.ShoppingList.create({ title: "הרשימה שלנו", shared_with: [], share_code: shareCode });
+      const newList = await base44.entities.ShoppingList.create({
+        title: "הרשימה שלנו",
+        shared_with: [],
+        share_code: shareCode,
+        ...(me.email ? { owner_email: me.email } : {})
+      });
       navigate(`/list/${newList.id}`, { replace: true });
     }
   };

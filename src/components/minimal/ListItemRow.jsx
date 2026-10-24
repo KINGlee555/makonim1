@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Bell, Plus, Minus, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send } from "lucide-react";
+import { Bell, Plus, Minus, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send, Eye } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
@@ -11,7 +11,7 @@ import { uiEnter, uiStep } from "@/lib/minimalUi";
 const action = "flex h-[28px] shrink-0 items-center justify-center gap-1 rounded-[14px] border bg-ui-canvas text-[13px] transition-[background-color,color,box-shadow,opacity] duration-200 active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent";
 
 // שורה אחת צפופה למוצר: תמונה, שם, כמות, מחיר, סימון קניתי — בלי כרטיס ובלי גלילה מיותרת.
-function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, deal, isFavorite, className }) {
+function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, deal, isFavorite, viewerName, className }) {
   const t = useT();
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
@@ -25,6 +25,8 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
     rate > 0 ? `₪${rate.toFixed(2)} ${t("productItem.perKg")}` : "",
     item.note || "",
   ].filter(Boolean).join(" · ");
+  // מי מבני הבית כבר ראה את המוצר — בלי השם שלי עצמי
+  const seenBy = (item.viewed_by || []).filter(name => name && name !== viewerName);
 
   return (
     <div className={`${uiEnter} flex min-h-[44px] items-center gap-2.5 border-b border-ui-line-soft py-1.5 sm:gap-3 ${className || ""}`} style={{ animationDelay: `${Math.min(index, 14) * 0.05}s` }}>
@@ -41,6 +43,12 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-[15px] text-ui-ink">{item.name}</span>
         <span className="truncate text-[12px] text-ui-muted">{meta}</span>
+        {seenBy.length > 0 && (
+          <span className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-ui-muted">
+            <Eye className="h-3 w-3 shrink-0" />
+            <span className="truncate">{t("productItem.seenBy", { names: `${seenBy.slice(0, 2).join(", ")}${seenBy.length > 2 ? ` +${seenBy.length - 2}` : ""}` })}</span>
+          </span>
+        )}
         {item.remind_at && (
           <span className={`mt-1 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] ${isReminderDue(item) ? "bg-ui-accent text-white" : "bg-ui-surface text-ui-muted"}`}>
             <Bell className="h-3 w-3" />{reminderText(item.remind_at)}

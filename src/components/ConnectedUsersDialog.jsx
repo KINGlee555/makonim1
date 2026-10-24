@@ -6,7 +6,7 @@ import { Users, Copy, Check, Crown, Radio, User as UserIcon } from "lucide-react
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 
-export default function ConnectedUsersDialog({ open, onOpenChange, list }) {
+export default function ConnectedUsersDialog({ open, onOpenChange, list, names = {} }) {
   const t = useT();
   const [userData, setUserData] = useState({});
   const [copied, setCopied] = useState(false);
@@ -24,10 +24,11 @@ export default function ConnectedUsersDialog({ open, onOpenChange, list }) {
     }).catch(() => {});
   }, [open, list]);
 
-  const allEmails = [list?.created_by, ...(list?.shared_with || [])].filter(Boolean);
+  // כל מי ששותף לרשימה: מי שהוזמן ומי שכבר נכנס אליה בפועל
+  const allEmails = [...new Set([...(list?.shared_with || []), ...Object.keys(names)])].filter(Boolean);
   const getLabel = (email) => {
     if (!email || email === "anonymous") return t("users.listOwner");
-    return userData[email]?.name || email;
+    return names[email] || userData[email]?.name || email;
   };
   const getPhoto = (email) => userData[email]?.photo || "";
   const shareUrl = list ? `${window.location.origin}/join/${list.share_code}` : "";

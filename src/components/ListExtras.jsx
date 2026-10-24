@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import ConnectedUsers from "./ConnectedUsers";
 import FavoritesSection from "./FavoritesSection";
 import NearbyDeals from "./NearbyDeals";
 import RecurringItems from "./RecurringItems";
@@ -16,7 +15,6 @@ export default function ListExtras({ list, listId, items, favorites, onAddProduc
   return (
     <section>
       <button type="button" onClick={() => setOpen(o => !o)} aria-expanded={open} className={`${uiPillRow} w-full text-start`}>
-        <span className={uiPill}>{t("users.connected")}</span>
         <span className={uiPill}>{t("favorites.title")}</span>
         <span className={uiPill}>מבצעים קרובים אליך</span>
         <span className={uiPill}>{t("recurring.title")}</span>
@@ -24,7 +22,6 @@ export default function ListExtras({ list, listId, items, favorites, onAddProduc
       </button>
       {open && (
         <div className="mt-3 space-y-4">
-          <ConnectedUsers list={list} />
           <FavoritesSection favorites={favorites} onAdd={onAddProduct} onRemove={onToggleFavorite} />
           <NearbyDeals onAddProduct={onAddProduct} />
           <RecurringItems listId={listId} currentItems={items} onAddProduct={onAddProduct} />
