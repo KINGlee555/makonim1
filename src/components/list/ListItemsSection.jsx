@@ -76,9 +76,8 @@ export default function ListItemsSection({
       {pendingItems.length === 0 && unavailableItems.length === 0 && (
         <div className={uiEnter}>
           <EmptyListSuggestions onAddProduct={onAddProduct} />
-          <div className="border-b border-ui-line-soft py-4 text-center text-[14px] text-ui-muted">
-            <b className="mb-0.5 block text-[15px] font-semibold text-ui-ink">{t("list.empty")}</b>
-            {t("list.emptyDesc")}
+          <div className="border-b border-ui-line-soft py-4 text-center">
+            <b className="block text-[15px] font-semibold text-ui-ink">{t("list.empty")}</b>
           </div>
         </div>
       )}

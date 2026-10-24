@@ -70,7 +70,6 @@ export default function FillFromLastWeek({ listId, currentItems, onFilled }) {
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" strokeWidth={2.2} />}
         {t("fillLast.button")} · {products.length}
       </button>
-      <p className="mt-1.5 text-center text-[12px] text-ui-muted">{t("fillLast.hint")}</p>
     </section>
   );
 }
