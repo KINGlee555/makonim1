@@ -515,6 +515,26 @@ const translations = {
     // Easy mode
     "header.easyMode": "מצב גדול ונוח",
     "header.normalMode": "חזור לגודל רגיל",
+
+    // Premium
+    "premium.open": "פרימיום",
+    "premium.title": "המסלול המועדף",
+    "premium.subtitle": "כל הכלים המתקדמים במקום אחד, בלי פרסומות",
+    "premium.monthly": "חודשי",
+    "premium.yearly": "שנתי",
+    "premium.yearlyBonus": "חודשיים מתנה",
+    "premium.perMonth": "לחודש",
+    "premium.perYear": "לשנה",
+    "premium.f1": "היסטוריית מחירים וגרפים לכל מוצר",
+    "premium.f2": "תקציב חכם והתראות חריגה",
+    "premium.f3": "סריקת קבלות וחלוקת עלויות בין המשתתפים",
+    "premium.f4": "תמיכה מהירה וללא פרסומות",
+    "premium.note": "פתיחת התשלום בהמשך. ההרשמה שלך שומרת לך מקום ומחיר מוקדם.",
+    "premium.cta": "אני רוצה פרימיום",
+    "premium.sending": "שולח...",
+    "premium.sentTitle": "נרשמת! תודה",
+    "premium.sentDesc": "ניצור איתך קשר ראשון כשהמסלול ייפתח.",
+    "premium.error": "לא הצלחתי לשלוח, נסו שוב",
   },
   en: {
     // App
@@ -1028,6 +1048,26 @@ const translations = {
     // Easy mode
     "header.easyMode": "Large & comfortable",
     "header.normalMode": "Back to normal size",
+
+    // Premium
+    "premium.open": "Premium",
+    "premium.title": "The premium plan",
+    "premium.subtitle": "Every advanced tool in one place, with no ads",
+    "premium.monthly": "Monthly",
+    "premium.yearly": "Yearly",
+    "premium.yearlyBonus": "2 months free",
+    "premium.perMonth": "per month",
+    "premium.perYear": "per year",
+    "premium.f1": "Price history and charts for every product",
+    "premium.f2": "Smart budget with overspend alerts",
+    "premium.f3": "Receipt scanning and cost splitting",
+    "premium.f4": "Fast support and no ads",
+    "premium.note": "Payments open soon. Joining now saves your place and an early price.",
+    "premium.cta": "I want premium",
+    "premium.sending": "Sending...",
+    "premium.sentTitle": "You are in! Thank you",
+    "premium.sentDesc": "We will contact you first when the plan opens.",
+    "premium.error": "Could not send, please try again",
   },
   ru: {
     // App
@@ -1466,6 +1506,26 @@ const translations = {
     // Easy mode
     "header.easyMode": "Крупный и удобный",
     "header.normalMode": "Обычный размер",
+
+    // Premium
+    "premium.open": "Премиум",
+    "premium.title": "Премиум-план",
+    "premium.subtitle": "Все продвинутые инструменты в одном месте, без рекламы",
+    "premium.monthly": "В месяц",
+    "premium.yearly": "В год",
+    "premium.yearlyBonus": "2 месяца в подарок",
+    "premium.perMonth": "в месяц",
+    "premium.perYear": "в год",
+    "premium.f1": "История цен и графики по каждому товару",
+    "premium.f2": "Умный бюджет с оповещениями о перерасходе",
+    "premium.f3": "Сканирование чеков и разделение расходов",
+    "premium.f4": "Быстрая поддержка и без рекламы",
+    "premium.note": "Оплата откроется позже. Запись сохраняет вам место и раннюю цену.",
+    "premium.cta": "Хочу премиум",
+    "premium.sending": "Отправляем...",
+    "premium.sentTitle": "Вы записаны! Спасибо",
+    "premium.sentDesc": "Мы свяжемся с вами первыми, когда план откроется.",
+    "premium.error": "Не удалось отправить, попробуйте снова",
   },
 };
 

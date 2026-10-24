@@ -45,6 +45,7 @@ import ChangePhotoDialog from "../components/ChangePhotoDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import RenameListDialog from "../components/RenameListDialog";
 import ParticipantsDialog from "../components/ParticipantsDialog";
+import PremiumDialog from "../components/PremiumDialog";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { categoryImage, categoryTone } from "@/lib/marketPalette";
 import { lineCost, quantityStep } from "@/lib/units";
@@ -66,6 +67,7 @@ export default function ListView() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showRename, setShowRename] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
+  const [showPremium, setShowPremium] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRoute, setShowRoute] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -465,6 +467,7 @@ export default function ListView() {
                 onOpenVoice={() => setShowVoice(true)}
                 onOpenDealCalculator={() => setShowDealCalculator(true)}
                 onOpenCategoryOrder={() => setShowCategoryOrder(true)}
+                onOpenPremium={() => setShowPremium(true)}
               />
             </div>
 
@@ -570,6 +573,7 @@ export default function ListView() {
       <DealCalculator open={showDealCalculator} onOpenChange={setShowDealCalculator} />
       <CategoryOrderDialog open={showCategoryOrder} onOpenChange={setShowCategoryOrder} onSaved={setCategoryOrder} />
       <VoiceQuickAdd open={showVoice} onOpenChange={setShowVoice} onAddProduct={handleAddProduct} allProducts={allProducts} />
+      <PremiumDialog open={showPremium} onOpenChange={setShowPremium} />
     </div>
   );
 }
