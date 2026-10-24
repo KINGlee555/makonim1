@@ -40,3 +40,19 @@ export function sortByCategoryOrder(categories, order) {
     return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
   });
 }
+
+// מקבץ מוצרים לפי מחלקה בסדר המסלול בסופר — מעבר אחד על המוצרים ומיון של המחלקות בלבד
+export function groupByCategoryOrder(products, order = DEFAULT_CATEGORY_ORDER) {
+  const rank = new Map(order.map((category, index) => [category, index]));
+  const groups = new Map();
+  for (const product of products) {
+    const category = product.category || "אחר";
+    let group = groups.get(category);
+    if (!group) {
+      group = { category, rank: rank.get(category) ?? order.length, items: [] };
+      groups.set(category, group);
+    }
+    group.items.push(product);
+  }
+  return [...groups.values()].sort((a, b) => a.rank - b.rank);
+}

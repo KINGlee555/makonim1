@@ -13,22 +13,23 @@ import { searchCatalog, normalizeProductText } from "@/lib/productSearch";
 import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { searchStoredCatalog } from "@/lib/catalogProducts";
 import { staplesForCategory } from "@/lib/categoryStaples";
+import { groupByCategoryOrder, loadCategoryOrder } from "@/lib/categoryOrder";
 
-const CATEGORIES = [
-  { id: "all", label: "הכל" },
-  { id: "חטיפים ומתוקים", label: "חטיפים" },
-  { id: "פירות וירקות", label: "פירות וירקות" },
-  { id: "מוצרי חלב", label: "חלבי" },
-  { id: "בשר ודגים", label: "בשרי" },
-  { id: "לחם ומאפים", label: "לחם" },
-  { id: "שימורים", label: "יבשים" },
-  { id: "תבלינים", label: "תבלינים" },
-  { id: "משקאות", label: "משקאות" },
-  { id: "קפואים", label: "קפואים" },
-  { id: "ניקיון", label: "ניקיון" },
-  { id: "היגיינה", label: "היגיינה" },
-  { id: "חיות מחמד", label: "חיות מחמד" },
-];
+// שם קצר לכל מחלקה — הסדר עצמו הוא סדר המחלקות האמיתי במסלול הסופר
+const CATEGORY_LABELS = {
+  "פירות וירקות": "פירות וירקות",
+  "לחם ומאפים": "לחם",
+  "מוצרי חלב": "חלבי",
+  "בשר ודגים": "בשרי",
+  "קפואים": "קפואים",
+  "שימורים": "יבשים",
+  "תבלינים": "תבלינים",
+  "חטיפים ומתוקים": "חטיפים",
+  "משקאות": "משקאות",
+  "ניקיון": "ניקיון",
+  "היגיינה": "היגיינה",
+  "חיות מחמד": "חיות מחמד",
+};
 
 // מוצר מוצג כשיש לו תמונה אמיתית, או כשיש לו מותג — ואז התמונה האמיתית נטענת לכרטיס
 const usableProduct = (product) => Boolean((product.image_verified && product.image_url) || product.brand);
@@ -69,6 +70,14 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     });
     return [...unique.values()];
   }, [allProducts, storedProducts, remoteProducts, remoteCategoryProducts]);
+  // סדר המחלקות האמיתי במסלול הסופר — הפירות בכניסה, הניקיון בסוף
+  const aisleOrder = useMemo(() => loadCategoryOrder(), [open]);
+  const categoryPills = useMemo(() => [
+    { id: "all", label: "הכל" },
+    ...aisleOrder
+      .filter(category => CATEGORY_LABELS[category])
+      .map(category => ({ id: category, label: CATEGORY_LABELS[category] })),
+  ], [aisleOrder]);
   const allResults = useMemo(() => {
     if (normalizeProductText(deferredQuery)) {
       return searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").filter(usableProduct);
@@ -82,6 +91,11 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     return [];
   }, [searchableProducts, remoteCategoryProducts, deferredQuery, selectedCategory, filterMode]);
   const results = useMemo(() => normalizeProductText(deferredQuery) ? allResults : allResults.slice(0, visibleLimit), [allResults, deferredQuery, visibleLimit]);
+  // בחיפוש התוצאות מתחלקות לפי מחלקות — בסדר שבו עוברים עליהן בסופר
+  const departmentGroups = useMemo(
+    () => (normalizeProductText(deferredQuery) ? groupByCategoryOrder(results, aisleOrder) : []),
+    [results, deferredQuery, aisleOrder]
+  );
   // מה שקונים בדרך כלל בישראל במחלקה הזו — מוצג מיד עם בחירת המחלקה, לפני הקטלוג
   const staples = useMemo(
     () => (normalizeProductText(deferredQuery) || selectedCategory === "all" ? [] : staplesForCategory(selectedCategory)),
@@ -273,7 +287,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
           {/* Category pills — horizontal scrollable */}
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-            {CATEGORIES.map((cat) => (
+            {categoryPills.map((cat) => (
               <button
                 key={cat.id}
                 aria-pressed={selectedCategory === cat.id}
@@ -352,10 +366,24 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </section>
           )}
 
+          {/* חיפוש — מחולק לפי סדר המחלקות האמיתי במסלול הסופר */}
+          {departmentGroups.length > 0 && (
+            <div className="space-y-5">
+              {departmentGroups.map(({ category, items: categoryProducts }) => (
+                <section key={category}>
+                  <p className="mb-3 px-1 text-sm font-bold text-muted-foreground">{category}</p>
+                  <div className="grid grid-cols-2 gap-3 animate-fade-in">
+                    {categoryProducts.map((product, idx) => renderProductCard(product, idx))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
+
           {/* תוצאות מהקטלוג */}
-          {catalogResults.length > 0 && (
+          {!normalizeProductText(deferredQuery) && catalogResults.length > 0 && (
             <section className={staples.length > 0 ? "mt-5" : ""}>
-              {!query && staples.length > 0 && (
+              {staples.length > 0 && (
                 <p className="mb-3 px-1 text-sm font-bold text-muted-foreground">{t("search.moreProducts")}</p>
               )}
               <div className="grid grid-cols-2 gap-3 animate-fade-in">
