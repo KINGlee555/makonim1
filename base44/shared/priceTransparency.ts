@@ -11,7 +11,11 @@ import { normalizeText } from "./shufersalPrices.ts";
 const UA = { "User-Agent": "MaKonim/1.0 (price transparency)" };
 const CERBERUS = "https://url.publishedprices.co.il";
 
-export type Chain = { id: string; name: string; source: "shufersal" | "cerberus"; user?: string; store?: string };
+export type Chain = {
+  id: string; name: string;
+  source: "shufersal" | "cerberus" | "binaprojects";
+  user?: string; password?: string; store?: string; host?: string;
+};
 
 export const CHAINS: Chain[] = [
   { id: "shufersal", name: "שופרסל", source: "shufersal", store: "413" },
@@ -23,7 +27,20 @@ export const CHAINS: Chain[] = [
   { id: "fresh_market", name: "פרש מרקט", source: "cerberus", user: "freshmarket" },
   { id: "stop_market", name: "סטופ מרקט", source: "cerberus", user: "Stop_Market" },
   { id: "politzer", name: "פוליצר", source: "cerberus", user: "politzer" },
-  { id: "salach_dabach", name: "סאלח דבאח", source: "cerberus", user: "SalachD" }
+  { id: "salach_dabach", name: "סאלח דבאח", source: "cerberus", user: "SalachD", password: "12345" },
+  { id: "dor_alon", name: "דור אלון", source: "cerberus", user: "doralon" },
+  { id: "yilo", name: "יילו", source: "cerberus", user: "Paz_bo", password: "paz468" },
+  // Smaller chains that publish through the shared binaprojects.com sites.
+  { id: "king_store", name: "קינג סטור", source: "binaprojects", host: "https://kingstore.binaprojects.com" },
+  { id: "zol_ve_gadol", name: "זול ובגדול", source: "binaprojects", host: "http://zolvebegadol.binaprojects.com" },
+  { id: "super_sapir", name: "סופר ספיר", source: "binaprojects", host: "https://supersapir.binaprojects.com" },
+  { id: "maayan_2000", name: "מעיין 2000", source: "binaprojects", host: "http://maayan2000.binaprojects.com" },
+  { id: "city_market", name: "סיטי מרקט", source: "binaprojects", host: "https://citymarketkiryatgat.binaprojects.com" },
+  { id: "shuk_hair", name: "שוק העיר", source: "binaprojects", host: "http://shuk-hayir.binaprojects.com" },
+  { id: "shefa_berkat_hashem", name: "שפע ברכת השם", source: "binaprojects", host: "http://shefabirkathashem.binaprojects.com" },
+  { id: "of_ve_hodu_bareket", name: "עוף והודו ברקת", source: "binaprojects", host: "http://superbareket.binaprojects.com" },
+  { id: "mishnat_yosef", name: "משנת יוסף", source: "binaprojects", host: "https://ktshivuk.binaprojects.com" },
+  { id: "good_pharm", name: "גוד פארם", source: "binaprojects", host: "https://goodpharm.binaprojects.com" }
 ];
 
 export function chainById(id: string) {
@@ -35,8 +52,9 @@ const csrfToken = (html: string) => (html.match(/name="csrftoken"\s+(?:value|con
 // Cerberus sessions are short-lived; cache per chain for a few minutes.
 const sessions = new Map<string, { cookie: string; csrf: string; at: number }>();
 
-async function cerberusSession(user: string) {
-  const cached = sessions.get(user);
+async function cerberusSession(user: string, password = "") {
+  const key = `${user}:${password}`;
+  const cached = sessions.get(key);
   if (cached && Date.now() - cached.at < 5 * 60 * 1000) return cached;
   const loginPage = await fetch(`${CERBERUS}/login`, { headers: UA });
   const html = await loginPage.text();
@@ -44,13 +62,13 @@ async function cerberusSession(user: string) {
   const login = await fetch(`${CERBERUS}/login/user`, {
     method: "POST", redirect: "manual",
     headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: cookie },
-    body: new URLSearchParams({ username: user, password: "", csrftoken: csrfToken(html) })
+    body: new URLSearchParams({ username: user, password, csrftoken: csrfToken(html) })
   });
   const set = login.headers.get("set-cookie");
   if (set) cookie = set.split(";")[0];
   const home = await fetch(`${CERBERUS}/file`, { headers: { ...UA, Cookie: cookie } });
   const session = { cookie, csrf: csrfToken(await home.text()), at: Date.now() };
-  sessions.set(user, session);
+  sessions.set(key, session);
   return session;
 }
 
@@ -64,7 +82,7 @@ const SHUFERSAL_CAT: Record<FileKind, number> = { price: 2, promo: 4 };
 
 // Newest full file of one branch: filename carries the date (…-YYYYMMDD-HHMMSS.gz).
 async function cerberusFile(chain: Chain, kind: FileKind) {
-  const session = await cerberusSession(chain.user as string);
+  const session = await cerberusSession(chain.user as string, chain.password || "");
   const dir = await fetch(`${CERBERUS}/file/json/dir`, {
     method: "POST",
     headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: session.cookie },
@@ -72,7 +90,7 @@ async function cerberusFile(chain: Chain, kind: FileKind) {
   });
   const text = await dir.text();
   if (!text.startsWith("{")) {
-    sessions.delete(chain.user as string);
+    sessions.delete(`${chain.user}:${chain.password || ""}`);
     throw new Error(`${chain.id}: price file listing unavailable`);
   }
   const names: string[] = (JSON.parse(text).aaData || []).map((row: any) => row.fname).filter(Boolean);
@@ -100,9 +118,48 @@ async function shufersalFile(chain: Chain, kind: FileKind) {
   };
 }
 
+// Many smaller chains publish through one shared vendor (binaprojects.com): every chain has
+// its own site with a JSON file list and a download endpoint keyed by the file name.
+const VENDOR_HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+  Accept: "application/json, text/javascript, */*; q=0.01",
+  "X-Requested-With": "XMLHttpRequest"
+};
+
+async function binaprojectsFile(chain: Chain, kind: FileKind) {
+  const host = chain.host as string;
+  const listing = await fetch(`${host}/MainIO_Hok.aspx`, {
+    method: "POST",
+    headers: { ...VENDOR_HEADERS, "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+    body: "Store=0&Type=0&From=&To="
+  });
+  if (!listing.ok) throw new Error(`${chain.id}: price file listing ${listing.status}`);
+  const rows: any[] = await listing.json();
+  const wanted = kind === "promo" ? /^PromoFull/i : /^PriceFull/i;
+  const dated = rows.map((row) => String(row?.FileNm || ""))
+    .filter((name) => wanted.test(name))
+    .map((name) => ({ name, stamp: (name.match(/-(\d{8})-(\d{4,6})\./i) || []).slice(1).join("-") }))
+    .filter((entry) => entry.stamp)
+    .sort((a, b) => (a.stamp < b.stamp ? 1 : -1));
+  if (!dated.length) throw new Error(`${chain.id}: no ${kind} file found`);
+  const day = dated[0].stamp.slice(0, 8);
+  // The download endpoint answers with the file's real location, which is what we fetch.
+  const link = await fetch(`${host}/Download.aspx?FileNm=${encodeURIComponent(dated[0].name)}`, {
+    method: "POST", headers: VENDOR_HEADERS
+  });
+  const location: any[] = link.ok ? await link.json() : [];
+  return {
+    url: String(location?.[0]?.SPath || `${host}/Download/${dated[0].name}`),
+    headers: { "User-Agent": VENDOR_HEADERS["User-Agent"] },
+    day: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}`
+  };
+}
+
 // Newest daily file of one chain: the shelf-price file or the promotions file.
 export async function chainDataFile(chain: Chain, kind: FileKind) {
-  return chain.source === "shufersal" ? shufersalFile(chain, kind) : cerberusFile(chain, kind);
+  if (chain.source === "shufersal") return shufersalFile(chain, kind);
+  if (chain.source === "binaprojects") return binaprojectsFile(chain, kind);
+  return cerberusFile(chain, kind);
 }
 
 export async function chainPriceFile(chain: Chain) {

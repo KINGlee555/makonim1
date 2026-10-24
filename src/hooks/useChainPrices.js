@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { CHAINS, FAST_CHAINS, OTHER_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
+import { CHAINS, FAST_CHAINS, OTHER_CHAINS, MORE_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
 import { isWeight, weightInKg } from "@/lib/units";
 
 // Answers are kept in memory for a while: reopening the comparison inside the same
@@ -59,7 +59,11 @@ export function useChainPrices(items, enabled) {
         setRefreshing(true);
         const rest = await fetchChainPrices(basket, OTHER_CHAINS);
         if (cancelled) return;
-        const merged = merge(first, rest);
+        setState(merge(first, rest));
+        // The smaller chains are read last, so they never delay the big ones.
+        const small = await fetchChainPrices(basket, MORE_CHAINS);
+        if (cancelled) return;
+        const merged = merge(merge(first, rest), small);
         setState(merged);
         setRefreshing(false);
         cache.set(signature, { at: Date.now(), data: merged });
