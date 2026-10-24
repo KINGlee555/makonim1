@@ -58,6 +58,7 @@ import RecentlyBought from "../components/RecentlyBought";
 import FillFromLastWeek from "../components/FillFromLastWeek";
 import PriceDropNotice from "../components/PriceDropNotice";
 import MonthlySummary from "../components/MonthlySummary";
+import PetStoreDialog from "../components/PetStoreDialog";
 import ReportPriceDialog from "../components/ReportPriceDialog";
 import PriceSourcesDialog from "../components/PriceSourcesDialog";
 import { useSimpleMode } from "@/lib/simpleMode";
@@ -84,6 +85,7 @@ export default function ListView() {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
   const [showSources, setShowSources] = useState(false);
+  const [showPetStore, setShowPetStore] = useState(false);
   const [reportItem, setReportItem] = useState(null);
   const [showCourier, setShowCourier] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
@@ -553,6 +555,7 @@ export default function ListView() {
             onOpenCategoryOrder={() => setShowCategoryOrder(true)}
             onOpenPremium={() => setShowPremium(true)}
             onOpenCourier={() => setShowCourier(true)}
+            onOpenPetStore={() => setShowPetStore(true)}
             onRefresh={handleRefresh}
             refreshing={refreshing}
             onOpenParticipants={isOwner ? () => setShowParticipants(true) : null}
@@ -578,6 +581,7 @@ export default function ListView() {
       <ItemReminderDialog item={reminderItem} onClose={() => setReminderItem(null)} onSaved={handleSetReminder} />
       <ReportPriceDialog item={reportItem} listId={listId} userName={currentUserNameRef.current} onClose={() => setReportItem(null)} />
       <PriceSourcesDialog open={showSources} onOpenChange={setShowSources} />
+      <PetStoreDialog open={showPetStore} onOpenChange={setShowPetStore} onAddProduct={handleAddProduct} />
 
       {showShoppingMode && (
         <ShoppingMode items={shoppingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
