@@ -8,23 +8,29 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
   const t = useT();
   const [open, setOpen] = useState(false);
 
-  const features = [
-    { icon: Crown, label: t("premium.open"), onClick: onOpenPremium, color: "text-amber-500" },
-    { icon: Truck, label: t("courier.open"), onClick: onOpenCourier, color: "text-sky-600" },
-    { icon: Scale, label: t("compare.open"), onClick: onOpenPriceCompare, color: "text-primary" },
-    { icon: Store, label: t("basket.title"), onClick: onOpenBasket, color: "text-blue-500" },
-    { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates, color: "text-primary" },
+  const pick = (handler) => { setOpen(false); window.setTimeout(() => handler(), 260); };
+
+  // אלה הכלים שמובילים לקנייה חכמה — בחזית התפריט
+  const mainTools = [
     { icon: ScanLine, label: t("barcode.title"), onClick: onOpenScanner, color: "text-purple-500" },
-    { icon: Route, label: t("route.title"), onClick: onOpenRoute, color: "text-green-500" },
-    { icon: CalendarDays, label: t("menu.title"), onClick: onOpenMenu, color: "text-orange-500" },
-    { icon: Tag, label: t("deals.title"), onClick: onOpenDeals, color: "text-red-500" },
-    { icon: Receipt, label: t("split.title"), onClick: onOpenSplit, color: "text-teal-500" },
-    { icon: Trophy, label: t("leaderboard.title"), onClick: onOpenLeaderboard, color: "text-amber-500" },
     { icon: Mic, label: t("voice.title"), onClick: onOpenVoice, color: "text-pink-500" },
-    { icon: Calculator, label: "מחשבון מבצעים", onClick: onOpenDealCalculator, color: "text-emerald-600" },
-    { icon: ArrowUpDown, label: "סדר המחלקות", onClick: onOpenCategoryOrder, color: "text-indigo-500" },
-    { icon: Layers, label: grouped ? t("list.ungroup") : t("list.groupByCategory"), onClick: onOpenGroupBy, color: "text-cyan-600" },
-    { icon: Sparkles, label: t("smart.title"), onClick: onOpenSuggestions, color: "text-fuchsia-500" },
+    { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates, color: "text-primary" },
+    { icon: Tag, label: t("deals.title"), onClick: onOpenDeals, color: "text-red-500" },
+    { icon: CalendarDays, label: t("menu.title"), onClick: onOpenMenu, color: "text-orange-500" },
+    { icon: Truck, label: t("courier.open"), onClick: onOpenCourier, color: "text-sky-600" },
+  ];
+
+  // והשאר בקיצור, בלי להעמיס על המסך
+  const extraTools = [
+    { icon: Scale, label: t("compare.open"), onClick: onOpenPriceCompare },
+    { icon: Receipt, label: t("split.title"), onClick: onOpenSplit },
+    { icon: Trophy, label: t("leaderboard.title"), onClick: onOpenLeaderboard },
+    { icon: Calculator, label: "מחשבון מבצעים", onClick: onOpenDealCalculator },
+    { icon: ArrowUpDown, label: "סדר המחלקות", onClick: onOpenCategoryOrder },
+    { icon: Layers, label: grouped ? t("list.ungroup") : t("list.groupByCategory"), onClick: onOpenGroupBy },
+    { icon: Sparkles, label: t("smart.title"), onClick: onOpenSuggestions },
+    { icon: Route, label: t("route.title"), onClick: onOpenRoute },
+    { icon: Crown, label: t("premium.open"), onClick: onOpenPremium },
   ];
 
   return (
@@ -39,18 +45,31 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
         <SheetHeader className="text-center">
           <SheetTitle className="text-xl">{t("list.moreFeatures")}</SheetTitle>
         </SheetHeader>
-        <div className="grid grid-cols-3 gap-3 mt-4">
-          {features.map((f, i) => (
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {mainTools.map((tool, index) => (
             <button
-              key={i}
-              data-testid={`feature-${i}`}
-              onClick={() => { setOpen(false); window.setTimeout(() => f.onClick(), 260); }}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl border bg-card hover:bg-accent transition-colors active:scale-95"
+              key={tool.label}
+              data-testid={`feature-${index}`}
+              onClick={() => pick(tool.onClick)}
+              className="flex flex-col items-center gap-2 rounded-2xl border bg-card p-4 transition-colors hover:bg-accent active:scale-95"
             >
-              <div className={`w-12 h-12 rounded-xl bg-muted flex items-center justify-center ${f.color}`}>
-                <f.icon className="w-6 h-6" />
+              <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-muted ${tool.color}`}>
+                <tool.icon className="h-6 w-6" />
               </div>
-              <span className="text-sm font-medium text-center leading-tight">{f.label}</span>
+              <span className="text-center text-sm font-medium leading-tight">{tool.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <p className="mb-2 mt-6 text-sm font-bold text-muted-foreground">עוד כלים</p>
+        <div className="flex flex-wrap gap-2">
+          {extraTools.map(tool => (
+            <button
+              key={tool.label}
+              onClick={() => pick(tool.onClick)}
+              className="flex items-center gap-1.5 rounded-full border bg-card px-3 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <tool.icon className="h-4 w-4 text-muted-foreground" />{tool.label}
             </button>
           ))}
         </div>

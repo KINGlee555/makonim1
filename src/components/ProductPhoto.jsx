@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { getSpecificProductImage } from "@/lib/productImages";
 import { detectBrand, pickBestPhoto } from "@/lib/productPhotoMatch";
-import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
-import { getCachedPhoto, cachePhoto } from "@/lib/photoCache";
+import { searchRemoteCatalog } from "@/lib/remoteCatalog";
+import { getCachedPhoto, cachePhoto, isPhotoMiss, cachePhotoMiss } from "@/lib/photoCache";
 import { getProductEmoji } from "@/lib/productEmoji";
 
-// כמה חיפושי תמונה רצים במקביל — רשימה ארוכה לא מציפה את הקטלוג
-const MAX_CONCURRENT = 3;
+// כמה חיפושי תמונה רצים במקביל — רשימה ארוכה מתמלאת מהר, בלי להציף את הקטלוג
+const MAX_CONCURRENT = 6;
 let activeLookups = 0;
 const waitingLookups = [];
+
+// שמות שכבר חיפשנו להם תמונה ולא נמצאה — לא מחפשים שוב באותה פתיחה
+const missedNow = new Set();
 
 function limitLookup(task) {
   return new Promise((resolve, reject) => {
@@ -46,48 +49,44 @@ async function findRealPhoto(name, brand) {
 
 // Shows the real photo of the product itself: the photo saved on the item, a photo already
 // matched for this name, or a branded match from the barcode catalog. A branded item never
-// falls back to a generic look-alike picture — until its real photo is found (or uploaded)
-// it shows the product's own icon instead.
+// falls back to a generic look-alike picture — עד שנמצא הצילום האמיתי הוא מציג את האייקון
+// של המוצר עצמו, כדי שאף כרטיס לא יישאר ריק בזמן החיפוש.
 export default function ProductPhoto({ name, category, imageUrl, brand: brandProp, className = "", onFound }) {
-  // מוצר עם מותג לא מקבל תמונת קטגוריה — רק התמונה האמיתית של המוצר
   const brand = brandProp || detectBrand(name);
   const keywordPhoto = brand ? "" : getSpecificProductImage(name);
   const known = useRef(getCachedPhoto(name));
   const found = useRef(onFound);
   found.current = onFound;
   const [src, setSrc] = useState(imageUrl || known.current || keywordPhoto);
-  const [checking, setChecking] = useState(!imageUrl && !known.current);
 
   useEffect(() => {
     let cancelled = false;
 
     if (imageUrl) {
       setSrc(imageUrl);
-      setChecking(false);
       return () => { cancelled = true; };
     }
 
     const remembered = getCachedPhoto(name);
     if (remembered) {
       setSrc(remembered);
-      setChecking(false);
       return () => { cancelled = true; };
     }
 
     setSrc(keywordPhoto);
-    setChecking(true);
+    if (!name || missedNow.has(name) || isPhotoMiss(name)) return () => { cancelled = true; };
+
     limitLookup(() => findRealPhoto(name, brand)).then(real => {
-      if (cancelled || !real) return;
-      setSrc(real);
-      found.current?.(real);
-    }).finally(() => { if (!cancelled) setChecking(false); });
+      if (cancelled) return;
+      if (real) setSrc(real);
+      else { missedNow.add(name); cachePhotoMiss(name); }
+      if (real) found.current?.(real);
+    }).catch(() => {
+      missedNow.add(name);
+    });
 
     return () => { cancelled = true; };
   }, [name, imageUrl, brand, keywordPhoto]);
-
-  if (checking && !src) {
-    return <div className={`shimmer bg-muted ${className}`} role="img" aria-label={`טוען תמונה עבור ${name}`} />;
-  }
 
   if (!src) {
     return (
@@ -109,8 +108,9 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
       }}
       onError={() => {
         limitLookup(() => findRealPhoto(name, brand)).then(alternate => {
+          const fallback = keywordPhoto || "";
           if (alternate && alternate !== src) setSrc(alternate);
-          else setSrc(keywordPhoto || "");
+          else { missedNow.add(name); cachePhotoMiss(name); setSrc(fallback); }
         }).catch(() => setSrc(keywordPhoto || ""));
       }}
     />
