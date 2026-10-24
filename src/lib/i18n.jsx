@@ -88,6 +88,8 @@ const translations = {
     "share.inviteSent": "ההזמנה נשלחה ל-{email} 🎉",
     "share.emailFailed": "שליחת המייל נכשלה",
     "share.emailFailedDesc": "ייתכן שהכתובת אינה רשומה באפליקציה. ניתן לשתף קישור במקום.",
+    "share.whatsappText": "מצטרפים לרשימה שלנו ״{title}״ 🛒\n{count} מוצרים מחכים — לוחצים על הקישור ומצטרפים:\n{link}",
+    "share.whatsappTextEmpty": "מצטרפים לרשימה שלנו ״{title}״ 🛒\n{link}",
 
     // ProfileDialog
     "profile.title": "השם שלי ברשימה",
@@ -524,6 +526,10 @@ const translations = {
     // Easy mode
     "header.easyMode": "מצב גדול ונוח",
     "header.normalMode": "חזור לגודל רגיל",
+    "simpleMode.on": "מצב פשוט",
+    "simpleMode.off": "חזרה למצב מלא",
+    "simpleMode.onToast": "מצב פשוט הופעל — נשארו הפעולות החשובות",
+    "simpleMode.offToast": "חזרת למצב המלא",
 
     // Premium
     "premium.open": "פרימיום",
@@ -667,6 +673,10 @@ const translations = {
     "recent.minutes": "לפני {count} דק׳",
     "recent.hours": "לפני {count} שע׳",
     "recent.days": "לפני {count} ימים",
+    "fillLast.button": "מלא מהשבוע שעבר",
+    "fillLast.hint": "כל מה שקניתם בשבועיים האחרונים, בלחיצה אחת",
+    "fillLast.added": "{count} פריטים חזרו לרשימה",
+    "fillLast.error": "המילוי נכשל, נסו שוב",
   },
   en: {
     // App
@@ -753,6 +763,8 @@ const translations = {
     "share.inviteSent": "Invitation sent to {email} 🎉",
     "share.emailFailed": "Email sending failed",
     "share.emailFailedDesc": "The address may not be registered. You can share a link instead.",
+    "share.whatsappText": "Join our shared list \"{title}\" 🛒\n{count} items are waiting — tap the link to join:\n{link}",
+    "share.whatsappTextEmpty": "Join our shared list \"{title}\" 🛒\n{link}",
 
     // ProfileDialog
     "profile.title": "My Name in the List",
@@ -1189,6 +1201,10 @@ const translations = {
     // Easy mode
     "header.easyMode": "Large & comfortable",
     "header.normalMode": "Back to normal size",
+    "simpleMode.on": "Simple mode",
+    "simpleMode.off": "Back to full view",
+    "simpleMode.onToast": "Simple mode on — only the essentials remain",
+    "simpleMode.offToast": "Back to the full view",
 
     // Premium
     "premium.open": "Premium",
@@ -1332,6 +1348,10 @@ const translations = {
     "recent.minutes": "{count} min ago",
     "recent.hours": "{count} h ago",
     "recent.days": "{count} d ago",
+    "fillLast.button": "Fill from last week",
+    "fillLast.hint": "Everything you bought in the last two weeks, in one tap",
+    "fillLast.added": "{count} items came back to the list",
+    "fillLast.error": "Could not fill, please try again",
   },
   ru: {
     // App
@@ -1418,6 +1438,8 @@ const translations = {
     "share.inviteSent": "Приглашение отправлено {email} 🎉",
     "share.emailFailed": "Не удалось отправить email",
     "share.emailFailedDesc": "Адрес может быть не зарегистрирован. Можно поделиться ссылкой.",
+    "share.whatsappText": "Присоединяйтесь к нашему списку «{title}» 🛒\n{count} товаров ждут — нажмите на ссылку:\n{link}",
+    "share.whatsappTextEmpty": "Присоединяйтесь к нашему списку «{title}» 🛒\n{link}",
 
     // ProfileDialog
     "profile.title": "Моё имя в списке",
@@ -1779,6 +1801,10 @@ const translations = {
     // Easy mode
     "header.easyMode": "Крупный и удобный",
     "header.normalMode": "Обычный размер",
+    "simpleMode.on": "Простой режим",
+    "simpleMode.off": "Полный вид",
+    "simpleMode.onToast": "Простой режим включён — остались главные действия",
+    "simpleMode.offToast": "Полный вид возвращён",
 
     // Premium
     "premium.open": "Премиум",
@@ -1922,6 +1948,10 @@ const translations = {
     "recent.minutes": "{count} мин назад",
     "recent.hours": "{count} ч назад",
     "recent.days": "{count} дн назад",
+    "fillLast.button": "Заполнить за прошлую неделю",
+    "fillLast.hint": "Всё, что вы купили за последние две недели, одним нажатием",
+    "fillLast.added": "{count} товаров вернулись в список",
+    "fillLast.error": "Не удалось заполнить, попробуйте снова",
   },
 };
 

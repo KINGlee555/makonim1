@@ -8,7 +8,7 @@ import { base44 } from "@/api/base44Client";
 import { buildInvitationEmailBody, INVITATION_SUBJECT } from "@/lib/invitationEmail";
 import { useT } from "@/lib/i18n";
 
-export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
+export default function ShareDialog({ open, onOpenChange, list, currentUser, itemCount = 0 }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const [email, setEmail] = useState("");
@@ -24,10 +24,12 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleWhatsApp = () => {
-    const text = `${list?.title || "הרשימה שלי"} - ${shareLink}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-  };
+  // הודעת שיתוף עם שם הרשימה ומספר המוצרים שמחכים — קישור שמזמין להצטרף
+  const whatsappHref = `https://wa.me/?text=${encodeURIComponent(
+    itemCount > 0
+      ? t("share.whatsappText", { title: list?.title || t("app.name"), count: itemCount, link: shareLink })
+      : t("share.whatsappTextEmpty", { title: list?.title || t("app.name"), link: shareLink })
+  )}`;
 
   // Proximity share — uses Web Share API (AirDrop on iOS, Nearby Share on Android)
   const handleProximityShare = async () => {
@@ -152,13 +154,10 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser }) {
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </Button>
-              <Button
-                onClick={handleWhatsApp}
-                className="h-12 w-12 rounded-xl flex-shrink-0"
-                variant="outline"
-                title={t("share.whatsapp")}
-              >
-                <MessageCircle className="w-5 h-5" />
+              <Button asChild className="h-12 w-12 rounded-xl flex-shrink-0" variant="outline" title={t("share.whatsapp")}>
+                <a href={whatsappHref} target="_blank" rel="noreferrer" aria-label={t("share.whatsapp")}>
+                  <MessageCircle className="w-5 h-5" />
+                </a>
               </Button>
             </div>
           </div>

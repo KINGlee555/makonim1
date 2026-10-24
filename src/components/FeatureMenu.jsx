@@ -8,7 +8,22 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
   const t = useT();
   const [open, setOpen] = useState(false);
 
-  const pick = (handler) => { setOpen(false); window.setTimeout(() => handler(), 260); };
+  // הכלים מסתדרים לפי מה שבאמת משתמשים בו — הנפוצים ביותר קופצים למעלה
+  const [usage, setUsage] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("featureUsage") || "{}"); } catch { return {}; }
+  });
+
+  const pick = (handler, label) => {
+    setOpen(false);
+    setUsage(prev => {
+      const next = { ...prev, [label]: (prev[label] || 0) + 1 };
+      localStorage.setItem("featureUsage", JSON.stringify(next));
+      return next;
+    });
+    window.setTimeout(() => handler(), 260);
+  };
+
+  const byUsage = (tools) => [...tools].sort((a, b) => (usage[b.label] || 0) - (usage[a.label] || 0));
 
   // אלה הכלים שמובילים לקנייה חכמה — בחזית התפריט
   const mainTools = [
@@ -52,12 +67,12 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
           <SheetTitle className="text-[15px] font-semibold text-ui-ink">{t("list.moreFeatures")}</SheetTitle>
         </SheetHeader>
         <div className="mt-4 grid grid-cols-3 gap-2">
-          {mainTools.map((tool, index) => (
+          {byUsage(mainTools).map((tool, index) => (
             <button
               key={tool.label}
               data-testid={`feature-${index}`}
               type="button"
-              onClick={() => pick(tool.onClick)}
+              onClick={() => pick(tool.onClick, tool.label)}
               className="flex flex-col items-center gap-2 rounded-[10px] border border-ui-line bg-ui-canvas p-3 text-ui-ink transition-[background-color,color,box-shadow,opacity] duration-200 hover:bg-ui-surface active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent"
             >
               <tool.icon className="h-5 w-5 text-ui-accent" strokeWidth={1.8} />
@@ -68,8 +83,8 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
 
         <p className="mb-2 mt-5 text-[12px] text-ui-muted">עוד כלים</p>
         <div className={uiPillRow}>
-          {extraTools.map(tool => (
-            <button key={tool.label} type="button" onClick={() => pick(tool.onClick)}
+          {byUsage(extraTools).map(tool => (
+            <button key={tool.label} type="button" onClick={() => pick(tool.onClick, tool.label)}
               className={`${uiPill} inline-flex items-center gap-1.5`}>
               <tool.icon className={`h-3.5 w-3.5 text-ui-muted ${tool.spinning ? "animate-refresh" : ""}`} strokeWidth={1.8} />{tool.label}
             </button>

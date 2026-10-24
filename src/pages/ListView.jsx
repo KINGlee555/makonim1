@@ -55,6 +55,8 @@ import CourierDeliveryDialog from "../components/CourierDeliveryDialog";
 import DeliveryNotice from "../components/DeliveryNotice";
 import SmartTools from "../components/SmartTools";
 import RecentlyBought from "../components/RecentlyBought";
+import FillFromLastWeek from "../components/FillFromLastWeek";
+import { useSimpleMode } from "@/lib/simpleMode";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { lineCost, quantityStep } from "@/lib/units";
 import { uiEnter, uiSection, uiBanner } from "@/lib/minimalUi";
@@ -113,6 +115,8 @@ export default function ListView() {
   const chainDeals = useChainDeals(items);
   // מי נמצא איתך ברשימה — נוכחות חיה, מתעדכנת כל חצי דקה
   const presence = useListPresence(listId, currentUserRef[0]);
+  // מצב פשוט — מסתיר כל מה שאינו הכרחי לקנייה עצמה; הכל נשאר נגיש דרך "עוד"
+  const [simple] = useSimpleMode();
 
   const loadData = useCallback(async () => {
     const [allLists, allItems, allFavorites] = await Promise.all([
@@ -418,9 +422,11 @@ export default function ListView() {
       <main className="mx-auto w-full max-w-[760px] px-5 pb-[110px] sm:px-7">
         <SharedWithStrip list={list} members={presence.members} myEmail={currentUserRef[0]?.email} onOpen={() => setShowShare(true)} />
 
-        <div className={uiEnter}>
-          <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
-        </div>
+        {!simple && (
+          <div className={uiEnter}>
+            <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
+          </div>
+        )}
 
         <DeliveryNotice listId={listId} delay={0.05} />
 
@@ -467,7 +473,7 @@ export default function ListView() {
               )}
             </div>
 
-            {showSuggestions && (
+            {showSuggestions && !simple && (
               <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} delay={0.1} />
             )}
           </>
@@ -490,18 +496,24 @@ export default function ListView() {
           </div>
         )}
 
-        <RecentlyBought listId={listId} delay={0.1} />
+        <FillFromLastWeek listId={listId} currentItems={items} onFilled={loadData} />
 
-        <div className={`${uiSection} ${uiEnter}`}>
-          <ListExtras list={list} listId={listId} items={items} favorites={favorites}
-            onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
-        </div>
+        {!simple && <RecentlyBought listId={listId} delay={0.1} />}
 
-        <SponsoredSlot delay={0.15} />
+        {!simple && (
+          <div className={`${uiSection} ${uiEnter}`}>
+            <ListExtras list={list} listId={listId} items={items} favorites={favorites}
+              onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
+          </div>
+        )}
 
-        <div className={`${uiSection} ${uiEnter}`}>
-          <PremiumBanner onOpen={() => setShowPremium(true)} />
-        </div>
+        {!simple && <SponsoredSlot delay={0.15} />}
+
+        {!simple && (
+          <div className={`${uiSection} ${uiEnter}`}>
+            <PremiumBanner onOpen={() => setShowPremium(true)} />
+          </div>
+        )}
 
         <AppFooter />
       </main>
@@ -538,7 +550,7 @@ export default function ListView() {
           />
         }
       />
-      <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} />
+      <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} itemCount={pendingItems.length} />
       <ParticipantsDialog open={showParticipants} onOpenChange={setShowParticipants} list={list}
         currentUser={currentUserRef[0]} onUpdated={(patch) => setList(prev => ({ ...prev, ...patch }))} />
       <ProductSearchDialog open={showSearch} onOpenChange={setShowSearch} onAddProduct={handleAddProduct}
