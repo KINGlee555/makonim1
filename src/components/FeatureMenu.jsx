@@ -36,8 +36,8 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button className="h-14 w-full rounded-[28px] bg-market-yellow px-2 text-[17px] font-black text-market-ink flex items-center justify-center gap-1.5 hover:bg-market-yellow hover:text-market-ink">
-          <LayoutGrid className="w-4 h-4" />
+        <Button className="h-16 w-full rounded-[28px] bg-market-yellow px-3 text-[20px] font-black text-market-ink flex items-center justify-center gap-2 hover:bg-market-yellow hover:text-market-ink">
+          <LayoutGrid className="w-5 h-5" />
           {t("list.moreFeatures")}
         </Button>
       </SheetTrigger>
@@ -56,7 +56,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
               <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-muted ${tool.color}`}>
                 <tool.icon className="h-6 w-6" />
               </div>
-              <span className="text-center text-sm font-medium leading-tight">{tool.label}</span>
+              <span className="text-center text-base font-bold leading-tight">{tool.label}</span>
             </button>
           ))}
         </div>
@@ -67,9 +67,9 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
             <button
               key={tool.label}
               onClick={() => pick(tool.onClick)}
-              className="flex items-center gap-1.5 rounded-full border bg-card px-3 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-accent"
+              className="flex items-center gap-1.5 rounded-full border bg-card px-4 py-2.5 text-[15px] font-bold text-foreground transition-colors hover:bg-accent"
             >
-              <tool.icon className="h-4 w-4 text-muted-foreground" />{tool.label}
+              <tool.icon className="h-5 w-5 text-muted-foreground" />{tool.label}
             </button>
           ))}
         </div>

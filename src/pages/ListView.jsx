@@ -465,8 +465,8 @@ export default function ListView() {
         {pendingItems.length > 0 && (
           <>
             <div className="mt-6 grid grid-cols-2 gap-3.5">
-              <button onClick={() => setShowShoppingMode(true)} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-pink px-2 text-[17px] font-black text-white">
-                <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
+              <button onClick={() => setShowShoppingMode(true)} className="flex h-16 items-center justify-center gap-2 rounded-[28px] bg-market-pink px-3 text-[20px] font-black text-white">
+                <ShoppingBag className="w-5 h-5" />{t("shoppingMode.title")}
               </button>
               <FeatureMenu
                 grouped={groupByCategory}

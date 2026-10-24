@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Plus, Minus, MapPin, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send } from "lucide-react";
+import { Plus, Minus, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import DealBadge from "@/components/DealBadge";
 import { useT } from "@/lib/i18n";
@@ -23,8 +23,8 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
         <span className="absolute left-[-34px] top-[14px] w-[130px] -rotate-[35deg] bg-market-pink py-1 text-center text-[15px] font-black text-white">{ribbon}</span>
       )}
 
-      <div className="relative h-28 overflow-hidden rounded-[20px] border-[3px] border-market-ink bg-market-surface">
-        <button type="button" className="h-full w-full" onClick={() => onNavigate && onNavigate(item)} aria-label={item.name}>
+      <div className="relative h-44 overflow-hidden rounded-[24px] border-[3px] border-market-ink bg-market-surface md:h-48">
+        <button type="button" className="h-full w-full" onClick={() => onNavigate && onNavigate(item)} aria-label={`${t("productItem.navigate")}: ${item.name}`}>
           <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url}
             onFound={(url) => onPhotoFound && onPhotoFound(item, url)}
             className="h-full w-full transition-transform duration-300 group-hover:scale-105" />
@@ -32,8 +32,9 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`} className="absolute start-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-market-surface shadow-sm">
-              {isFavorite ? <Star className="h-4 w-4 fill-market-pink text-market-pink" /> : <MoreVertical className="h-4 w-4 text-market-ink" />}
+            <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`} className="absolute start-2 top-2 flex h-11 items-center gap-1.5 rounded-[22px] border-2 border-market-ink bg-market-surface px-3 text-[15px] font-black text-market-ink shadow-sm">
+              {isFavorite ? <Star className="h-4 w-4 fill-market-pink text-market-pink" /> : <MoreVertical className="h-5 w-5" />}
+              {t("productItem.more")}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-52 rounded-2xl">
@@ -60,43 +61,38 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {onNavigate && (
-          <span className="absolute bottom-1.5 end-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-market-surface text-market-ink shadow-sm">
-            <MapPin className="h-4 w-4" />
-          </span>
-        )}
       </div>
 
       {deal && <DealBadge deal={deal} />}
 
-      <h3 className="product-name text-[22px] font-black leading-tight tracking-[-1px] text-market-ink">{item.name}</h3>
+      <h3 className="product-name text-[26px] font-black leading-tight tracking-[-1px] text-market-ink md:text-[28px]">{item.name}</h3>
 
       <div className="flex items-center justify-between gap-2">
-        <span className="min-w-0 truncate rounded-xl border-2 border-market-ink bg-market-surface px-2.5 py-0.5 text-sm font-extrabold text-market-ink">
+        <span className="min-w-0 truncate rounded-xl border-2 border-market-ink bg-market-surface px-2.5 py-0.5 text-base font-extrabold text-market-ink">
           {item.category || t("summary.other")}
           {rate > 0 ? ` · ₪${rate.toFixed(2)} ${t("productItem.perKg")}` : ""}
         </span>
-        {cost > 0 && <span className="whitespace-nowrap text-[28px] font-black leading-none tracking-[-1px] text-market-pink">₪{cost.toFixed(2)}</span>}
+        {cost > 0 && <span className="whitespace-nowrap text-[32px] font-black leading-none tracking-[-1px] text-market-pink">₪{cost.toFixed(2)}</span>}
       </div>
 
-      <div className="mt-auto flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5">
+      <div className="mt-auto flex flex-col gap-2.5">
+        <div className="flex items-center justify-between gap-2 rounded-[26px] border-[3px] border-market-ink bg-market-surface px-2 py-1.5">
           <button
             onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}
-            className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-market-blue text-white" aria-label="הפחתה">
-            <Minus className="h-5 w-5" />
+            className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-full bg-market-blue text-white" aria-label="הפחתה">
+            <Minus className="h-6 w-6" />
           </button>
-          <span className="flex min-w-[52px] flex-col items-center leading-none">
-            <b className="text-3xl font-black text-market-ink">{quantity}</b>
-            {unitLabel && <small className="mt-0.5 text-[13px] font-black text-market-ink/70">{unitLabel}</small>}
+          <span className="flex flex-col items-center leading-none">
+            <b className="text-[38px] font-black text-market-ink">{quantity}</b>
+            {unitLabel && <small className="mt-0.5 text-[15px] font-black text-market-ink/70">{unitLabel}</small>}
           </span>
           <button onClick={() => onUpdateQuantity(item, quantity + step)}
-            className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-market-pink text-white" aria-label="הוספה">
-            <Plus className="h-5 w-5" />
+            className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-full bg-market-pink text-white" aria-label="הוספה">
+            <Plus className="h-6 w-6" />
           </button>
         </div>
-        <button onClick={() => onToggleBought(item)} className="flex h-[46px] items-center justify-center gap-1.5 rounded-[23px] bg-market-ink px-4 text-[17px] font-black text-white" title={t("productItem.bought")}>
-          <Check className="h-4 w-4" />
+        <button onClick={() => onToggleBought(item)} className="flex h-[56px] w-full items-center justify-center gap-2 rounded-[28px] bg-market-ink text-[20px] font-black text-white">
+          <Check className="h-5 w-5" />
           {t("productItem.bought")}
         </button>
       </div>
