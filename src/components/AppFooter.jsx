@@ -21,6 +21,8 @@ export default function AppFooter() {
           <>
             <span className="text-market-blue/50">•</span>
             <Link to="/photo-suggestions" className="mx-2 text-[15px] font-black text-market-pink no-underline">{t("footer.suggestions")}</Link>
+            <span className="text-market-blue/50">•</span>
+            <Link to="/sponsored" className="mx-2 text-[15px] font-black text-market-pink no-underline">{t("sponsored.admin")}</Link>
           </>
         )}
       </div>

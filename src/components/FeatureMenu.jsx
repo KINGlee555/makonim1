@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown } from "lucide-react";
+import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenGroupBy, grouped, onOpenSuggestions }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
   const features = [
     { icon: Crown, label: t("premium.open"), onClick: onOpenPremium, color: "text-amber-500" },
+    { icon: Truck, label: t("courier.open"), onClick: onOpenCourier, color: "text-sky-600" },
     { icon: Scale, label: t("compare.open"), onClick: onOpenPriceCompare, color: "text-primary" },
     { icon: Store, label: t("basket.title"), onClick: onOpenBasket, color: "text-blue-500" },
     { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates, color: "text-primary" },

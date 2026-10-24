@@ -46,6 +46,10 @@ import UnavailableItem from "../components/UnavailableItem";
 import RenameListDialog from "../components/RenameListDialog";
 import ParticipantsDialog from "../components/ParticipantsDialog";
 import PremiumDialog from "../components/PremiumDialog";
+import PremiumBanner from "../components/PremiumBanner";
+import SponsoredSlot from "../components/sponsored/SponsoredSlot";
+import CourierDeliveryDialog from "../components/CourierDeliveryDialog";
+import DeliveryNotice from "../components/DeliveryNotice";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { categoryImage, categoryTone } from "@/lib/marketPalette";
 import { lineCost, quantityStep } from "@/lib/units";
@@ -68,6 +72,7 @@ export default function ListView() {
   const [showRename, setShowRename] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
+  const [showCourier, setShowCourier] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRoute, setShowRoute] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -433,6 +438,12 @@ export default function ListView() {
           </div>
         </section>
 
+        <SponsoredSlot />
+
+        <PremiumBanner onOpen={() => setShowPremium(true)} />
+
+        <DeliveryNotice listId={listId} />
+
         <ListExtras list={list} listId={listId} items={items} favorites={favorites}
           onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
 
@@ -468,6 +479,7 @@ export default function ListView() {
                 onOpenDealCalculator={() => setShowDealCalculator(true)}
                 onOpenCategoryOrder={() => setShowCategoryOrder(true)}
                 onOpenPremium={() => setShowPremium(true)}
+                onOpenCourier={() => setShowCourier(true)}
               />
             </div>
 
@@ -574,6 +586,8 @@ export default function ListView() {
       <CategoryOrderDialog open={showCategoryOrder} onOpenChange={setShowCategoryOrder} onSaved={setCategoryOrder} />
       <VoiceQuickAdd open={showVoice} onOpenChange={setShowVoice} onAddProduct={handleAddProduct} allProducts={allProducts} />
       <PremiumDialog open={showPremium} onOpenChange={setShowPremium} />
+      <CourierDeliveryDialog open={showCourier} onOpenChange={setShowCourier} listId={listId}
+        items={pendingItems} userName={currentUserNameRef.current} />
     </div>
   );
 }
