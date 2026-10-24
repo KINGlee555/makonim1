@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Volume2, Square } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n";
+import { uiPill } from "@/lib/minimalUi";
 
 export default function ListReader({ items }) {
   const t = useT();
@@ -35,15 +35,14 @@ export default function ListReader({ items }) {
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
+    <button
+      type="button"
       onClick={handleRead}
-      className="h-10 gap-1.5 rounded-[20px] bg-market-blue px-4 text-[15px] font-black text-white hover:bg-market-blue hover:text-white"
       disabled={items.filter(i => i.status !== "bought").length === 0}
+      className={`${uiPill} inline-flex items-center gap-1.5 disabled:opacity-40`}
     >
-      {reading ? <Square className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+      {reading ? <Square className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
       {reading ? t("reader.stop") : t("reader.read")}
-    </Button>
+    </button>
   );
 }

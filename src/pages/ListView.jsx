@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, RefreshCw, Pencil, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import AppHeader from "../components/AppHeader";
+import { RefreshCw, Users } from "lucide-react";
+import ListHeader from "../components/minimal/ListHeader";
+import ListItemRow from "../components/minimal/ListItemRow";
+import CategoryHeader from "../components/minimal/CategoryHeader";
 import ProfileDialog from "../components/ProfileDialog";
-import ProductItem from "../components/ProductItem";
 import QuickAddBar from "../components/QuickAddBar";
 import ShareDialog from "../components/ShareDialog";
 import ProductSearchDialog from "../components/ProductSearchDialog";
@@ -19,7 +19,6 @@ import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { usePriceSync } from "@/hooks/usePriceSync";
 import { useWarmChainPrices } from "@/hooks/useWarmChainPrices";
 import { useT } from "@/lib/i18n";
-import { getProductEmoji } from "@/lib/productEmoji";
 import ShoppingMode from "../components/ShoppingMode";
 import BasketComparison from "../components/BasketComparison";
 import PriceCompareTable from "../components/PriceCompareTable";
@@ -53,8 +52,8 @@ import DeliveryNotice from "../components/DeliveryNotice";
 import SmartTools from "../components/SmartTools";
 import RecentlyBought from "../components/RecentlyBought";
 import { loadAllProducts } from "@/lib/loadAllProducts";
-import { categoryImage, categoryTone } from "@/lib/marketPalette";
 import { lineCost, quantityStep } from "@/lib/units";
+import { uiEnter, uiSection, uiPill, uiPillRow, uiBanner, uiPrimary } from "@/lib/minimalUi";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -328,15 +327,13 @@ export default function ListView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-market-surface">
-        <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 md:px-12 space-y-4">
-          <div className="h-14 rounded-[28px] bg-market-track shimmer" />
-          <div className="h-56 rounded-[40px] bg-market-track shimmer" />
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-72 rounded-[30px] bg-market-track shimmer" />
-            ))}
-          </div>
+      <div className="min-h-screen bg-ui-canvas font-system font-medium">
+        <div className="mx-auto w-full max-w-[760px] space-y-2 px-5 py-4 sm:px-7">
+          <div className="h-11 rounded-[22px] bg-ui-surface shimmer" />
+          <div className="h-12 rounded-[22px] bg-ui-surface shimmer" />
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-[44px] rounded-lg bg-ui-surface shimmer" />
+          ))}
         </div>
       </div>
     );
@@ -344,10 +341,8 @@ export default function ListView() {
 
   if (!list) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-market-surface">
-        <div className="text-center">
-          <p className="text-[26px] font-black text-market-ink">{t("list.notFound")}</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-ui-canvas font-system">
+        <p className="text-[20px] font-semibold text-ui-ink">{t("list.notFound")}</p>
       </div>
     );
   }
@@ -378,96 +373,67 @@ export default function ListView() {
   });
 
   return (
-    <div className="market-page min-h-screen bg-market-surface pb-24">
-      <AppHeader
-        listView
+    <div className="min-h-screen bg-ui-canvas font-system font-medium text-ui-ink tabular-nums">
+      <ListHeader
+        list={list}
         userName={currentUserRef[0]?.full_name}
-        rightAction={
-          <div className="flex items-center gap-1.5">
-            <Button variant="ghost" size="icon" title={t("header.changeName")} onClick={() => setShowProfile(true)} className="flex h-11 w-auto items-center gap-1.5 rounded-[22px] bg-market-pink px-3.5 text-white hover:bg-market-pink hover:text-white">
-              <User className="w-4 h-4" />
-              <span className="hidden text-[15px] font-extrabold md:inline">{t("header.changeName")}</span>
-            </Button>
-            <Button variant="ghost" size="icon" title={t("header.settings")} onClick={() => setShowSettings(true)} className="flex h-11 w-auto items-center gap-1.5 rounded-[22px] bg-market-yellow px-3.5 text-market-ink hover:bg-market-yellow hover:text-market-ink">
-              <Settings className="w-4 h-4" />
-              <span className="hidden text-[15px] font-extrabold md:inline">{t("header.settings")}</span>
-            </Button>
-            <Button variant="ghost" size="icon" title={t("header.share")} onClick={() => setShowShare(true)} className="flex h-11 w-auto items-center gap-1.5 rounded-[22px] bg-market-blue px-3.5 text-white hover:bg-market-blue hover:text-white">
-              <Share2 className="w-4 h-4" />
-              <span className="hidden text-[15px] font-extrabold md:inline">{t("header.share")}</span>
-            </Button>
-          </div>
-        }
+        itemCount={pendingItems.length}
+        total={totalPrice}
+        onOpenProfile={() => setShowProfile(true)}
+        onOpenSettings={() => setShowSettings(true)}
+        onOpenShare={() => setShowShare(true)}
+        onRename={() => setShowRename(true)}
+        onAdd={() => setShowSearch(true)}
       />
 
-      <main className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 md:px-12">
-        <section className="relative mt-2 overflow-hidden rounded-[40px] border-4 border-market-ink bg-market-blue px-5 py-6 shadow-[0_10px_0_hsl(var(--market-ink))] mk-pop md:px-9 md:py-7" aria-label={t("list.total")}>
-          <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-80 w-80 rounded-full bg-market-yellow opacity-[0.35]" />
-
-          <div className="relative z-[1] rounded-[28px] border-[3px] border-market-ink bg-market-surface px-5 py-5 md:px-7">
-            <div className="grid grid-cols-[0.85fr_1.15fr] items-start gap-3 text-center">
-              <div className="min-w-0">
-                <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.toBuy")}</span>
-                <p className="mt-1.5 text-[clamp(30px,8.5vw,54px)] font-black leading-[1.05] tracking-tight text-market-pink tabular-nums">{pendingItems.length}</p>
-              </div>
-              <div className="min-w-0">
-                <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.total")}</span>
-                <p className="mt-1.5 whitespace-nowrap text-[clamp(22px,6.4vw,48px)] font-black leading-[1.05] tracking-tight text-market-blue tabular-nums">₪{totalPrice.toFixed(2)}</p>
-              </div>
-            </div>
-            <div className="my-4 h-4 overflow-hidden rounded-lg border-2 border-market-ink bg-market-track">
-              <span className="mk-stripe block h-full w-full" />
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-2.5">
-              <button onClick={() => setShowRename(true)} title={t("rename.button")} className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-[16px] bg-market-yellow-soft px-2.5 py-1 text-[18px] font-black text-market-ink">
-                <span className="min-w-0 truncate">{list.title}</span>
-                <Pencil className="h-4 w-4 flex-shrink-0" />
+      <main className="mx-auto w-full max-w-[760px] px-5 pb-[110px] sm:px-7">
+        <div className={`${uiSection} ${uiEnter}`}>
+          <div className={uiPillRow}>
+            <button type="button" onClick={handleRefresh} className={`${uiPill} inline-flex items-center gap-1.5`}>
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-refresh" : ""}`} />
+              {t("list.refresh")}
+            </button>
+            {isOwner && (
+              <button type="button" onClick={() => setShowParticipants(true)} className={`${uiPill} inline-flex items-center gap-1.5`}>
+                <Users className="h-3.5 w-3.5" />
+                {t("participants.button")}
               </button>
-              <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <button onClick={handleRefresh} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-pink px-4 text-[15px] font-black text-white">
-                  <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
-                  {t("list.refresh")}
-                </button>
-                {isOwner && (
-                  <button onClick={() => setShowParticipants(true)} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-blue px-4 text-[15px] font-black text-white">
-                    <Users className="w-4 h-4" />
-                    {t("participants.button")}
-                  </button>
-                )}
-                <ListReader items={pendingItems} />
-              </div>
-            </div>
+            )}
+            <ListReader items={pendingItems} />
           </div>
-        </section>
+        </div>
 
-        <SponsoredSlot />
+        <SponsoredSlot delay={0.05} />
 
-        <PremiumBanner onOpen={() => setShowPremium(true)} />
+        <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.1s" }}>
+          <PremiumBanner onOpen={() => setShowPremium(true)} />
+        </div>
 
-        <DeliveryNotice listId={listId} />
+        <DeliveryNotice listId={listId} delay={0.15} />
 
-        <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
+        <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.2s" }}>
+          <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
+        </div>
 
-        <ListExtras list={list} listId={listId} items={items} favorites={favorites}
-          onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
+        <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.25s" }}>
+          <ListExtras list={list} listId={listId} items={items} favorites={favorites}
+            onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
+        </div>
 
-        <RecentlyBought listId={listId} />
+        <RecentlyBought listId={listId} delay={0.3} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
-          <div className="mt-5 flex items-center gap-2.5 rounded-3xl border-[3px] border-market-pink bg-market-pink-tint px-5 py-3">
-            <span className="h-3 w-3 flex-shrink-0 rounded-full bg-market-pink" />
-            <span className="text-[17px] font-extrabold text-market-pink">
+          <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.32s" }}>
+            <div className={uiBanner}>
               {t("active.nowShopping", { name: (list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).join(", ") })}
-            </span>
+            </div>
           </div>
         )}
 
         {pendingItems.length > 0 && (
           <>
-            <div className="mt-6 grid grid-cols-2 gap-3.5">
-              <button onClick={() => setShowShoppingMode(true)} className="flex h-16 items-center justify-center gap-2 rounded-[28px] bg-market-pink px-3 text-[20px] font-black text-white">
-                <ShoppingBag className="w-5 h-5" />{t("shoppingMode.title")}
-              </button>
+            <div className={`grid grid-cols-2 gap-2.5 py-3 ${uiEnter}`} style={{ animationDelay: "0.35s" }}>
+              <button type="button" onClick={() => setShowShoppingMode(true)} className={uiPrimary}>{t("shoppingMode.title")}</button>
               <FeatureMenu
                 grouped={groupByCategory}
                 onOpenGroupBy={() => setGroupByCategory(g => !g)}
@@ -490,66 +456,53 @@ export default function ListView() {
             </div>
 
             {showSuggestions && (
-              <div className="mt-6">
-                <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
-              </div>
+              <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} delay={0.4} />
             )}
 
-            <div key={groupByCategory ? "grouped" : "ungrouped"} className="mt-7 animate-fade-in">
+            <div key={groupByCategory ? "grouped" : "ungrouped"} className="pt-1">
               {groupByCategory ? (
-                groupedCategories.map(([cat, catItems], index) => (
-                  <section key={cat} className="mb-7">
-                    <div className="mb-4 flex items-center gap-4">
-                      <img src={categoryImage(cat)} alt={cat} className="h-16 w-16 flex-shrink-0 rounded-full border-4 border-market-ink object-cover md:h-[84px] md:w-[84px]" />
-                      <h2 className={`min-w-0 text-[28px] font-black leading-tight tracking-[-2px] md:text-[38px] ${categoryTone(index).text}`}>{cat}</h2>
-                      <span className={`rounded-[14px] px-3.5 py-0.5 text-base font-black ${categoryTone(index).badge}`}>{catItems.length}</span>
-                    </div>
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                      {catItems.map((item, itemIndex) => (
-                        <ProductItem key={item.id} item={item} paletteIndex={itemIndex} onToggleBought={handleToggleBought}
-                          onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                          onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
-                          onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
-                          onPhotoFound={handlePhotoFound}
-                          isFavorite={favorites.some(favorite => favorite.name === item.name)}
-                          className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
-                      ))}
-                    </div>
+                groupedCategories.map(([cat, catItems]) => (
+                  <section key={cat} className="pb-1.5">
+                    <CategoryHeader category={cat} count={catItems.length} />
+                    {catItems.map((item, itemIndex) => (
+                      <ListItemRow key={item.id} item={item} index={itemIndex} onToggleBought={handleToggleBought}
+                        onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                        onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                        onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
+                        onPhotoFound={handlePhotoFound}
+                        isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                        className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
+                    ))}
                   </section>
                 ))
               ) : (
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {pendingItems.map((item, index) => (
-                    <ProductItem key={item.id} item={item} paletteIndex={index} onToggleBought={handleToggleBought}
-                      onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                      onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
-                      onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
-                      onPhotoFound={handlePhotoFound}
-                      isFavorite={favorites.some(favorite => favorite.name === item.name)}
-                      className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
-                  ))}
-                </div>
+                pendingItems.map((item, index) => (
+                  <ListItemRow key={item.id} item={item} index={index} onToggleBought={handleToggleBought}
+                    onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                    onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                    onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
+                    onPhotoFound={handlePhotoFound}
+                    isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                    className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
+                ))
               )}
             </div>
           </>
         )}
 
         {unavailableItems.length > 0 && (
-          <section className="mt-7 mb-6 space-y-3 animate-fade-in">
-            <h2 className="text-[26px] font-black text-market-ink">{t("list.unavailable")}</h2>
+          <section className={`${uiSection} pt-4`}>
+            <h2 className="mb-1 text-[15px] font-semibold text-ui-ink">{t("list.unavailable")}</h2>
             {unavailableItems.map(item => <UnavailableItem key={item.id} item={item} onRestore={handleRestore} />)}
           </section>
         )}
 
         {pendingItems.length === 0 && unavailableItems.length === 0 && (
-          <div className="py-4 animate-fade-in">
+          <div className={`${uiEnter}`}>
             <EmptyListSuggestions onAddProduct={handleAddProduct} />
-            <div className="text-center py-12">
-              <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full border-4 border-market-ink bg-market-yellow mk-bob">
-                <ShoppingCart className="w-11 h-11 text-market-ink" />
-              </div>
-              <p className="text-[26px] font-black text-market-ink mb-1">{t("list.empty")}</p>
-              <p className="text-[17px] font-bold text-market-ink/70">{t("list.emptyDesc")}</p>
+            <div className="border-b border-ui-line-soft py-4 text-center text-[14px] text-ui-muted">
+              <b className="mb-0.5 block text-[15px] font-semibold text-ui-ink">{t("list.empty")}</b>
+              {t("list.emptyDesc")}
             </div>
           </div>
         )}
@@ -558,7 +511,6 @@ export default function ListView() {
       </main>
 
       <QuickAddBar onOpenSearch={() => setShowSearch(true)} onOpenScanner={() => setShowScanner(true)} onOpenVoice={() => setShowVoice(true)} />
-
       <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} />
       <ParticipantsDialog open={showParticipants} onOpenChange={setShowParticipants} list={list}
         currentUser={currentUserRef[0]} onUpdated={(patch) => setList(prev => ({ ...prev, ...patch }))} />

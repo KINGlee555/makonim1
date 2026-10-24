@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Plus, TrendingDown, Bell } from "lucide-react";
+import { Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
+import { uiPillRow, uiSection, uiEnter } from "@/lib/minimalUi";
 
-export default function SmartSuggestions({ listId, currentItems, onAddProduct }) {
+export default function SmartSuggestions({ listId, currentItems, onAddProduct, delay = 0 }) {
   const t = useT();
   const [history, setHistory] = useState([]);
 
@@ -35,17 +36,16 @@ export default function SmartSuggestions({ listId, currentItems, onAddProduct })
   if (suggestions.length === 0) return null;
 
   return (
-    <section className="mb-0">
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-5 h-5 text-market-pink" />
-        <h2 className="text-[19px] font-black text-market-ink">{t("smart.title")}</h2>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
+    <section className={`${uiSection} ${uiEnter}`} style={{ animationDelay: `${delay}s` }}>
+      <p className="mb-2 text-[12px] text-ui-muted">{t("smart.title")}</p>
+      <div className={uiPillRow}>
         {suggestions.map(s => (
-          <button key={s.name} onClick={() => onAddProduct({ name: s.name, price: 0, category: "אחר", image_url: "" })} className="flex min-w-0 items-center gap-2 rounded-[22px] border-[3px] border-market-ink bg-market-yellow-soft p-2.5 text-start shadow-[0_4px_0_hsl(var(--market-ink))]">
-            <ProductPhoto name={s.name} category="אחר" className="h-12 w-12 flex-shrink-0 rounded-xl" />
-            <span className="min-w-0 flex-1 truncate text-sm font-extrabold text-market-ink">{s.name}</span>
-            <Plus className="h-4 w-4 flex-shrink-0 text-market-pink" />
+          <button key={s.name} type="button"
+            onClick={() => onAddProduct({ name: s.name, price: 0, category: "אחר", image_url: "" })}
+            className="flex h-[30px] shrink-0 items-center gap-1.5 rounded-[15px] border border-ui-line bg-ui-canvas ps-1.5 pe-2.5 text-[13px] text-ui-ink transition-[background-color,color,box-shadow,opacity] duration-200 hover:bg-ui-surface active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent">
+            <ProductPhoto name={s.name} category="אחר" className="h-6 w-6 flex-shrink-0 rounded-full object-cover" />
+            <span className="max-w-[9rem] truncate">{s.name}</span>
+            <Plus className="h-3.5 w-3.5 flex-shrink-0 text-ui-accent" />
           </button>
         ))}
       </div>

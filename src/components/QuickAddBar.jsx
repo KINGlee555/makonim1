@@ -1,34 +1,22 @@
 import { Search, ScanLine, Mic } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { uiIconRound, uiPrimary } from "@/lib/minimalUi";
 
 export default function QuickAddBar({ onOpenSearch, onOpenScanner, onOpenVoice }) {
   const t = useT();
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
-      <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
-        <div className="pointer-events-auto flex items-center gap-3 rounded-[40px] border-4 border-market-ink bg-market-blue p-4 shadow-[0_8px_0_hsl(var(--market-ink))] mk-pop">
-          <button
-            onClick={onOpenVoice}
-            className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-market-surface text-market-ink"
-            title={t("voice.title")}
-          >
-            <Mic className="w-5 h-5" />
-          </button>
-          <button
-            onClick={onOpenScanner}
-            className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-market-surface text-market-ink"
-            title={t("barcode.title")}
-          >
-            <ScanLine className="w-5 h-5" />
-          </button>
-          <button
-            onClick={onOpenSearch}
-            className="flex h-14 min-w-0 flex-1 items-center justify-center gap-2.5 rounded-[28px] bg-market-yellow px-3 text-[20px] font-black text-market-ink"
-          >
-            <Search className="w-5 h-5 flex-shrink-0" />
-            <span className="truncate">{t("quickAdd.search")}</span>
-          </button>
-        </div>
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-ui-line bg-ui-canvas">
+      <div className="mx-auto flex w-full max-w-[760px] items-center gap-2.5 px-5 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 sm:px-7">
+        <button type="button" onClick={onOpenVoice} className={uiIconRound} title={t("voice.title")} aria-label={t("voice.title")}>
+          <Mic className="h-5 w-5" strokeWidth={1.8} />
+        </button>
+        <button type="button" onClick={onOpenScanner} className={uiIconRound} title={t("barcode.title")} aria-label={t("barcode.title")}>
+          <ScanLine className="h-5 w-5" strokeWidth={1.8} />
+        </button>
+        <button type="button" onClick={onOpenSearch} className={`${uiPrimary} flex items-center justify-center gap-2`}>
+          <Search className="h-4 w-4 shrink-0" />
+          <span className="truncate">{t("quickAdd.search")}</span>
+        </button>
       </div>
     </div>
   );

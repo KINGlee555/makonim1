@@ -1,27 +1,29 @@
 import { useState } from "react";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import ConnectedUsers from "./ConnectedUsers";
 import FavoritesSection from "./FavoritesSection";
 import NearbyDeals from "./NearbyDeals";
 import RecurringItems from "./RecurringItems";
 import RegisteredUsersCount from "./RegisteredUsersCount";
+import { useT } from "@/lib/i18n";
+import { uiPill, uiPillRow } from "@/lib/minimalUi";
 
 // Secondary sections folded into one collapsible block so the list itself stays front and center
 export default function ListExtras({ list, listId, items, favorites, onAddProduct, onToggleFavorite }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="mb-4">
-      <button onClick={() => setOpen(o => !o)} aria-expanded={open}
-        className="flex w-full items-center justify-between rounded-3xl border-[3px] border-market-yellow bg-market-surface px-5 py-3.5 text-start shadow-[0_5px_0_hsl(var(--market-yellow))]">
-        <span className="flex items-center gap-2 text-[19px] font-black text-market-ink">
-          <Sparkles className="h-5 w-5 text-market-pink" />
-          מועדפים, מבצעים ומשתמשים
-        </span>
-        <ChevronDown className={`h-5 w-5 text-market-ink transition-transform ${open ? "rotate-180" : ""}`} />
+    <section>
+      <button type="button" onClick={() => setOpen(o => !o)} aria-expanded={open} className={`${uiPillRow} w-full text-start`}>
+        <span className={uiPill}>{t("users.connected")}</span>
+        <span className={uiPill}>{t("favorites.title")}</span>
+        <span className={uiPill}>מבצעים קרובים אליך</span>
+        <span className={uiPill}>{t("recurring.title")}</span>
+        <ChevronDown className={`h-4 w-4 shrink-0 text-ui-muted transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="mt-3 animate-fade-in">
+        <div className="mt-3 space-y-4">
           <ConnectedUsers list={list} />
           <FavoritesSection favorites={favorites} onAdd={onAddProduct} onRemove={onToggleFavorite} />
           <NearbyDeals onAddProduct={onAddProduct} />

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck } from "lucide-react";
+import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
 
 export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions }) {
   const t = useT();
@@ -12,12 +12,12 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
 
   // אלה הכלים שמובילים לקנייה חכמה — בחזית התפריט
   const mainTools = [
-    { icon: ScanLine, label: t("barcode.title"), onClick: onOpenScanner, color: "text-purple-500" },
-    { icon: Mic, label: t("voice.title"), onClick: onOpenVoice, color: "text-pink-500" },
-    { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates, color: "text-primary" },
-    { icon: Tag, label: t("deals.title"), onClick: onOpenDeals, color: "text-red-500" },
-    { icon: CalendarDays, label: t("menu.title"), onClick: onOpenMenu, color: "text-orange-500" },
-    { icon: Truck, label: t("courier.open"), onClick: onOpenCourier, color: "text-sky-600" },
+    { icon: ScanLine, label: t("barcode.title"), onClick: onOpenScanner },
+    { icon: Mic, label: t("voice.title"), onClick: onOpenVoice },
+    { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates },
+    { icon: Tag, label: t("deals.title"), onClick: onOpenDeals },
+    { icon: CalendarDays, label: t("menu.title"), onClick: onOpenMenu },
+    { icon: Truck, label: t("courier.open"), onClick: onOpenCourier },
   ];
 
   // והשאר בקיצור, בלי להעמיס על המסך
@@ -36,40 +36,33 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button className="h-16 w-full rounded-[28px] bg-market-yellow px-3 text-[20px] font-black text-market-ink flex items-center justify-center gap-2 hover:bg-market-yellow hover:text-market-ink">
-          <LayoutGrid className="w-5 h-5" />
-          {t("list.moreFeatures")}
-        </Button>
+        <button type="button" className={uiOutline}>{t("list.moreFeatures")}</button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="rounded-t-3xl px-4 pb-8 pt-4">
+      <SheetContent side="bottom" className="rounded-t-3xl border-t border-ui-line bg-ui-canvas px-5 pb-8 pt-4 font-system text-ui-ink">
         <SheetHeader className="text-center">
-          <SheetTitle className="text-xl">{t("list.moreFeatures")}</SheetTitle>
+          <SheetTitle className="text-[15px] font-semibold text-ui-ink">{t("list.moreFeatures")}</SheetTitle>
         </SheetHeader>
-        <div className="mt-4 grid grid-cols-3 gap-3">
+        <div className="mt-4 grid grid-cols-3 gap-2">
           {mainTools.map((tool, index) => (
             <button
               key={tool.label}
               data-testid={`feature-${index}`}
+              type="button"
               onClick={() => pick(tool.onClick)}
-              className="flex flex-col items-center gap-2 rounded-2xl border bg-card p-4 transition-colors hover:bg-accent active:scale-95"
+              className="flex flex-col items-center gap-2 rounded-[10px] border border-ui-line bg-ui-canvas p-3 text-ui-ink transition-[background-color,color,box-shadow,opacity] duration-200 hover:bg-ui-surface active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent"
             >
-              <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-muted ${tool.color}`}>
-                <tool.icon className="h-6 w-6" />
-              </div>
-              <span className="text-center text-base font-bold leading-tight">{tool.label}</span>
+              <tool.icon className="h-5 w-5 text-ui-accent" strokeWidth={1.8} />
+              <span className="text-center text-[13px] leading-tight">{tool.label}</span>
             </button>
           ))}
         </div>
 
-        <p className="mb-2 mt-6 text-sm font-bold text-muted-foreground">עוד כלים</p>
-        <div className="flex flex-wrap gap-2">
+        <p className="mb-2 mt-5 text-[12px] text-ui-muted">עוד כלים</p>
+        <div className={uiPillRow}>
           {extraTools.map(tool => (
-            <button
-              key={tool.label}
-              onClick={() => pick(tool.onClick)}
-              className="flex items-center gap-1.5 rounded-full border bg-card px-4 py-2.5 text-[15px] font-bold text-foreground transition-colors hover:bg-accent"
-            >
-              <tool.icon className="h-5 w-5 text-muted-foreground" />{tool.label}
+            <button key={tool.label} type="button" onClick={() => pick(tool.onClick)}
+              className={`${uiPill} inline-flex items-center gap-1.5`}>
+              <tool.icon className="h-3.5 w-3.5 text-ui-muted" strokeWidth={1.8} />{tool.label}
             </button>
           ))}
         </div>

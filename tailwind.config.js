@@ -5,7 +5,8 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			rubik: ['var(--font-rubik)']
+  			rubik: ['var(--font-rubik)'],
+  			system: ['var(--font-system)']
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -46,6 +47,15 @@ module.exports = {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+  			ui: {
+  				canvas: 'hsl(var(--ui-canvas))',
+  				ink: 'hsl(var(--ui-ink))',
+  				muted: 'hsl(var(--ui-muted))',
+  				line: 'hsl(var(--ui-line))',
+  				'line-soft': 'hsl(var(--ui-line-soft))',
+  				surface: 'hsl(var(--ui-surface))',
+  				accent: 'hsl(var(--ui-accent))'
+  			},
   			market: {
   				ink: 'hsl(var(--market-ink))',
   				pink: 'hsl(var(--market-pink))',

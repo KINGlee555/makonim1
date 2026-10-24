@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Truck } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { uiSection, uiBannerAction, uiEnter } from "@/lib/minimalUi";
 
 // Open courier requests are visible to every participant of the list.
-export default function DeliveryNotice({ listId }) {
+export default function DeliveryNotice({ listId, delay = 0 }) {
   const t = useT();
   const [requests, setRequests] = useState([]);
 
@@ -25,26 +25,20 @@ export default function DeliveryNotice({ listId }) {
   if (requests.length === 0) return null;
 
   return (
-    <section className="mt-5 space-y-2.5">
-      {requests.map(request => (
-        <div key={request.id} className="flex items-center gap-3 rounded-3xl border-[3px] border-market-ink bg-market-blue-soft px-4 py-3">
-          <Truck className="h-5 w-5 flex-shrink-0 text-market-ink" />
-          <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-black text-market-ink">
-              {t("courier.requested")} · {Number(request.total_weight_kg || 0).toFixed(1)} {t("courier.kg")}
-            </p>
-            <p className="truncate text-[13px] font-bold text-market-ink/75">
-              {request.requested_by} · {request.address}
-            </p>
+    <section className={`${uiSection} ${uiEnter}`} style={{ animationDelay: `${delay}s` }}>
+      <div className="space-y-2">
+        {requests.map(request => (
+          <div key={request.id} className="flex items-center justify-between gap-3 rounded-[10px] bg-ui-surface px-3.5 py-2.5 text-[14px] text-ui-ink">
+            <div className="min-w-0 flex-1">
+              <p className="truncate">
+                {t("courier.requested")} · {Number(request.total_weight_kg || 0).toFixed(1)} {t("courier.kg")}
+              </p>
+              <p className="truncate text-[12px] text-ui-muted">{request.requested_by} · {request.address}</p>
+            </div>
+            <button type="button" onClick={() => handleDone(request)} className={uiBannerAction}>{t("courier.done")}</button>
           </div>
-          <button
-            onClick={() => handleDone(request)}
-            className="flex-shrink-0 rounded-2xl bg-market-ink px-3 py-2 text-[13px] font-black text-white"
-          >
-            {t("courier.done")}
-          </button>
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   );
 }
