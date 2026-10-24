@@ -86,8 +86,10 @@ export function usePriceSync() {
           }
         }
 
-        if (updates.length > 0 && !cancelled) {
-          await base44.entities.Product.bulkUpdate(updates);
+        // אותו מוצר יכול להימצא פעמיים באותו סבב — מאחדים לפי מזהה כדי לא לשלוח כפילות
+        const uniqueUpdates = [...new Map(updates.map(u => [u.id, u])).values()];
+        if (uniqueUpdates.length > 0 && !cancelled) {
+          await base44.entities.Product.bulkUpdate(uniqueUpdates);
         }
       } catch {
         // Silent fail — don't disrupt user experience

@@ -22,10 +22,21 @@ export function catalogChainById(id: string) {
   return CATALOG_CHAINS.find((chain) => chain.id === id) || null;
 }
 
-// מוצר ממותג כמעט תמיד קיים בקטלוג התמונות העולמי, בעוד ירקות טריים ובשר בתפזורת
-// כמעט שאף פעם לא. לכן קודם כל בודקים את המוצרים עם מותג.
+// ברקוד אמיתי (EAN-13 / UPC-A עם ספרת ביקורת) כמעט תמיד קיים בקטלוג התמונות העולמי,
+// בעוד הקוד הפנימי של הרשת כמעט אף פעם לא. בודקים קודם את אלה — כך כל בדיקה מניבה יותר.
+export function isRealBarcode(code: string) {
+  const digits = code.length === 12 ? `0${code}` : code;
+  if (!/^\d{13}$/.test(digits)) return false;
+  let sum = 0;
+  for (let i = 0; i < 12; i++) sum += Number(digits[i]) * (i % 2 ? 3 : 1);
+  return (10 - (sum % 10)) % 10 === Number(digits[12]);
+}
+
+// מוצר ממותג עם ברקוד אמיתי הוא הסיכוי הגבוה ביותר לתמונה אמיתית; ירקות טריים
+// ובשר בתפזורת כמעט שאף פעם לא נמצאים בקטלוג העולמי.
 export function prioritizeForPhotos(items: CatalogItem[], keep: number) {
-  const sorted = items.slice().sort((a, b) => (a.brand ? 0 : 1) - (b.brand ? 0 : 1) || a.name.length - b.name.length);
+  const rank = (item: CatalogItem) => (isRealBarcode(item.code) ? 0 : 2) + (item.brand ? 0 : 1);
+  const sorted = items.slice().sort((a, b) => rank(a) - rank(b) || a.name.length - b.name.length);
   return sorted.slice(0, keep);
 }
 
@@ -146,7 +157,7 @@ async function searchOnePhoto(code: string, images: Map<string, string>) {
   }
 }
 
-export async function photosForCodes(codes: string[], maxSingle = 300) {
+export async function photosForCodes(codes: string[], maxSingle = 450) {
   const images = new Map<string, string>();
   const checked: string[] = [];
   const pendingCodes: string[] = [];

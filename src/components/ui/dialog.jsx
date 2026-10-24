@@ -25,6 +25,14 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
+// חלון בלי תיאור מקבל סימון מפורש כדי שקוראי מסך לא ייחשפו להתראת נגישות מיותרת,
+// וחלון שכן מכיל תיאור שומר על הקישור האוטומטי של הספרייה
+const containsDescription = (nodes) => React.Children.toArray(nodes).some((node) => {
+  if (!React.isValidElement(node)) return false;
+  if (node.type === DialogDescription) return true;
+  return node.props?.children ? containsDescription(node.props.children) : false;
+});
+
 const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
@@ -34,7 +42,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
         "pointer-events-auto fixed left-[50%] top-[50%] z-50 grid w-[calc(100vw-1.5rem)] max-w-[26rem] translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-5 shadow-lg duration-200 overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-3xl sm:max-w-lg sm:rounded-2xl",
         className
       )}
-      {...props}>
+      {...(containsDescription(children) ? props : { "aria-describedby": undefined, ...props })}>
       {children}
       <DialogPrimitive.Close
         className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">

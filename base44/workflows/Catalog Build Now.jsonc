@@ -6,16 +6,16 @@
     "config": {
       "trigger_type": "scheduled",
       "events": [],
-      "schedule_mode": "one_time",
-      "one_time_date": "2026-10-24T09:35:00Z",
+      "schedule_mode": "interval",
+      "one_time_date": null,
       "timezone": "Asia/Jerusalem",
       "cron_expression": null,
-      "interval_value": null,
-      "interval_unit": null,
-      "interval_anchor": null,
-      "ends_type": "never",
+      "interval_value": 2,
+      "interval_unit": "hours",
+      "interval_anchor": "2026-10-24T09:52:00Z",
+      "ends_type": "after_count",
       "ends_on_date": null,
-      "ends_after_count": null
+      "ends_after_count": 4
     }
   },
   "definition": {
