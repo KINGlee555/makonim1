@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
-import { quantityStep } from "@/lib/units";
+import { clampQuantity, quantityStep } from "@/lib/units";
+import { isWeightSold } from "@/lib/weightProducts";
 import { requestNotificationPermission } from "@/hooks/useListNotifications";
 
 // כל נתוני הרשימה והפעולות עליה במקום אחד: טעינה, סנכרון חי בין המשתתפים,
@@ -146,13 +147,18 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
   }, [listId]);
 
   const handleUpdateQuantity = useCallback((item, qty) => {
-    setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: qty } : i));
-    base44.entities.ListItem.update(item.id, { quantity: qty }).catch(() => {});
+    // הכמות נשמרת בטווח שהוגדר ליחידה — עד 10 ק״ג למוצר לפי משקל
+    const quantity = clampQuantity(item, qty);
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity } : i));
+    base44.entities.ListItem.update(item.id, { quantity }).catch(() => {});
   }, []);
 
   const handleUpdateDetails = useCallback((item, details) => {
-    setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...details } : i));
-    base44.entities.ListItem.update(item.id, details).catch(() => {});
+    const next = details.quantity == null
+      ? details
+      : { ...details, quantity: clampQuantity({ ...item, unit: details.unit || item.unit }, details.quantity) };
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...next } : i));
+    base44.entities.ListItem.update(item.id, next).catch(() => {});
   }, []);
 
   // תמונה אמיתית שנמצאה למוצר נשמרת על הפריט — כל המשפחה רואה אותה בלי חיפוש חוזר
@@ -196,8 +202,8 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
   }, [listId]);
 
   const handleAddProduct = useCallback(async (product) => {
-    // מוצר שנמכר לפי משקל נכנס כיחידת גרם עם קילו כברירת מחדל
-    const unit = product.weighted ? "gram" : "unit";
+    // מוצר שנמכר לפי משקל נכנס בקילו — ומשם מוסיפים קילו-קילו עד 10 ק״ג
+    const unit = isWeightSold(product) ? "kg" : "unit";
     const existing = itemsRef.current.find(i => i.name === product.name && i.status !== "bought");
     if (existing) {
       const newQty = (existing.quantity || 1) + quantityStep(existing.unit || unit);
@@ -209,7 +215,7 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
       list_id: listId, name: product.name, barcode: product.barcode || "",
       price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
-      status: "pending", quantity: unit === "gram" ? 1000 : 1, unit, note: ""
+      status: "pending", quantity: 1, unit, note: ""
     });
     setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
   }, [listId]);
@@ -218,7 +224,7 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
     const rows = products.map(p => ({
       list_id: listId, name: p.name, barcode: p.barcode || "", price: p.price || 0,
       image_url: p.image_url || "", category: p.category || "אחר",
-      status: "pending", quantity: 1
+      status: "pending", quantity: 1, unit: isWeightSold(p) ? "kg" : "unit"
     }));
     try {
       const created = await base44.entities.ListItem.bulkCreate(rows);

@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 import { uiEnter, uiSection } from "@/lib/minimalUi";
+import { isWeightSold } from "@/lib/weightProducts";
 
 const DAYS_BACK = 14;
 const HISTORY_LIMIT = 200;
@@ -48,7 +49,7 @@ export default function FillFromLastWeek({ listId, currentItems, onFilled }) {
         image_url: "",
         status: "pending",
         quantity: 1,
-        unit: "unit"
+        unit: isWeightSold({ name: product.name, category: product.category }) ? "kg" : "unit"
       })));
       toast({ title: t("fillLast.added", { count: created.length }), duration: 3000 });
       onFilled();

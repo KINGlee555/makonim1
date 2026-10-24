@@ -15,6 +15,7 @@ import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCa
 import { searchStoredCatalog } from "@/lib/catalogProducts";
 import { staplesForCategory } from "@/lib/categoryStaples";
 import { groupByCategoryOrder, loadCategoryOrder } from "@/lib/categoryOrder";
+import { isWeightSold } from "@/lib/weightProducts";
 
 // שם קצר לכל מחלקה — הסדר עצמו הוא סדר המחלקות האמיתי במסלול הסופר
 const CATEGORY_LABELS = {
@@ -220,9 +221,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     if (mode === "location" && !userLocation) requestLocation();
   };
 
-  // לפי משקל: המוצר שיתווסף נכנס כיחידת גרם (קילו כברירת מחדל)
+  // לפי משקל: מוצר שנשקל נכנס בקילו, ולחיצה על "משקל" מסמנת כל מוצר ככזה
   const handleAdd = (product) => {
-    onAddProduct(byWeight ? { ...product, weighted: true } : product);
+    onAddProduct(byWeight || isWeightSold(product) ? { ...product, weighted: true } : product);
     setAddedIds(prev => new Set([...prev, product.name]));
   };
 

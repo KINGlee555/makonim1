@@ -3,7 +3,7 @@ import { Bell, Plus, Minus, Check, ChevronDown, Pencil, CircleSlash2, Star, Came
 import ProductPhoto from "@/components/ProductPhoto";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
-import { isGram, isWeight, lineCost, quantityStep } from "@/lib/units";
+import { isGram, isWeight, lineCost, maxQuantity, quantityStep } from "@/lib/units";
 import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { uiEnter, uiStep } from "@/lib/minimalUi";
@@ -16,6 +16,8 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
   const step = quantityStep(unit);
+  // אין מה להעלות מעבר לטווח שהוגדר — 10 ק״ג למוצר לפי משקל
+  const max = maxQuantity(item);
   const unitLabel = unit === "unit" ? "" : t(`unit.${unit}`);
   const cost = lineCost(item);
   const rate = isGram(unit) || unit === "kg" ? Number(item.price) || 0 : 0;
@@ -82,7 +84,8 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
             {unitLabel}
           </button>
         )}
-        <button type="button" aria-label="הוספה" className={uiStep} onClick={() => onUpdateQuantity(item, quantity + step)}>
+        <button type="button" aria-label="הוספה" disabled={quantity >= max} className={`${uiStep} disabled:opacity-40`}
+          onClick={() => onUpdateQuantity(item, quantity + step)}>
           <Plus className="h-3.5 w-3.5" />
         </button>
       </div>

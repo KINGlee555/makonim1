@@ -22,3 +22,20 @@ export function lineCost(item) {
 export function quantityStep(unit) {
   return unit === "gram" ? 100 : 1;
 }
+
+// עד 10 ק״ג למוצר — טווח נוח לקנייה במשקל, בלי כמויות מוגזמות
+export const MAX_WEIGHT_KG = 10;
+
+// הכמות המקסימלית לפי היחידה: 10 ק״ג, 10000 גרם, או 99 ליחידות
+export function maxQuantity(item) {
+  if (item?.unit === "kg") return MAX_WEIGHT_KG;
+  if (item?.unit === "gram") return MAX_WEIGHT_KG * 1000;
+  return 99;
+}
+
+// הכמות נשמרת תמיד בתוך הטווח המותר
+export function clampQuantity(item, quantity) {
+  const value = Number(quantity);
+  if (!Number.isFinite(value)) return 1;
+  return Math.min(Math.max(value, 0), maxQuantity(item));
+}

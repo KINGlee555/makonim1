@@ -3,10 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n";
-import { isWeight } from "@/lib/units";
+import { MAX_WEIGHT_KG, clampQuantity, isWeight } from "@/lib/units";
 
 const UNITS = ["unit", "package", "kg", "gram", "liter"];
-const WEIGHT_PICKS = [100, 250, 500, 1000];
+// הבחירות המהירות במשקל — חצי קילו, קילו, 2, 5 ו-10 ק״ג
+const WEIGHT_PICKS_KG = [0.5, 1, 2, 5, 10];
 
 // פרטי המוצר: הערה, יחידת מידה, וכמות — כולל משקל בגרמים למוצרים שנמכרים לפי משקל.
 export default function ItemDetailsDialog({ item, onClose, onSave }) {
@@ -24,6 +25,8 @@ export default function ItemDetailsDialog({ item, onClose, onSave }) {
   }, [item]);
 
   const byWeight = isWeight(unit);
+  // הגבול העליון של הכמות — 10 ק״ג, ובגרמים 10000
+  const maxAmount = unit === "kg" ? MAX_WEIGHT_KG : MAX_WEIGHT_KG * 1000;
 
   // מעבר בין גרמים לק״ג שומר על אותה כמות בדיוק; מעבר אחר ליחידת משקל מתחיל מקילו
   const changeUnit = (next) => {
@@ -37,7 +40,7 @@ export default function ItemDetailsDialog({ item, onClose, onSave }) {
   const amountFor = (grams) => (unit === "kg" ? grams / 1000 : grams);
 
   const save = () => {
-    const details = { note: note.trim(), unit, quantity: Number(quantity) || 1 };
+    const details = { note: note.trim(), unit, quantity: clampQuantity({ unit }, Number(quantity) || 1) };
     if (byWeight) details.price = Number(price) || 0;
     onSave(item, details);
     onClose();
@@ -58,16 +61,21 @@ export default function ItemDetailsDialog({ item, onClose, onSave }) {
           <div className="space-y-2">
             <span className="text-sm font-semibold">{unit === "kg" ? t("itemDetails.weightKg") : t("itemDetails.weight")}</span>
             <div className="flex flex-wrap gap-2">
-              {WEIGHT_PICKS.map((grams) => (
-                <button key={grams} type="button" onClick={() => setQuantity(amountFor(grams))}
-                  aria-pressed={Number(quantity) === amountFor(grams)}
-                  className={`rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold ${Number(quantity) === amountFor(grams) ? "bg-primary text-primary-foreground" : "bg-background"}`}>
-                  {unit === "kg" ? `${grams / 1000} ${t("unit.kg")}` : `${grams} ${t("unit.gram")}`}
+              {WEIGHT_PICKS_KG.map((kg) => (
+                <button key={kg} type="button" onClick={() => setQuantity(amountFor(kg * 1000))}
+                  aria-pressed={Number(quantity) === amountFor(kg * 1000)}
+                  className={`rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold ${Number(quantity) === amountFor(kg * 1000) ? "bg-primary text-primary-foreground" : "bg-background"}`}>
+                  {unit === "kg" ? `${kg} ${t("unit.kg")}` : `${kg * 1000} ${t("unit.gram")}`}
                 </button>
               ))}
             </div>
-            <Input type="number" inputMode="decimal" step={unit === "kg" ? "0.1" : "1"} value={quantity} min={unit === "kg" ? 0.1 : 1}
-              onChange={(event) => setQuantity(Number(event.target.value))} className="h-12 rounded-xl" />
+            <Input type="number" inputMode="decimal" step={unit === "kg" ? "0.5" : "100"} value={quantity}
+              min={unit === "kg" ? 0.1 : 100} max={maxAmount}
+              onChange={(event) => {
+                const amount = Number(event.target.value);
+                setQuantity(Number.isFinite(amount) && amount > maxAmount ? maxAmount : amount);
+              }} className="h-12 rounded-xl" />
+            <p className="text-xs text-muted-foreground">{t("itemDetails.maxWeight", { max: MAX_WEIGHT_KG })}</p>
           </div>
         )}
 
