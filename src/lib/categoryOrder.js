@@ -41,6 +41,16 @@ export function sortByCategoryOrder(categories, order) {
   });
 }
 
+// מוצרים לפי סדר המסלול — כל מחלקה ברצף אחד, כדי לעבור על הסופר בלי לחזור אחורה
+export function sortItemsByCategory(items, order = DEFAULT_CATEGORY_ORDER) {
+  const rank = new Map(order.map((category, index) => [category, index]));
+  return [...items].sort((a, b) => {
+    const ia = rank.get(a.category || "אחר") ?? order.length;
+    const ib = rank.get(b.category || "אחר") ?? order.length;
+    return ia - ib;
+  });
+}
+
 // מקבץ מוצרים לפי מחלקה בסדר המסלול בסופר — מעבר אחד על המוצרים ומיון של המחלקות בלבד
 export function groupByCategoryOrder(products, order = DEFAULT_CATEGORY_ORDER) {
   const rank = new Map(order.map((category, index) => [category, index]));

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users } from "lucide-react";
+import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users, MoreHorizontal } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
+import { uiIconRound, uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
 
-export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot, bar }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -38,7 +38,13 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button type="button" className={uiOutline}>{t("list.moreFeatures")}</button>
+        {bar ? (
+          <button type="button" className={uiIconRound} title={t("list.moreFeatures")} aria-label={t("list.moreFeatures")}>
+            <MoreHorizontal className="h-5 w-5" strokeWidth={1.8} />
+          </button>
+        ) : (
+          <button type="button" className={uiOutline}>{t("list.moreFeatures")}</button>
+        )}
       </SheetTrigger>
       <SheetContent side="bottom" className="rounded-t-3xl border-t border-ui-line bg-ui-canvas px-5 pb-8 pt-4 font-system text-ui-ink">
         <SheetHeader className="text-center">

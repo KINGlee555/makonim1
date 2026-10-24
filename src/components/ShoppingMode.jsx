@@ -52,6 +52,18 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
     }
   }, [items, index, onBought]);
 
+  // סיום מחלקה שלמה: כל מוצרי המחלקה מסומנים כנקנו, וממשיכים למחלקה הבאה במסלול
+  const finishCategory = useCallback(() => {
+    const key = items[index]?.category || "";
+    const inCategory = key ? items.filter(candidate => (candidate.category || "") === key) : [];
+    if (!inCategory.length) return;
+    inCategory.forEach(candidate => onBought(candidate));
+    setBoughtCount(count => count + inCategory.length);
+    const after = items.findIndex((candidate, position) => position > index && (candidate.category || "") !== key);
+    // כל המחלקה יוצאת מהרשימה, ולכן מדלגים קדימה רק במספר הפריטים שנשארו בה
+    setIndex(after === -1 ? items.length : Math.max(0, after - inCategory.length));
+  }, [items, index, onBought]);
+
   useEffect(() => {
     const handler = (e) => {
       if (e.key === "ArrowRight" || e.key === "Enter") handleNext(true);
@@ -94,6 +106,9 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
 
   const item = items[index];
   const progress = (index / items.length) * 100;
+  const category = item.category || "";
+  // כמה מוצרים נשארו במחלקה הזו — ממנה ממשיכים הלאה במסלול
+  const remainingInCategory = category ? items.slice(index).filter(candidate => (candidate.category || "") === category).length : 0;
 
   return (
     <div ref={containerRef} className="fixed inset-0 bg-background z-50 flex flex-col">
@@ -137,6 +152,12 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
       </div>
 
       <div className="px-4 pb-8">
+        {remainingInCategory > 1 && (
+          <div className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-muted px-4 py-2.5">
+            <span className="text-sm text-muted-foreground">{t("shoppingMode.nextDept", { category, count: remainingInCategory })}</span>
+            <button type="button" onClick={finishCategory} className="shrink-0 text-sm font-semibold text-primary">{t("shoppingMode.finishDept")}</button>
+          </div>
+        )}
         <div className="flex items-center justify-center gap-4">
           <Button variant="outline" className="h-14 rounded-full px-6 border-2 text-muted-foreground" onClick={() => handleNext(false)}>
             <SkipForward className="w-6 h-6" /><span className="ms-1">{t("shoppingMode.skip")}</span>

@@ -13,10 +13,12 @@ export default function SmartTools({ items, onOpenBasket }) {
   const t = useT();
   const [showStores, setShowStores] = useState(false);
   const [showPickup, setShowPickup] = useState(false);
-  const { loading, totals } = useChainPrices(items, items.length > 0);
+  const { loading, totals, matched } = useChainPrices(items, items.length > 0);
 
   const cheapest = totals[0];
   const savings = totals.length > 1 ? totals[totals.length - 1].total - cheapest.total : 0;
+  // המחיר מבוסס רק על המוצרים שנמצא להם מחיר — אומרים על כמה מתוך הרשימה הוא נשען
+  const partialCoverage = matched > 0 && matched < items.length;
   // בשבת נספרות רק הרשתות שפתוחות בשבת
   const now = new Date();
   const openNow = SUPERMARKETS.filter(store => storeStatus(now, store.shabbat).open).length;
@@ -36,6 +38,9 @@ export default function SmartTools({ items, onOpenBasket }) {
               <span className="rounded-full bg-ui-surface px-2.5 py-1 text-[13px] text-ui-ink">{cheapest.name}</span>
             </div>
             {savings > 0 && <p className="mt-1.5 text-[13px] text-ui-accent">{t("tools.savings", { amount: savings.toFixed(2) })}</p>}
+            {partialCoverage && (
+              <p className="mt-1 text-[12px] text-ui-muted">{t("tools.basedOn", { found: matched, total: items.length })}</p>
+            )}
           </>
         ) : (
           <p className="text-[14px] text-ui-muted">{t("tools.noPrices")}</p>

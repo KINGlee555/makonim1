@@ -2,6 +2,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
+import { storeStatus } from "@/lib/storeHours";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, Star, Scale } from "lucide-react";
@@ -34,9 +35,9 @@ const CATEGORY_LABELS = {
 // מוצר מוצג כשיש לו תמונה אמיתית, או כשיש לו מותג — ואז התמונה האמיתית נטענת לכרטיס
 const usableProduct = (product) => Boolean((product.image_verified && product.image_url) || product.brand);
 
-function getSimulatedStores(productName, userLocation) {
+function getSimulatedStores(productName, stores) {
   const seed = productName.charCodeAt(0) + productName.charCodeAt(productName.length - 1);
-  return SUPERMARKETS.map((s, i) => {
+  return stores.map((s, i) => {
     const dist = ((seed + i * 37) % 30 + 2) / 10;
     return { ...s, distance: dist.toFixed(1), price: null };
   }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)).slice(0, 3);
@@ -48,6 +49,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [byWeight, setByWeight] = useState(false);
   const [addedIds, setAddedIds] = useState(new Set());
   const [filterMode, setFilterMode] = useState("price");
+  const [chainFilter, setChainFilter] = useState("all");
   const [userLocation, setUserLocation] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
@@ -72,6 +74,12 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   }, [allProducts, storedProducts, remoteProducts, remoteCategoryProducts]);
   // סדר המחלקות האמיתי במסלול הסופר — הפירות בכניסה, הניקיון בסוף
   const aisleOrder = useMemo(() => loadCategoryOrder(), [open]);
+  // לפי אילו רשתות להראות מרחק בכל מוצר: כולן, פתוחות עכשיו, או פתוחות בשבת
+  const storesForFilter = useMemo(() => {
+    if (chainFilter === "openNow") return SUPERMARKETS.filter(store => storeStatus(new Date(), store.shabbat).open);
+    if (chainFilter === "shabbat") return SUPERMARKETS.filter(store => store.shabbat);
+    return SUPERMARKETS;
+  }, [chainFilter]);
   const categoryPills = useMemo(() => [
     { id: "all", label: "הכל" },
     ...aisleOrder
@@ -206,9 +214,10 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     );
   };
 
+  // מעבר מיידי למצב מיקום — הבקשה להרשאה יוצאת במקביל, והסינון לפי רשתות גלוי מיד
   const handleFilterChange = (mode) => {
+    setFilterMode(mode);
     if (mode === "location" && !userLocation) requestLocation();
-    else setFilterMode(mode);
   };
 
   // לפי משקל: המוצר שיתווסף נכנס כיחידת גרם (קילו כברירת מחדל)
@@ -219,7 +228,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -229,7 +238,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const renderProductCard = (product, idx) => {
     const isAdded = addedIds.has(product.name);
     const isFavorite = favorites.some(favorite => favorite.name === product.name);
-    const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, userLocation) : null;
+    const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, storesForFilter) : null;
     const nearest = nearbyStores?.[0];
     return (
       <div key={product.name + idx} onClick={() => !isAdded && handleAdd(product)}
@@ -317,6 +326,20 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
               {userLocation && <span className="w-2 h-2 rounded-full bg-primary inline-block" />}
             </button>
           </div>
+
+          {filterMode === "location" && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[["all", t("search.allChains")], ["openNow", t("search.openNow")], ["shabbat", t("search.shabbatOpen")]].map(([id, label]) => (
+                <button key={id} type="button" aria-pressed={chainFilter === id} onClick={() => setChainFilter(id)}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all active:scale-95 ${
+                    chainFilter === id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  }`}>
+                  {label}
+                </button>
+              ))}
+              {storesForFilter.length === 0 && <span className="text-xs text-destructive">{t("search.noOpenChains")}</span>}
+            </div>
+          )}
 
           {locationError && <p className="text-sm text-destructive text-center">{locationError}</p>}
         </div>

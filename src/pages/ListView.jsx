@@ -39,7 +39,7 @@ import VoiceQuickAdd from "../components/VoiceQuickAdd";
 import FeatureMenu from "../components/FeatureMenu";
 import DealCalculator from "../components/DealCalculator";
 import CategoryOrderDialog from "../components/CategoryOrderDialog";
-import { loadCategoryOrder, sortByCategoryOrder } from "@/lib/categoryOrder";
+import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/lib/categoryOrder";
 import EmptyListSuggestions from "../components/EmptyListSuggestions";
 import ItemDetailsDialog from "../components/ItemDetailsDialog";
 import ChangePhotoDialog from "../components/ChangePhotoDialog";
@@ -55,7 +55,7 @@ import SmartTools from "../components/SmartTools";
 import RecentlyBought from "../components/RecentlyBought";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { lineCost, quantityStep } from "@/lib/units";
-import { uiEnter, uiSection, uiBanner, uiPrimary } from "@/lib/minimalUi";
+import { uiEnter, uiSection, uiBanner } from "@/lib/minimalUi";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -371,6 +371,8 @@ export default function ListView() {
   );
 
   const pendingItems = items.filter(i => !i.status || i.status === "pending");
+  // מצב קנייה עובר על המוצרים לפי סדר המחלקות בסופר — כל מחלקה ברצף אחד
+  const shoppingItems = sortItemsByCategory(pendingItems, categoryOrder);
   const unavailableItems = items.filter(i => i.status === "unavailable");
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
   const groupedCategories = Object.entries(
@@ -413,35 +415,6 @@ export default function ListView() {
             </div>
           </div>
         )}
-
-        <div className={`grid gap-2.5 py-3 ${pendingItems.length > 0 ? "grid-cols-2" : ""} ${uiEnter}`}>
-          {pendingItems.length > 0 && (
-            <button type="button" onClick={() => setShowShoppingMode(true)} className={uiPrimary}>{t("shoppingMode.title")}</button>
-          )}
-          <FeatureMenu
-            grouped={groupByCategory}
-            onOpenGroupBy={() => setGroupByCategory(g => !g)}
-            onOpenSuggestions={() => setShowSuggestions(v => !v)}
-            onOpenBasket={() => setShowBasket(true)}
-            onOpenPriceCompare={() => setShowPriceCompare(true)}
-            onOpenTemplates={() => setShowTemplates(true)}
-            onOpenScanner={() => setShowScanner(true)}
-            onOpenRoute={() => setShowRoute(true)}
-            onOpenMenu={() => setShowMenu(true)}
-            onOpenDeals={() => setShowDeals(true)}
-            onOpenSplit={() => setShowSplit(true)}
-            onOpenLeaderboard={() => setShowLeaderboard(true)}
-            onOpenVoice={() => setShowVoice(true)}
-            onOpenDealCalculator={() => setShowDealCalculator(true)}
-            onOpenCategoryOrder={() => setShowCategoryOrder(true)}
-            onOpenPremium={() => setShowPremium(true)}
-            onOpenCourier={() => setShowCourier(true)}
-            onRefresh={handleRefresh}
-            refreshing={refreshing}
-            onOpenParticipants={isOwner ? () => setShowParticipants(true) : null}
-            readerSlot={<ListReader items={pendingItems} />}
-          />
-        </div>
 
         {pendingItems.length > 0 && (
           <>
@@ -513,7 +486,38 @@ export default function ListView() {
         <AppFooter />
       </main>
 
-      <QuickAddBar onOpenSearch={() => setShowSearch(true)} onOpenScanner={() => setShowScanner(true)} onOpenVoice={() => setShowVoice(true)} />
+      <QuickAddBar
+        onOpenSearch={() => setShowSearch(true)}
+        onOpenScanner={() => setShowScanner(true)}
+        onOpenShoppingMode={() => setShowShoppingMode(true)}
+        hasItems={pendingItems.length > 0}
+        tools={
+          <FeatureMenu
+            bar
+            grouped={groupByCategory}
+            onOpenGroupBy={() => setGroupByCategory(g => !g)}
+            onOpenSuggestions={() => setShowSuggestions(v => !v)}
+            onOpenBasket={() => setShowBasket(true)}
+            onOpenPriceCompare={() => setShowPriceCompare(true)}
+            onOpenTemplates={() => setShowTemplates(true)}
+            onOpenScanner={() => setShowScanner(true)}
+            onOpenRoute={() => setShowRoute(true)}
+            onOpenMenu={() => setShowMenu(true)}
+            onOpenDeals={() => setShowDeals(true)}
+            onOpenSplit={() => setShowSplit(true)}
+            onOpenLeaderboard={() => setShowLeaderboard(true)}
+            onOpenVoice={() => setShowVoice(true)}
+            onOpenDealCalculator={() => setShowDealCalculator(true)}
+            onOpenCategoryOrder={() => setShowCategoryOrder(true)}
+            onOpenPremium={() => setShowPremium(true)}
+            onOpenCourier={() => setShowCourier(true)}
+            onRefresh={handleRefresh}
+            refreshing={refreshing}
+            onOpenParticipants={isOwner ? () => setShowParticipants(true) : null}
+            readerSlot={<ListReader items={pendingItems} />}
+          />
+        }
+      />
       <ShareDialog open={showShare} onOpenChange={setShowShare} list={list} currentUser={currentUserRef[0]} />
       <ParticipantsDialog open={showParticipants} onOpenChange={setShowParticipants} list={list}
         currentUser={currentUserRef[0]} onUpdated={(patch) => setList(prev => ({ ...prev, ...patch }))} />
@@ -532,7 +536,7 @@ export default function ListView() {
       <ItemReminderDialog item={reminderItem} onClose={() => setReminderItem(null)} onSaved={handleSetReminder} />
 
       {showShoppingMode && (
-        <ShoppingMode items={pendingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
+        <ShoppingMode items={shoppingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
           userName={currentUserNameRef.current} listId={listId} />
       )}
       <BasketComparison open={showBasket} onOpenChange={setShowBasket} items={pendingItems} />
