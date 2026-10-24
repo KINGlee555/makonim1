@@ -18,7 +18,9 @@ export default function SmartTools({ items, onOpenBasket }) {
 
   const cheapest = totals[0];
   const savings = totals.length > 1 ? totals[totals.length - 1].total - cheapest.total : 0;
-  const openNow = SUPERMARKETS.filter(store => storeStatus().open).length;
+  // בשבת נספרות רק הרשתות שפתוחות בשבת
+  const now = new Date();
+  const openNow = SUPERMARKETS.filter(store => storeStatus(now, store.shabbat).open).length;
 
   const priceStatus = loading
     ? t("tools.checking")

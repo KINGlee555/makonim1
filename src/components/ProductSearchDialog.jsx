@@ -285,8 +285,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           </div>
           {byWeight && <p className="text-xs font-semibold text-primary">{t("search.weightHint")}</p>}
 
-          {/* Category pills — horizontal scrollable */}
-          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+          {/* כל המחלקות גלויות על המסך — בלי גלילה לצדדים */}
+          <div className="flex flex-wrap gap-1.5">
             {categoryPills.map((cat) => (
               <button
                 key={cat.id}

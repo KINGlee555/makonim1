@@ -21,8 +21,9 @@ export default function OpenStoresDialog({ open, onOpenChange }) {
 
   const preferred = getPreferredSupermarket();
   const stores = SUPERMARKETS
-    .map(store => ({ ...store, status: storeStatus(now) }))
+    .map(store => ({ ...store, status: storeStatus(now, store.shabbat) }))
     .sort((a, b) => Number(b.status.open) - Number(a.status.open)
+      || Number(Boolean(b.shabbat)) - Number(Boolean(a.shabbat))
       || Number(b.name === preferred) - Number(a.name === preferred));
 
   const go = (name, mode) => {
@@ -64,6 +65,7 @@ export default function OpenStoresDialog({ open, onOpenChange }) {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold text-foreground">
                   {store.name}
+                  {store.shabbat && <span className="ms-2 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-black text-primary">{t("tools.shabbat")}</span>}
                   {store.name === preferred && <span className="ms-2 text-xs font-black text-primary">{t("tools.preferred")}</span>}
                 </p>
                 <p className={`flex items-center gap-1 text-xs font-bold ${store.status.open ? "text-primary" : "text-muted-foreground"}`}>

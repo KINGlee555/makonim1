@@ -18,8 +18,9 @@ const clock = (hour) => {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 };
 
-export function storeStatus(now = new Date()) {
-  const hours = WEEK[now.getDay()];
+// שבת: רק רשתות שסימנו שעות פתיחה לשבת פתוחות — כל השאר סגורות
+export function storeStatus(now = new Date(), shabbatHours = null) {
+  const hours = now.getDay() === 6 ? (shabbatHours || null) : WEEK[now.getDay()];
   if (!hours) return { open: false, label: "closedToday", time: "" };
   const [from, to] = hours;
   const current = now.getHours() + now.getMinutes() / 60;
