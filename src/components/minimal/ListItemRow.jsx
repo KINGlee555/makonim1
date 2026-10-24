@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Bell, Plus, Minus, Check, ChevronDown, Pencil, CircleSlash2, Star, Camera, Send, Eye } from "lucide-react";
+import { Bell, Plus, Minus, Check, ChevronDown, Pencil, CircleSlash2, Star, Camera, Send, Eye, Flag } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
@@ -11,7 +11,7 @@ import { uiEnter, uiStep } from "@/lib/minimalUi";
 const action = "flex h-[28px] shrink-0 items-center justify-center gap-1 rounded-[14px] border bg-ui-canvas text-[13px] transition-[background-color,color,box-shadow,opacity] duration-200 active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent";
 
 // שורה אחת צפופה למוצר: תמונה, שם, כמות, מחיר, סימון קניתי — בלי כרטיס ובלי גלילה מיותרת.
-function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, onUpdateDetails, deal, isFavorite, viewerName, className }) {
+function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, onUpdateDetails, onReportPrice, deal, isFavorite, viewerName, className }) {
   const t = useT();
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
@@ -125,6 +125,11 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
           {onSuggestPhoto && (
             <DropdownMenuItem onClick={() => onSuggestPhoto(item)}>
               <Send className="me-2 h-4 w-4" />{t("suggest.menu")}
+            </DropdownMenuItem>
+          )}
+          {onReportPrice && (
+            <DropdownMenuItem onClick={() => onReportPrice(item)}>
+              <Flag className="me-2 h-4 w-4" />{t("report.menu")}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => onUnavailable(item)}>

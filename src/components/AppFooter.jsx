@@ -19,6 +19,7 @@ export default function AppFooter() {
       {isAdmin && (
         <>
           <Link to="/photo-suggestions" className={`${uiLink} no-underline`}>{t("footer.suggestions")}</Link>
+          <Link to="/price-reports" className={`${uiLink} no-underline`}>{t("footer.priceReports")}</Link>
           <Link to="/sponsored" className={`${uiLink} no-underline`}>{t("sponsored.admin")}</Link>
         </>
       )}

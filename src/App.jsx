@@ -16,6 +16,7 @@ import Contact from './pages/Contact';
 import ShoppingHistory from './pages/ShoppingHistory';
 import ShoppingSummary from './pages/ShoppingSummary';
 import PhotoSuggestions from './pages/PhotoSuggestions';
+import PriceReports from './pages/PriceReports';
 import SponsoredPlacements from './pages/SponsoredPlacements';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -71,6 +72,7 @@ const AuthenticatedApp = () => {
       <Route path="/history/:listId" element={<ShoppingHistory />} />
       <Route path="/summary/:listId" element={<ShoppingSummary />} />
       <Route path="/photo-suggestions" element={<PhotoSuggestions />} />
+      <Route path="/price-reports" element={<PriceReports />} />
       <Route path="/sponsored" element={<SponsoredPlacements />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>

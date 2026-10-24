@@ -6,6 +6,7 @@ import { Copy, Check, Mail, Send, Loader2, Link as LinkIcon, MessageCircle, Radi
 import { toast } from "@/components/ui/use-toast";
 import { base44 } from "@/api/base44Client";
 import { buildInvitationEmailBody, INVITATION_SUBJECT } from "@/lib/invitationEmail";
+import JoinQrCode from "@/components/JoinQrCode";
 import { useT } from "@/lib/i18n";
 
 export default function ShareDialog({ open, onOpenChange, list, currentUser, itemCount = 0 }) {
@@ -161,6 +162,8 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser, ite
               </Button>
             </div>
           </div>
+
+          <JoinQrCode url={shareLink} />
 
           <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 text-center">
             <p className="text-sm text-primary">{t("share.shareNote")}</p>

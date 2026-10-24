@@ -5,7 +5,7 @@ import { useT } from "@/lib/i18n";
 import { useChainPrices } from "@/hooks/useChainPrices";
 import ChainLogo from "@/components/ChainLogo";
 
-export default function BasketComparison({ open, onOpenChange, items }) {
+export default function BasketComparison({ open, onOpenChange, items, onOpenSources }) {
   const t = useT();
   const { loading, error, totals, matched, coverage, day, refreshing } = useChainPrices(items, open);
 
@@ -74,6 +74,12 @@ export default function BasketComparison({ open, onOpenChange, items }) {
               <p className="text-xs text-muted-foreground text-center mt-2">
                 {t("basket.disclaimer")}{day ? ` · ${t("basket.updated", { day })}` : ""}
               </p>
+              {onOpenSources && (
+                <button type="button" onClick={onOpenSources}
+                  className="mx-auto mt-2 block text-[13px] text-primary underline underline-offset-4">
+                  {t("sources.open")}
+                </button>
+              )}
             </>
           )}
         </div>

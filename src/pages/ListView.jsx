@@ -56,6 +56,9 @@ import DeliveryNotice from "../components/DeliveryNotice";
 import SmartTools from "../components/SmartTools";
 import RecentlyBought from "../components/RecentlyBought";
 import FillFromLastWeek from "../components/FillFromLastWeek";
+import PriceDropNotice from "../components/PriceDropNotice";
+import ReportPriceDialog from "../components/ReportPriceDialog";
+import PriceSourcesDialog from "../components/PriceSourcesDialog";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { lineCost, quantityStep } from "@/lib/units";
@@ -79,6 +82,8 @@ export default function ListView() {
   const [showRename, setShowRename] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
+  const [showSources, setShowSources] = useState(false);
+  const [reportItem, setReportItem] = useState(null);
   const [showCourier, setShowCourier] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showRoute, setShowRoute] = useState(false);
@@ -428,6 +433,8 @@ export default function ListView() {
           </div>
         )}
 
+        <PriceDropNotice listId={listId} items={pendingItems} />
+
         <DeliveryNotice listId={listId} delay={0.05} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
@@ -450,7 +457,7 @@ export default function ListView() {
                         onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                         onEdit={setEditingItem} onSetReminder={setReminderItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
                         onUpdateDetails={handleUpdateDetails}
-                        onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
+                        onSuggestPhoto={setSuggestPhotoItem} onReportPrice={setReportItem} deal={dealForItem(chainDeals, item)}
                         onPhotoFound={handlePhotoFound}
                         isFavorite={favorites.some(favorite => favorite.name === item.name)}
                         viewerName={currentUserRef[0]?.full_name}
@@ -464,7 +471,7 @@ export default function ListView() {
                     onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                     onEdit={setEditingItem} onSetReminder={setReminderItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
                     onUpdateDetails={handleUpdateDetails}
-                    onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
+                    onSuggestPhoto={setSuggestPhotoItem} onReportPrice={setReportItem} deal={dealForItem(chainDeals, item)}
                     onPhotoFound={handlePhotoFound}
                     isFavorite={favorites.some(favorite => favorite.name === item.name)}
                     viewerName={currentUserRef[0]?.full_name}
@@ -566,12 +573,14 @@ export default function ListView() {
       <SuggestPhotoDialog item={suggestPhotoItem} listId={listId} userName={currentUserNameRef.current}
         onClose={() => setSuggestPhotoItem(null)} />
       <ItemReminderDialog item={reminderItem} onClose={() => setReminderItem(null)} onSaved={handleSetReminder} />
+      <ReportPriceDialog item={reportItem} listId={listId} userName={currentUserNameRef.current} onClose={() => setReportItem(null)} />
+      <PriceSourcesDialog open={showSources} onOpenChange={setShowSources} />
 
       {showShoppingMode && (
         <ShoppingMode items={shoppingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
           userName={currentUserNameRef.current} listId={listId} />
       )}
-      <BasketComparison open={showBasket} onOpenChange={setShowBasket} items={pendingItems} />
+      <BasketComparison open={showBasket} onOpenChange={setShowBasket} items={pendingItems} onOpenSources={() => setShowSources(true)} />
       <PriceCompareTable open={showPriceCompare} onOpenChange={setShowPriceCompare} items={pendingItems} />
       <ListTemplates open={showTemplates} onOpenChange={setShowTemplates} listId={listId} allProducts={allProducts} onAdded={loadData} />
       <BarcodeScanner open={showScanner} onOpenChange={setShowScanner} onDetected={() => { setShowScanner(false); setShowSearch(true); }} />
