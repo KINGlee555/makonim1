@@ -3,9 +3,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus, Search, Sparkles, Tag } from "lucide-react";
-import { fetchChainDealsInGroups, dealPriceText, multiBuyText } from "@/lib/chainDeals";
+import { fetchChainDealsInGroups, dealPriceText, multiBuyText, listDealsKey, readDealsCache, writeDealsCache } from "@/lib/chainDeals";
 import ChainLogo from "@/components/ChainLogo";
 import { useT } from "@/lib/i18n";
+
+// מטמון המבצעים הכלליים של היום במכשיר — החלון נפתח איתם מיד
+const POPULAR_KEY = "popular";
 
 // מבצעים אמיתיים מהרשתות — מתוך קבצי השקיפות הרשמיים, מתעדכנים כל בוקר.
 export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }) {
@@ -15,21 +18,37 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState("");
+  const [fallback, setFallback] = useState(false);
 
-  const signature = useMemo(
-    () => (items || []).map(item => `${item.name}|${item.barcode || ""}`).join(";"),
-    [items]
-  );
+  const signature = useMemo(() => listDealsKey(items), [items]);
 
   const load = useCallback(async (which, searchTerm) => {
-    setDeals([]);
+    setFallback(false);
     setLoading(true);
     try {
-      const payload = searchTerm ? { mode: "search", query: searchTerm }
-        : which === "popular" ? { mode: "popular" }
-          : { mode: "items", items: (items || []).filter(item => item?.name).map(item => ({ name: item.name, barcode: item.barcode || "" })) };
-      if (!searchTerm && which !== "popular" && !payload.items.length) return;
-      await fetchChainDealsInGroups(payload, setDeals);
+      // מה שכבר נטען היום במכשיר מוצג מיד, והרענון ממשיך ברקע
+      const key = which === "popular" ? POPULAR_KEY : `mine:${listDealsKey(items)}`;
+      const seeded = searchTerm ? [] : readDealsCache(key);
+      setDeals(seeded);
+
+      let found = [];
+      if (searchTerm) {
+        found = await fetchChainDealsInGroups({ mode: "search", query: searchTerm }, setDeals);
+      } else if (which === "popular") {
+        found = await fetchChainDealsInGroups({ mode: "popular" }, setDeals);
+      } else {
+        const wanted = (items || []).filter(item => item?.name).map(item => ({ name: item.name, barcode: item.barcode || "" }));
+        if (wanted.length) found = await fetchChainDealsInGroups({ mode: "items", items: wanted }, setDeals);
+      }
+      if (!searchTerm) writeDealsCache(key, found);
+
+      // אין מבצעים על הרשימה או בחיפוש? מוצגים המבצעים השווים — המסך לא נשאר ריק
+      if (!found.length && !seeded.length && which !== "popular") {
+        setFallback(true);
+        const cached = readDealsCache(POPULAR_KEY);
+        if (cached.length) setDeals(cached);
+        writeDealsCache(POPULAR_KEY, await fetchChainDealsInGroups({ mode: "popular" }, setDeals));
+      }
     } catch {
       setDeals([]);
     } finally {
@@ -81,11 +100,17 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
         </form>
 
         <div className="flex-1 space-y-2 overflow-y-auto pb-2">
-          {loading && (
+          {loading && deals.length === 0 && (
             <div className="flex items-center justify-center gap-2 py-12 text-market-ink">
               <Loader2 className="h-5 w-5 animate-spin" />
               <span className="text-sm font-bold">{t("deals.loading")}</span>
             </div>
+          )}
+
+          {fallback && deals.length > 0 && (
+            <p className="rounded-2xl bg-market-yellow-soft px-4 py-3 text-center text-[13px] font-black text-market-ink">
+              {searched ? t("deals.searchFallback", { name: searched }) : t("deals.fallback")}
+            </p>
           )}
 
           {!loading && deals.length === 0 && (
@@ -94,7 +119,7 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
             </p>
           )}
 
-          {!loading && deals.map((deal, index) => (
+          {deals.map((deal, index) => (
             <div key={`${deal.chain}-${deal.barcode}-${index}`} className="flex items-center gap-3 rounded-2xl border-2 border-market-ink/20 bg-card p-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[15px] font-black text-market-ink">{deal.name || deal.barcode}</p>

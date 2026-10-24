@@ -8,11 +8,15 @@ export async function fetchChainDeals(payload) {
 
 // קוראים את הרשתות בקבוצות קטנות: קריאה אחת שקוראת את קבצי המבצעים של כל הרשתות
 // יחד חורגת ממגבלת ה-CPU של השרת, ובקבוצות התוצאות גם מגיעות מהר יותר.
+// קבוצה של שתי רשתות היא הגבול שה-worker עומד בו. המבצעים מוצגים ברגע שקבוצה חוזרת,
+// ולכן הרשתות שנקראות מהר ובאמינות מגיעות ראשונות, והקבצים הכבדים (רמי לוי ויוחננוף,
+// שקריאתם נמשכת עד לקצה הזמן המוקצב) נשארים לאחרונות כדי לא לעכב את כל השאר.
 export const DEAL_CHAIN_GROUPS = [
-  ["shufersal", "rami_levy"],
-  ["yohananof", "osher_ad"],
-  ["tiv_taam", "keshet", "fresh_market"],
-  ["stop_market", "politzer", "salach_dabach"]
+  ["shufersal", "osher_ad"],
+  ["keshet", "fresh_market"],
+  ["tiv_taam", "politzer"],
+  ["stop_market", "salach_dabach"],
+  ["yohananof", "rami_levy"]
 ];
 
 // התג ברשימה נבדק מול שתי הרשתות הגדולות — קריאה קלה ומהירה.
@@ -56,4 +60,32 @@ export function multiBuyText(deal) {
 export function dealPriceText(deal) {
   if (!deal) return "";
   return multiBuyText(deal) || `₪${Number(deal.deal_price || 0).toFixed(2)}`;
+}
+
+// ===== מטמון המבצעים בדפדפן =====
+// המבצעים של היום נשמרים גם במכשיר, כך שהחלון נפתח עם מבצעים מיד והרענון ממשיך ברקע.
+const CACHE_PREFIX = "makonim-deals-v1";
+const cacheDay = () => new Date().toISOString().slice(0, 10);
+
+// מפתח יציב לפי המוצרים, כדי שמטמון של רשימה אחת לא יידרס על ידי רשימה אחרת
+export function listDealsKey(items) {
+  return (items || []).map(item => `${item.name}|${item.barcode || ""}`).sort().join(";");
+}
+
+export function readDealsCache(key) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(`${CACHE_PREFIX}:${key}`) || "null");
+    return parsed?.day === cacheDay() ? parsed.deals || [] : [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeDealsCache(key, deals) {
+  if (!deals?.length) return;
+  try {
+    localStorage.setItem(`${CACHE_PREFIX}:${key}`, JSON.stringify({ day: cacheDay(), deals: deals.slice(0, 60) }));
+  } catch {
+    // אין מקום באחסון המקומי — פשוט לא שומרים
+  }
 }

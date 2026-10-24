@@ -13,11 +13,20 @@ const CHAIN_TIMEOUT_MS = 15000;
 const MAX_CHAINS_PER_CALL = 4;
 const CHAINS_PER_READ = MAX_CHAINS_PER_CALL;
 
-// Staples most households buy — the base of the ready-made deals list.
+// Staples most households buy — the base of the ready-made deals list. The wider the list,
+// the more real promotions it catches, and resolving more names costs one catalog scan each.
 const POPULAR = [
-  "חלב 3%", "לחם אחיד", "ביצים L", "קוטג׳ 5%", "גבינה צהובה", "יוגורט",
-  "שמן זית", "אורז", "פסטה", "טונה", "נייר טואלט", "אבקת כביסה"
+  "חלב 3%", "לחם אחיד", "ביצים L", "קוטג׳ 5%", "גבינה צהובה", "גבינה לבנה", "יוגורט", "חמאה", "שמנת חמוצה",
+  "עגבניות", "מלפפון", "בננה", "תפוחי אדמה", "גזר", "בצל", "פלפל",
+  "חזה עוף", "עוף", "בשר טחון", "נקניקיות", "טונה", "סלמון",
+  "אורז", "פסטה", "קמח", "סוכר", "שמן זית", "שמן", "חומוס", "טחינה", "קטשופ", "מיונז",
+  "קורנפלקס", "שוקולד", "במבה", "ביסלי", "גלידה", "פיצה",
+  "קולה", "מים מינרליים", "בירה", "קפה", "תה",
+  "נייר טואלט", "נייר מטבח", "אבקת כביסה", "מרכך כביסה", "סבון כלים", "שמפו", "משחת שיניים", "שקיות אשפה", "מגבונים"
 ];
+
+// "2 ב-18" / "3ב-30" — מבצע על כמה יחידות יחד, ולא מחיר ליחידה אחת
+const MULTI_BUY = /(\d+)\s*ב\s*[־-]?\s*(\d+(?:\.\d+)?)/;
 
 const withTimeout = <T,>(promise: Promise<T>, chainId: string) => Promise.race([
   promise,
@@ -58,15 +67,19 @@ export default async function (req: Request): Promise<Response> {
       else if (item.name) names.push(item.name);
     }
     if (names.length) {
+      // A name that was resolved once keeps its barcode for good, so the lookup is not limited
+      // to today's rows — yesterday's mapping still finds today's promotion.
       const resolved = await base44.asServiceRole.entities.ChainPrice.filter(
-        { day, name: { $in: names } }, "-created_date", names.length * CHAINS.length
+        { name: { $in: names } }, "-created_date", names.length * CHAINS.length
       );
       for (const row of resolved) if (row.barcode && row.name && !byBarcode.has(row.barcode)) byBarcode.set(row.barcode, row.name);
     }
     // 2. The rest are looked up in the price catalog, which also yields the barcode. Each
     //    resolved barcode is kept as a name mapping for the day, so the next run is a plain
     //    DB read and never pays for the catalog again.
-    const resolveCap = mode === "popular" ? 6 : 2;
+    // Everything asked for is resolved: an unresolved name is a product no promotion can ever
+    // match, which is exactly what left the deals screen empty.
+    const resolveCap = mode === "popular" ? asked.length : 12;
     const unknown = names.filter((name) => ![...byBarcode.values()].includes(name)).slice(0, resolveCap);
     if (unknown.length) {
       const mappings: any[] = [];
@@ -76,7 +89,8 @@ export default async function (req: Request): Promise<Response> {
           if (match?.code && !byBarcode.has(match.code)) {
             const code = String(match.code);
             byBarcode.set(code, name);
-            mappings.push({ chain: "shufersal", barcode: code, name, price: 0, day });
+            // The shelf price is kept with the mapping, so a promotion match can show its saving.
+            mappings.push({ chain: "shufersal", barcode: code, name, price: Number(match.price) || 0, day });
           }
         } catch (error) {
           console.error("chainDeals barcode resolve failed", error instanceof Error ? error.message : error);
@@ -153,12 +167,15 @@ export default async function (req: Request): Promise<Response> {
         const fromRate = price > 0 && row.discount_rate > 0 ? Math.round(price * (1 - row.discount_rate / 100) * 100) / 100 : 0;
         const dealPrice = row.deal_price > 0 ? row.deal_price : fromRate;
         if (!(dealPrice > 0)) continue;
-        if (price > 0 && dealPrice >= price) continue;
+        // מחיר של מבצע "2 ב-18" הוא מחיר לשני מוצרים, ואין להשוות אותו למחיר היחידה
+        // שעל המדף — השוואה כזו היא שהעלימה מבצעים אמיתיים מהרשימה.
+        const multiBuy = MULTI_BUY.test(row.description || "");
+        if (price > 0 && dealPrice >= price && !multiBuy) continue;
         deals.push({
           chain: chain.id, chain_name: chain.name, barcode: code,
           name: row.name || byBarcode.get(code) || "",
           price, deal_price: dealPrice, description: row.description || "", ends_on: row.ends_on || "",
-          discount: price > 0 ? Math.round((1 - dealPrice / price) * 100) : 0
+          discount: multiBuy || !(price > 0) ? 0 : Math.round((1 - dealPrice / price) * 100)
         });
       }
     }
