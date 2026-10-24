@@ -163,7 +163,10 @@ const translations = {
 
     // Home/Welcome
     "welcome.title": "MaKonim",
-    "welcome.subtitle": "רשימת קניות משותפת",
+    "welcome.subtitle": "רשימה משפחתית משותפת בזמן אמת, עם מחירי רשתות אמיתיים, מבצעים ואיסוף עצמי",
+    "welcome.p1": "רשימה אחת לכל המשפחה — כולם רואים ומעדכנים באותו רגע",
+    "welcome.p2": "מחירי רשתות אמיתיים והשוואת סל לפני שקונים",
+    "welcome.p3": "מבצעים, ניווט לחנות ואיסוף עצמי עם סל מוכן לחנות",
     "welcome.namePlaceholder": "מה שמך?",
     "welcome.start": "בוא נתחיל לקנות 🛒",
 
@@ -599,6 +602,29 @@ const translations = {
     "tools.preferred": "מועדף",
     "tools.estimatedHours": "שעות פתיחה משוערות — כדאי לוודא מול הסניף הקרוב",
 
+    // איסוף עצמי — סל מוכן לחנות
+    "pickup.open": "איסוף עצמי",
+    "pickup.title": "איסוף עצמי",
+    "pickup.subtitle": "בוחרים רשת, מקבלים את הסל המדויק עם מחירי המדף, ומעבירים לחנות כדי לסגור איסוף.",
+    "pickup.toolsHint": "סל מוכן לאיסוף עצמי",
+    "pickup.toolsDesc": "בוחרים רשת ומעבירים לחנות",
+    "pickup.cheapest": "הכי זול",
+    "pickup.preferred": "המועדפת שלי",
+    "pickup.chainList": "בחירת רשת",
+    "pickup.coverage": "{found} מתוך {total} פריטים",
+    "pickup.basket": "הסל לחנות",
+    "pickup.missing": "לא נמצאו במחירון",
+    "pickup.total": "סה״כ לפי מחירי המדף",
+    "pickup.openSite": "פתח אתר הזמנה",
+    "pickup.findSite": "מצא את אתר ההזמנה",
+    "pickup.whatsapp": "שלח לחנות בוואטסאפ",
+    "pickup.copy": "העתק את הסל",
+    "pickup.copied": "הסל הועתק",
+    "pickup.copyFailed": "ההעתקה נכשלה, אפשר להעתיק ידנית",
+    "pickup.empty": "אין עדיין מחירי מדף לבניית סל, נסו שוב בעוד רגע",
+    "pickup.openHours": "שעות איסוף היום",
+    "pickup.handoffNote": "ההזמנה עצמה נסגרת באתר או בטלפון של הרשת — הסל כאן מוכן עם כמויות ומחירים.",
+
     // חיפוש מוצרים
     "search.staples": "קונים בדרך כלל",
     "search.moreProducts": "עוד מוצרים",
@@ -772,7 +798,10 @@ const translations = {
 
     // Home/Welcome
     "welcome.title": "MaKonim",
-    "welcome.subtitle": "Shared Shopping List",
+    "welcome.subtitle": "A shared family list in real time, with real chain prices, deals and self pickup",
+    "welcome.p1": "One list for the whole family — everyone sees and updates it live",
+    "welcome.p2": "Real chain prices and basket comparison before you buy",
+    "welcome.p3": "Deals, store navigation and self pickup with a ready basket",
     "welcome.namePlaceholder": "What's your name?",
     "welcome.start": "Let's start shopping 🛒",
 
@@ -1208,6 +1237,29 @@ const translations = {
     "tools.preferred": "Preferred",
     "tools.estimatedHours": "Estimated opening hours — worth checking with the nearby branch",
 
+    // Self pickup — a basket ready for the store
+    "pickup.open": "Self pickup",
+    "pickup.title": "Self pickup",
+    "pickup.subtitle": "Pick a chain, get the exact basket at shelf prices, and send it to the store to arrange pickup.",
+    "pickup.toolsHint": "A basket ready for pickup",
+    "pickup.toolsDesc": "Pick a chain and send it to the store",
+    "pickup.cheapest": "Cheapest",
+    "pickup.preferred": "My preferred",
+    "pickup.chainList": "Choose a chain",
+    "pickup.coverage": "{found} of {total} items",
+    "pickup.basket": "The basket for the store",
+    "pickup.missing": "Not in their price file",
+    "pickup.total": "Total at shelf prices",
+    "pickup.openSite": "Open the order site",
+    "pickup.findSite": "Find the order site",
+    "pickup.whatsapp": "Send to the store",
+    "pickup.copy": "Copy the basket",
+    "pickup.copied": "Basket copied",
+    "pickup.copyFailed": "Copy failed, please copy it manually",
+    "pickup.empty": "No shelf prices to build a basket yet, try again in a moment",
+    "pickup.openHours": "Pickup hours today",
+    "pickup.handoffNote": "The order itself is completed on the chain's site or by phone — the basket here is ready with quantities and prices.",
+
     // Product search
     "search.staples": "Usually bought",
     "search.moreProducts": "More products",
@@ -1381,7 +1433,10 @@ const translations = {
 
     // Home/Welcome
     "welcome.title": "MaKonim",
-    "welcome.subtitle": "Совместный список покупок",
+    "welcome.subtitle": "Общий семейный список в реальном времени, с реальными ценами сетей, акциями и самовывозом",
+    "welcome.p1": "Один список для всей семьи — все видят и обновляют сразу",
+    "welcome.p2": "Реальные цены сетей и сравнение корзины до покупки",
+    "welcome.p3": "Акции, навигация к магазину и самовывоз с готовой корзиной",
     "welcome.namePlaceholder": "Как вас зовут?",
     "welcome.start": "Начнём покупки 🛒",
 
@@ -1741,6 +1796,29 @@ const translations = {
     "tools.closedToday": "Сегодня закрыто",
     "tools.preferred": "Избранное",
     "tools.estimatedHours": "Примерные часы работы — уточните в ближайшем магазине",
+
+    // Самовывоз — готовая корзина для магазина
+    "pickup.open": "Самовывоз",
+    "pickup.title": "Самовывоз",
+    "pickup.subtitle": "Выберите сеть, получите точную корзину по ценам полки и отправьте её магазину для самовывоза.",
+    "pickup.toolsHint": "Готовая корзина для самовывоза",
+    "pickup.toolsDesc": "Выберите сеть и отправьте магазину",
+    "pickup.cheapest": "Дешевле всего",
+    "pickup.preferred": "Моя любимая",
+    "pickup.chainList": "Выбор сети",
+    "pickup.coverage": "{found} из {total} товаров",
+    "pickup.basket": "Корзина для магазина",
+    "pickup.missing": "Нет в их прайсе",
+    "pickup.total": "Итого по ценам полки",
+    "pickup.openSite": "Открыть сайт заказа",
+    "pickup.findSite": "Найти сайт заказа",
+    "pickup.whatsapp": "Отправить магазину",
+    "pickup.copy": "Скопировать корзину",
+    "pickup.copied": "Корзина скопирована",
+    "pickup.copyFailed": "Не удалось скопировать, выделите вручную",
+    "pickup.empty": "Пока нет цен полки для корзины, попробуйте через минуту",
+    "pickup.openHours": "Часы самовывоза сегодня",
+    "pickup.handoffNote": "Сам заказ оформляется на сайте сети или по телефону — корзина здесь готова с количествами и ценами.",
 
     // Поиск продуктов
     "search.staples": "Обычно покупают",
