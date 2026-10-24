@@ -13,6 +13,7 @@ const translations = {
     "header.changeName": "שנה שם",
     "header.settings": "הגדרות",
     "header.share": "שתף",
+    "header.more": "עוד",
     "header.language": "שפה",
 
     // Footer
@@ -39,6 +40,7 @@ const translations = {
     "search.placeholder": "חפש מוצר... (חלב, נענע, לחם...)",
     "search.byPrice": "לפי מחיר",
     "search.byWeight": "הוספה לפי משקל",
+    "search.weightShort": "לפי משקל",
     "search.weightHint": "מוצרים שיתווספו ייכנסו לפי משקל — קילו כברירת מחדל",
     "search.byLocation": "לפי מיקום",
     "search.locationUnsupported": "הדפדפן לא תומך במיקום",
@@ -589,6 +591,7 @@ const translations = {
     "tools.bestValueHint": "כמה עולה הסל בכל רשת",
     "tools.checking": "בודק מחירים...",
     "tools.cheapestAt": "הכי זול: {chain} · ₪{total}",
+    "tools.cheapestLabel": "הסל הזול ביותר",
     "tools.savings": "חיסכון של ₪{amount}",
     "tools.noPrices": "עדיין אין מחירי רשת להשוואה",
     "tools.openNow": "הכי קרוב ופתוח",
@@ -632,6 +635,16 @@ const translations = {
 
     // נרכש לאחרונה
     "recent.title": "נרכש לאחרונה",
+    "reminder.button": "תזכורת",
+    "reminder.title": "תזכורת לקנייה",
+    "reminder.hint": "נזכיר לך כשהאפליקציה פתוחה",
+    "reminder.hour": "בעוד שעה",
+    "reminder.tonight": "היום בערב",
+    "reminder.tomorrow": "מחר בבוקר",
+    "reminder.week": "בעוד שבוע",
+    "reminder.exact": "תאריך ושעה",
+    "reminder.set": "שמור תזכורת",
+    "reminder.clear": "בטל תזכורת",
     "recent.all": "לכל ההיסטוריה",
     "recent.by": "נקנה ע״י {name}",
     "recent.now": "עכשיו",
@@ -649,6 +662,7 @@ const translations = {
     "header.changeName": "Change name",
     "header.settings": "Settings",
     "header.share": "Share",
+    "header.more": "More",
     "header.language": "Language",
 
     // Footer
@@ -675,6 +689,7 @@ const translations = {
     "search.placeholder": "Search product... (milk, mint, bread...)",
     "search.byPrice": "By Price",
     "search.byWeight": "Add by weight",
+    "search.weightShort": "By weight",
     "search.weightHint": "Added products go in by weight — 1 kg by default",
     "search.byLocation": "By Location",
     "search.locationUnsupported": "Browser doesn't support location",
@@ -1225,6 +1240,7 @@ const translations = {
     "tools.bestValueHint": "What the basket costs at each chain",
     "tools.checking": "Checking prices...",
     "tools.cheapestAt": "Cheapest: {chain} · ₪{total}",
+    "tools.cheapestLabel": "Cheapest basket",
     "tools.savings": "Save ₪{amount}",
     "tools.noPrices": "No chain prices to compare yet",
     "tools.openNow": "Nearby and open",
@@ -1268,6 +1284,16 @@ const translations = {
 
     // Recently bought
     "recent.title": "Recently bought",
+    "reminder.button": "Reminder",
+    "reminder.title": "Shopping reminder",
+    "reminder.hint": "We'll remind you while the app is open",
+    "reminder.hour": "In an hour",
+    "reminder.tonight": "Tonight",
+    "reminder.tomorrow": "Tomorrow morning",
+    "reminder.week": "In a week",
+    "reminder.exact": "Date and time",
+    "reminder.set": "Set reminder",
+    "reminder.clear": "Remove reminder",
     "recent.all": "Full history",
     "recent.by": "Bought by {name}",
     "recent.now": "just now",
@@ -1285,6 +1311,7 @@ const translations = {
     "header.changeName": "Изменить имя",
     "header.settings": "Настройки",
     "header.share": "Поделиться",
+    "header.more": "Ещё",
     "header.language": "Язык",
 
     // Footer
@@ -1311,6 +1338,7 @@ const translations = {
     "search.placeholder": "Искать продукт... (молоко, мята, хлеб...)",
     "search.byPrice": "По цене",
     "search.byWeight": "Добавить по весу",
+    "search.weightShort": "По весу",
     "search.weightHint": "Добавленные товары вносятся по весу — по умолчанию 1 кг",
     "search.byLocation": "По расположению",
     "search.locationUnsupported": "Браузер не поддерживает геолокацию",
@@ -1786,6 +1814,7 @@ const translations = {
     "tools.bestValueHint": "Сколько корзина стоит в каждой сети",
     "tools.checking": "Проверяем цены...",
     "tools.cheapestAt": "Дешевле всего: {chain} · ₪{total}",
+    "tools.cheapestLabel": "Самая дешёвая корзина",
     "tools.savings": "Экономия ₪{amount}",
     "tools.noPrices": "Пока нет цен сетей для сравнения",
     "tools.openNow": "Ближайшее и открыто",
@@ -1829,6 +1858,16 @@ const translations = {
 
     // Недавно куплено
     "recent.title": "Недавно куплено",
+    "reminder.button": "Напоминание",
+    "reminder.title": "Напоминание о покупке",
+    "reminder.hint": "Напомним, пока приложение открыто",
+    "reminder.hour": "Через час",
+    "reminder.tonight": "Сегодня вечером",
+    "reminder.tomorrow": "Завтра утром",
+    "reminder.week": "Через неделю",
+    "reminder.exact": "Дата и время",
+    "reminder.set": "Сохранить напоминание",
+    "reminder.clear": "Убрать напоминание",
     "recent.all": "Вся история",
     "recent.by": "Купил(а) {name}",
     "recent.now": "только что",

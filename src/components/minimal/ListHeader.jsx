@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Pencil } from "lucide-react";
 import EasyModeToggle from "@/components/EasyModeToggle";
-import DarkModeToggle from "@/components/DarkModeToggle";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import HeaderMenu from "@/components/HeaderMenu";
 import { useT } from "@/lib/i18n";
 import { uiPill, uiEnter } from "@/lib/minimalUi";
 
@@ -37,13 +36,10 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
           {userName && (
             <p className="hidden min-w-0 truncate text-[14px] text-ui-muted sm:block">{t("header.greeting", { name: userName })}</p>
           )}
-          <div className="scrollbar-hide flex min-w-0 items-center gap-1.5 overflow-x-auto">
+          <div className="flex shrink-0 items-center gap-1.5">
             <EasyModeToggle pill />
-            <DarkModeToggle pill />
-            <LanguageSwitcher pill />
-            <button type="button" onClick={onOpenProfile} className={uiPill}>{t("header.changeName")}</button>
-            <button type="button" onClick={onOpenSettings} className={uiPill}>{t("header.settings")}</button>
             <button type="button" onClick={onOpenShare} className={uiPill}>{t("header.share")}</button>
+            <HeaderMenu onOpenProfile={onOpenProfile} onOpenSettings={onOpenSettings} />
           </div>
         </div>
 

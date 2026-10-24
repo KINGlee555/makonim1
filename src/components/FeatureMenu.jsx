@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck } from "lucide-react";
+import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
 
-export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -22,6 +22,8 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
 
   // והשאר בקיצור, בלי להעמיס על המסך
   const extraTools = [
+    { icon: RefreshCw, label: t("list.refresh"), onClick: onRefresh, spinning: refreshing },
+    ...(onOpenParticipants ? [{ icon: Users, label: t("participants.button"), onClick: onOpenParticipants }] : []),
     { icon: Scale, label: t("compare.open"), onClick: onOpenPriceCompare },
     { icon: Receipt, label: t("split.title"), onClick: onOpenSplit },
     { icon: Trophy, label: t("leaderboard.title"), onClick: onOpenLeaderboard },
@@ -62,9 +64,10 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
           {extraTools.map(tool => (
             <button key={tool.label} type="button" onClick={() => pick(tool.onClick)}
               className={`${uiPill} inline-flex items-center gap-1.5`}>
-              <tool.icon className="h-3.5 w-3.5 text-ui-muted" strokeWidth={1.8} />{tool.label}
+              <tool.icon className={`h-3.5 w-3.5 text-ui-muted ${tool.spinning ? "animate-refresh" : ""}`} strokeWidth={1.8} />{tool.label}
             </button>
           ))}
+          {readerSlot}
         </div>
       </SheetContent>
     </Sheet>

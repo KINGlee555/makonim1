@@ -2,23 +2,14 @@ import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { uiPill } from "@/lib/minimalUi";
+import { applyDarkTheme, isDarkTheme } from "@/lib/theme";
 
 export default function DarkModeToggle({ pill = false }) {
   const t = useT();
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const [dark, setDark] = useState(isDarkTheme);
 
   useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+    applyDarkTheme(dark);
   }, [dark]);
 
   const label = dark ? t("header.lightMode") : t("header.darkMode");

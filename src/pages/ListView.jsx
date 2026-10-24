@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { RefreshCw, Users } from "lucide-react";
 import ListHeader from "../components/minimal/ListHeader";
 import ListItemRow from "../components/minimal/ListItemRow";
 import CategoryHeader from "../components/minimal/CategoryHeader";
@@ -24,6 +23,9 @@ import BasketComparison from "../components/BasketComparison";
 import PriceCompareTable from "../components/PriceCompareTable";
 import ListTemplates from "../components/ListTemplates";
 import SuggestPhotoDialog from "../components/SuggestPhotoDialog";
+import ItemReminderDialog from "../components/ItemReminderDialog";
+import { useItemReminders } from "@/hooks/useItemReminders";
+import { requestNotificationPermission } from "@/hooks/useListNotifications";
 import { useChainDeals } from "@/hooks/useChainDeals";
 import { dealForItem } from "@/lib/chainDeals";
 import BarcodeScanner from "../components/BarcodeScanner";
@@ -53,7 +55,7 @@ import SmartTools from "../components/SmartTools";
 import RecentlyBought from "../components/RecentlyBought";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { lineCost, quantityStep } from "@/lib/units";
-import { uiEnter, uiSection, uiPill, uiPillRow, uiBanner, uiPrimary } from "@/lib/minimalUi";
+import { uiEnter, uiSection, uiBanner, uiPrimary } from "@/lib/minimalUi";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -93,6 +95,7 @@ export default function ListView() {
   const [editingItem, setEditingItem] = useState(null);
   const [photoItem, setPhotoItem] = useState(null);
   const [suggestPhotoItem, setSuggestPhotoItem] = useState(null);
+  const [reminderItem, setReminderItem] = useState(null);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
   const itemsRef = useRef([]);
@@ -102,6 +105,8 @@ export default function ListView() {
   const { syncing: priceSyncing } = usePriceSync();
   // Prepares real chain prices in the background so comparisons open instantly
   useWarmChainPrices(items);
+  // תזכורות לפריטים שהגיע זמנן
+  useItemReminders(items);
   // מבצעים אמיתיים מהרשתות עבור המוצרים ברשימה
   const chainDeals = useChainDeals(items);
 
@@ -236,6 +241,14 @@ export default function ListView() {
     if (!url || item.image_url === url) return;
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, image_url: url } : i));
     base44.entities.ListItem.update(item.id, { image_url: url }).catch(() => {});
+  }, []);
+
+  // תזכורת לפריט — נשמרת על המוצר, ומוצגת בהתראה כשמגיע הזמן
+  const handleSetReminder = useCallback((item, remindAt) => {
+    const patch = { remind_at: remindAt || "", reminder_sent: false };
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...patch } : i));
+    base44.entities.ListItem.update(item.id, patch).catch(() => {});
+    if (remindAt) requestNotificationPermission();
   }, []);
 
   const handleUnavailable = useCallback(async (item) => {
@@ -387,78 +400,51 @@ export default function ListView() {
       />
 
       <main className="mx-auto w-full max-w-[760px] px-5 pb-[110px] sm:px-7">
-        <div className={`${uiSection} ${uiEnter}`}>
-          <div className={uiPillRow}>
-            <button type="button" onClick={handleRefresh} className={`${uiPill} inline-flex items-center gap-1.5`}>
-              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-refresh" : ""}`} />
-              {t("list.refresh")}
-            </button>
-            {isOwner && (
-              <button type="button" onClick={() => setShowParticipants(true)} className={`${uiPill} inline-flex items-center gap-1.5`}>
-                <Users className="h-3.5 w-3.5" />
-                {t("participants.button")}
-              </button>
-            )}
-            <ListReader items={pendingItems} />
-          </div>
-        </div>
-
-        <SponsoredSlot delay={0.05} />
-
-        <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.1s" }}>
-          <PremiumBanner onOpen={() => setShowPremium(true)} />
-        </div>
-
-        <DeliveryNotice listId={listId} delay={0.15} />
-
-        <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.2s" }}>
+        <div className={uiEnter}>
           <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
         </div>
 
-        <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.25s" }}>
-          <ListExtras list={list} listId={listId} items={items} favorites={favorites}
-            onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
-        </div>
-
-        <RecentlyBought listId={listId} delay={0.3} />
+        <DeliveryNotice listId={listId} delay={0.05} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
-          <div className={`${uiSection} ${uiEnter}`} style={{ animationDelay: "0.32s" }}>
+          <div className={`${uiSection} ${uiEnter}`}>
             <div className={uiBanner}>
               {t("active.nowShopping", { name: (list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).join(", ") })}
             </div>
           </div>
         )}
 
+        <div className={`grid gap-2.5 py-3 ${pendingItems.length > 0 ? "grid-cols-2" : ""} ${uiEnter}`}>
+          {pendingItems.length > 0 && (
+            <button type="button" onClick={() => setShowShoppingMode(true)} className={uiPrimary}>{t("shoppingMode.title")}</button>
+          )}
+          <FeatureMenu
+            grouped={groupByCategory}
+            onOpenGroupBy={() => setGroupByCategory(g => !g)}
+            onOpenSuggestions={() => setShowSuggestions(v => !v)}
+            onOpenBasket={() => setShowBasket(true)}
+            onOpenPriceCompare={() => setShowPriceCompare(true)}
+            onOpenTemplates={() => setShowTemplates(true)}
+            onOpenScanner={() => setShowScanner(true)}
+            onOpenRoute={() => setShowRoute(true)}
+            onOpenMenu={() => setShowMenu(true)}
+            onOpenDeals={() => setShowDeals(true)}
+            onOpenSplit={() => setShowSplit(true)}
+            onOpenLeaderboard={() => setShowLeaderboard(true)}
+            onOpenVoice={() => setShowVoice(true)}
+            onOpenDealCalculator={() => setShowDealCalculator(true)}
+            onOpenCategoryOrder={() => setShowCategoryOrder(true)}
+            onOpenPremium={() => setShowPremium(true)}
+            onOpenCourier={() => setShowCourier(true)}
+            onRefresh={handleRefresh}
+            refreshing={refreshing}
+            onOpenParticipants={isOwner ? () => setShowParticipants(true) : null}
+            readerSlot={<ListReader items={pendingItems} />}
+          />
+        </div>
+
         {pendingItems.length > 0 && (
           <>
-            <div className={`grid grid-cols-2 gap-2.5 py-3 ${uiEnter}`} style={{ animationDelay: "0.35s" }}>
-              <button type="button" onClick={() => setShowShoppingMode(true)} className={uiPrimary}>{t("shoppingMode.title")}</button>
-              <FeatureMenu
-                grouped={groupByCategory}
-                onOpenGroupBy={() => setGroupByCategory(g => !g)}
-                onOpenSuggestions={() => setShowSuggestions(v => !v)}
-                onOpenBasket={() => setShowBasket(true)}
-                onOpenPriceCompare={() => setShowPriceCompare(true)}
-                onOpenTemplates={() => setShowTemplates(true)}
-                onOpenScanner={() => setShowScanner(true)}
-                onOpenRoute={() => setShowRoute(true)}
-                onOpenMenu={() => setShowMenu(true)}
-                onOpenDeals={() => setShowDeals(true)}
-                onOpenSplit={() => setShowSplit(true)}
-                onOpenLeaderboard={() => setShowLeaderboard(true)}
-                onOpenVoice={() => setShowVoice(true)}
-                onOpenDealCalculator={() => setShowDealCalculator(true)}
-                onOpenCategoryOrder={() => setShowCategoryOrder(true)}
-                onOpenPremium={() => setShowPremium(true)}
-                onOpenCourier={() => setShowCourier(true)}
-              />
-            </div>
-
-            {showSuggestions && (
-              <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} delay={0.4} />
-            )}
-
             <div key={groupByCategory ? "grouped" : "ungrouped"} className="pt-1">
               {groupByCategory ? (
                 groupedCategories.map(([cat, catItems]) => (
@@ -467,7 +453,7 @@ export default function ListView() {
                     {catItems.map((item, itemIndex) => (
                       <ListItemRow key={item.id} item={item} index={itemIndex} onToggleBought={handleToggleBought}
                         onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                        onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                        onEdit={setEditingItem} onSetReminder={setReminderItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
                         onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                         onPhotoFound={handlePhotoFound}
                         isFavorite={favorites.some(favorite => favorite.name === item.name)}
@@ -479,7 +465,7 @@ export default function ListView() {
                 pendingItems.map((item, index) => (
                   <ListItemRow key={item.id} item={item} index={index} onToggleBought={handleToggleBought}
                     onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                    onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                    onEdit={setEditingItem} onSetReminder={setReminderItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
                     onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                     onPhotoFound={handlePhotoFound}
                     isFavorite={favorites.some(favorite => favorite.name === item.name)}
@@ -487,6 +473,10 @@ export default function ListView() {
                 ))
               )}
             </div>
+
+            {showSuggestions && (
+              <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} delay={0.1} />
+            )}
           </>
         )}
 
@@ -507,6 +497,19 @@ export default function ListView() {
           </div>
         )}
 
+        <RecentlyBought listId={listId} delay={0.1} />
+
+        <div className={`${uiSection} ${uiEnter}`}>
+          <ListExtras list={list} listId={listId} items={items} favorites={favorites}
+            onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
+        </div>
+
+        <SponsoredSlot delay={0.15} />
+
+        <div className={`${uiSection} ${uiEnter}`}>
+          <PremiumBanner onOpen={() => setShowPremium(true)} />
+        </div>
+
         <AppFooter />
       </main>
 
@@ -526,6 +529,7 @@ export default function ListView() {
         onSaved={(id, url) => setItems(prev => prev.map(i => (i.id === id ? { ...i, image_url: url } : i)))} />
       <SuggestPhotoDialog item={suggestPhotoItem} listId={listId} userName={currentUserNameRef.current}
         onClose={() => setSuggestPhotoItem(null)} />
+      <ItemReminderDialog item={reminderItem} onClose={() => setReminderItem(null)} onSaved={handleSetReminder} />
 
       {showShoppingMode && (
         <ShoppingMode items={pendingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}

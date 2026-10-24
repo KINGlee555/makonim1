@@ -2,12 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Globe, Check } from "lucide-react";
 import { useLanguage, useT } from "@/lib/i18n";
 import { uiPill } from "@/lib/minimalUi";
-
-const LANGUAGES = [
-  { code: "he", label: "עברית", flag: "🇮🇱" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "ru", label: "Русский", flag: "🇷🇺" },
-];
+import { LANGUAGES } from "@/lib/languages";
 
 export default function LanguageSwitcher({ pill = false }) {
   const t = useT();

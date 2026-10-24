@@ -1,16 +1,17 @@
 import { memo } from "react";
-import { Plus, Minus, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send } from "lucide-react";
+import { Bell, Plus, Minus, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
 import { isGram, lineCost, quantityStep } from "@/lib/units";
+import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { uiEnter, uiStep } from "@/lib/minimalUi";
 
 const action = "flex h-[28px] shrink-0 items-center justify-center gap-1 rounded-[14px] border bg-ui-canvas text-[13px] transition-[background-color,color,box-shadow,opacity] duration-200 active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent";
 
 // שורה אחת צפופה למוצר: תמונה, שם, כמות, מחיר, סימון קניתי — בלי כרטיס ובלי גלילה מיותרת.
-function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, deal, isFavorite, className }) {
+function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, deal, isFavorite, className }) {
   const t = useT();
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
@@ -40,6 +41,11 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-[15px] text-ui-ink">{item.name}</span>
         <span className="truncate text-[12px] text-ui-muted">{meta}</span>
+        {item.remind_at && (
+          <span className={`mt-1 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] ${isReminderDue(item) ? "bg-ui-accent text-white" : "bg-ui-surface text-ui-muted"}`}>
+            <Bell className="h-3 w-3" />{reminderText(item.remind_at)}
+          </span>
+        )}
         {deal && (
           <span className="truncate text-[12px] text-ui-accent">
             {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}
@@ -82,6 +88,11 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
           <DropdownMenuItem onClick={() => onEdit(item)}>
             <Pencil className="me-2 h-4 w-4" />{t("productItem.edit")}
           </DropdownMenuItem>
+          {onSetReminder && (
+            <DropdownMenuItem onClick={() => onSetReminder(item)}>
+              <Bell className="me-2 h-4 w-4" />{t("reminder.button")}
+            </DropdownMenuItem>
+          )}
           {onChangePhoto && (
             <DropdownMenuItem onClick={() => onChangePhoto(item)}>
               <Camera className="me-2 h-4 w-4" />{t("productItem.changePhoto")}

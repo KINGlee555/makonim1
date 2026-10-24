@@ -278,8 +278,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
               onChange={(e) => setQuery(e.target.value)}
               className="h-12 rounded-2xl text-base border-2 border-primary/20 focus-visible:border-primary" autoFocus />
             <button type="button" onClick={() => setByWeight(v => !v)} aria-pressed={byWeight} title={t("search.byWeight")}
-              className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border-2 transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
-              <Scale className="h-5 w-5" />
+              className={`flex h-12 flex-shrink-0 items-center gap-1.5 rounded-2xl border-2 px-3 text-sm font-semibold transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
+              <Scale className="h-4 w-4" />
+              {t("search.weightShort")}
             </button>
             <VoiceSearchButton onResult={handleVoiceResult} />
           </div>
