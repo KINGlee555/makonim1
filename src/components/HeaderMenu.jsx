@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Moon, MoreHorizontal, Sun } from "lucide-react";
+import { Check, ChevronDown, Moon, Sun } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
@@ -23,8 +23,9 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" aria-label={t("header.more")} title={t("header.more")} className={`${uiPill} w-[34px] px-0`}>
-          <MoreHorizontal className="h-4 w-4" />
+        <button type="button" aria-label={t("header.more")} title={t("header.more")} className={`${uiPill} inline-flex items-center gap-1`}>
+          {t("header.more")}
+          <ChevronDown className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 rounded-xl border-ui-line">

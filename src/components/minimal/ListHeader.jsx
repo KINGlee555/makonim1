@@ -54,7 +54,7 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
           </div>
         ) : (
           <>
-        <div className="flex items-center justify-between gap-3 border-b border-ui-line-soft py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-b border-ui-line-soft py-2.5">
           <div className="flex shrink-0 items-center gap-2.5">
             <span className="text-[18px] font-semibold text-ui-accent">MaKonim</span>
             <img

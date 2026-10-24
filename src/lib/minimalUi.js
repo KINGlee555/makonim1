@@ -13,6 +13,8 @@ export const uiStep = `flex h-[26px] w-[26px] shrink-0 items-center justify-cent
 export const uiPrimary = `h-11 w-full rounded-[22px] border border-ui-accent bg-ui-accent text-[15px] text-white hover:shadow-[0_2px_8px_rgba(14,159,143,0.35)] active:opacity-70 ${motion} ${focus}`;
 export const uiOutline = `h-11 w-full rounded-[22px] border border-ui-line bg-ui-canvas text-[15px] text-ui-ink hover:shadow-[0_2px_8px_rgba(17,24,39,0.12)] active:opacity-70 ${motion} ${focus}`;
 export const uiIconRound = `flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ui-line bg-ui-canvas text-ui-ink hover:bg-ui-surface active:opacity-70 ${motion} ${focus}`;
+// כפתור עם מילה מפורשת בסרגל התחתון — כדי שברור שיש עוד תפריט
+export const uiBarPill = `h-11 shrink-0 rounded-[22px] border border-ui-line bg-ui-canvas px-3 text-[13px] text-ui-ink hover:bg-ui-surface active:opacity-70 ${motion} ${focus}`;
 export const uiLink = `text-[13px] text-ui-muted underline-offset-4 hover:text-ui-ink ${motion} ${focus}`;
 
 // כניסה מלמעלה עם דהייה קצרה — כל שורה נכנסת בהפרש קטן מהקודמת

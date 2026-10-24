@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users, MoreHorizontal } from "lucide-react";
+import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users, ChevronDown } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { uiIconRound, uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
+import { uiBarPill, uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
 
 export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot, bar }) {
   const t = useT();
@@ -39,8 +39,9 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         {bar ? (
-          <button type="button" className={uiIconRound} title={t("list.moreFeatures")} aria-label={t("list.moreFeatures")}>
-            <MoreHorizontal className="h-5 w-5" strokeWidth={1.8} />
+          <button type="button" className={`${uiBarPill} inline-flex items-center gap-1`} title={t("list.moreFeatures")} aria-label={t("list.moreFeatures")}>
+            {t("common.more")}
+            <ChevronDown className="h-4 w-4 shrink-0" strokeWidth={2.2} />
           </button>
         ) : (
           <button type="button" className={uiOutline}>{t("list.moreFeatures")}</button>

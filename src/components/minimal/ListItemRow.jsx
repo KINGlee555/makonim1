@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Bell, Plus, Minus, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send, Eye } from "lucide-react";
+import { Bell, Plus, Minus, Check, ChevronDown, Pencil, CircleSlash2, Star, Camera, Send, Eye } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
@@ -98,9 +98,10 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`}
-            className={`${action} w-7 border-ui-line text-ui-ink hover:bg-ui-surface sm:w-auto sm:px-2.5`}>
-            {isFavorite ? <Star className="h-3.5 w-3.5 fill-ui-accent text-ui-accent" /> : <MoreVertical className="h-4 w-4" />}
-            <span className="hidden sm:inline">{t("productItem.more")}</span>
+            className="flex h-[32px] shrink-0 items-center justify-center gap-1 rounded-[16px] border border-ui-line bg-ui-canvas px-2.5 text-[12px] text-ui-ink transition-[background-color,color,box-shadow,opacity] duration-200 hover:bg-ui-surface active:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ui-accent">
+            {isFavorite && <Star className="h-3.5 w-3.5 shrink-0 fill-ui-accent text-ui-accent" />}
+            {t("common.more")}
+            <ChevronDown className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-52 rounded-xl border-ui-line">
