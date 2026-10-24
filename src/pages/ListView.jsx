@@ -405,25 +405,25 @@ export default function ListView() {
           <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-80 w-80 rounded-full bg-market-yellow opacity-[0.35]" />
 
           <div className="relative z-[1] rounded-[28px] border-[3px] border-market-ink bg-market-surface px-5 py-5 md:px-7">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
+            <div className="grid grid-cols-[0.85fr_1.15fr] items-start gap-3 text-center">
+              <div className="min-w-0">
                 <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.toBuy")}</span>
-                <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-pink md:text-[56px]">{pendingItems.length}</p>
+                <p className="mt-1.5 text-[clamp(30px,8.5vw,54px)] font-black leading-[1.05] tracking-tight text-market-pink tabular-nums">{pendingItems.length}</p>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.total")}</span>
-                <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-blue md:text-[56px]">₪{totalPrice.toFixed(2)}</p>
+                <p className="mt-1.5 whitespace-nowrap text-[clamp(22px,6.4vw,48px)] font-black leading-[1.05] tracking-tight text-market-blue tabular-nums">₪{totalPrice.toFixed(2)}</p>
               </div>
             </div>
             <div className="my-4 h-4 overflow-hidden rounded-lg border-2 border-market-ink bg-market-track">
               <span className="mk-stripe block h-full w-full" />
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2.5">
-              <button onClick={() => setShowRename(true)} title={t("rename.button")} className="flex min-w-0 items-center gap-2 text-[18px] font-black text-market-ink">
-                <span className="truncate">{list.title}</span>
+              <button onClick={() => setShowRename(true)} title={t("rename.button")} className="inline-flex w-fit max-w-full items-center gap-1.5 rounded-[16px] bg-market-yellow-soft px-2.5 py-1 text-[18px] font-black text-market-ink">
+                <span className="min-w-0 truncate">{list.title}</span>
                 <Pencil className="h-4 w-4 flex-shrink-0" />
               </button>
-              <div className="flex flex-shrink-0 items-center gap-2">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <button onClick={handleRefresh} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-pink px-4 text-[15px] font-black text-white">
                   <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
                   {t("list.refresh")}

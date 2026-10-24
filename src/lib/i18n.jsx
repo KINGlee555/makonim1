@@ -20,7 +20,7 @@ const translations = {
 
     // ListView
     "list.notFound": "הרשימה לא נמצאה",
-    "list.toBuy": "לקנות",
+    "list.toBuy": "פריטים לקנות",
     "list.bought": "נקנו",
     "list.total": "סה״כ:",
     "list.empty": "הרשימה ריקה",
@@ -655,7 +655,7 @@ const translations = {
 
     // ListView
     "list.notFound": "List not found",
-    "list.toBuy": "To Buy",
+    "list.toBuy": "Items to Buy",
     "list.bought": "Bought",
     "list.total": "Total:",
     "list.empty": "List is Empty",
@@ -1290,7 +1290,7 @@ const translations = {
 
     // ListView
     "list.notFound": "Список не найден",
-    "list.toBuy": "Купить",
+    "list.toBuy": "Товаров купить",
     "list.bought": "Куплено",
     "list.total": "Итого:",
     "list.empty": "Список пуст",
