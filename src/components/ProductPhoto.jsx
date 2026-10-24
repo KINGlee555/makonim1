@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getSpecificProductImage } from "@/lib/productImages";
 import { detectBrand, pickBestPhoto } from "@/lib/productPhotoMatch";
-import { searchRemoteCatalog } from "@/lib/remoteCatalog";
+import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { getCachedPhoto, cachePhoto, isPhotoMiss, cachePhotoMiss } from "@/lib/photoCache";
 import { getProductEmoji } from "@/lib/productEmoji";
 

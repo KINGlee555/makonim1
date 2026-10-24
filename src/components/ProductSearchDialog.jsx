@@ -4,7 +4,7 @@ import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, X, Star, Scale } from "lucide-react";
+import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, Star, Scale } from "lucide-react";
 import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
@@ -12,6 +12,7 @@ import { loadAllProducts } from "@/lib/loadAllProducts";
 import { searchCatalog, normalizeProductText } from "@/lib/productSearch";
 import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { searchStoredCatalog } from "@/lib/catalogProducts";
+import { staplesForCategory } from "@/lib/categoryStaples";
 
 const CATEGORIES = [
   { id: "all", label: "הכל" },
@@ -81,6 +82,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     return [];
   }, [searchableProducts, remoteCategoryProducts, deferredQuery, selectedCategory, filterMode]);
   const results = useMemo(() => normalizeProductText(deferredQuery) ? allResults : allResults.slice(0, visibleLimit), [allResults, deferredQuery, visibleLimit]);
+  // מה שקונים בדרך כלל בישראל במחלקה הזו — מוצג מיד עם בחירת המחלקה, לפני הקטלוג
+  const staples = useMemo(
+    () => (normalizeProductText(deferredQuery) || selectedCategory === "all" ? [] : staplesForCategory(selectedCategory)),
+    [deferredQuery, selectedCategory]
+  );
+  const stapleKeys = useMemo(() => new Set(staples.map(product => normalizeProductText(product.name))), [staples]);
+  const catalogResults = results.filter(product => !stapleKeys.has(normalizeProductText(product.name)));
 
   useEffect(() => {
     if (!open) return;
@@ -246,11 +254,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[calc(100%-1rem)] max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl !flex animate-scale-in">
-        <DialogHeader className="px-5 pt-5 pb-3 flex-row items-center justify-between space-y-0">
+        <DialogHeader className="px-5 pt-5 pb-3 flex-row items-center space-y-0">
           <DialogTitle className="text-xl font-bold">{t("search.title")}</DialogTitle>
-          <button onClick={() => handleClose(false)} className="w-8 h-8 rounded-full bg-muted hover:bg-muted/70 flex items-center justify-center transition-all active:scale-90">
-            <X className="w-4 h-4" />
-          </button>
         </DialogHeader>
 
         <div className="px-5 space-y-3">
@@ -318,7 +323,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           )}
 
           {/* Suggestions grid */}
-          {!loadingProducts && !categoryLoading && results.length === 0 && !query && filteredSuggestions.length > 0 && (
+          {!loadingProducts && !categoryLoading && results.length === 0 && !query && selectedCategory === "all" && filteredSuggestions.length > 0 && (
             <div className="animate-fade-in">
               <div className="flex items-center gap-2 mb-3 px-1">
                 <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
@@ -332,11 +337,31 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </div>
           )}
 
-          {/* Search results grid */}
-          {results.length > 0 && (
-            <div className="grid grid-cols-2 gap-3 animate-fade-in">
-              {results.map((product, idx) => renderProductCard(product, idx))}
-            </div>
+          {/* מה שקונים בדרך כלל במחלקה הזו */}
+          {!query && staples.length > 0 && (
+            <section className="animate-fade-in">
+              <div className="mb-3 flex items-center gap-2 px-1">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <p className="text-sm font-bold text-foreground">{t("search.staples")}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {staples.map((product, idx) => renderProductCard(product, idx))}
+              </div>
+            </section>
+          )}
+
+          {/* תוצאות מהקטלוג */}
+          {catalogResults.length > 0 && (
+            <section className={staples.length > 0 ? "mt-5" : ""}>
+              {!query && staples.length > 0 && (
+                <p className="mb-3 px-1 text-sm font-bold text-muted-foreground">{t("search.moreProducts")}</p>
+              )}
+              <div className="grid grid-cols-2 gap-3 animate-fade-in">
+                {catalogResults.map((product, idx) => renderProductCard(product, idx))}
+              </div>
+            </section>
           )}
 
           {!query && allResults.length > results.length && (
@@ -360,7 +385,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           )}
 
           {/* Empty state */}
-          {!loadingProducts && !categoryLoading && results.length === 0 && !query && filteredSuggestions.length === 0 && (
+          {!loadingProducts && !categoryLoading && results.length === 0 && !query && staples.length === 0 && filteredSuggestions.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12">
               <ShoppingBasket className="w-14 h-14 text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground text-base">{t("search.searchPrompt")}</p>

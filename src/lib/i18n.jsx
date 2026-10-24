@@ -578,6 +578,37 @@ const translations = {
     "courier.error": "לא הצלחתי לשלוח, נסו שוב",
     "courier.requested": "בקשת משלוח",
     "courier.done": "סמן כבוצע",
+
+    // כלים חכמים על המסך הראשון
+    "tools.bestValue": "הכי משתלם",
+    "tools.bestValueHint": "כמה עולה הסל בכל רשת",
+    "tools.checking": "בודק מחירים...",
+    "tools.cheapestAt": "הכי זול: {chain} · ₪{total}",
+    "tools.savings": "חיסכון של ₪{amount}",
+    "tools.noPrices": "עדיין אין מחירי רשת להשוואה",
+    "tools.openNow": "הכי קרוב ופתוח",
+    "tools.openNowHint": "{count} רשתות פתוחות עכשיו",
+    "tools.openNowTap": "בחר רשת וצא לדרך",
+    "tools.storesTitle": "מה פתוח עכשיו",
+    "tools.openUntil": "פתוח עד {time}",
+    "tools.opensAt": "נפתח ב-{time}",
+    "tools.closed": "סגור",
+    "tools.closedToday": "סגור היום",
+    "tools.preferred": "מועדף",
+    "tools.estimatedHours": "שעות פתיחה משוערות — כדאי לוודא מול הסניף הקרוב",
+
+    // חיפוש מוצרים
+    "search.staples": "קונים בדרך כלל",
+    "search.moreProducts": "עוד מוצרים",
+
+    // נרכש לאחרונה
+    "recent.title": "נרכש לאחרונה",
+    "recent.all": "לכל ההיסטוריה",
+    "recent.by": "נקנה ע״י {name}",
+    "recent.now": "עכשיו",
+    "recent.minutes": "לפני {count} דק׳",
+    "recent.hours": "לפני {count} שע׳",
+    "recent.days": "לפני {count} ימים",
   },
   en: {
     // App
@@ -1154,6 +1185,37 @@ const translations = {
     "courier.error": "Could not send, please try again",
     "courier.requested": "Delivery request",
     "courier.done": "Mark as done",
+
+    // Smart tools on the first screen
+    "tools.bestValue": "Best value",
+    "tools.bestValueHint": "What the basket costs at each chain",
+    "tools.checking": "Checking prices...",
+    "tools.cheapestAt": "Cheapest: {chain} · ₪{total}",
+    "tools.savings": "Save ₪{amount}",
+    "tools.noPrices": "No chain prices to compare yet",
+    "tools.openNow": "Nearby and open",
+    "tools.openNowHint": "{count} chains open now",
+    "tools.openNowTap": "Pick a chain and set off",
+    "tools.storesTitle": "Open right now",
+    "tools.openUntil": "Open until {time}",
+    "tools.opensAt": "Opens at {time}",
+    "tools.closed": "Closed",
+    "tools.closedToday": "Closed today",
+    "tools.preferred": "Preferred",
+    "tools.estimatedHours": "Estimated opening hours — worth checking with the nearby branch",
+
+    // Product search
+    "search.staples": "Usually bought",
+    "search.moreProducts": "More products",
+
+    // Recently bought
+    "recent.title": "Recently bought",
+    "recent.all": "Full history",
+    "recent.by": "Bought by {name}",
+    "recent.now": "just now",
+    "recent.minutes": "{count} min ago",
+    "recent.hours": "{count} h ago",
+    "recent.days": "{count} d ago",
   },
   ru: {
     // App
@@ -1655,6 +1717,37 @@ const translations = {
     "courier.error": "Не удалось отправить, попробуйте снова",
     "courier.requested": "Запрос доставки",
     "courier.done": "Отметить выполненным",
+
+    // Умные инструменты на первом экране
+    "tools.bestValue": "Выгоднее всего",
+    "tools.bestValueHint": "Сколько корзина стоит в каждой сети",
+    "tools.checking": "Проверяем цены...",
+    "tools.cheapestAt": "Дешевле всего: {chain} · ₪{total}",
+    "tools.savings": "Экономия ₪{amount}",
+    "tools.noPrices": "Пока нет цен сетей для сравнения",
+    "tools.openNow": "Ближайшее и открыто",
+    "tools.openNowHint": "{count} сетей открыты сейчас",
+    "tools.openNowTap": "Выберите сеть и в путь",
+    "tools.storesTitle": "Что открыто сейчас",
+    "tools.openUntil": "Открыто до {time}",
+    "tools.opensAt": "Откроется в {time}",
+    "tools.closed": "Закрыто",
+    "tools.closedToday": "Сегодня закрыто",
+    "tools.preferred": "Избранное",
+    "tools.estimatedHours": "Примерные часы работы — уточните в ближайшем магазине",
+
+    // Поиск продуктов
+    "search.staples": "Обычно покупают",
+    "search.moreProducts": "Ещё товары",
+
+    // Недавно куплено
+    "recent.title": "Недавно куплено",
+    "recent.all": "Вся история",
+    "recent.by": "Купил(а) {name}",
+    "recent.now": "только что",
+    "recent.minutes": "{count} мин назад",
+    "recent.hours": "{count} ч назад",
+    "recent.days": "{count} дн назад",
   },
 };
 

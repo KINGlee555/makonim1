@@ -50,6 +50,8 @@ import PremiumBanner from "../components/PremiumBanner";
 import SponsoredSlot from "../components/sponsored/SponsoredSlot";
 import CourierDeliveryDialog from "../components/CourierDeliveryDialog";
 import DeliveryNotice from "../components/DeliveryNotice";
+import SmartTools from "../components/SmartTools";
+import RecentlyBought from "../components/RecentlyBought";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { categoryImage, categoryTone } from "@/lib/marketPalette";
 import { lineCost, quantityStep } from "@/lib/units";
@@ -444,8 +446,12 @@ export default function ListView() {
 
         <DeliveryNotice listId={listId} />
 
+        <SmartTools items={pendingItems} onOpenBasket={() => setShowBasket(true)} />
+
         <ListExtras list={list} listId={listId} items={items} favorites={favorites}
           onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
+
+        <RecentlyBought listId={listId} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
           <div className="mt-5 flex items-center gap-2.5 rounded-3xl border-[3px] border-market-pink bg-market-pink-tint px-5 py-3">

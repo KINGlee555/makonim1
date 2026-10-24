@@ -360,7 +360,7 @@ html.dark.easy-mode {
 
 /* Leave room for the close button so titles never sit under it */
 [role="dialog"] > div:first-child {
-  padding-inline-end: 1.75rem;
+  padding-inline-end: 3.25rem;
 }
 
 /* Keep every dialog element inside the window — no horizontal scrolling */
