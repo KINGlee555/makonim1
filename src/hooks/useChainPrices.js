@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { CHAINS, FAST_CHAINS, OTHER_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
+import { isWeight, weightInKg } from "@/lib/units";
 
 // Answers are kept in memory for a while: reopening the comparison inside the same
 // visit is instant and never hits the network again.
@@ -85,10 +86,12 @@ export function useChainPrices(items, enabled) {
     const rows = items.map(item => {
       const key = item.barcode || item.name;
       const quantity = item.quantity || 1;
+      // מוצרי משקל מתומחרים לק״ג — הגרמים מומרים בהתאם
+      const factor = isWeight(item.unit) ? weightInKg(item) : quantity;
       const prices = state.chains
         .map(chain => ({ chain, price: chain.prices?.[key] }))
         .filter(entry => entry.price > 0)
-        .map(entry => ({ chain: entry.chain.name, chainId: entry.chain.id, unit: entry.price, total: entry.price * quantity }));
+        .map(entry => ({ chain: entry.chain.name, chainId: entry.chain.id, unit: entry.price, total: entry.price * factor }));
       if (!prices.length) return null;
       const totals = prices.map(entry => entry.total);
       const min = Math.min(...totals);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil, Sparkles } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, RefreshCw, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -42,7 +42,8 @@ import ChangePhotoDialog from "../components/ChangePhotoDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import RenameListDialog from "../components/RenameListDialog";
 import { loadAllProducts } from "@/lib/loadAllProducts";
-import { MARKET_ASSETS, categoryImage, categoryTone } from "@/lib/marketPalette";
+import { categoryImage, categoryTone } from "@/lib/marketPalette";
+import { lineCost, quantityStep } from "@/lib/units";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -194,8 +195,11 @@ export default function ListView() {
     }, 300);
     base44.entities.ListItem.update(item.id, { status: "bought", bought_by: buyerName })
       .catch(() => setItems(prev => prev.some(i => i.id === item.id) ? prev : [{ ...item, status: "pending" }, ...prev]));
+    // בהיסטוריה נשמר מחיר ליחידה — למוצר גרם זה המחיר לק״ג חלקי 1000
+    const isGram = item.unit === "gram";
     base44.entities.PurchaseHistory.create({
-      list_id: listId, item_name: item.name, price: item.price || 0,
+      list_id: listId, item_name: item.name,
+      price: isGram ? (item.price || 0) / 1000 : (item.price || 0),
       quantity: item.quantity || 1, category: item.category || "אחר",
       bought_by: buyerName
     }).catch(() => {});
@@ -209,6 +213,13 @@ export default function ListView() {
   const handleUpdateDetails = useCallback((item, details) => {
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, ...details } : i));
     base44.entities.ListItem.update(item.id, details).catch(() => {});
+  }, []);
+
+  // תמונה אמיתית שנמצאה למוצר נשמרת על הפריט — כל המשפחה רואה אותה בלי חיפוש חוזר
+  const handlePhotoFound = useCallback((item, url) => {
+    if (!url || item.image_url === url) return;
+    setItems(prev => prev.map(i => i.id === item.id ? { ...i, image_url: url } : i));
+    base44.entities.ListItem.update(item.id, { image_url: url }).catch(() => {});
   }, []);
 
   const handleUnavailable = useCallback(async (item) => {
@@ -237,10 +248,11 @@ export default function ListView() {
   }, [listId]);
 
   const handleAddProduct = useCallback(async (product) => {
-    // Prevent duplicates: if item already exists, increment quantity
+    // מוצר שנמכר לפי משקל נכנס כיחידת גרם עם קילו כברירת מחדל
+    const unit = product.weighted ? "gram" : "unit";
     const existing = itemsRef.current.find(i => i.name === product.name && i.status !== "bought");
     if (existing) {
-      const newQty = (existing.quantity || 1) + 1;
+      const newQty = (existing.quantity || 1) + quantityStep(existing.unit || unit);
       setItems(prev => prev.map(i => i.id === existing.id ? { ...i, quantity: newQty, status: "pending" } : i));
       base44.entities.ListItem.update(existing.id, { quantity: newQty, status: "pending" }).catch(() => {});
       return;
@@ -249,7 +261,7 @@ export default function ListView() {
       list_id: listId, name: product.name, barcode: product.barcode || "",
       price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
-      status: "pending", quantity: 1, unit: "unit", note: ""
+      status: "pending", quantity: unit === "gram" ? 1000 : 1, unit, note: ""
     });
     setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
   }, [listId]);
@@ -325,7 +337,7 @@ export default function ListView() {
 
   const pendingItems = items.filter(i => !i.status || i.status === "pending");
   const unavailableItems = items.filter(i => i.status === "unavailable");
-  const totalPrice = pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
+  const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
   const groupedCategories = Object.entries(
     pendingItems.reduce((groups, item) => {
       const cat = item.category || t("summary.other");
@@ -362,45 +374,36 @@ export default function ListView() {
       />
 
       <main className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 md:px-12">
-        <section className="relative mt-2 overflow-hidden rounded-[40px] border-4 border-market-ink bg-market-blue px-5 py-7 shadow-[0_10px_0_hsl(var(--market-ink))] mk-pop md:px-11 md:py-9" aria-label={t("list.total")}>
+        <section className="relative mt-2 overflow-hidden rounded-[40px] border-4 border-market-ink bg-market-blue px-5 py-6 shadow-[0_10px_0_hsl(var(--market-ink))] mk-pop md:px-9 md:py-7" aria-label={t("list.total")}>
           <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-80 w-80 rounded-full bg-market-yellow opacity-[0.35]" />
-          <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-[380px] h-52 w-52 rounded-full bg-market-pink opacity-50" />
 
-          <span className="absolute left-3 top-3 z-10 flex h-24 w-24 flex-col items-center justify-center rounded-full border-[5px] border-white bg-market-yellow text-market-ink shadow-[0_0_0_4px_hsl(var(--market-pink))] mk-bob md:left-[70px] md:top-[34px] md:h-[150px] md:w-[150px]">
-            <b className="text-4xl font-black leading-none tracking-[-3px] md:text-[64px]">{pendingItems.length}</b>
-            <span className="text-sm font-black md:text-[17px]">{t("list.toBuy")}</span>
-          </span>
-
-          <div className="relative z-[1] grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_440px]">
-            <div className="rounded-[28px] border-[3px] border-market-ink bg-market-surface px-5 py-6 md:px-7">
-              <div className="grid grid-cols-2 gap-4 pt-20 text-center md:pt-0">
-                <div>
-                  <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.toBuy")}</span>
-                  <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-pink md:text-[64px]">{pendingItems.length}</p>
-                </div>
-                <div>
-                  <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.total")}</span>
-                  <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-blue md:text-[64px]">₪{totalPrice.toFixed(2)}</p>
-                </div>
+          <div className="relative z-[1] rounded-[28px] border-[3px] border-market-ink bg-market-surface px-5 py-5 md:px-7">
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.toBuy")}</span>
+                <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-pink md:text-[56px]">{pendingItems.length}</p>
               </div>
-              <div className="my-4 h-4 overflow-hidden rounded-lg border-2 border-market-ink bg-market-track">
-                <span className="mk-stripe block h-full w-full" />
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2.5">
-                <button onClick={() => setShowRename(true)} title={t("rename.button")} className="flex min-w-0 items-center gap-2 text-[18px] font-black text-market-ink">
-                  <span className="truncate">{list.title}</span>
-                  <Pencil className="h-4 w-4 flex-shrink-0" />
-                </button>
-                <div className="flex flex-shrink-0 items-center gap-2">
-                  <button onClick={handleRefresh} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-pink px-4 text-[15px] font-black text-white">
-                    <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
-                    {t("list.refresh")}
-                  </button>
-                  <ListReader items={pendingItems} />
-                </div>
+              <div>
+                <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.total")}</span>
+                <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-blue md:text-[56px]">₪{totalPrice.toFixed(2)}</p>
               </div>
             </div>
-            <img src={MARKET_ASSETS.hero} alt="עגלת קניות מצוירת" className="relative z-[1] aspect-[4/3] w-full rounded-[28px] border-4 border-white object-cover mk-wob" />
+            <div className="my-4 h-4 overflow-hidden rounded-lg border-2 border-market-ink bg-market-track">
+              <span className="mk-stripe block h-full w-full" />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+              <button onClick={() => setShowRename(true)} title={t("rename.button")} className="flex min-w-0 items-center gap-2 text-[18px] font-black text-market-ink">
+                <span className="truncate">{list.title}</span>
+                <Pencil className="h-4 w-4 flex-shrink-0" />
+              </button>
+              <div className="flex flex-shrink-0 items-center gap-2">
+                <button onClick={handleRefresh} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-pink px-4 text-[15px] font-black text-white">
+                  <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
+                  {t("list.refresh")}
+                </button>
+                <ListReader items={pendingItems} />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -418,14 +421,14 @@ export default function ListView() {
 
         {pendingItems.length > 0 && (
           <>
-            <div className="mt-6 grid grid-cols-2 gap-3.5 md:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3.5">
               <button onClick={() => setShowShoppingMode(true)} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-pink px-2 text-[17px] font-black text-white">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
               </button>
-              <button onClick={() => setGroupByCategory(g => !g)} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-blue px-2 text-[17px] font-black text-white">
-                <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
-              </button>
               <FeatureMenu
+                grouped={groupByCategory}
+                onOpenGroupBy={() => setGroupByCategory(g => !g)}
+                onOpenSuggestions={() => setShowSuggestions(v => !v)}
                 onOpenBasket={() => setShowBasket(true)}
                 onOpenPriceCompare={() => setShowPriceCompare(true)}
                 onOpenTemplates={() => setShowTemplates(true)}
@@ -439,9 +442,6 @@ export default function ListView() {
                 onOpenDealCalculator={() => setShowDealCalculator(true)}
                 onOpenCategoryOrder={() => setShowCategoryOrder(true)}
               />
-              <button onClick={() => setShowSuggestions(v => !v)} aria-expanded={showSuggestions} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-ink px-2 text-[17px] font-black text-white">
-                <Sparkles className="w-4 h-4" />{t("smart.title")}
-              </button>
             </div>
 
             {showSuggestions && (
@@ -449,15 +449,6 @@ export default function ListView() {
                 <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
               </div>
             )}
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              {groupedCategories.map(([cat, catItems], index) => (
-                <span key={cat} className={`flex items-center gap-2.5 rounded-[26px] px-5 py-2.5 text-[18px] font-black ${categoryTone(index).chip}`}>
-                  {cat}
-                  <em className="rounded-[14px] bg-market-surface px-2.5 py-0.5 text-base font-black not-italic text-market-ink">{catItems.length}</em>
-                </span>
-              ))}
-            </div>
 
             <div key={groupByCategory ? "grouped" : "ungrouped"} className="mt-7 animate-fade-in">
               {groupByCategory ? (
@@ -473,6 +464,7 @@ export default function ListView() {
                         <ProductItem key={item.id} item={item} paletteIndex={itemIndex} onToggleBought={handleToggleBought}
                           onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                           onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                          onPhotoFound={handlePhotoFound}
                           isFavorite={favorites.some(favorite => favorite.name === item.name)}
                           className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                       ))}
@@ -485,6 +477,7 @@ export default function ListView() {
                     <ProductItem key={item.id} item={item} paletteIndex={index} onToggleBought={handleToggleBought}
                       onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                       onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                      onPhotoFound={handlePhotoFound}
                       isFavorite={favorites.some(favorite => favorite.name === item.name)}
                       className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
                   ))}

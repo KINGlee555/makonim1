@@ -4,7 +4,7 @@ import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, X, Star } from "lucide-react";
+import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, X, Star, Scale } from "lucide-react";
 import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
@@ -28,6 +28,9 @@ const CATEGORIES = [
   { id: "חיות מחמד", label: "חיות מחמד" },
 ];
 
+// מוצר מוצג כשיש לו תמונה אמיתית, או כשיש לו מותג — ואז התמונה האמיתית נטענת לכרטיס
+const usableProduct = (product) => Boolean((product.image_verified && product.image_url) || product.brand);
+
 function getSimulatedStores(productName, userLocation) {
   const seed = productName.charCodeAt(0) + productName.charCodeAt(productName.length - 1);
   return SUPERMARKETS.map((s, i) => {
@@ -39,6 +42,7 @@ function getSimulatedStores(productName, userLocation) {
 export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, favorites = [], onToggleFavorite }) {
   const t = useT();
   const [query, setQuery] = useState("");
+  const [byWeight, setByWeight] = useState(false);
   const [addedIds, setAddedIds] = useState(new Set());
   const [filterMode, setFilterMode] = useState("price");
   const [userLocation, setUserLocation] = useState(null);
@@ -64,14 +68,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   }, [allProducts, remoteProducts, remoteCategoryProducts]);
   const allResults = useMemo(() => {
     if (normalizeProductText(deferredQuery)) {
-      return searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price")
-        .filter(product => product.image_verified && product.image_url);
+      return searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").filter(usableProduct);
     }
     if (selectedCategory === "חטיפים ומתוקים") {
-      return remoteCategoryProducts.filter(product => product.image_verified && product.image_url);
+      return remoteCategoryProducts.filter(usableProduct);
     }
     if (selectedCategory !== "all") {
-      return searchableProducts.filter(product => product.category === selectedCategory && product.image_verified && product.image_url);
+      return searchableProducts.filter(product => product.category === selectedCategory && usableProduct(product));
     }
     return [];
   }, [searchableProducts, remoteCategoryProducts, deferredQuery, selectedCategory, filterMode]);
@@ -170,7 +173,11 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     else setFilterMode(mode);
   };
 
-  const handleAdd = (product) => { onAddProduct(product); setAddedIds(prev => new Set([...prev, product.name])); };
+  // לפי משקל: המוצר שיתווסף נכנס כיחידת גרם (קילו כברירת מחדל)
+  const handleAdd = (product) => {
+    onAddProduct(byWeight ? { ...product, weighted: true } : product);
+    setAddedIds(prev => new Set([...prev, product.name]));
+  };
 
   const handleClose = (val) => {
     onOpenChange(val);
@@ -193,7 +200,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
         }`}
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
         <div className="relative h-36 bg-white p-2 flex items-center justify-center">
-          <ProductPhoto name={product.name} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" />
+          <ProductPhoto name={product.name} brand={product.brand} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" />
           <button onClick={(event) => { event.stopPropagation(); onToggleFavorite(product); }} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${product.name}`} className="absolute start-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
             <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />
           </button>
@@ -235,8 +242,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             <Input placeholder={t("search.placeholder")} value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="h-12 rounded-2xl text-base border-2 border-primary/20 focus-visible:border-primary" autoFocus />
+            <button type="button" onClick={() => setByWeight(v => !v)} aria-pressed={byWeight} title={t("search.byWeight")}
+              className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border-2 transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
+              <Scale className="h-5 w-5" />
+            </button>
             <VoiceSearchButton onResult={handleVoiceResult} />
           </div>
+          {byWeight && <p className="text-xs font-semibold text-primary">{t("search.weightHint")}</p>}
 
           {/* Category pills — horizontal scrollable */}
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">

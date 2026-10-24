@@ -2,10 +2,10 @@ import { base44 } from "@/api/base44Client";
 import { israeliProducts } from "@/lib/israeliProducts";
 import { curatedProducts } from "@/lib/curatedProducts";
 import { petProducts } from "@/lib/petProducts";
-import { getProductImageUrl, hasSpecificProductImage } from "@/lib/productImages";
+import { getSpecificProductImage } from "@/lib/productImages";
 import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
 
-const CACHE_KEY = "makonim-product-catalog-v7";
+const CACHE_KEY = "makonim-product-catalog-v8";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 const memoryCatalogs = new Map();
 const pendingLoads = new Map();
@@ -24,11 +24,11 @@ function buildCatalog(remoteProducts) {
     if (!product?.name || !product?.category || typeof product.price !== "number") return;
     const key = `${normalizeProductText(product.name)}|${normalizeProductText(product.brand)}`;
     if (!unique.has(key)) {
-      const specific = product.image_url || (hasSpecificProductImage(product.name) ? getProductImageUrl(product.name, product.category) : "");
+      // רק תמונה של המוצר עצמו נכנסת לקטלוג — ולמוצר ממותג רק התמונה האמיתית שלו
+      const specific = product.image_url || (product.brand ? "" : getSpecificProductImage(product.name));
       unique.set(key, prepareProduct({
         ...product,
-        image_url: specific || getProductImageUrl(product.name, product.category),
-        // Only a product-specific photo counts as verified — generic category shots stay hidden from the catalog
+        image_url: specific,
         image_verified: Boolean(product.image_verified || specific)
       }));
     }

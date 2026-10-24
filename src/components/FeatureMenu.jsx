@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale } from "lucide-react";
+import { LayoutGrid, Store, ClipboardList, ScanLine, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenGroupBy, grouped, onOpenSuggestions }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -21,6 +21,8 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
     { icon: Mic, label: t("voice.title"), onClick: onOpenVoice, color: "text-pink-500" },
     { icon: Calculator, label: "מחשבון מבצעים", onClick: onOpenDealCalculator, color: "text-emerald-600" },
     { icon: ArrowUpDown, label: "סדר המחלקות", onClick: onOpenCategoryOrder, color: "text-indigo-500" },
+    { icon: Layers, label: grouped ? t("list.ungroup") : t("list.groupByCategory"), onClick: onOpenGroupBy, color: "text-cyan-600" },
+    { icon: Sparkles, label: t("smart.title"), onClick: onOpenSuggestions, color: "text-fuchsia-500" },
   ];
 
   return (

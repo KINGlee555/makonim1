@@ -1,13 +1,13 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { searchPriceCatalog, priceByBarcode, categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
 
-const OFF_FIELDS = "code,image_front_url,image_url";
+const OFF_FIELDS = "code,image_front_url,image_url,brands,product_name";
 
 // OFF rate-limits bursts — retry a couple of times with a short backoff.
 async function fetchWithRetry(url: string, label: string) {
   const headers = { "User-Agent": `MaKonim/1.0 (${label})` };
   for (let attempt = 0; attempt < 3; attempt++) {
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { headers, signal: AbortSignal.timeout(20000) });
     if (response.ok) return response;
     console.error("catalog request failed", label, response.status, attempt);
     if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1)));
@@ -58,8 +58,30 @@ function toProduct(item: any, image: string) {
   return {
     id: `shufersal-${item.code}`, barcode: item.code, name, brand: item.brand,
     category: categoryFromName(name), price: item.price, image_url: image,
+    weighted: Boolean(item.weighted),
     image_verified: true, price_source: "shufersal", catalog_source: "open_food_facts"
   };
+}
+
+// Hebrew queries typed with sizes and punctuation ("חלב טרה 3%") match better once the
+// punctuation is gone, and a shorter phrase finds the product when the full one doesn't.
+function nameQueries(query: string) {
+  const cleaned = query.replace(/[%.,()/\\-]/g, " ").replace(/\s+/g, " ").trim();
+  const words = cleaned.split(" ").filter(Boolean);
+  const queries = [cleaned];
+  if (words.length > 2) queries.push(words.slice(0, 2).join(" "));
+  return [...new Set(queries.filter((value: string) => value.length >= 3))];
+}
+
+// Some Israeli barcodes have no photo in the barcode catalog. A name search there often
+// still finds the very same product, so those real photos join the results as a second
+// source (they carry no shelf price, so they never outrank the priced products).
+async function photosByName(query: string) {
+  const params = new URLSearchParams({ search_terms: query, search_simple: "1", action: "process", json: "1", page_size: "24", fields: OFF_FIELDS });
+  const response = await fetchWithRetry(`https://world.openfoodfacts.org/cgi/search.pl?${params}`, "product photo search");
+  if (!response) return [];
+  const data = await response.json();
+  return (data.products || []).filter((product: any) => product.image_front_url || product.image_url);
 }
 
 export default async function(req: Request): Promise<Response> {
@@ -99,10 +121,34 @@ export default async function(req: Request): Promise<Response> {
     const priced = await searchPriceCatalog(query, 80);
     const pricedAt = Date.now();
     const images = await imagesForCodes(base44, priced.map((item) => item.code));
-    console.log("timing ms", { prices: pricedAt - started, photos: Date.now() - pricedAt, candidates: priced.length });
     const products = priced.filter((item) => images.has(item.code)).slice(0, limit)
       .map((item) => toProduct(item, images.get(item.code) as string));
-    return Response.json({ products, total: products.length, priced: priced.length, timing: { prices: pricedAt - started, photos: Date.now() - pricedAt } });
+
+    // Extra real photos for the products whose barcode had none.
+    const known = new Set(products.map((product) => product.barcode));
+    const extras: any[] = [];
+    if (query.length >= 3) {
+      for (const nameQuery of nameQueries(query)) {
+        for (const raw of await photosByName(nameQuery)) {
+          const code = String(raw.code);
+          const image = String(raw.image_front_url || raw.image_url || "").replace(/^http:/, "https:");
+          if (!code || !image || known.has(code)) continue;
+          known.add(code);
+          const name = String(raw.product_name || "").trim().slice(0, 64) || query;
+          extras.push({
+            id: `openfoodfacts-${code}`, barcode: code, name,
+            brand: String(raw.brands || "").split(",")[0].trim(),
+            category: categoryFromName(name), price: 0, image_url: image, weighted: false,
+            image_verified: true, price_source: "", catalog_source: "open_food_facts_search"
+          });
+        }
+        if (extras.length >= 8) break;
+      }
+    }
+
+    const all = [...products, ...extras];
+    console.log("timing ms", { prices: pricedAt - started, photos: Date.now() - pricedAt, candidates: priced.length, extras: extras.length });
+    return Response.json({ products: all, total: all.length, priced: priced.length, timing: { prices: pricedAt - started, photos: Date.now() - pricedAt } });
   } catch (error) {
     console.error("searchProductCatalog", error);
     return Response.json({ error: error instanceof Error ? error.message : "Catalog search failed" }, { status: 500 });

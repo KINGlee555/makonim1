@@ -113,38 +113,14 @@ const exactPhotos = [
 
 ];
 
-// Category fallback — guarantees every product shows a real photo
-const categoryPhotos = {
-  "פירות וירקות": pexels(1300972),
-  "מוצרי חלב": pexels(248412),
-  "בשר ודגים": pexels(1639557),
-  "לחם ומאפים": pexels(1775043),
-  "שימורים": pexels(4198015),
-  "תבלינים": pexels(4198714),
-  "חטיפים ומתוקים": pexels(4109944),
-  "משקאות": pexels(2983100),
-  "קפואים": pexels(845798),
-  "ניקיון": pexels(4239146),
-  "היגיינה": pexels(3735619),
-  "חיות מחמד": pexels(6568943),
-  "אחר": pexels(264636),
-};
+
 
 function findSpecificPhoto(name = "") {
   const value = name.toLowerCase();
   return exactPhotos.find(([pattern]) => pattern.test(value))?.[1] || "";
 }
 
-// True only when the photo really matches the product itself (not a generic category shot)
-export function hasSpecificProductImage(name = "") {
-  return Boolean(findSpecificPhoto(name));
-}
-
-// Keyword-matched photo only — no generic category shot
+// Real photo of the product itself — never a generic category shot
 export function getSpecificProductImage(name = "") {
   return findSpecificPhoto(name);
-}
-
-export function getProductImageUrl(name = "", category = "") {
-  return findSpecificPhoto(name) || categoryPhotos[category] || categoryPhotos["אחר"];
 }
