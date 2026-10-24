@@ -4,13 +4,13 @@ import { useT } from "@/lib/i18n";
 export default function AppFooter() {
   const t = useT();
   return (
-    <footer className="pt-8 pb-2 text-center">
-      <div className="mb-2 flex items-center justify-center gap-3 text-xs font-medium text-muted-foreground">
-        <Link to="/about" className="hover:text-primary">אודות</Link>
-        <span className="text-muted-foreground/40">•</span>
-        <Link to="/contact" className="hover:text-primary">יצירת קשר</Link>
+    <footer className="mt-8 text-center">
+      <div className="flex items-center justify-center gap-2">
+        <Link to="/about" className="mx-2 text-[15px] font-black text-market-blue no-underline">אודות</Link>
+        <span className="text-market-blue/50">•</span>
+        <Link to="/contact" className="mx-2 text-[15px] font-black text-market-blue no-underline">יצירת קשר</Link>
       </div>
-      <div className="text-[10px] text-muted-foreground/40">{t("footer.credit")}</div>
+      <p className="mt-1.5 text-[11px] font-bold text-muted-foreground/70">{t("footer.credit")}</p>
     </footer>
   );
 }

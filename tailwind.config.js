@@ -46,6 +46,19 @@ module.exports = {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+  			market: {
+  				ink: 'hsl(var(--market-ink))',
+  				pink: 'hsl(var(--market-pink))',
+  				'pink-soft': 'hsl(var(--market-pink-soft))',
+  				'pink-tint': 'hsl(var(--market-pink-tint))',
+  				yellow: 'hsl(var(--market-yellow))',
+  				'yellow-deep': 'hsl(var(--market-yellow-deep))',
+  				'yellow-soft': 'hsl(var(--market-yellow-soft))',
+  				blue: 'hsl(var(--market-blue))',
+  				'blue-soft': 'hsl(var(--market-blue-soft))',
+  				surface: 'hsl(var(--market-surface))',
+  				track: 'hsl(var(--market-track))'
+  			},
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

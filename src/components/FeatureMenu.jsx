@@ -26,7 +26,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button className="h-11 w-full rounded-lg bg-primary px-2 text-primary-foreground shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
+        <Button className="h-14 w-full rounded-[28px] bg-market-yellow px-2 text-[17px] font-black text-market-ink flex items-center justify-center gap-1.5 hover:bg-market-yellow hover:text-market-ink">
           <LayoutGrid className="w-4 h-4" />
           {t("list.moreFeatures")}
         </Button>

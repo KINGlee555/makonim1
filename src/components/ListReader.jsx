@@ -39,7 +39,7 @@ export default function ListReader({ items }) {
       variant="ghost"
       size="sm"
       onClick={handleRead}
-      className="gap-2 text-muted-foreground"
+      className="h-10 gap-1.5 rounded-[20px] bg-market-blue px-4 text-[15px] font-black text-white hover:bg-market-blue hover:text-white"
       disabled={items.filter(i => i.status !== "bought").length === 0}
     >
       {reading ? <Square className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}

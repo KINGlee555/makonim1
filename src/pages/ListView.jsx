@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil } from "lucide-react";
+import { Share2, ShoppingCart, User, Settings, ShoppingBag, Layers, RefreshCw, Pencil, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../components/AppHeader";
 import ProfileDialog from "../components/ProfileDialog";
@@ -42,6 +42,7 @@ import ChangePhotoDialog from "../components/ChangePhotoDialog";
 import UnavailableItem from "../components/UnavailableItem";
 import RenameListDialog from "../components/RenameListDialog";
 import { loadAllProducts } from "@/lib/loadAllProducts";
+import { MARKET_ASSETS, categoryImage, categoryTone } from "@/lib/marketPalette";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -69,6 +70,7 @@ export default function ListView() {
   const [groupByCategory, setGroupByCategory] = useState(true);
   const [showDealCalculator, setShowDealCalculator] = useState(false);
   const [showCategoryOrder, setShowCategoryOrder] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const [categoryOrder, setCategoryOrder] = useState(loadCategoryOrder);
   const [removingIds, setRemovingIds] = useState(new Set());
   const [refreshing, setRefreshing] = useState(false);
@@ -297,13 +299,13 @@ export default function ListView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 space-y-4">
-          <div className="h-10 rounded-xl bg-muted shimmer" />
-          <div className="h-16 rounded-xl bg-muted shimmer" />
-          <div className="space-y-2">
+      <div className="min-h-screen bg-market-surface">
+        <div className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 md:px-12 space-y-4">
+          <div className="h-14 rounded-[28px] bg-market-track shimmer" />
+          <div className="h-56 rounded-[40px] bg-market-track shimmer" />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-2xl bg-card shimmer" />
+              <div key={i} className="h-72 rounded-[30px] bg-market-track shimmer" />
             ))}
           </div>
         </div>
@@ -313,9 +315,9 @@ export default function ListView() {
 
   if (!list) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-market-surface">
         <div className="text-center">
-          <p className="text-xl text-muted-foreground">{t("list.notFound")}</p>
+          <p className="text-[26px] font-black text-market-ink">{t("list.notFound")}</p>
         </div>
       </div>
     );
@@ -323,55 +325,82 @@ export default function ListView() {
 
   const pendingItems = items.filter(i => !i.status || i.status === "pending");
   const unavailableItems = items.filter(i => i.status === "unavailable");
+  const totalPrice = pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
+  const groupedCategories = Object.entries(
+    pendingItems.reduce((groups, item) => {
+      const cat = item.category || t("summary.other");
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(item);
+      return groups;
+    }, {})
+  ).sort(([a], [b]) => {
+    const sorted = sortByCategoryOrder([a, b], categoryOrder);
+    return sorted[0] === a ? -1 : 1;
+  });
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="market-page min-h-screen bg-market-surface pb-24">
       <AppHeader
         listView
         userName={currentUserRef[0]?.full_name}
         rightAction={
-          <div className="flex gap-2">
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" title={t("header.changeName")} onClick={() => setShowProfile(true)}>
-              <User className="w-5 h-5" />
+          <div className="flex items-center gap-1.5">
+            <Button variant="ghost" size="icon" title={t("header.changeName")} onClick={() => setShowProfile(true)} className="flex h-11 w-auto items-center gap-1.5 rounded-[22px] bg-market-pink px-3.5 text-white hover:bg-market-pink hover:text-white">
+              <User className="w-4 h-4" />
+              <span className="hidden text-[15px] font-extrabold md:inline">{t("header.changeName")}</span>
             </Button>
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" title={t("header.settings")} onClick={() => setShowSettings(true)}>
-              <Settings className="w-5 h-5" />
+            <Button variant="ghost" size="icon" title={t("header.settings")} onClick={() => setShowSettings(true)} className="flex h-11 w-auto items-center gap-1.5 rounded-[22px] bg-market-yellow px-3.5 text-market-ink hover:bg-market-yellow hover:text-market-ink">
+              <Settings className="w-4 h-4" />
+              <span className="hidden text-[15px] font-extrabold md:inline">{t("header.settings")}</span>
             </Button>
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" title={t("header.share")} onClick={() => setShowShare(true)}>
-              <Share2 className="w-5 h-5" />
+            <Button variant="ghost" size="icon" title={t("header.share")} onClick={() => setShowShare(true)} className="flex h-11 w-auto items-center gap-1.5 rounded-[22px] bg-market-blue px-3.5 text-white hover:bg-market-blue hover:text-white">
+              <Share2 className="w-4 h-4" />
+              <span className="hidden text-[15px] font-extrabold md:inline">{t("header.share")}</span>
             </Button>
           </div>
         }
       />
 
-      <main className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4">
-        <section className="rounded-2xl border border-primary/10 bg-card p-4 shadow-md shadow-primary/5 mb-4 animate-slide-up" aria-label={t("list.total")}>
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">{t("list.toBuy")}</p>
-              <p className="text-3xl font-bold leading-none text-foreground mt-1">{pendingItems.length}</p>
+      <main className="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 md:px-12">
+        <section className="relative mt-2 overflow-hidden rounded-[40px] border-4 border-market-ink bg-market-blue px-5 py-7 shadow-[0_10px_0_hsl(var(--market-ink))] mk-pop md:px-11 md:py-9" aria-label={t("list.total")}>
+          <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-80 w-80 rounded-full bg-market-yellow opacity-[0.35]" />
+          <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-[380px] h-52 w-52 rounded-full bg-market-pink opacity-50" />
+
+          <span className="absolute left-3 top-3 z-10 flex h-24 w-24 flex-col items-center justify-center rounded-full border-[5px] border-white bg-market-yellow text-market-ink shadow-[0_0_0_4px_hsl(var(--market-pink))] mk-bob md:left-[70px] md:top-[34px] md:h-[150px] md:w-[150px]">
+            <b className="text-4xl font-black leading-none tracking-[-3px] md:text-[64px]">{pendingItems.length}</b>
+            <span className="text-sm font-black md:text-[17px]">{t("list.toBuy")}</span>
+          </span>
+
+          <div className="relative z-[1] grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_440px]">
+            <div className="rounded-[28px] border-[3px] border-market-ink bg-market-surface px-5 py-6 md:px-7">
+              <div className="grid grid-cols-2 gap-4 pt-20 text-center md:pt-0">
+                <div>
+                  <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.toBuy")}</span>
+                  <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-pink md:text-[64px]">{pendingItems.length}</p>
+                </div>
+                <div>
+                  <span className="inline-block rounded-xl bg-market-yellow px-3 py-0.5 text-sm font-black tracking-[0.5px] text-market-ink">{t("list.total")}</span>
+                  <p className="mt-1.5 text-5xl font-black leading-[1.1] tracking-[-3px] text-market-blue md:text-[64px]">₪{totalPrice.toFixed(2)}</p>
+                </div>
+              </div>
+              <div className="my-4 h-4 overflow-hidden rounded-lg border-2 border-market-ink bg-market-track">
+                <span className="mk-stripe block h-full w-full" />
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-2.5">
+                <button onClick={() => setShowRename(true)} title={t("rename.button")} className="flex min-w-0 items-center gap-2 text-[18px] font-black text-market-ink">
+                  <span className="truncate">{list.title}</span>
+                  <Pencil className="h-4 w-4 flex-shrink-0" />
+                </button>
+                <div className="flex flex-shrink-0 items-center gap-2">
+                  <button onClick={handleRefresh} className="flex h-10 items-center justify-center gap-1.5 rounded-[20px] bg-market-pink px-4 text-[15px] font-black text-white">
+                    <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
+                    {t("list.refresh")}
+                  </button>
+                  <ListReader items={pendingItems} />
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">{t("list.total")}</p>
-              <p className="text-3xl font-bold leading-none text-foreground mt-1">₪{pendingItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0).toFixed(2)}</p>
-            </div>
-          </div>
-          <div className="h-2 rounded-full bg-secondary overflow-hidden my-3">
-            <div className="h-full w-full rounded-full bg-primary/35" />
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <button onClick={() => setShowRename(true)} title={t("rename.button")}
-              className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-muted-foreground">
-              <span className="truncate">{list.title}</span>
-              <Pencil className="h-4 w-4 flex-shrink-0 text-primary" />
-            </button>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button onClick={handleRefresh} className="h-9 min-w-16 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm flex items-center justify-center gap-1.5">
-                <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-refresh" : ""}`} />
-                {t("list.refresh")}
-              </button>
-              <ListReader items={pendingItems} />
-            </div>
+            <img src={MARKET_ASSETS.hero} alt="עגלת קניות מצוירת" className="relative z-[1] aspect-[4/3] w-full rounded-[28px] border-4 border-white object-cover mk-wob" />
           </div>
         </section>
 
@@ -379,9 +408,9 @@ export default function ListView() {
           onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
 
         {(list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).length > 0 && (
-          <div className="flex items-center gap-2 bg-secondary border border-primary/15 rounded-xl px-4 py-2 mb-4">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-sm font-medium text-secondary-foreground">
+          <div className="mt-5 flex items-center gap-2.5 rounded-3xl border-[3px] border-market-pink bg-market-pink-tint px-5 py-3">
+            <span className="h-3 w-3 flex-shrink-0 rounded-full bg-market-pink" />
+            <span className="text-[17px] font-extrabold text-market-pink">
               {t("active.nowShopping", { name: (list.active_shoppers || []).filter(s => s !== currentUserNameRef.current).join(", ") })}
             </span>
           </div>
@@ -389,13 +418,13 @@ export default function ListView() {
 
         {pendingItems.length > 0 && (
           <>
-            <div className="grid grid-cols-3 gap-2 mb-5 animate-slide-up">
-              <Button onClick={() => setShowShoppingMode(true)} className="h-11 rounded-lg bg-primary text-primary-foreground px-2 shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
+            <div className="mt-6 grid grid-cols-2 gap-3.5 md:grid-cols-4">
+              <button onClick={() => setShowShoppingMode(true)} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-pink px-2 text-[17px] font-black text-white">
                 <ShoppingBag className="w-4 h-4" />{t("shoppingMode.title")}
-              </Button>
-              <Button variant="default" onClick={() => setGroupByCategory(g => !g)} className="h-11 rounded-lg bg-primary text-primary-foreground px-2 shadow-sm flex items-center justify-center gap-1.5 text-sm font-semibold">
+              </button>
+              <button onClick={() => setGroupByCategory(g => !g)} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-blue px-2 text-[17px] font-black text-white">
                 <Layers className="w-4 h-4" />{groupByCategory ? t("list.ungroup") : t("list.groupByCategory")}
-              </Button>
+              </button>
               <FeatureMenu
                 onOpenBasket={() => setShowBasket(true)}
                 onOpenPriceCompare={() => setShowPriceCompare(true)}
@@ -410,58 +439,64 @@ export default function ListView() {
                 onOpenDealCalculator={() => setShowDealCalculator(true)}
                 onOpenCategoryOrder={() => setShowCategoryOrder(true)}
               />
+              <button onClick={() => setShowSuggestions(v => !v)} aria-expanded={showSuggestions} className="flex h-14 items-center justify-center gap-1.5 rounded-[28px] bg-market-ink px-2 text-[17px] font-black text-white">
+                <Sparkles className="w-4 h-4" />{t("smart.title")}
+              </button>
             </div>
 
-            <div className="mb-5">
-              <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+            {showSuggestions && (
+              <div className="mt-6">
+                <SmartSuggestions listId={listId} currentItems={items} onAddProduct={handleAddProduct} />
+              </div>
+            )}
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {groupedCategories.map(([cat, catItems], index) => (
+                <span key={cat} className={`flex items-center gap-2.5 rounded-[26px] px-5 py-2.5 text-[18px] font-black ${categoryTone(index).chip}`}>
+                  {cat}
+                  <em className="rounded-[14px] bg-market-surface px-2.5 py-0.5 text-base font-black not-italic text-market-ink">{catItems.length}</em>
+                </span>
+              ))}
             </div>
 
-            <div key={groupByCategory ? "grouped" : "ungrouped"} className="space-y-4 mb-6 animate-fade-in">
-              {groupByCategory
-                ? Object.entries(
-                    pendingItems.reduce((groups, item) => {
-                      const cat = item.category || t("summary.other");
-                      if (!groups[cat]) groups[cat] = [];
-                      groups[cat].push(item);
-                      return groups;
-                    }, {})
-                  ).sort(([a], [b]) => {
-                    const sorted = sortByCategoryOrder([a, b], categoryOrder);
-                    return sorted[0] === a ? -1 : 1;
-                  }).map(([cat, catItems]) => (
-                    <section key={cat}>
-                      <div className="category-header flex items-end justify-between gap-3 px-1 pb-2 border-b border-primary/10 mb-2">
-                        <div>
-                          <h2 className="text-xl font-bold text-foreground">{cat}</h2>
-                          <p className="text-sm text-muted-foreground">{catItems.length} {t("list.toBuy")}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        {catItems.map(item => (
-                          <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
-                            onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                            onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
-                            isFavorite={favorites.some(favorite => favorite.name === item.name)}
-                            className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
-                        ))}
-                      </div>
-                    </section>
-                  ))
-                : pendingItems.map(item => (
-                  <ProductItem key={item.id} item={item} onToggleBought={handleToggleBought}
-                    onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
-                    onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
-                    isFavorite={favorites.some(favorite => favorite.name === item.name)}
-                    className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
+            <div key={groupByCategory ? "grouped" : "ungrouped"} className="mt-7 animate-fade-in">
+              {groupByCategory ? (
+                groupedCategories.map(([cat, catItems], index) => (
+                  <section key={cat} className="mb-7">
+                    <div className="mb-4 flex items-center gap-4">
+                      <img src={categoryImage(cat)} alt={cat} className="h-16 w-16 flex-shrink-0 rounded-full border-4 border-market-ink object-cover md:h-[84px] md:w-[84px]" />
+                      <h2 className={`min-w-0 text-[28px] font-black leading-tight tracking-[-2px] md:text-[38px] ${categoryTone(index).text}`}>{cat}</h2>
+                      <span className={`rounded-[14px] px-3.5 py-0.5 text-base font-black ${categoryTone(index).badge}`}>{catItems.length}</span>
+                    </div>
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                      {catItems.map((item, itemIndex) => (
+                        <ProductItem key={item.id} item={item} paletteIndex={itemIndex} onToggleBought={handleToggleBought}
+                          onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                          onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                          isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                          className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
+                      ))}
+                    </div>
+                  </section>
                 ))
-              }
+              ) : (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {pendingItems.map((item, index) => (
+                    <ProductItem key={item.id} item={item} paletteIndex={index} onToggleBought={handleToggleBought}
+                      onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
+                      onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                      isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                      className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}
 
         {unavailableItems.length > 0 && (
-          <section className="mb-6 space-y-2 animate-fade-in">
-            <h2 className="px-1 text-lg font-bold text-muted-foreground">{t("list.unavailable")}</h2>
+          <section className="mt-7 mb-6 space-y-3 animate-fade-in">
+            <h2 className="text-[26px] font-black text-market-ink">{t("list.unavailable")}</h2>
             {unavailableItems.map(item => <UnavailableItem key={item.id} item={item} onRestore={handleRestore} />)}
           </section>
         )}
@@ -470,11 +505,11 @@ export default function ListView() {
           <div className="py-4 animate-fade-in">
             <EmptyListSuggestions onAddProduct={handleAddProduct} />
             <div className="text-center py-12">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 animate-float">
-                <ShoppingCart className="w-10 h-10 text-primary/50" />
+              <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full border-4 border-market-ink bg-market-yellow mk-bob">
+                <ShoppingCart className="w-11 h-11 text-market-ink" />
               </div>
-              <p className="text-xl font-bold text-foreground mb-1">{t("list.empty")}</p>
-              <p className="text-muted-foreground text-sm">{t("list.emptyDesc")}</p>
+              <p className="text-[26px] font-black text-market-ink mb-1">{t("list.empty")}</p>
+              <p className="text-[17px] font-bold text-market-ink/70">{t("list.emptyDesc")}</p>
             </div>
           </div>
         )}

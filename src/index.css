@@ -7,6 +7,18 @@
 @layer base {
   :root {
     --font-rubik: 'Rubik', sans-serif;
+    /* Colorful market design direction — a fixed brand palette, not theme colors */
+    --market-ink: 197 75% 17%;
+    --market-pink: 349 100% 65%;
+    --market-yellow: 43 100% 51%;
+    --market-yellow-deep: 41 100% 44%;
+    --market-blue: 195 82% 38%;
+    --market-surface: 0 0% 100%;
+    --market-pink-soft: 347 100% 95%;
+    --market-yellow-soft: 44 100% 89%;
+    --market-blue-soft: 195 74% 91%;
+    --market-track: 196 61% 94%;
+    --market-pink-tint: 348 100% 97%;
     --background: 36 33% 94%;
     --foreground: 181 61% 15%;
     --card: 0 0% 100%;
@@ -424,3 +436,50 @@ html.easy-mode [role="dialog"] .text-xl {
     max-width: 56rem;
   }
 }
+
+/* ===== Colorful market design direction ===== */
+.market-page button {
+  cursor: pointer;
+  transition: box-shadow 0.2s, opacity 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.market-page button:hover {
+  box-shadow: 0 6px 0 rgba(11, 58, 77, 0.18);
+}
+
+.market-page button:active {
+  opacity: 0.85;
+  transform: none;
+}
+
+.market-page button:focus-visible,
+.market-page a:focus-visible {
+  outline: 3px solid #0b3a4d;
+  outline-offset: 2px;
+}
+
+/* Striped progress fill */
+.mk-stripe {
+  background: repeating-linear-gradient(45deg, hsl(var(--market-pink)) 0 14px, hsl(var(--market-yellow)) 14px 28px);
+}
+
+@keyframes mkPop {
+  0% { opacity: 0; transform: translateY(40px) scale(0.8); }
+  60% { opacity: 1; transform: translateY(-8px) scale(1.04); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes mkBob {
+  0%, 100% { transform: rotate(-8deg) translateY(0); }
+  50% { transform: rotate(-8deg) translateY(-10px); }
+}
+
+@keyframes mkWob {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.mk-pop { animation: mkPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.mk-bob { animation: mkBob 3s ease-in-out infinite; }
+.mk-wob { animation: mkWob 4s ease-in-out infinite; }

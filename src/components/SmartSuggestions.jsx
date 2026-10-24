@@ -36,16 +36,16 @@ export default function SmartSuggestions({ listId, currentItems, onAddProduct })
 
   return (
     <section className="mb-0">
-      <div className="flex items-center gap-2 mb-2 px-1">
-        <Sparkles className="w-4 h-4 text-primary" />
-        <h2 className="text-lg font-bold text-foreground">{t("smart.title")}</h2>
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="w-5 h-5 text-market-pink" />
+        <h2 className="text-[19px] font-black text-market-ink">{t("smart.title")}</h2>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         {suggestions.map(s => (
-          <button key={s.name} onClick={() => onAddProduct({ name: s.name, price: 0, category: "אחר", image_url: "" })} className="flex min-w-0 items-center gap-2 rounded-xl border border-primary/10 bg-card p-2 text-start shadow-sm">
-            <ProductPhoto name={s.name} category="אחר" className="h-12 w-12 flex-shrink-0 rounded-lg" />
-            <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{s.name}</span>
-            <Plus className="h-4 w-4 flex-shrink-0 text-primary" />
+          <button key={s.name} onClick={() => onAddProduct({ name: s.name, price: 0, category: "אחר", image_url: "" })} className="flex min-w-0 items-center gap-2 rounded-[22px] border-[3px] border-market-ink bg-market-yellow-soft p-2.5 text-start shadow-[0_4px_0_hsl(var(--market-ink))]">
+            <ProductPhoto name={s.name} category="אחר" className="h-12 w-12 flex-shrink-0 rounded-xl" />
+            <span className="min-w-0 flex-1 truncate text-sm font-extrabold text-market-ink">{s.name}</span>
+            <Plus className="h-4 w-4 flex-shrink-0 text-market-pink" />
           </button>
         ))}
       </div>
