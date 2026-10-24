@@ -57,6 +57,7 @@ import SmartTools from "../components/SmartTools";
 import RecentlyBought from "../components/RecentlyBought";
 import FillFromLastWeek from "../components/FillFromLastWeek";
 import PriceDropNotice from "../components/PriceDropNotice";
+import MonthlySummary from "../components/MonthlySummary";
 import ReportPriceDialog from "../components/ReportPriceDialog";
 import PriceSourcesDialog from "../components/PriceSourcesDialog";
 import { useSimpleMode } from "@/lib/simpleMode";
@@ -434,6 +435,8 @@ export default function ListView() {
         )}
 
         <PriceDropNotice listId={listId} items={pendingItems} />
+
+        <MonthlySummary listId={listId} />
 
         <DeliveryNotice listId={listId} delay={0.05} />
 

@@ -42,6 +42,9 @@ export default function Login() {
           <Link to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")} className="text-primary font-medium hover:underline">
             {t("auth.login.createOne")}
           </Link>
+          <span className="mt-2 block">
+            <Link to="/demo" className="text-primary font-medium hover:underline">{t("auth.login.seeDemo")}</Link>
+          </span>
         </>
       }
     >

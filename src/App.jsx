@@ -22,9 +22,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import DemoList from './pages/DemoList';
 
 // Public pages: reachable without login (auth pages + trust pages)
-const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact"];
+const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact", "/demo"];
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/demo" element={<DemoList />} />
       <Route path="/" element={<Home />} />
       <Route path="/list/:listId" element={<ListView />} />
       <Route path="/join/:shareCode" element={<JoinList />} />

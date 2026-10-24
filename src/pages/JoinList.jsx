@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,6 +118,9 @@ export default function JoinList() {
             <Button onClick={() => navigate("/")} className="h-14 px-8 rounded-2xl text-lg">
               {t("join.backHome")}
             </Button>
+            <div className="mt-3">
+              <Link to="/demo" className="text-primary hover:underline">{t("join.seeDemo")}</Link>
+            </div>
           </>
         )}
 
