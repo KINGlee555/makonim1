@@ -1,4 +1,5 @@
 import ShareDialog from "@/components/ShareDialog";
+import JoinQrDialog from "@/components/JoinQrDialog";
 import ParticipantsDialog from "@/components/ParticipantsDialog";
 import ProductSearchDialog from "@/components/ProductSearchDialog";
 import ProfileDialog from "@/components/ProfileDialog";
@@ -37,6 +38,7 @@ export default function ListDialogs({
   return (
     <>
       <ShareDialog {...bind("share")} list={list} currentUser={user} itemCount={pendingItems.length} />
+      <JoinQrDialog {...bind("qr")} list={list} />
       <ParticipantsDialog {...bind("participants")} list={list} currentUser={user}
         onUpdated={actions.onListUpdated} />
       <ProductSearchDialog {...bind("search")} onAddProduct={actions.onAddProduct}

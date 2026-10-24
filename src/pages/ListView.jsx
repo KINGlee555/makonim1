@@ -125,6 +125,7 @@ export default function ListView() {
         onOpenProfile={() => show("profile")}
         onOpenSettings={() => show("settings")}
         onOpenShare={() => show("share")}
+        onOpenQr={() => show("qr")}
         onRename={() => show("rename")}
         onAdd={() => show("search")}
       />
@@ -230,6 +231,7 @@ export default function ListView() {
             onOpenPremium={() => show("premium")}
             onOpenCourier={() => show("courier")}
             onOpenPetStore={() => show("pet")}
+            onOpenQr={() => show("qr")}
             onRefresh={handleRefresh}
             refreshing={refreshing}
             onOpenParticipants={isOwner ? () => show("participants") : null}

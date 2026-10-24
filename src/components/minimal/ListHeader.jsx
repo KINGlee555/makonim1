@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, QrCode } from "lucide-react";
 import EasyModeToggle from "@/components/EasyModeToggle";
 import HeaderMenu from "@/components/HeaderMenu";
 import { useT } from "@/lib/i18n";
 import { uiPill, uiEnter } from "@/lib/minimalUi";
 
 // פס עליון אחד דביק: הזהות, הפעולות הקטנות, ואחריו שם הרשימה עם כמה נשאר והסה״כ.
-export default function ListHeader({ list, userName, itemCount, total, onOpenProfile, onOpenSettings, onOpenShare, onRename, onAdd }) {
+export default function ListHeader({ list, userName, itemCount, total, onOpenProfile, onOpenSettings, onOpenShare, onOpenQr, onRename, onAdd }) {
   const t = useT();
   const ref = useRef(null);
   const [compact, setCompact] = useState(false);
@@ -69,6 +69,15 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
           <div className="flex shrink-0 items-center gap-1.5">
             <EasyModeToggle pill />
             <button type="button" onClick={onOpenShare} className={uiPill}>{t("header.share")}</button>
+            <button
+              type="button"
+              onClick={onOpenQr}
+              title={t("share.qrTitle")}
+              className={`${uiPill} inline-flex items-center gap-1`}
+            >
+              <QrCode className="h-3.5 w-3.5" strokeWidth={2} />
+              {t("share.qrButton")}
+            </button>
             <HeaderMenu onOpenProfile={onOpenProfile} onOpenSettings={onOpenSettings} />
           </div>
         </div>

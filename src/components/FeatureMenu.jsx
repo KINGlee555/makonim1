@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users, ChevronDown, PawPrint } from "lucide-react";
+import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users, ChevronDown, PawPrint, QrCode } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { uiBarPill, uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
 
-export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenPetStore, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot, bar }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenPetStore, onOpenQr, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot, bar }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -32,6 +32,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
     { icon: ClipboardList, label: t("templates.title"), onClick: onOpenTemplates },
     { icon: Tag, label: t("deals.title"), onClick: onOpenDeals },
     { icon: PawPrint, label: t("pet.title"), onClick: onOpenPetStore },
+    ...(onOpenQr ? [{ icon: QrCode, label: t("share.qrButton"), onClick: onOpenQr }] : []),
     { icon: CalendarDays, label: t("menu.title"), onClick: onOpenMenu },
     { icon: Truck, label: t("courier.open"), onClick: onOpenCourier },
   ];

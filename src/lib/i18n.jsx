@@ -714,6 +714,11 @@ const translations = {
     "drops.hide": "הסתר",
     "share.qrAlt": "קוד QR להצטרפות לרשימה",
     "share.qrHint": "סרקו את הקוד מהטלפון השני כדי להצטרף",
+    "share.qrButton": "קוד הצטרפות",
+    "share.qrTitle": "הצטרפות בקוד QR",
+    "share.qrScanHint": "כוונו את המצלמה של הטלפון השני לקוד — הרשימה תיפתח וההצטרפות בלחיצה אחת",
+    "share.qrAccountHint": "מי שאין לו חשבון עובר הרשמה קצרה ואז חוזר להצטרפות לרשימה.",
+    "share.qrSend": "שלחו לחבר/ה",
 
     // סיכום חודשי, רשימת דוגמה לאורח וקישור אליה ממסכי הפתיחה
     "monthly.title": "סיכום חודשי",
@@ -1477,6 +1482,11 @@ const translations = {
     "drops.hide": "Hide",
     "share.qrAlt": "QR code to join the list",
     "share.qrHint": "Scan the code from the other phone to join",
+    "share.qrButton": "Join code",
+    "share.qrTitle": "Join with a QR code",
+    "share.qrScanHint": "Point the other phone's camera at the code - the list opens and joining takes one tap",
+    "share.qrAccountHint": "Anyone without an account signs up briefly and then returns to join the list.",
+    "share.qrSend": "Send it",
 
     // Monthly summary, guest sample list and links to it from the entry screens
     "monthly.title": "Monthly summary",
@@ -2165,6 +2175,11 @@ const translations = {
     "drops.hide": "Скрыть",
     "share.qrAlt": "QR-код для присоединения к списку",
     "share.qrHint": "Отсканируйте код со второго телефона, чтобы присоединиться",
+    "share.qrButton": "Код присоединения",
+    "share.qrTitle": "Присоединение по QR-коду",
+    "share.qrScanHint": "Наведите камеру второго телефона на код — список откроется, и присоединение за одно касание",
+    "share.qrAccountHint": "У кого нет аккаунта — короткая регистрация и возврат к присоединению.",
+    "share.qrSend": "Отправить",
 
     // Итоги месяца, пример списка для гостя и ссылки на него
     "monthly.title": "Итоги месяца",
