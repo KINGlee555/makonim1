@@ -1,12 +1,13 @@
 import { memo } from "react";
-import { Plus, Minus, MapPin, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera } from "lucide-react";
+import { Plus, Minus, MapPin, Check, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
+import DealBadge from "@/components/DealBadge";
 import { useT } from "@/lib/i18n";
 import { cardTone } from "@/lib/marketPalette";
 import { isGram, lineCost, quantityStep } from "@/lib/units";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onUnavailable, onToggleFavorite, onChangePhoto, onPhotoFound, isFavorite, paletteIndex = 0, className }) {
+function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, deal, isFavorite, paletteIndex = 0, className }) {
   const t = useT();
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
@@ -48,6 +49,11 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
                 <Camera className="me-2 h-4 w-4" />{t("productItem.changePhoto")}
               </DropdownMenuItem>
             )}
+            {onSuggestPhoto && (
+              <DropdownMenuItem onClick={() => onSuggestPhoto(item)}>
+                <Send className="me-2 h-4 w-4" />{t("suggest.menu")}
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={() => onUnavailable(item)}>
               <CircleSlash2 className="me-2 h-4 w-4" />{t("productItem.notFound")}
             </DropdownMenuItem>
@@ -60,6 +66,8 @@ function ProductItem({ item, onToggleBought, onUpdateQuantity, onNavigate, onRem
           </span>
         )}
       </div>
+
+      {deal && <DealBadge deal={deal} />}
 
       <h3 className="product-name text-[22px] font-black leading-tight tracking-[-1px] text-market-ink">{item.name}</h3>
 

@@ -15,6 +15,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ShoppingHistory from './pages/ShoppingHistory';
 import ShoppingSummary from './pages/ShoppingSummary';
+import PhotoSuggestions from './pages/PhotoSuggestions';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
       <Route path="/join/:shareCode" element={<JoinList />} />
       <Route path="/history/:listId" element={<ShoppingHistory />} />
       <Route path="/summary/:listId" element={<ShoppingSummary />} />
+      <Route path="/photo-suggestions" element={<PhotoSuggestions />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

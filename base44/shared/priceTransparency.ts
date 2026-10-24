@@ -54,13 +54,21 @@ async function cerberusSession(user: string) {
   return session;
 }
 
-// Newest full price file of one branch: filename carries the date (…-YYYYMMDD-HHMMSS.gz).
-async function cerberusFile(chain: Chain) {
+export type FileKind = "price" | "promo";
+const FILE_KIND: Record<FileKind, { search: string; name: string }> = {
+  price: { search: "PriceFull", name: "pricefull" },
+  promo: { search: "PromoFull", name: "promofull" }
+};
+// Shufersal publishes each file type under its own category id.
+const SHUFERSAL_CAT: Record<FileKind, number> = { price: 2, promo: 4 };
+
+// Newest full file of one branch: filename carries the date (…-YYYYMMDD-HHMMSS.gz).
+async function cerberusFile(chain: Chain, kind: FileKind) {
   const session = await cerberusSession(chain.user as string);
   const dir = await fetch(`${CERBERUS}/file/json/dir`, {
     method: "POST",
     headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: session.cookie },
-    body: new URLSearchParams({ csrftoken: session.csrf, sEcho: "1", iDisplayLength: "200", sSearch: "PriceFull" })
+    body: new URLSearchParams({ csrftoken: session.csrf, sEcho: "1", iDisplayLength: "200", sSearch: FILE_KIND[kind].search })
   });
   const text = await dir.text();
   if (!text.startsWith("{")) {
@@ -79,11 +87,11 @@ async function cerberusFile(chain: Chain) {
   };
 }
 
-async function shufersalFile(chain: Chain) {
-  const listing = await fetch(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=2&storeId=${chain.store}`, { headers: UA });
+async function shufersalFile(chain: Chain, kind: FileKind) {
+  const listing = await fetch(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=${SHUFERSAL_CAT[kind]}&storeId=${chain.store}`, { headers: UA });
   const html = await listing.text();
-  const link = html.match(/href="(https:\/\/pricesprodpublic[^"]+pricefull[^"]+)"/i);
-  if (!link) throw new Error("shufersal: price file link not found");
+  const link = html.match(new RegExp(`href="(https:\\/\\/pricesprodpublic[^"]+${FILE_KIND[kind].name}[^"]+)"`, "i"));
+  if (!link) throw new Error(`shufersal: ${kind} file link not found`);
   const url = link[1].replace(/&amp;/g, "&");
   const day = (url.match(/(\d{8})\d{4}\.gz/) || [])[1] || "";
   return {
@@ -92,8 +100,13 @@ async function shufersalFile(chain: Chain) {
   };
 }
 
+// Newest daily file of one chain: the shelf-price file or the promotions file.
+export async function chainDataFile(chain: Chain, kind: FileKind) {
+  return chain.source === "shufersal" ? shufersalFile(chain, kind) : cerberusFile(chain, kind);
+}
+
 export async function chainPriceFile(chain: Chain) {
-  return chain.source === "shufersal" ? shufersalFile(chain) : cerberusFile(chain);
+  return chainDataFile(chain, "price");
 }
 
 const tag = (block: string, name: string) => (block.match(new RegExp(`<${name}>([^<]*)</${name}>`)) || [])[1]?.trim() || "";

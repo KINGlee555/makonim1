@@ -24,6 +24,9 @@ import ShoppingMode from "../components/ShoppingMode";
 import BasketComparison from "../components/BasketComparison";
 import PriceCompareTable from "../components/PriceCompareTable";
 import ListTemplates from "../components/ListTemplates";
+import SuggestPhotoDialog from "../components/SuggestPhotoDialog";
+import { useChainDeals } from "@/hooks/useChainDeals";
+import { dealForItem } from "@/lib/chainDeals";
 import BarcodeScanner from "../components/BarcodeScanner";
 import SmartSuggestions from "../components/SmartSuggestions";
 import ShoppingRoute from "../components/ShoppingRoute";
@@ -79,6 +82,7 @@ export default function ListView() {
   const [favorites, setFavorites] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [photoItem, setPhotoItem] = useState(null);
+  const [suggestPhotoItem, setSuggestPhotoItem] = useState(null);
   const currentUserRef = useState(null);
   const currentUserNameRef = useRef("");
   const itemsRef = useRef([]);
@@ -88,6 +92,8 @@ export default function ListView() {
   const { syncing: priceSyncing } = usePriceSync();
   // Prepares real chain prices in the background so comparisons open instantly
   useWarmChainPrices(items);
+  // מבצעים אמיתיים מהרשתות עבור המוצרים ברשימה
+  const chainDeals = useChainDeals(items);
 
   const loadData = useCallback(async () => {
     const [allLists, allItems, allFavorites] = await Promise.all([
@@ -464,6 +470,7 @@ export default function ListView() {
                         <ProductItem key={item.id} item={item} paletteIndex={itemIndex} onToggleBought={handleToggleBought}
                           onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                           onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                          onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                           onPhotoFound={handlePhotoFound}
                           isFavorite={favorites.some(favorite => favorite.name === item.name)}
                           className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
@@ -477,6 +484,7 @@ export default function ListView() {
                     <ProductItem key={item.id} item={item} paletteIndex={index} onToggleBought={handleToggleBought}
                       onUpdateQuantity={handleUpdateQuantity} onNavigate={handleNavigate} onRemove={handleRemoveItem}
                       onEdit={setEditingItem} onUnavailable={handleUnavailable} onToggleFavorite={handleToggleFavorite} onChangePhoto={setPhotoItem}
+                      onSuggestPhoto={setSuggestPhotoItem} deal={dealForItem(chainDeals, item)}
                       onPhotoFound={handlePhotoFound}
                       isFavorite={favorites.some(favorite => favorite.name === item.name)}
                       className={removingIds.has(item.id) ? "animate-slide-out" : ""} />
@@ -523,6 +531,8 @@ export default function ListView() {
       <ItemDetailsDialog item={editingItem} onClose={() => setEditingItem(null)} onSave={handleUpdateDetails} />
       <ChangePhotoDialog item={photoItem} onClose={() => setPhotoItem(null)}
         onSaved={(id, url) => setItems(prev => prev.map(i => (i.id === id ? { ...i, image_url: url } : i)))} />
+      <SuggestPhotoDialog item={suggestPhotoItem} listId={listId} userName={currentUserNameRef.current}
+        onClose={() => setSuggestPhotoItem(null)} />
 
       {showShoppingMode && (
         <ShoppingMode items={pendingItems} onBought={handleToggleBought} onExit={() => setShowShoppingMode(false)}
@@ -536,7 +546,7 @@ export default function ListView() {
       <WeeklyMenu open={showMenu} onOpenChange={setShowMenu} onGenerate={handleAddMultiple} />
       <CostSplitter open={showSplit} onOpenChange={setShowSplit} listId={listId} list={list} />
       <Leaderboard open={showLeaderboard} onOpenChange={setShowLeaderboard} listId={listId} />
-      <CouponsDeals open={showDeals} onOpenChange={setShowDeals} items={pendingItems} />
+      <CouponsDeals open={showDeals} onOpenChange={setShowDeals} items={pendingItems} onAddProduct={handleAddProduct} />
       <DealCalculator open={showDealCalculator} onOpenChange={setShowDealCalculator} />
       <CategoryOrderDialog open={showCategoryOrder} onOpenChange={setShowCategoryOrder} onSaved={setCategoryOrder} />
       <VoiceQuickAdd open={showVoice} onOpenChange={setShowVoice} onAddProduct={handleAddProduct} allProducts={allProducts} />

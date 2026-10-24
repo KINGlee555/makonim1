@@ -1,0 +1,90 @@
+{
+  "name": "ImageSuggestion",
+  "type": "object",
+  "properties": {
+    "product_name": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05de\u05d5\u05e6\u05e8 \u05e9\u05d4\u05ea\u05de\u05d5\u05e0\u05d4 \u05e9\u05dc\u05d5 \u05de\u05d5\u05e6\u05e2\u05ea \u05dc\u05e9\u05d9\u05e0\u05d5\u05d9",
+      "maxLength": 64
+    },
+    "barcode": {
+      "type": "string",
+      "default": "",
+      "description": "\u05d1\u05e8\u05e7\u05d5\u05d3 \u05d4\u05de\u05d5\u05e6\u05e8 (\u05d0\u05dd \u05d9\u05d3\u05d5\u05e2)"
+    },
+    "category": {
+      "type": "string",
+      "default": "",
+      "description": "\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d9\u05ea \u05d4\u05de\u05d5\u05e6\u05e8"
+    },
+    "current_image_url": {
+      "type": "string",
+      "default": "",
+      "description": "\u05d4\u05ea\u05de\u05d5\u05e0\u05d4 \u05e9\u05de\u05d5\u05e6\u05d2\u05ea \u05d4\u05d9\u05d5\u05dd \u05dc\u05de\u05d5\u05e6\u05e8"
+    },
+    "suggested_image_url": {
+      "type": "string",
+      "description": "\u05d4\u05ea\u05de\u05d5\u05e0\u05d4 \u05d4\u05de\u05d5\u05e6\u05e2\u05ea \u05e9\u05d4\u05de\u05e9\u05ea\u05de\u05e9 \u05d4\u05e2\u05dc\u05d4"
+    },
+    "note": {
+      "type": "string",
+      "default": "",
+      "description": "\u05d4\u05e2\u05e8\u05d4 \u05e7\u05e6\u05e8\u05d4 \u05de\u05d4\u05de\u05e9\u05ea\u05de\u05e9",
+      "maxLength": 160
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "\u05de\u05e6\u05d1 \u05d4\u05d4\u05e6\u05e2\u05d4"
+    },
+    "submitted_by_name": {
+      "type": "string",
+      "default": "",
+      "description": "\u05e9\u05dd \u05d4\u05de\u05e9\u05ea\u05de\u05e9 \u05e9\u05d4\u05e6\u05d9\u05e2 \u05d0\u05ea \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "list_id": {
+      "type": "string",
+      "default": "",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05e8\u05e9\u05d9\u05de\u05d4 \u05e9\u05de\u05de\u05e0\u05d4 \u05d4\u05d5\u05e6\u05e2\u05d4 \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "review_note": {
+      "type": "string",
+      "default": "",
+      "description": "\u05d4\u05e2\u05e8\u05ea \u05d4\u05de\u05e0\u05d4\u05dc \u05d1\u05e2\u05ea \u05d4\u05d4\u05d7\u05dc\u05d8\u05d4"
+    }
+  },
+  "required": [
+    "product_name",
+    "suggested_image_url"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

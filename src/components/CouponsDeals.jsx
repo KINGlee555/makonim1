@@ -1,81 +1,129 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tag, Percent, Copy, Check } from "lucide-react";
-import { useState } from "react";
-import { useT } from "@/lib/i18n";
-import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2, Plus, Search, Sparkles, Tag } from "lucide-react";
+import { fetchChainDealsInGroups, dealPriceText, multiBuyText } from "@/lib/chainDeals";
 import ChainLogo from "@/components/ChainLogo";
+import { useT } from "@/lib/i18n";
 
-// Simulated deals based on common Israeli supermarket promotions
-const DEALS = [
-  { store: "שופרסל", product: "חלב 3% טרה", originalPrice: 5.90, dealPrice: 4.90, type: "1+1", emoji: "🥛" },
-  { store: "רמי לוי", product: "לחם אחיד", originalPrice: 8.50, dealPrice: 6.90, type: "discount", emoji: "🍞" },
-  { store: "מגא בול", product: "ביצים L", originalPrice: 12.90, dealPrice: 9.90, type: "discount", emoji: "🥚" },
-  { store: "יוחננוף", product: "עגבניות שרי", originalPrice: 7.90, dealPrice: 5.90, type: "1+1", emoji: "🍅" },
-  { store: "ויקטורי", product: "גבינה צהובה", originalPrice: 14.90, dealPrice: 11.90, type: "discount", emoji: "🧀" },
-  { store: "קשת טעמים", product: "שמן זית", originalPrice: 29.90, dealPrice: 22.90, type: "discount", emoji: "🫒" },
-  { store: "חצי חינם", product: "אורז בסמטי", originalPrice: 9.90, dealPrice: 6.90, type: "1+1", emoji: "🌾" },
-  { store: "אושר עד", product: "קפה שחור", originalPrice: 24.90, dealPrice: 19.90, type: "discount", emoji: "☕" },
-  { store: "טיב טעם", product: "סלמון טרי", originalPrice: 89.90, dealPrice: 69.90, type: "discount", emoji: "🐟" },
-  { store: "שופרסל", product: "נייר טואלט", originalPrice: 19.90, dealPrice: 14.90, type: "1+1", emoji: "🧻" },
-];
-
-export default function CouponsDeals({ open, onOpenChange, items }) {
+// מבצעים אמיתיים מהרשתות — מתוך קבצי השקיפות הרשמיים, מתעדכנים כל בוקר.
+export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }) {
   const t = useT();
-  const [copied, setCopied] = useState(null);
+  const [tab, setTab] = useState("mine");
+  const [query, setQuery] = useState("");
+  const [deals, setDeals] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState("");
 
-  const relevantDeals = useMemo(() => {
-    if (!items || items.length === 0) return DEALS;
-    const itemNames = items.map(i => i.name.toLowerCase());
-    const matched = DEALS.filter(d => itemNames.some(n => n.includes(d.product.toLowerCase().split(" ")[0]) || d.product.toLowerCase().includes(n.split(" ")[0])));
-    return matched.length > 0 ? matched : DEALS;
+  const signature = useMemo(
+    () => (items || []).map(item => `${item.name}|${item.barcode || ""}`).join(";"),
+    [items]
+  );
+
+  const load = useCallback(async (which, searchTerm) => {
+    setDeals([]);
+    setLoading(true);
+    try {
+      const payload = searchTerm ? { mode: "search", query: searchTerm }
+        : which === "popular" ? { mode: "popular" }
+          : { mode: "items", items: (items || []).filter(item => item?.name).map(item => ({ name: item.name, barcode: item.barcode || "" })) };
+      if (!searchTerm && which !== "popular" && !payload.items.length) return;
+      await fetchChainDealsInGroups(payload, setDeals);
+    } catch {
+      setDeals([]);
+    } finally {
+      setLoading(false);
+    }
   }, [items]);
 
-  const handleCopy = (deal, idx) => {
-    setCopied(idx);
-    toast({ title: t("deals.copied"), duration: 1500 });
-    setTimeout(() => setCopied(null), 2000);
+  useEffect(() => {
+    if (!open) return;
+    setSearched("");
+    setQuery("");
+    load(tab, "");
+  }, [open, tab, signature]);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const term = query.trim();
+    if (term.length < 2) return;
+    setSearched(term);
+    load(null, term);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md mx-auto max-h-[85vh] flex flex-col overflow-hidden rounded-3xl">
+      <DialogContent className="flex max-h-[88vh] max-w-lg flex-col overflow-hidden rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-start flex items-center gap-2">
-            <Tag className="w-5 h-5 text-primary" />{t("deals.title")}
+          <DialogTitle className="flex items-center gap-2 text-xl font-black">
+            <Tag className="h-5 w-5 text-market-pink" />{t("deals.title")}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-5 pb-5 space-y-2">
-          {relevantDeals.map((deal, idx) => {
-            const savings = deal.originalPrice - deal.dealPrice;
-            const pct = Math.round((savings / deal.originalPrice) * 100);
-            return (
-              <div key={idx} className="bg-card border border-border rounded-2xl p-3 flex items-center gap-3">
-                <span className="text-3xl">{deal.emoji}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground text-sm line-clamp-1">{deal.product}</p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <ChainLogo name={deal.store} size={14} />{deal.store}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm font-bold text-primary">₪{deal.dealPrice.toFixed(2)}</span>
-                    <span className="text-xs text-muted-foreground line-through">₪{deal.originalPrice.toFixed(2)}</span>
-                    {deal.type === "1+1" ? (
-                      <span className="text-xs bg-accent text-accent-foreground rounded-full px-2 py-0.5 font-bold">1+1</span>
-                    ) : (
-                      <span className="text-xs bg-green-100 text-green-700 rounded-full px-2 py-0.5 font-bold">-{pct}%</span>
-                    )}
-                  </div>
+        <div className="flex shrink-0 gap-2">
+          <button onClick={() => setTab("mine")}
+            className={`h-10 flex-1 rounded-2xl border-2 text-[14px] font-black ${tab === "mine" && !searched ? "border-market-ink bg-market-pink text-white" : "border-market-ink/30 bg-background text-market-ink"}`}>
+            {t("deals.mine")}
+          </button>
+          <button onClick={() => setTab("popular")}
+            className={`h-10 flex-1 rounded-2xl border-2 text-[14px] font-black ${tab === "popular" && !searched ? "border-market-ink bg-market-yellow text-market-ink" : "border-market-ink/30 bg-background text-market-ink"}`}>
+            {t("deals.popular")}
+          </button>
+        </div>
+
+        <form onSubmit={handleSearch} className="flex shrink-0 gap-2">
+          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("deals.searchPlaceholder")}
+            className="h-11 rounded-2xl border-2 border-market-ink/30 text-base" />
+          <Button type="submit" className="h-11 rounded-2xl bg-market-blue px-4 font-black text-white hover:bg-market-blue">
+            <Search className="h-4 w-4" />
+          </Button>
+        </form>
+
+        <div className="flex-1 space-y-2 overflow-y-auto pb-2">
+          {loading && (
+            <div className="flex items-center justify-center gap-2 py-12 text-market-ink">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span className="text-sm font-bold">{t("deals.loading")}</span>
+            </div>
+          )}
+
+          {!loading && deals.length === 0 && (
+            <p className="rounded-2xl bg-market-track px-4 py-8 text-center text-[15px] font-black text-market-ink">
+              {searched ? t("deals.noSearch", { name: searched }) : t("deals.empty")}
+            </p>
+          )}
+
+          {!loading && deals.map((deal, index) => (
+            <div key={`${deal.chain}-${deal.barcode}-${index}`} className="flex items-center gap-3 rounded-2xl border-2 border-market-ink/20 bg-card p-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[15px] font-black text-market-ink">{deal.name || deal.barcode}</p>
+                <p className="mt-0.5 flex items-center gap-1.5 text-[12px] font-bold text-muted-foreground">
+                  <ChainLogo name={deal.chain_name} size={14} />{deal.chain_name}
+                  {deal.ends_on ? ` · ${t("deals.ends", { date: deal.ends_on })}` : ""}
+                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <span className="rounded-lg bg-market-pink px-2 py-0.5 text-[13px] font-black text-white">{dealPriceText(deal)}</span>
+                  {deal.price > 0 && !multiBuyText(deal) && (
+                    <span className="text-[12px] font-bold text-muted-foreground line-through">₪{Number(deal.price).toFixed(2)}</span>
+                  )}
+                  {deal.discount > 0 && <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[12px] font-black text-primary">-{deal.discount}%</span>}
+                  {deal.description && multiBuyText(deal) && <span className="truncate text-[12px] font-bold text-muted-foreground">{deal.description}</span>}
                 </div>
-                <button onClick={() => handleCopy(deal, idx)} aria-label={t("deals.copy")}
-                  className="w-9 h-9 rounded-xl border-2 border-primary/30 text-primary flex items-center justify-center flex-shrink-0 hover:bg-primary hover:text-primary-foreground transition-all">
-                  {copied === idx ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                </button>
               </div>
-            );
-          })}
-          <p className="text-xs text-muted-foreground text-center pt-2">{t("deals.disclaimer")}</p>
+              {onAddProduct && (
+                <button onClick={() => onAddProduct({ name: deal.name || deal.barcode, barcode: deal.barcode, price: deal.deal_price || 0, category: "אחר", image_url: "" })}
+                  aria-label={t("deals.addToList")} title={t("deals.addToList")}
+                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-market-yellow text-market-ink">
+                  <Plus className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+          ))}
+
+          <p className="flex items-center justify-center gap-1.5 pt-2 text-center text-[11px] font-bold text-muted-foreground">
+            <Sparkles className="h-3 w-3" />{t("deals.updated")}
+          </p>
         </div>
       </DialogContent>
     </Dialog>
