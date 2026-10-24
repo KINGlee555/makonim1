@@ -11,6 +11,7 @@ import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { searchCatalog, normalizeProductText } from "@/lib/productSearch";
 import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCatalog";
+import { searchStoredCatalog } from "@/lib/catalogProducts";
 
 const CATEGORIES = [
   { id: "all", label: "הכל" },
@@ -54,18 +55,19 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [remoteProducts, setRemoteProducts] = useState([]);
   const [remoteCategoryProducts, setRemoteCategoryProducts] = useState([]);
+  const [storedProducts, setStoredProducts] = useState([]);
   const [remoteLoading, setRemoteLoading] = useState(false);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [visibleLimit, setVisibleLimit] = useState(48);
   const deferredQuery = useDeferredValue(query);
   const searchableProducts = useMemo(() => {
     const unique = new Map();
-    [...remoteProducts, ...remoteCategoryProducts, ...allProducts].forEach(product => {
+    [...storedProducts, ...remoteProducts, ...remoteCategoryProducts, ...allProducts].forEach(product => {
       const key = normalizeProductText(product.name);
       if (!unique.has(key)) unique.set(key, product);
     });
     return [...unique.values()];
-  }, [allProducts, remoteProducts, remoteCategoryProducts]);
+  }, [allProducts, storedProducts, remoteProducts, remoteCategoryProducts]);
   const allResults = useMemo(() => {
     if (normalizeProductText(deferredQuery)) {
       return searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").filter(usableProduct);
@@ -108,6 +110,20 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     }, 120);
     return () => { cancelled = true; window.clearTimeout(timer); };
   }, [open, deferredQuery]);
+
+  // קטלוג המוצרים השמור — אלפי מוצרים אמיתיים מכל הרשתות, עם תמונה אמיתית לכל אחד.
+  useEffect(() => {
+    if (!open) return;
+    const term = normalizeProductText(deferredQuery);
+    if (term.length < 2 && selectedCategory === "all") { setStoredProducts([]); return; }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      searchStoredCatalog({ query: deferredQuery, category: term.length < 2 ? selectedCategory : "", limit: 150 })
+        .then(products => { if (!cancelled) setStoredProducts(products); })
+        .catch(() => {});
+    }, 150);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [open, deferredQuery, selectedCategory]);
 
   useEffect(() => {
     if (!open || normalizeProductText(deferredQuery) || selectedCategory !== "חטיפים ומתוקים") {
@@ -181,7 +197,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
