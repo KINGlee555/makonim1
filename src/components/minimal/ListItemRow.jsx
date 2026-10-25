@@ -8,7 +8,7 @@ import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 // כפתור כמות עגול וגדול וכפתור "קניתי" בולט — הקשה אחת, בלי לכוון
-const stepBtn = "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-big-accent bg-big-canvas text-big-accent hover:bg-big-accent hover:text-big-canvas disabled:opacity-40 sm:h-[60px] sm:w-[60px]";
+const stepBtn = "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-big-turquoise bg-big-canvas text-big-accent hover:bg-big-turquoise hover:text-big-canvas disabled:opacity-40 sm:h-[60px] sm:w-[60px]";
 const boughtBtn = "h-11 shrink-0 rounded-full border-0 bg-big-accent px-5 text-[16px] text-big-canvas hover:shadow-[0_4px_14px_rgba(14,143,130,0.4)] sm:h-14 sm:px-6 sm:text-[22px]";
 
 // שורה אחת גדולה וקריאה למוצר: תמונה, שם, מחיר, כמות וקניתי — וכל השאר בתפריט.
@@ -65,7 +65,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       {/* בטלפון השורה מתפצלת לשניים — שם למעלה, וכאן המחיר והפעולות */}
       <div className="flex w-full flex-wrap items-center justify-between gap-x-3 gap-y-3 sm:w-auto sm:flex-nowrap sm:justify-end sm:gap-x-5">
         {price > 0 && (
-          <span className="shrink-0 text-[20px] font-semibold tracking-[0.06em] tabular-nums text-big-accent sm:min-w-[120px] sm:text-[32px]">{priceText}</span>
+          <span className="shrink-0 text-[20px] font-semibold tracking-[0.06em] tabular-nums text-big-pink sm:min-w-[120px] sm:text-[32px]">{priceText}</span>
         )}
 
         <div className="flex shrink-0 items-center gap-3 sm:gap-3.5">

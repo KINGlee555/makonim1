@@ -64,6 +64,10 @@ module.exports = {
   				'line-soft': 'hsl(var(--big-line-soft))',
   				surface: 'hsl(var(--big-surface))',
   				accent: 'hsl(var(--big-accent))',
+  				turquoise: 'hsl(var(--big-turquoise))',
+  				pink: 'hsl(var(--big-pink))',
+  				blue: 'hsl(var(--big-blue))',
+  				yellow: 'hsl(var(--big-yellow))',
   				attn: 'hsl(var(--big-attn))',
   				'attn-soft': 'hsl(var(--big-attn-soft))',
   				'attn-ink': 'hsl(var(--big-attn-ink))'

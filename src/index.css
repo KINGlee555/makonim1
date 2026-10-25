@@ -29,13 +29,17 @@
     --ui-surface: 210 20% 96%;
     --ui-accent: 173 84% 34%;
     /* מסך גדול ופשוט — לבן, דיו, טורקיז וצהוב לתשומת לב */
-    --big-canvas: 0 0% 100%;
+    --big-canvas: 36 70% 96%;
     --big-ink: 0 0% 11%;
-    --big-muted: 214 10% 40%;
-    --big-line: 216 11% 91%;
-    --big-line-soft: 210 13% 94%;
-    --big-surface: 210 18% 96%;
+    --big-muted: 196 16% 38%;
+    --big-line: 174 32% 84%;
+    --big-line-soft: 174 44% 90%;
+    --big-surface: 174 60% 93%;
     --big-accent: 174 82% 31%;
+    --big-turquoise: 174 62% 42%;
+    --big-pink: 349 100% 60%;
+    --big-blue: 195 82% 38%;
+    --big-yellow: 43 100% 47%;
     --big-attn: 44 99% 48%;
     --big-attn-soft: 47 100% 90%;
     --big-attn-ink: 44 100% 27%;
@@ -116,13 +120,17 @@
     --ui-surface: 217 19% 16%;
     --ui-accent: 173 72% 45%;
     /* מסך גדול ופשוט — אותה שפה על קנבס כהה */
-    --big-canvas: 0 0% 7%;
+    --big-canvas: 197 26% 10%;
     --big-ink: 0 0% 96%;
-    --big-muted: 216 10% 66%;
-    --big-line: 216 11% 22%;
-    --big-line-soft: 216 11% 17%;
-    --big-surface: 216 14% 17%;
+    --big-muted: 190 14% 68%;
+    --big-line: 186 18% 27%;
+    --big-line-soft: 190 16% 19%;
+    --big-surface: 190 22% 16%;
     --big-accent: 174 70% 45%;
+    --big-turquoise: 174 60% 52%;
+    --big-pink: 349 95% 70%;
+    --big-blue: 195 85% 62%;
+    --big-yellow: 44 95% 58%;
     --big-attn: 44 95% 55%;
     --big-attn-soft: 44 50% 22%;
     --big-attn-ink: 44 95% 74%;

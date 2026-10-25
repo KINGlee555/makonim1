@@ -25,7 +25,7 @@ export default function MoreTools({
 
   return (
     <details open className="big-more big-in mt-8 sm:mt-[34px]" style={{ animationDelay: ".5s" }}>
-      <summary className="flex cursor-pointer items-center justify-between rounded-[20px] border-2 border-big-ink bg-big-canvas px-5 py-4 text-[22px] font-semibold text-big-ink hover:bg-[#F6F7F8] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-big-attn sm:px-[30px] sm:py-[26px] sm:text-[30px]">
+      <summary className="flex cursor-pointer items-center justify-between rounded-[20px] border-2 border-big-blue bg-big-surface px-5 py-4 text-[22px] font-semibold text-big-blue hover:bg-big-turquoise/15 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-big-attn sm:px-[30px] sm:py-[26px] sm:text-[30px]">
         {t("list.moreFeatures")}
         <ChevronUp className="h-6 w-6 shrink-0 sm:h-[30px] sm:w-[30px]" strokeWidth={2.4} />
       </summary>
@@ -53,7 +53,7 @@ export default function MoreTools({
                 <div key={category}
                   className={`flex items-center gap-3.5 py-3.5 text-[18px] text-big-ink sm:text-[26px] ${index < groupedCategories.length - 1 ? "border-b-2 border-big-line-soft" : ""}`}>
                   <span className="min-w-0 flex-1 truncate">{category}</span>
-                  <span className="shrink-0 rounded-[12px] border-2 border-big-accent px-3 text-[15px] leading-8 text-big-accent sm:text-[20px]">{categoryItems.length}</span>
+                  <span className="shrink-0 rounded-[12px] border-2 border-big-pink px-3 text-[15px] leading-8 text-big-pink sm:text-[20px]">{categoryItems.length}</span>
                 </div>
               ))}
             </div>
