@@ -35,7 +35,7 @@
                 "king_store"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_zol_ve_gadol",
@@ -54,7 +54,7 @@
                 "zol_ve_gadol"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_super_sapir",
@@ -73,7 +73,7 @@
                 "super_sapir"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_maayan_2000",
@@ -92,7 +92,7 @@
                 "maayan_2000"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_city_market",
@@ -111,7 +111,7 @@
                 "city_market"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_shuk_hair",
@@ -130,7 +130,7 @@
                 "shuk_hair"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_shefa_berkat_hashem",
@@ -149,7 +149,7 @@
                 "shefa_berkat_hashem"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_of_ve_hodu_bareket",
@@ -168,7 +168,7 @@
                 "of_ve_hodu_bareket"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_mishnat_yosef",
@@ -187,7 +187,7 @@
                 "mishnat_yosef"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_good_pharm",
@@ -206,7 +206,7 @@
                 "good_pharm"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_dor_alon",
@@ -225,7 +225,7 @@
                 "dor_alon"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "catalog_yilo",
@@ -244,7 +244,7 @@
                 "yilo"
               ],
               "scan": 8000,
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "end",

@@ -96,7 +96,7 @@
                 "rami_levy",
                 "yohananof"
               ],
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "build_catalog_b",
@@ -117,7 +117,7 @@
                 "tiv_taam",
                 "keshet"
               ],
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "build_catalog_c",
@@ -139,7 +139,7 @@
                 "politzer",
                 "salach_dabach"
               ],
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "build_catalog_d",
@@ -160,7 +160,7 @@
                 "victory",
                 "hazi_hinam"
               ],
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "build_catalog_e",
@@ -180,7 +180,7 @@
                 "super_yuda",
                 "yeinot_bitan"
               ],
-              "perChain": 1200
+              "perChain": 2500
             }
           },
           "then": "end",

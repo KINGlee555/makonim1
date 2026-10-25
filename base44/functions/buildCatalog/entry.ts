@@ -7,7 +7,7 @@ const DEFAULT_CHAINS = ["shufersal", "rami_levy", "yohananof"];
 // אחרי הזמן הזה מפסיקים לפתוח רשתות חדשות בקריאה הזאת, וממשיכים בקריאה הבאה.
 const TIME_BUDGET_MS = 200000;
 // כמה מוצרים מתחילת קובץ המחירים נבדוק מול מה שכבר יש לנו.
-const MAX_CHUNKS = 30;
+const MAX_CHUNKS = 50;
 
 export default async function (req) {
   try {
@@ -27,7 +27,7 @@ export default async function (req) {
     const requested = Array.isArray(body?.chains) && body.chains.length ? body.chains : DEFAULT_CHAINS;
     // כמה מוצרים לסרוק מקובץ המחירים, וכמה מהם לבדוק מול קטלוג התמונות בקריאה הזאת.
     const scan = Math.min(Math.max(Number(body?.scan) || 6000, 200), 30000);
-    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 1200);
+    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 2500);
     const startedAt = Date.now();
     const report = [];
 
@@ -64,7 +64,7 @@ export default async function (req) {
 
         const unknown = prioritizeForPhotos(candidates, perChain);
         // בדיקת התמונות האישית מוגבלת, כדי שכל קריאה תסתיים בזמן ותוכל לכסות עוד רשתות.
-        const result = await photosForCodes(unknown.map((item) => item.code), 150);
+        const result = await photosForCodes(unknown.map((item) => item.code), 110);
         const images = result.images;
         const checked = result.checked;
 
