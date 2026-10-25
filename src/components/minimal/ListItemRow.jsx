@@ -26,7 +26,6 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
   const meta = [
     item.category || t("summary.other"),
     byWeight ? "" : (quantity > 1 || unitLabel ? `${quantity}${unitLabel ? ` ${unitLabel}` : ""}` : ""),
-    rate > 0 ? `₪${rate.toFixed(2)} ${t("productItem.perKg")}` : "",
     item.note || "",
   ].filter(Boolean).join(" · ");
   // מי מבני הבית כבר ראה את המוצר — בלי השם שלי עצמי
@@ -54,6 +53,10 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-[15px] text-ui-ink">{item.name}</span>
         <span className="truncate text-[12px] text-ui-muted">{meta}</span>
+        {/* מוצר לפי משקל נשאר עם המחיר לק״ג גלוי גם כשרשימת הפרטים מתקצרת */}
+        {byWeight && rate > 0 && (
+          <span className="text-[12px] tabular-nums text-ui-accent">{`₪${rate.toFixed(2)} ${t("productItem.perKg")}`}</span>
+        )}
         {seenBy.length > 0 && (
           <span className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-ui-muted">
             <Eye className="h-3 w-3 shrink-0" />
