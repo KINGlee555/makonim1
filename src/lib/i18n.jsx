@@ -109,6 +109,8 @@ const translations = {
     "settings.pushEnabled": "התראות הופעלו",
     "settings.pushDisabled": "התראות בוטלו",
     "settings.pushInfo": "ההתראות מופיעות במכשיר גם כשהאפליקציה פתוחה ברקע. באייפון: הוסיפו את האפליקציה למסך הבית כדי לקבל אותן.",
+    "settings.whatsapp": "בוט וואטסאפ",
+    "settings.whatsappDesc": "הוסיפו מוצרים בהודעה: צריך חלב 3 ליטר טרה",
 
     // Notifications
     "notify.enable": "הפעל התראות למשפחה",
@@ -892,6 +894,8 @@ const translations = {
     "settings.pushEnabled": "Notifications enabled",
     "settings.pushDisabled": "Notifications disabled",
     "settings.pushInfo": "Alerts show on your device while the app is open in the background. On iPhone, add the app to your home screen to receive them.",
+    "settings.whatsapp": "WhatsApp bot",
+    "settings.whatsappDesc": "Add items by message: need 3 liters of milk",
 
     // Notifications
     "notify.enable": "Turn on family alerts",
@@ -1675,6 +1679,8 @@ const translations = {
     "settings.pushEnabled": "Уведомления включены",
     "settings.pushDisabled": "Уведомления отключены",
     "settings.pushInfo": "Оповещения приходят, пока приложение открыто в фоне. На iPhone добавьте приложение на домашний экран, чтобы их получать.",
+    "settings.whatsapp": "Бот в WhatsApp",
+    "settings.whatsappDesc": "Добавляйте товары сообщением: нужно 3 л молока",
 
     // Notifications
     "notify.enable": "Включить семейные оповещения",

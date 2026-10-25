@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Bell, History, BarChart3, Info, Store, Check, Star } from "lucide-react";
+import { Bell, History, BarChart3, Info, Store, Check, Star, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
@@ -108,6 +108,22 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
               <p dir="rtl" className="block w-full max-w-full text-center text-xs text-muted-foreground leading-relaxed break-words [overflow-wrap:anywhere]">{t("settings.pushInfo")}</p>
             </div>
           )}
+
+          {/* WhatsApp bot — מוסיפים מוצרים בהודעת ווטסאפ */}
+          <a
+            href={base44.agents.getWhatsAppConnectURL("shopping_bot")}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full flex items-center gap-3 bg-muted/50 hover:bg-muted rounded-2xl p-4 transition-colors text-start animate-slide-up stagger-3"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <MessageCircle className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground truncate">{t("settings.whatsapp")}</p>
+              <p className="text-sm text-muted-foreground truncate">{t("settings.whatsappDesc")}</p>
+            </div>
+          </a>
 
           {/* Supermarket preference */}
           <div className="bg-muted/50 rounded-2xl p-4 animate-slide-up stagger-3 overflow-hidden">
