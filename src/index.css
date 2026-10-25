@@ -712,6 +712,30 @@ html.easy-mode [role="dialog"] .text-xl {
   font-weight: 700;
 }
 
+/* מוצר לפי משקל — שדה כמות במקום פלוס ומינוס */
+.mkc-list .mkc-amount {
+  width: 66px;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid rgba(20, 42, 40, 0.2);
+  border-radius: 10px;
+  background: #fff;
+  color: #142a28;
+  font-size: 16px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.mkc-list .mkc-amount:focus-visible {
+  outline: 3px solid #ff3b5d;
+  outline-offset: 2px;
+}
+
+.mkc-list .mkc-remove {
+  color: #b0342f;
+}
+
 .mkc-list .mkc-step,
 .mkc-list .mkc-more,
 .mkc-list .mkc-bought {
@@ -739,3 +763,4 @@ html.easy-mode .mkc-list .mkc-step,
 html.easy-mode .mkc-list .mkc-more { width: 40px; height: 40px; }
 html.easy-mode .mkc-list .mkc-bought { height: 40px; font-size: 15px; }
 html.easy-mode .mkc-list .mkc-unit { height: 40px; font-size: 14px; }
+html.easy-mode .mkc-list .mkc-amount { width: 84px; height: 40px; font-size: 18px; }

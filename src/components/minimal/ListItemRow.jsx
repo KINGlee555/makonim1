@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Bell, Plus, Minus, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send, Flag } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
+import WeightQuantity from "@/components/minimal/WeightQuantity";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
 import { isGram, isWeight, maxQuantity, quantityStep } from "@/lib/units";
@@ -70,22 +71,22 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       </div>
 
       <div className="mkc-controls">
-        <div className="mkc-qty">
-          <button type="button" aria-label="הפחתה" className="mkc-step"
-            onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}>
-            <Minus className="h-4 w-4" strokeWidth={2.5} />
-          </button>
-          <span className="mkc-count">{quantity}</span>
-          {byWeight && (
-            <button type="button" onClick={switchWeightUnit} aria-label={t("productItem.switchUnit")} aria-pressed={unit === "kg"} className="mkc-unit">
-              {unitLabel}
+        {byWeight ? (
+          <WeightQuantity item={item} unit={unit} unitLabel={unitLabel}
+            onUpdateQuantity={onUpdateQuantity} onRemove={onRemove} onSwitchUnit={switchWeightUnit} />
+        ) : (
+          <div className="mkc-qty">
+            <button type="button" aria-label="הפחתה" className="mkc-step"
+              onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}>
+              <Minus className="h-4 w-4" strokeWidth={2.5} />
             </button>
-          )}
-          <button type="button" aria-label="הוספה" disabled={quantity >= max} className="mkc-step"
-            onClick={() => onUpdateQuantity(item, quantity + step)}>
-            <Plus className="h-4 w-4" strokeWidth={2.5} />
-          </button>
-        </div>
+            <span className="mkc-count">{quantity}</span>
+            <button type="button" aria-label="הוספה" disabled={quantity >= max} className="mkc-step"
+              onClick={() => onUpdateQuantity(item, quantity + step)}>
+              <Plus className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          </div>
+        )}
 
         <button type="button" onClick={() => onToggleBought(item)} aria-label={t("productItem.bought")} className="mkc-bought">
           {t("productItem.bought")}
