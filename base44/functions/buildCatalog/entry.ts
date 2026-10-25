@@ -31,7 +31,11 @@ export default async function (req) {
     const startedAt = Date.now();
     const report = [];
 
-    for (const requestedId of requested) {
+    // כדי שכל הרשתות ייכנסו בתור ולא תמיד אותן רשתות ראשונות, כל יום מתחילים מרשת אחרת.
+    const rotation = Math.floor(Date.now() / 86400000) % requested.length;
+    const order = requested.slice(rotation).concat(requested.slice(0, rotation));
+
+    for (const requestedId of order) {
       const chain = catalogChainById(String(requestedId));
       if (!chain) {
         report.push({ chain: String(requestedId), error: "unknown chain" });
@@ -59,7 +63,8 @@ export default async function (req) {
         }
 
         const unknown = prioritizeForPhotos(candidates, perChain);
-        const result = await photosForCodes(unknown.map((item) => item.code));
+        // בדיקת התמונות האישית מוגבלת, כדי שכל קריאה תסתיים בזמן ותוכל לכסות עוד רשתות.
+        const result = await photosForCodes(unknown.map((item) => item.code), 150);
         const images = result.images;
         const checked = result.checked;
 
