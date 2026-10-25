@@ -2,19 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ListHeader from "../components/minimal/ListHeader";
 import QuickAddBar from "../components/QuickAddBar";
-import ListExtras from "../components/ListExtras";
 import AppFooter from "../components/AppFooter";
-import SharedWithStrip from "../components/SharedWithStrip";
-import SmartTools from "../components/SmartTools";
-import RecentlyBought from "../components/RecentlyBought";
-import FillFromLastWeek from "../components/FillFromLastWeek";
-import PriceDropNotice from "../components/PriceDropNotice";
-import MonthlySummary from "../components/MonthlySummary";
-import DeliveryNotice from "../components/DeliveryNotice";
-import FeatureMenu from "../components/FeatureMenu";
-import ListReader from "../components/ListReader";
-import PremiumBanner from "../components/PremiumBanner";
-import SponsoredSlot from "../components/sponsored/SponsoredSlot";
+import MoreTools from "../components/list/MoreTools";
 import ListItemsSection from "@/components/list/ListItemsSection";
 import ListDialogs from "@/components/list/ListDialogs";
 import { useShoppingList } from "@/hooks/useShoppingList";
@@ -29,15 +18,14 @@ import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/lib/categoryOrder";
 import { lineCost } from "@/lib/units";
-import { uiEnter, uiSection, uiBanner } from "@/lib/minimalUi";
+import { bigAlert } from "@/lib/bigUi";
 
 export default function ListView() {
   const { listId } = useParams();
   const t = useT();
   const dialogs = useListDialogs();
-  const { open, show } = dialogs;
+  const { show } = dialogs;
 
-  const [groupByCategory, setGroupByCategory] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [categoryOrder, setCategoryOrder] = useState(loadCategoryOrder);
   const [allProducts, setAllProducts] = useState([]);
@@ -59,7 +47,7 @@ export default function ListView() {
   const chainDeals = useChainDeals(items);
   // מי נמצא איתך ברשימה — נוכחות חיה, מתעדכנת כל חצי דקה
   const presence = useListPresence(listId, user);
-  // מצב פשוט — מסתיר כל מה שאינו הכרחי לקנייה עצמה; הכל נשאר נגיש דרך "עוד"
+  // מצב פשוט — מסתיר כל מה שאינו הכרחי לקנייה עצמה; הכל נשאר נגיש דרך "עוד כלים"
   const [simple] = useSimpleMode();
 
   useEffect(() => {
@@ -68,12 +56,12 @@ export default function ListView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-ui-canvas font-system font-medium">
-        <div className="mx-auto w-full max-w-[760px] space-y-2 px-5 py-4 sm:px-7">
-          <div className="h-11 rounded-[22px] bg-ui-surface shimmer" />
-          <div className="h-12 rounded-[22px] bg-ui-surface shimmer" />
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-[44px] rounded-lg bg-ui-surface shimmer" />
+      <div className="big-page min-h-screen bg-big-canvas font-system font-semibold">
+        <div className="mx-auto w-full max-w-[940px] space-y-3 px-5 py-6 sm:px-7">
+          <div className="h-16 rounded-[18px] bg-big-surface shimmer" />
+          <div className="h-12 rounded-[18px] bg-big-surface shimmer" />
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-[92px] rounded-[18px] bg-big-surface shimmer" />
           ))}
         </div>
       </div>
@@ -82,8 +70,8 @@ export default function ListView() {
 
   if (!list) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ui-canvas font-system">
-        <p className="text-[20px] font-semibold text-ui-ink">{t("list.notFound")}</p>
+      <div className="big-page flex min-h-screen items-center justify-center bg-big-canvas font-system">
+        <p className="text-[24px] font-semibold text-big-ink">{t("list.notFound")}</p>
       </div>
     );
   }
@@ -98,9 +86,10 @@ export default function ListView() {
   );
 
   const pendingItems = items.filter(i => !i.status || i.status === "pending");
-  // מצב קנייה עובר על המוצרים לפי סדר המחלקות בסופר — כל מחלקה ברצף אחד
+  // הרשימה מוצגת לפי סדר המחלקות בסופר — כמו שמהלכים בחנות
   const shoppingItems = sortItemsByCategory(pendingItems, categoryOrder);
   const unavailableItems = items.filter(i => i.status === "unavailable");
+  const boughtCount = items.filter(i => i.status === "bought").length;
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
   const otherShoppers = (list.active_shoppers || []).filter(s => s !== userNameRef.current);
   const groupedCategories = Object.entries(
@@ -116,7 +105,7 @@ export default function ListView() {
   });
 
   return (
-    <div className="min-h-screen bg-ui-canvas font-system font-medium text-ui-ink tabular-nums">
+    <div className="big-page min-h-screen bg-big-canvas font-system font-semibold text-big-ink tabular-nums">
       <ListHeader
         list={list}
         userName={user?.full_name}
@@ -127,41 +116,16 @@ export default function ListView() {
         onOpenShare={() => show("share")}
         onOpenQr={() => show("qr")}
         onRename={() => show("rename")}
-        onAdd={() => show("search")}
       />
 
-      <main className="mx-auto w-full max-w-[760px] px-5 pb-[110px] sm:px-7">
-        <SharedWithStrip list={list} members={presence.members} myEmail={user?.email} onOpen={() => show("share")} />
-
-        {!simple && (
-          <div className={uiEnter}>
-            <SmartTools items={pendingItems} onOpenBasket={() => show("basket")} />
-          </div>
-        )}
-
-        <PriceDropNotice listId={listId} items={pendingItems} />
-
-        <MonthlySummary listId={listId} />
-
-        <DeliveryNotice listId={listId} delay={0.05} />
-
+      <main className="mx-auto w-full max-w-[940px] px-5 pb-[170px] sm:px-7 sm:pb-[200px]">
         {otherShoppers.length > 0 && (
-          <div className={`${uiSection} ${uiEnter}`}>
-            <div className={uiBanner}>
-              {t("active.nowShopping", { name: otherShoppers.join(", ") })}
-            </div>
-          </div>
+          <p className={`${bigAlert} mt-5`}>{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
         )}
 
         <ListItemsSection
-          listId={listId}
-          items={items}
-          pendingItems={pendingItems}
+          pendingItems={shoppingItems}
           unavailableItems={unavailableItems}
-          groupedCategories={groupedCategories}
-          groupByCategory={groupByCategory}
-          showSuggestions={showSuggestions}
-          simple={simple}
           favorites={favorites}
           chainDeals={chainDeals}
           removingIds={removingIds}
@@ -181,26 +145,32 @@ export default function ListView() {
           onReportPrice={(item) => show("report", item)}
           onPhotoFound={handlePhotoFound}
           onRestore={handleRestore}
+          onOpenSearch={() => show("search")}
+          onOpenScanner={() => show("scanner")}
+          onOpenShoppingMode={() => show("shopping")}
         />
 
-        <FillFromLastWeek listId={listId} currentItems={items} onFilled={loadData} />
-
-        {!simple && <RecentlyBought listId={listId} delay={0.1} />}
-
-        {!simple && (
-          <div className={`${uiSection} ${uiEnter}`}>
-            <ListExtras list={list} listId={listId} items={items} favorites={favorites}
-              onAddProduct={handleAddProduct} onToggleFavorite={handleToggleFavorite} />
-          </div>
-        )}
-
-        {!simple && <SponsoredSlot delay={0.15} />}
-
-        {!simple && (
-          <div className={`${uiSection} ${uiEnter}`}>
-            <PremiumBanner onOpen={() => show("premium")} />
-          </div>
-        )}
+        <MoreTools
+          list={list}
+          listId={listId}
+          items={items}
+          pendingItems={pendingItems}
+          groupedCategories={groupedCategories}
+          boughtCount={boughtCount}
+          members={presence.members}
+          myEmail={user?.email}
+          simple={simple}
+          showSuggestions={showSuggestions}
+          favorites={favorites}
+          refreshing={refreshing}
+          isOwner={isOwner}
+          onAddProduct={handleAddProduct}
+          onToggleFavorite={handleToggleFavorite}
+          onToggleSuggestions={() => setShowSuggestions(v => !v)}
+          onRefresh={handleRefresh}
+          onReload={loadData}
+          show={show}
+        />
 
         <AppFooter />
       </main>
@@ -209,35 +179,6 @@ export default function ListView() {
         onOpenSearch={() => show("search")}
         onOpenScanner={() => show("scanner")}
         onOpenShoppingMode={() => show("shopping")}
-        hasItems={pendingItems.length > 0}
-        tools={
-          <FeatureMenu
-            bar
-            grouped={groupByCategory}
-            onOpenGroupBy={() => setGroupByCategory(g => !g)}
-            onOpenSuggestions={() => setShowSuggestions(v => !v)}
-            onOpenBasket={() => show("basket")}
-            onOpenPriceCompare={() => show("priceCompare")}
-            onOpenTemplates={() => show("templates")}
-            onOpenScanner={() => show("scanner")}
-            onOpenRoute={() => show("route")}
-            onOpenMenu={() => show("menu")}
-            onOpenDeals={() => show("deals")}
-            onOpenSplit={() => show("split")}
-            onOpenLeaderboard={() => show("leaderboard")}
-            onOpenVoice={() => show("voice")}
-            onOpenDealCalculator={() => show("dealCalculator")}
-            onOpenCategoryOrder={() => show("categoryOrder")}
-            onOpenPremium={() => show("premium")}
-            onOpenCourier={() => show("courier")}
-            onOpenPetStore={() => show("pet")}
-            onOpenQr={() => show("qr")}
-            onRefresh={handleRefresh}
-            refreshing={refreshing}
-            onOpenParticipants={isOwner ? () => show("participants") : null}
-            readerSlot={<ListReader items={pendingItems} />}
-          />
-        }
       />
 
       <ListDialogs

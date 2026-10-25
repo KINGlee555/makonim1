@@ -326,6 +326,12 @@ const translations = {
     "list.ungroup": "בטל קיבוץ",
     "list.moreFeatures": "עוד כלים",
 
+    // מסך גדול ופשוט — שני הכפתורים הגדולים וכותרות הכלים
+    "big.add": "הוסף מוצר",
+    "big.finish": "סיימתי לקנות",
+    "big.departments": "מחלקות",
+    "big.smartStart": "הצעות חכמות להתחלה",
+
     // Basket Comparison
     "basket.title": "השוואת סל",
     "basket.cheapest": "הכי זול",
@@ -1094,6 +1100,12 @@ const translations = {
     "list.groupByCategory": "Group",
     "list.ungroup": "Ungroup",
     "list.moreFeatures": "More Tools",
+
+    // Big and simple — the two large buttons and the tools headings
+    "big.add": "Add product",
+    "big.finish": "Finished shopping",
+    "big.departments": "Departments",
+    "big.smartStart": "Smart suggestions to start",
 
     // Basket Comparison
     "basket.title": "Basket",
@@ -1878,6 +1890,12 @@ const translations = {
     "basket.savings": "Экономия до ₪{amount} по сравнению с самой дорогой",
     "basket.empty": "Список пуст",
     "list.moreFeatures": "Ещё инструменты",
+
+    // Крупный простой экран — две большие кнопки и заголовки инструментов
+    "big.add": "Добавить товар",
+    "big.finish": "Закончил покупки",
+    "big.departments": "Отделы",
+    "big.smartStart": "Умные подсказки на старт",
 
     // Shopping route
     "route.title": "Маршрут",

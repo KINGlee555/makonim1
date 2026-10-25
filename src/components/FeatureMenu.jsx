@@ -46,7 +46,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
     { icon: Trophy, label: t("leaderboard.title"), onClick: onOpenLeaderboard },
     { icon: Calculator, label: "מחשבון מבצעים", onClick: onOpenDealCalculator },
     { icon: ArrowUpDown, label: "סדר המחלקות", onClick: onOpenCategoryOrder },
-    { icon: Layers, label: grouped ? t("list.ungroup") : t("list.groupByCategory"), onClick: onOpenGroupBy },
+    ...(onOpenGroupBy ? [{ icon: Layers, label: grouped ? t("list.ungroup") : t("list.groupByCategory"), onClick: onOpenGroupBy }] : []),
     { icon: Sparkles, label: t("smart.title"), onClick: onOpenSuggestions },
     { icon: Route, label: t("route.title"), onClick: onOpenRoute },
     { icon: Crown, label: t("premium.open"), onClick: onOpenPremium },

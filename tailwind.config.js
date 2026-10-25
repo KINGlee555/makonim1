@@ -56,6 +56,18 @@ module.exports = {
   				surface: 'hsl(var(--ui-surface))',
   				accent: 'hsl(var(--ui-accent))'
   			},
+  			big: {
+  				canvas: 'hsl(var(--big-canvas))',
+  				ink: 'hsl(var(--big-ink))',
+  				muted: 'hsl(var(--big-muted))',
+  				line: 'hsl(var(--big-line))',
+  				'line-soft': 'hsl(var(--big-line-soft))',
+  				surface: 'hsl(var(--big-surface))',
+  				accent: 'hsl(var(--big-accent))',
+  				attn: 'hsl(var(--big-attn))',
+  				'attn-soft': 'hsl(var(--big-attn-soft))',
+  				'attn-ink': 'hsl(var(--big-attn-ink))'
+  			},
   			market: {
   				ink: 'hsl(var(--market-ink))',
   				pink: 'hsl(var(--market-pink))',

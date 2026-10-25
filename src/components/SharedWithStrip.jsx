@@ -1,7 +1,6 @@
-import { Users } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { uiPill } from "@/lib/minimalUi";
 import { isHere } from "@/hooks/useListPresence";
+import { bigCard, bigChip, bigNote, bigPill, bigSection, bigTitle } from "@/lib/bigUi";
 
 const MAX_CHIPS = 4;
 
@@ -22,27 +21,32 @@ export default function SharedWithStrip({ list, members = [], myEmail, onOpen })
   const people = [...others, ...invited];
   const shown = people.slice(0, MAX_CHIPS);
   const hidden = people.length - shown.length;
+  const hereCount = people.filter(person => person.here).length;
 
   return (
-    <section className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-ui-line-soft py-2.5">
-      <span className="flex items-center gap-1.5 text-[12px] text-ui-muted">
-        <Users className="h-3.5 w-3.5" />{t("presence.title")}
-      </span>
+    <section className={bigSection}>
+      <h3 className={bigTitle}>{t("presence.open")}</h3>
+      <div className={bigCard}>
+        <div className="flex flex-wrap items-center gap-3">
+          {shown.map(person => (
+            <span key={person.user_email} className={bigChip}
+              title={person.here ? t("presence.here") : person.invited ? t("presence.invited") : person.name}>
+              <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${person.here ? "bg-big-accent" : "bg-big-line"}`} />
+              <span className="max-w-[160px] truncate">{person.name}</span>
+            </span>
+          ))}
+          {hidden > 0 && <span className={bigNote}>+{hidden}</span>}
+          {people.length === 0 && <span className={bigChip}>{t("presence.alone")}</span>}
+        </div>
 
-      {shown.map(person => (
-        <span
-          key={person.user_email}
-          title={person.here ? t("presence.here") : person.invited ? t("presence.invited") : person.name}
-          className="flex items-center gap-1.5 rounded-full bg-ui-surface px-2.5 py-1 text-[12px] text-ui-ink"
-        >
-          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${person.here ? "bg-ui-accent" : "bg-ui-line"}`} />
-          <span className="max-w-[140px] truncate">{person.name}</span>
-        </span>
-      ))}
-      {hidden > 0 && <span className="text-[12px] text-ui-muted">+{hidden}</span>}
-      {people.length === 0 && <span className="text-[12px] text-ui-muted">{t("presence.alone")}</span>}
+        {people.length > 0 && (
+          <p className={`mt-2.5 ${bigNote}`}>{hereCount > 0 ? t("presence.here") : t("presence.invited")}</p>
+        )}
 
-      <button type="button" onClick={onOpen} className={uiPill}>{t("presence.open")}</button>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <button type="button" onClick={onOpen} className={bigPill}>{t("participants.button")}</button>
+        </div>
+      </div>
     </section>
   );
 }

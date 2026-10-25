@@ -28,6 +28,17 @@
     --ui-line-soft: 210 20% 96%;
     --ui-surface: 210 20% 96%;
     --ui-accent: 173 84% 34%;
+    /* מסך גדול ופשוט — לבן, דיו, טורקיז וצהוב לתשומת לב */
+    --big-canvas: 0 0% 100%;
+    --big-ink: 0 0% 11%;
+    --big-muted: 214 10% 40%;
+    --big-line: 216 11% 91%;
+    --big-line-soft: 210 13% 94%;
+    --big-surface: 210 18% 96%;
+    --big-accent: 174 82% 31%;
+    --big-attn: 44 99% 48%;
+    --big-attn-soft: 47 100% 90%;
+    --big-attn-ink: 44 100% 27%;
     --background: 36 33% 94%;
     --foreground: 181 61% 15%;
     --card: 0 0% 100%;
@@ -104,6 +115,17 @@
     --ui-line-soft: 217 19% 16%;
     --ui-surface: 217 19% 16%;
     --ui-accent: 173 72% 45%;
+    /* מסך גדול ופשוט — אותה שפה על קנבס כהה */
+    --big-canvas: 0 0% 7%;
+    --big-ink: 0 0% 96%;
+    --big-muted: 216 10% 66%;
+    --big-line: 216 11% 22%;
+    --big-line-soft: 216 11% 17%;
+    --big-surface: 216 14% 17%;
+    --big-accent: 174 70% 45%;
+    --big-attn: 44 95% 55%;
+    --big-attn-soft: 44 50% 22%;
+    --big-attn-ink: 44 95% 74%;
   }
 }
 
@@ -503,6 +525,44 @@ html.easy-mode [role="dialog"] .text-xl {
 }
 
 .ui-in { animation: uiIn 0.5s ease-out both; }
+
+/* ===== מסך גדול ופשוט — תנועה, מעברים ונגישות של מסך הרשימה ===== */
+.big-page button {
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.big-page button:active {
+  opacity: 0.75;
+  transform: none;
+}
+
+.big-page button:focus-visible,
+.big-page a:focus-visible {
+  outline: 3px solid hsl(var(--big-attn));
+  outline-offset: 2px;
+}
+
+@keyframes bigRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes bigBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.big-in { animation: bigRise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.big-beat { animation: bigBeat 1.6s ease-in-out 1; }
+
+.big-more > summary {
+  list-style: none;
+}
+
+.big-more > summary::-webkit-details-marker {
+  display: none;
+}
 
 .mk-pop { animation: mkPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 .mk-bob { animation: mkBob 3s ease-in-out infinite; }
