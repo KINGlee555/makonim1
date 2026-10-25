@@ -104,11 +104,19 @@ const translations = {
 
     // SettingsDialog
     "settings.title": "הגדרות",
-    "settings.pushNotifications": "התראות Push",
-    "settings.pushDesc": "עדכן את בן/בת הזוג כשפריט נקנה",
+    "settings.pushNotifications": "התראות על הרשימה",
+    "settings.pushDesc": "התראה במכשיר כשמוסיפים מוצר או מסמנים כנקנה",
     "settings.pushEnabled": "התראות הופעלו",
     "settings.pushDisabled": "התראות בוטלו",
-    "settings.pushInfo": "התראות Push דורשות בניית אפליקציה נייטיבית (iOS/Android). כעת ההעדפה נשמרת ותופעל אוטומטית כשתבנה האפליקציה.",
+    "settings.pushInfo": "ההתראות מופיעות במכשיר גם כשהאפליקציה פתוחה ברקע. באייפון: הוסיפו את האפליקציה למסך הבית כדי לקבל אותן.",
+
+    // Notifications
+    "notify.enable": "הפעל התראות למשפחה",
+    "notify.enableHint": "התראה במכשיר כשמוסיפים מוצר או קונים",
+    "notify.added": "מוצר חדש ברשימה",
+    "notify.bought": "מוצר נקנה",
+    "notify.boughtBody": "סומן כנקנה: {name}",
+    "notify.blocked": "צריך לאשר התראות בדפדפן כדי לקבל אותן",
     "settings.history": "היסטוריית קניות",
     "settings.historyDesc": "צפה בפריטים שנקנו בעבר",
     "settings.summary": "סיכום קניות",
@@ -879,11 +887,19 @@ const translations = {
 
     // SettingsDialog
     "settings.title": "Settings",
-    "settings.pushNotifications": "Push Notifications",
-    "settings.pushDesc": "Notify your partner when an item is bought",
+    "settings.pushNotifications": "Notifications for this list",
+    "settings.pushDesc": "Device alert when an item is added or marked as bought",
     "settings.pushEnabled": "Notifications enabled",
     "settings.pushDisabled": "Notifications disabled",
-    "settings.pushInfo": "Push notifications require a native app build (iOS/Android). The preference is saved and will activate automatically when you build the app.",
+    "settings.pushInfo": "Alerts show on your device while the app is open in the background. On iPhone, add the app to your home screen to receive them.",
+
+    // Notifications
+    "notify.enable": "Turn on family alerts",
+    "notify.enableHint": "Device alert when an item is added or bought",
+    "notify.added": "New item on the list",
+    "notify.bought": "Item bought",
+    "notify.boughtBody": "Marked as bought: {name}",
+    "notify.blocked": "Allow notifications in your browser to receive them",
     "settings.history": "Shopping History",
     "settings.historyDesc": "View previously purchased items",
     "settings.summary": "Shopping Summary",
@@ -1654,11 +1670,19 @@ const translations = {
 
     // SettingsDialog
     "settings.title": "Настройки",
-    "settings.pushNotifications": "Push-уведомления",
-    "settings.pushDesc": "Уведомить партнёра при покупке товара",
+    "settings.pushNotifications": "Уведомления по списку",
+    "settings.pushDesc": "Оповещение на устройстве при добавлении товара или отметке о покупке",
     "settings.pushEnabled": "Уведомления включены",
     "settings.pushDisabled": "Уведомления отключены",
-    "settings.pushInfo": "Push-уведомления требуют нативного приложения (iOS/Android). Настройка сохранится и активируется при сборке приложения.",
+    "settings.pushInfo": "Оповещения приходят, пока приложение открыто в фоне. На iPhone добавьте приложение на домашний экран, чтобы их получать.",
+
+    // Notifications
+    "notify.enable": "Включить семейные оповещения",
+    "notify.enableHint": "Оповещение на устройство при добавлении или покупке товара",
+    "notify.added": "Новый товар в списке",
+    "notify.bought": "Товар куплен",
+    "notify.boughtBody": "Отмечено как куплено: {name}",
+    "notify.blocked": "Разрешите уведомления в браузере, чтобы получать их",
     "settings.history": "История покупок",
     "settings.historyDesc": "Просмотр купленных ранее товаров",
     "settings.summary": "Сводка покупок",

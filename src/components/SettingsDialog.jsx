@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
+import { requestNotificationPermission } from "@/hooks/useListNotifications";
 import BudgetTracker from "./BudgetTracker";
 import { SUPERMARKET_NAMES, getPreferredSupermarket, setPreferredSupermarket } from "@/lib/supermarkets";
 import ChainLogo from "@/components/ChainLogo";
@@ -28,12 +29,21 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
   }, [list, open]);
 
   const handleTogglePush = async (checked) => {
+    // לפני שמפעילים — מאשרים התראות בדפדפן; בלי אישור אין מה לשמור
+    if (checked) {
+      const permission = await requestNotificationPermission();
+      if (permission !== "granted") {
+        toast({ title: t("notify.blocked") });
+        return;
+      }
+    }
     setPushEnabled(checked);
     setSaving(true);
     try {
       await base44.entities.ShoppingList.update(list.id, { push_enabled: checked });
     } catch {
       setPushEnabled(!checked);
+      toast({ title: t("settings.error") });
     }
     setSaving(false);
   };

@@ -70,12 +70,6 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
   }, []);
 
   useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  useEffect(() => {
     const unsubscribe = base44.entities.ShoppingList.subscribe((event) => {
       if (event.id !== listId) return;
       if (event.type === "update") setList(prev => prev ? { ...prev, ...event.data } : prev);

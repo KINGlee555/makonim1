@@ -13,6 +13,8 @@ import { useWarmChainPrices } from "@/hooks/useWarmChainPrices";
 import { useListPresence } from "@/hooks/useListPresence";
 import { useItemReminders } from "@/hooks/useItemReminders";
 import { useChainDeals } from "@/hooks/useChainDeals";
+import { useListNotifications } from "@/hooks/useListNotifications";
+import NotificationPrompt from "@/components/NotificationPrompt";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
@@ -49,6 +51,8 @@ export default function ListView() {
   const presence = useListPresence(listId, user);
   // מצב פשוט — מסתיר כל מה שאינו הכרחי לקנייה עצמה; הכל נשאר נגיש דרך "עוד כלים"
   const [simple] = useSimpleMode();
+  // התראות בזמן אמת במכשיר — כשמישהו מהמשפחה מוסיף מוצר או מסמן מוצר כנקנה
+  useListNotifications(listId, !!list?.push_enabled, user?.id);
 
   useEffect(() => {
     loadAllProducts(1000).then(setAllProducts).catch(() => {});
@@ -122,6 +126,8 @@ export default function ListView() {
         {otherShoppers.length > 0 && (
           <p className={`${bigAlert} mt-5`}>{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
         )}
+
+        <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
 
         <ListItemsSection
           pendingItems={shoppingItems}
