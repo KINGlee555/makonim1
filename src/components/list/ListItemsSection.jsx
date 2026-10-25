@@ -17,7 +17,7 @@ export default function ListItemsSection({
   return (
     <>
       {pendingItems.length > 0 && (
-        <div className="mt-6 sm:mt-8">
+        <div className="mkc-list mt-6 sm:mt-8">
           {pendingItems.map((item, index) => (
             <ListItemRow
               key={item.id}
