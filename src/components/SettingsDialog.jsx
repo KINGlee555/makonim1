@@ -9,6 +9,8 @@ import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 import { requestNotificationPermission } from "@/hooks/useListNotifications";
 import BudgetTracker from "./BudgetTracker";
+import PremiumLock from "@/components/premium/PremiumLock";
+import usePremium from "@/hooks/usePremium";
 import { SUPERMARKET_NAMES, getPreferredSupermarket, setPreferredSupermarket } from "@/lib/supermarkets";
 import ChainLogo from "@/components/ChainLogo";
 
@@ -19,6 +21,7 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
   const [saving, setSaving] = useState(false);
   const [preferredStore, setPreferredStore] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
+  const { isPremium } = usePremium();
 
   useEffect(() => {
     if (list) {
@@ -162,7 +165,7 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
           </div>
 
           <div className="animate-slide-up stagger-4">
-            <BudgetTracker listId={list.id} />
+            {isPremium ? <BudgetTracker listId={list.id} /> : <PremiumLock hint={t("premium.f2")} />}
           </div>
 
           <button

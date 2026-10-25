@@ -8,11 +8,14 @@ import ProductPhoto from "@/components/ProductPhoto";
 import AppFooter from "../components/AppFooter";
 import { useT } from "@/lib/i18n";
 import PriceHistoryChart from "../components/PriceHistoryChart";
+import PremiumLock from "@/components/premium/PremiumLock";
+import usePremium from "@/hooks/usePremium";
 
 export default function ShoppingSummary() {
   const { listId } = useParams();
   const navigate = useNavigate();
   const t = useT();
+  const { isPremium } = usePremium();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -142,7 +145,7 @@ export default function ShoppingSummary() {
             )}
 
             <h3 className="text-lg font-semibold text-foreground mb-3">{t("priceHistory.title")}</h3>
-            <PriceHistoryChart records={records} />
+            {isPremium ? <PriceHistoryChart records={records} /> : <PremiumLock hint={t("premium.f1")} />}
           </>
         )}
         <AppFooter />

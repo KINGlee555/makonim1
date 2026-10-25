@@ -7,12 +7,15 @@ import { ArrowRight, ShoppingBag } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import AppFooter from "../components/AppFooter";
 import ReceiptScanner from "../components/ReceiptScanner";
+import PremiumLock from "@/components/premium/PremiumLock";
+import usePremium from "@/hooks/usePremium";
 import { useT } from "@/lib/i18n";
 
 export default function ShoppingHistory() {
   const { listId } = useParams();
   const navigate = useNavigate();
   const t = useT();
+  const { isPremium } = usePremium();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,7 +52,7 @@ export default function ShoppingHistory() {
             <h1 className="text-2xl font-bold text-foreground mb-1">{t("history.title")}</h1>
             <p className="text-muted-foreground">{t("history.desc")}</p>
           </div>
-          <ReceiptScanner listId={listId} onScanned={loadHistory} />
+          {isPremium ? <ReceiptScanner listId={listId} onScanned={loadHistory} /> : <PremiumLock hint={t("premium.f3")} />}
         </div>
 
         <div className="bg-card border border-primary/15 rounded-3xl p-5 mb-7 flex items-center justify-between shadow-lg shadow-primary/10">

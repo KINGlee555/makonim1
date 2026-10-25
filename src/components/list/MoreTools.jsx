@@ -13,6 +13,7 @@ import SmartSuggestions from "@/components/SmartSuggestions";
 import RecentlyBought from "@/components/RecentlyBought";
 import FillFromLastWeek from "@/components/FillFromLastWeek";
 import { useT } from "@/lib/i18n";
+import usePremium from "@/hooks/usePremium";
 import { bigAlert, bigCard, bigSection, bigTitle } from "@/lib/bigUi";
 
 // "עוד כלים" — כל מה שלא צריך על המסך הראשי: מי איתך, הסל, המחלקות, ההצעות והכלים.
@@ -22,6 +23,7 @@ export default function MoreTools({
   onAddProduct, onToggleFavorite, onToggleSuggestions, onRefresh, onReload, show,
 }) {
   const t = useT();
+  const { isPremium } = usePremium();
 
   return (
     <details open className="big-more big-in mt-8 sm:mt-[34px]" style={{ animationDelay: ".5s" }}>
@@ -95,7 +97,7 @@ export default function MoreTools({
             onOpenRoute={() => show("route")}
             onOpenMenu={() => show("menu")}
             onOpenDeals={() => show("deals")}
-            onOpenSplit={() => show("split")}
+            onOpenSplit={() => (isPremium ? show("split") : show("premium"))}
             onOpenLeaderboard={() => show("leaderboard")}
             onOpenVoice={() => show("voice")}
             onOpenDealCalculator={() => show("dealCalculator")}

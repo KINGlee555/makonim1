@@ -22,6 +22,7 @@ export default function AppFooter() {
           <Link to="/photo-suggestions" className={link}>{t("footer.suggestions")}</Link>
           <Link to="/price-reports" className={link}>{t("footer.priceReports")}</Link>
           <Link to="/sponsored" className={link}>{t("sponsored.admin")}</Link>
+          <Link to="/premium-members" className={link}>מנויי פרימיום</Link>
         </>
       )}
       <span className="w-full text-center text-[16px] text-big-muted">{t("footer.credit")}</span>

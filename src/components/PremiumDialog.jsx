@@ -5,6 +5,7 @@ import { Check, Crown } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 import PremiumPlanCard from "./PremiumPlanCard";
+import usePremium from "@/hooks/usePremium";
 
 const PLANS = [
   { id: "yearly", label: "premium.yearly", price: 149, period: "premium.perYear", badge: "premium.yearlyBonus" },
@@ -19,6 +20,7 @@ export default function PremiumDialog({ open, onOpenChange }) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [failed, setFailed] = useState(false);
+  const { isPremium, member } = usePremium();
 
   const handleJoin = async () => {
     setSending(true);
@@ -48,7 +50,12 @@ export default function PremiumDialog({ open, onOpenChange }) {
           </DialogTitle>
         </DialogHeader>
 
-        {sent ? (
+        {isPremium ? (
+          <div className="py-6 text-center">
+            <p className="text-[22px] font-black text-market-ink">{t("premium.activeTitle")}</p>
+            <p className="mt-2 text-[15px] font-bold text-market-ink/70">{t("premium.activeUntil", { date: member?.paid_until })}</p>
+          </div>
+        ) : sent ? (
           <div className="py-6 text-center">
             <p className="text-[22px] font-black text-market-ink">{t("premium.sentTitle")}</p>
             <p className="mt-2 text-[15px] font-bold text-market-ink/70">{t("premium.sentDesc")}</p>

@@ -23,6 +23,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import DemoList from './pages/DemoList';
+import PremiumMembers from './pages/PremiumMembers';
 
 // Public pages: reachable without login (auth pages + trust pages)
 const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact", "/demo"];
@@ -76,6 +77,7 @@ const AuthenticatedApp = () => {
       <Route path="/photo-suggestions" element={<PhotoSuggestions />} />
       <Route path="/price-reports" element={<PriceReports />} />
       <Route path="/sponsored" element={<SponsoredPlacements />} />
+      <Route path="/premium-members" element={<PremiumMembers />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
