@@ -33,8 +33,9 @@ const CATEGORY_LABELS = {
   "חיות מחמד": "חיות מחמד",
 };
 
-// מוצר מוצג כשיש לו תמונה אמיתית, או כשיש לו מותג — ואז התמונה האמיתית נטענת לכרטיס
-const usableProduct = (product) => Boolean((product.image_verified && product.image_url) || product.brand);
+// מוצר מוצג כשיש לו תמונה אמיתית, מותג, או ברקוד אמיתי מהקטלוג — כך כל המוצרים שנאספו
+// מהרשתות מופיעים בחיפוש, עם תמונת המוצר או עם האייקון שלו עד שנמצא הצילום האמיתי
+const usableProduct = (product) => Boolean((product.image_verified && product.image_url) || product.brand || product.barcode);
 
 function getSimulatedStores(productName, stores) {
   const seed = productName.charCodeAt(0) + productName.charCodeAt(productName.length - 1);

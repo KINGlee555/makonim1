@@ -1,5 +1,5 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
-import { CATALOG_CHAINS, catalogChainById, chainCatalogItems, photosForCodes, prioritizeForPhotos } from "../../shared/chainCatalog.ts";
+import { CATALOG_CHAINS, catalogChainById, chainCatalogItems, isRealBarcode, photosForCodes, prioritizeForPhotos } from "../../shared/chainCatalog.ts";
 import { categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
 
 // ברירת מחדל: שלוש רשתות בכל קריאה, כדי לעמוד במגבלות הזמן של השרת.
@@ -7,7 +7,7 @@ const DEFAULT_CHAINS = ["shufersal", "rami_levy", "yohananof"];
 // אחרי הזמן הזה מפסיקים לפתוח רשתות חדשות בקריאה הזאת, וממשיכים בקריאה הבאה.
 const TIME_BUDGET_MS = 200000;
 // כמה מוצרים מתחילת קובץ המחירים נבדוק מול מה שכבר יש לנו.
-const MAX_CHUNKS = 12;
+const MAX_CHUNKS = 30;
 
 export default async function (req) {
   try {
@@ -26,8 +26,8 @@ export default async function (req) {
     const body = await req.json().catch(() => ({}));
     const requested = Array.isArray(body?.chains) && body.chains.length ? body.chains : DEFAULT_CHAINS;
     // כמה מוצרים לסרוק מקובץ המחירים, וכמה מהם לבדוק מול קטלוג התמונות בקריאה הזאת.
-    const scan = Math.min(Math.max(Number(body?.scan) || 1800, 200), 5000);
-    const perChain = Math.min(Math.max(Number(body?.perChain) || 400, 20), 1200);
+    const scan = Math.min(Math.max(Number(body?.scan) || 6000, 200), 30000);
+    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 1200);
     const startedAt = Date.now();
     const report = [];
 
@@ -68,7 +68,9 @@ export default async function (req) {
           await base44.asServiceRole.entities.CatalogImage.bulkCreate(checked.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
         }
 
-        const rows = unknown.filter((item) => images.has(item.code)).map((item) => ({
+        // נשמר כל מוצר שיש לו תמונה אמיתית, וגם כל מוצר עם ברקוד אמיתי — כך הקטלוג גדל
+        // גם במוצרים שאין להם תמונה בקטלוג העולמי (מותג פרטי, טרי, מעדנייה).
+        const rows = unknown.filter((item) => images.has(item.code) || isRealBarcode(item.code)).map((item) => ({
           barcode: item.code,
           name: displayName(item).slice(0, 64),
           brand: item.brand.slice(0, 48),
@@ -76,7 +78,7 @@ export default async function (req) {
           price: item.price,
           chain: chain.id,
           chain_name: chain.name,
-          image_url: images.get(item.code),
+          image_url: images.get(item.code) || "",
           weighted: item.weighted,
           day
         }));
@@ -86,7 +88,7 @@ export default async function (req) {
           const created = await base44.asServiceRole.entities.CatalogProduct.bulkCreate(rows.slice(i, i + 500));
           stored += Array.isArray(created) ? created.length : 0;
         }
-        report.push({ chain: chain.id, chain_name: chain.name, day, scanned: items.length, candidates: candidates.length, checked: checked.length, withPhoto: rows.length, stored });
+        report.push({ chain: chain.id, chain_name: chain.name, day, scanned: items.length, candidates: candidates.length, branded: unknown.filter((item) => item.brand).length, checked: checked.length, withPhoto: rows.length, stored });
       } catch (error) {
         report.push({ chain: chain.id, error: error instanceof Error ? error.message : String(error) });
       }

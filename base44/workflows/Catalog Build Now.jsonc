@@ -1,23 +1,22 @@
 {
-  "name": "Catalog Build Now",
-  "description": "\u05d1\u05d5\u05e0\u05d4 \u05d0\u05ea \u05e7\u05d8\u05dc\u05d5\u05d2 \u05d4\u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05de\u05db\u05dc \u05d4\u05e8\u05e9\u05ea\u05d5\u05ea, \u05e2\u05dd \u05ea\u05de\u05d5\u05e0\u05d4 \u05d0\u05de\u05d9\u05ea\u05d9\u05ea \u05dc\u05db\u05dc \u05de\u05d5\u05e6\u05e8",
   "trigger": {
     "condition": null,
     "config": {
       "trigger_type": "scheduled",
       "events": [],
-      "schedule_mode": "interval",
+      "schedule_mode": "recurring",
+      "cron_expression": "30 3 * * *",
       "one_time_date": null,
       "timezone": "Asia/Jerusalem",
-      "cron_expression": null,
-      "interval_value": 2,
-      "interval_unit": "hours",
-      "interval_anchor": "2026-10-24T09:52:00Z",
-      "ends_type": "after_count",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
       "ends_on_date": null,
-      "ends_after_count": 4
+      "ends_after_count": null
     }
   },
+  "name": "Catalog Build Now",
   "definition": {
     "document": {
       "dsl": "1.0.0",
@@ -27,575 +26,234 @@
     },
     "do": [
       {
-        "catalog_1_shufersal": {
+        "catalog_king_store": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "shufersal"
+                "king_store"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_2_shufersal",
+          "then": "catalog_zol_ve_gadol",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e9\u05d5\u05e4\u05e8\u05e1\u05dc"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e7\u05d9\u05e0\u05d2 \u05e1\u05d8\u05d5\u05e8"
           }
         }
       },
       {
-        "catalog_2_shufersal": {
+        "catalog_zol_ve_gadol": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "shufersal"
+                "zol_ve_gadol"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_1_rami_levy",
+          "then": "catalog_super_sapir",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e9\u05d5\u05e4\u05e8\u05e1\u05dc \u05d4\u05de\u05e9\u05da"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d6\u05d5\u05dc \u05d5\u05d1\u05d2\u05d3\u05d5\u05dc"
           }
         }
       },
       {
-        "catalog_1_rami_levy": {
+        "catalog_super_sapir": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "rami_levy"
+                "super_sapir"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_2_rami_levy",
+          "then": "catalog_maayan_2000",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e8\u05de\u05d9 \u05dc\u05d5\u05d9"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d5\u05e4\u05e8 \u05e1\u05e4\u05d9\u05e8"
           }
         }
       },
       {
-        "catalog_2_rami_levy": {
+        "catalog_maayan_2000": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "rami_levy"
+                "maayan_2000"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_1_yohananof",
+          "then": "catalog_city_market",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e8\u05de\u05d9 \u05dc\u05d5\u05d9 \u05d4\u05de\u05e9\u05da"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05de\u05e2\u05d9\u05d9\u05df 2000"
           }
         }
       },
       {
-        "catalog_1_yohananof": {
+        "catalog_city_market": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "yohananof"
+                "city_market"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_2_yohananof",
+          "then": "catalog_shuk_hair",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d5\u05d7\u05e0\u05e0\u05d5\u05e3"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d9\u05d8\u05d9 \u05de\u05e8\u05e7\u05d8"
           }
         }
       },
       {
-        "catalog_2_yohananof": {
+        "catalog_shuk_hair": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "yohananof"
+                "shuk_hair"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_1_osher_ad",
+          "then": "catalog_shefa_berkat_hashem",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d5\u05d7\u05e0\u05e0\u05d5\u05e3 \u05d4\u05de\u05e9\u05da"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e9\u05d5\u05e7 \u05d4\u05e2\u05d9\u05e8"
           }
         }
       },
       {
-        "catalog_1_osher_ad": {
+        "catalog_shefa_berkat_hashem": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "osher_ad"
+                "shefa_berkat_hashem"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_2_osher_ad",
+          "then": "catalog_of_ve_hodu_bareket",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d0\u05d5\u05e9\u05e8 \u05e2\u05d3"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e9\u05e4\u05e2 \u05d1\u05e8\u05db\u05ea \u05d4\u05e9\u05dd"
           }
         }
       },
       {
-        "catalog_2_osher_ad": {
+        "catalog_of_ve_hodu_bareket": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "osher_ad"
+                "of_ve_hodu_bareket"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_1_tiv_taam",
+          "then": "catalog_mishnat_yosef",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d0\u05d5\u05e9\u05e8 \u05e2\u05d3 \u05d4\u05de\u05e9\u05da"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e2\u05d5\u05e3 \u05d5\u05d4\u05d5\u05d3\u05d5 \u05d1\u05e8\u05e7\u05ea"
           }
         }
       },
       {
-        "catalog_1_tiv_taam": {
+        "catalog_mishnat_yosef": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "tiv_taam"
+                "mishnat_yosef"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_2_tiv_taam",
+          "then": "catalog_good_pharm",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d8\u05d9\u05d1 \u05d8\u05e2\u05dd"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05de\u05e9\u05e0\u05ea \u05d9\u05d5\u05e1\u05e3"
           }
         }
       },
       {
-        "catalog_2_tiv_taam": {
+        "catalog_good_pharm": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "tiv_taam"
+                "good_pharm"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_1_keshet",
+          "then": "catalog_dor_alon",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d8\u05d9\u05d1 \u05d8\u05e2\u05dd \u05d4\u05de\u05e9\u05da"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d2\u05d5\u05d3 \u05e4\u05d0\u05e8\u05dd"
           }
         }
       },
       {
-        "catalog_1_keshet": {
+        "catalog_dor_alon": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "keshet"
+                "dor_alon"
               ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
-          "then": "catalog_2_keshet",
+          "then": "catalog_yilo",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e7\u05e9\u05ea \u05d8\u05e2\u05de\u05d9\u05dd"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d3\u05d5\u05e8 \u05d0\u05dc\u05d5\u05df"
           }
         }
       },
       {
-        "catalog_2_keshet": {
+        "catalog_yilo": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "buildCatalog",
             "args": {
               "chains": [
-                "keshet"
+                "yilo"
               ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_fresh_market",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e7\u05e9\u05ea \u05d8\u05e2\u05de\u05d9\u05dd \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_fresh_market": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "fresh_market"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_fresh_market",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e4\u05e8\u05e9 \u05de\u05e8\u05e7\u05d8"
-          }
-        }
-      },
-      {
-        "catalog_2_fresh_market": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "fresh_market"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_stop_market",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e4\u05e8\u05e9 \u05de\u05e8\u05e7\u05d8 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_stop_market": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "stop_market"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_stop_market",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d8\u05d5\u05e4 \u05de\u05e8\u05e7\u05d8"
-          }
-        }
-      },
-      {
-        "catalog_2_stop_market": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "stop_market"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_politzer",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d8\u05d5\u05e4 \u05de\u05e8\u05e7\u05d8 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_politzer": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "politzer"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_politzer",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e4\u05d5\u05dc\u05d9\u05e6\u05e8"
-          }
-        }
-      },
-      {
-        "catalog_2_politzer": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "politzer"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_salach_dabach",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e4\u05d5\u05dc\u05d9\u05e6\u05e8 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_salach_dabach": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "salach_dabach"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_salach_dabach",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d0\u05dc\u05d7 \u05d3\u05d1\u05d0\u05d7"
-          }
-        }
-      },
-      {
-        "catalog_2_salach_dabach": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "salach_dabach"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_machsanei_hashuk",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d0\u05dc\u05d7 \u05d3\u05d1\u05d0\u05d7 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_machsanei_hashuk": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "machsanei_hashuk"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_machsanei_hashuk",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05de\u05d7\u05e1\u05e0\u05d9 \u05d4\u05e9\u05d5\u05e7"
-          }
-        }
-      },
-      {
-        "catalog_2_machsanei_hashuk": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "machsanei_hashuk"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_victory",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05de\u05d7\u05e1\u05e0\u05d9 \u05d4\u05e9\u05d5\u05e7 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_victory": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "victory"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_victory",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d5\u05d9\u05e7\u05d8\u05d5\u05e8\u05d9"
-          }
-        }
-      },
-      {
-        "catalog_2_victory": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "victory"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_hazi_hinam",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d5\u05d9\u05e7\u05d8\u05d5\u05e8\u05d9 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_hazi_hinam": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "hazi_hinam"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_hazi_hinam",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d7\u05e6\u05d9 \u05d7\u05d9\u05e0\u05dd"
-          }
-        }
-      },
-      {
-        "catalog_2_hazi_hinam": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "hazi_hinam"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_super_yuda",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d7\u05e6\u05d9 \u05d7\u05d9\u05e0\u05dd \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_super_yuda": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "super_yuda"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_super_yuda",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d5\u05e4\u05e8 \u05d9\u05d5\u05d3\u05d4"
-          }
-        }
-      },
-      {
-        "catalog_2_super_yuda": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "super_yuda"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_1_yeinot_bitan",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d5\u05e4\u05e8 \u05d9\u05d5\u05d3\u05d4 \u05d4\u05de\u05e9\u05da"
-          }
-        }
-      },
-      {
-        "catalog_1_yeinot_bitan": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "yeinot_bitan"
-              ],
-              "scan": 2400,
-              "perChain": 400
-            }
-          },
-          "then": "catalog_2_yeinot_bitan",
-          "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d9\u05e0\u05d5\u05ea \u05d1\u05d9\u05ea\u05df"
-          }
-        }
-      },
-      {
-        "catalog_2_yeinot_bitan": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "buildCatalog",
-            "args": {
-              "chains": [
-                "yeinot_bitan"
-              ],
-              "scan": 2400,
-              "perChain": 400
+              "scan": 8000,
+              "perChain": 1200
             }
           },
           "then": "end",
           "x-base44": {
-            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d9\u05e0\u05d5\u05ea \u05d1\u05d9\u05ea\u05df \u05d4\u05de\u05e9\u05da"
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d9\u05dc\u05d5"
           }
         }
       }
     ]
-  }
+  },
+  "description": "\u05de\u05de\u05e9\u05d9\u05da \u05dc\u05d4\u05d2\u05d3\u05d9\u05dc \u05d0\u05ea \u05e7\u05d8\u05dc\u05d5\u05d2 \u05d4\u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05de\u05d3\u05d9 \u05d9\u05d5\u05dd \u05de\u05db\u05dc \u05d4\u05e8\u05e9\u05ea\u05d5\u05ea \u05d4\u05e7\u05d8\u05e0\u05d5\u05ea \u05e9\u05dc\u05d0 \u05e0\u05db\u05dc\u05dc\u05d5\u05ea \u05d1\u05e1\u05e0\u05db\u05e8\u05d5\u05df \u05d4\u05d9\u05d5\u05de\u05d9"
 }
