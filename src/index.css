@@ -155,8 +155,8 @@
     overflow-x: clip;
   }
 
-  /* Smooth scrolling */
-  * {
+  /* גלילה חלקה של העמוד עצמו בלבד — לא על כל אלמנט, כדי לא להעמיס על מסכים של 120Hz */
+  html {
     scroll-behavior: smooth;
   }
 }
