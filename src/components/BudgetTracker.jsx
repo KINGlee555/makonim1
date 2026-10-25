@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Wallet, TrendingUp, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import { useT } from "@/lib/i18n";
 
 export default function BudgetTracker({ listId }) {
@@ -14,7 +14,7 @@ export default function BudgetTracker({ listId }) {
   useEffect(() => {
     const saved = localStorage.getItem(`budget_${listId}`);
     if (saved) setBudget(parseFloat(saved));
-    base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", 500).then(records => {
+    loadPurchaseHistory(listId, 500).then(records => {
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthSpent = records.filter(r => new Date(r.created_date) >= monthStart)

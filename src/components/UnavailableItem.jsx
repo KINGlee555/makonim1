@@ -7,7 +7,7 @@ export default function UnavailableItem({ item, onRestore }) {
   const t = useT();
   return (
     <div className="flex items-center gap-3 border-b border-ui-line-soft py-1.5">
-      <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url}
+      <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode}
         className="h-10 w-10 flex-shrink-0 rounded-lg object-cover opacity-50" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] text-ui-muted">{item.name}</p>

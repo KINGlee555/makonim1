@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 import { uiPillRow, uiSection, uiEnter } from "@/lib/minimalUi";
@@ -11,7 +11,7 @@ export default function SmartSuggestions({ listId, currentItems, onAddProduct, d
 
   useEffect(() => {
     let cancelled = false;
-    base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", 200)
+    loadPurchaseHistory(listId, 200)
       .then(h => { if (!cancelled) setHistory(h); }).catch(() => {});
     return () => { cancelled = true; };
   }, [listId]);

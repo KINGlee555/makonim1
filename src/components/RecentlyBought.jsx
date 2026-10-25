@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import ProductPhoto from "@/components/ProductPhoto";
 import { useT } from "@/lib/i18n";
 import { uiSection, uiLink, uiEnter } from "@/lib/minimalUi";
@@ -23,7 +24,7 @@ export default function RecentlyBought({ listId, delay = 0 }) {
 
   useEffect(() => {
     let cancelled = false;
-    const load = () => base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", LIMIT)
+    const load = () => loadPurchaseHistory(listId, LIMIT)
       .then(records => { if (!cancelled) setRows(records); })
       .catch(() => {});
     load();

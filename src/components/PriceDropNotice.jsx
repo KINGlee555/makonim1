@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { TrendingDown } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import { useChainPrices } from "@/hooks/useChainPrices";
 import { uiBanner, uiEnter, uiPill, uiSection } from "@/lib/minimalUi";
 import { useT } from "@/lib/i18n";
@@ -20,7 +20,7 @@ export default function PriceDropNotice({ listId, items }) {
 
   useEffect(() => {
     if (!listId) return;
-    base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", 80)
+    loadPurchaseHistory(listId, 80)
       .then(history => {
         const latest = {};
         for (const entry of history) {

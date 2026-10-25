@@ -43,7 +43,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
     >
       <div className="mkc-top">
         <button type="button" onClick={() => onNavigate && onNavigate(item)} aria-label={`${t("productItem.navigate")}: ${item.name}`} className="shrink-0 rounded-full">
-          <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url}
+          <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode}
             onFound={(url) => onPhotoFound && onPhotoFound(item, url)} className="mkc-photo" />
         </button>
 

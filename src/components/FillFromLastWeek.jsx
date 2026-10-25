@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Loader2, RotateCcw } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 import { uiEnter, uiSection } from "@/lib/minimalUi";
@@ -19,7 +20,7 @@ export default function FillFromLastWeek({ listId, currentItems, onFilled }) {
 
   useEffect(() => {
     let alive = true;
-    base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", HISTORY_LIMIT)
+    loadPurchaseHistory(listId, HISTORY_LIMIT)
       .then(rows => { if (alive) setHistory(rows); })
       .catch(() => {});
     return () => { alive = false; };

@@ -60,7 +60,7 @@ export default function ShoppingRoute({ open, onOpenChange, items }) {
                     <div className="divide-y divide-border">
                       {aisleItems.map(item => (
                         <div key={item.id} className="flex items-center gap-3 px-4 py-2.5 bg-card">
-                          <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} className="h-9 w-9 flex-shrink-0 rounded-lg" />
+                          <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode} className="h-9 w-9 flex-shrink-0 rounded-lg" />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-foreground line-clamp-1">{item.name}</p>
                             {item.quantity > 1 && <span className="text-xs text-muted-foreground">×{item.quantity}</span>}

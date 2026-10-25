@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { buildMonthlySummary } from "@/lib/monthlySummary";
@@ -12,7 +12,7 @@ export default function MonthlySummary({ listId }) {
 
   useEffect(() => {
     let cancelled = false;
-    base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", 400)
+    loadPurchaseHistory(listId, 400)
       .then(rows => { if (!cancelled) setSummary(buildMonthlySummary(rows)); })
       .catch(() => {});
     return () => { cancelled = true; };

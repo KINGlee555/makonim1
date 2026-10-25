@@ -193,7 +193,7 @@ export default function VoiceQuickAdd({ open, onOpenChange, onAddProduct, allPro
                 const isAdded = addedNames.has(item.parsedName);
                 return (
                   <div key={idx} className={`rounded-2xl border p-3 flex items-center gap-3 ${isAdded ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}>
-                    <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} className="h-11 w-11 flex-shrink-0 rounded-xl" />
+                    <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode} className="h-11 w-11 flex-shrink-0 rounded-xl" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-foreground line-clamp-1">{item.name}</p>
                       {item.store && (

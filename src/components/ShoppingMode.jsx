@@ -140,7 +140,7 @@ export default function ShoppingMode({ items, onBought, onExit, userName, listId
             }}
             className="w-full max-w-sm bg-card border-2 border-border rounded-3xl p-8 shadow-lg cursor-grab active:cursor-grabbing select-none"
           >
-            <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} className="mx-auto mb-6 h-32 w-32 rounded-2xl" />
+            <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode} className="mx-auto mb-6 h-32 w-32 rounded-2xl" />
             <h2 className="text-2xl font-bold text-center text-foreground mb-2">{item.name}</h2>
             {item.category && <p className="text-center text-muted-foreground mb-4">{item.category}</p>}
             <div className="flex items-center justify-center gap-4 mb-2">

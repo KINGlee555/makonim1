@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Trophy, Medal, TrendingDown, ShoppingBag } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { loadPurchaseHistory } from "@/lib/purchaseHistoryStore";
 import { useT } from "@/lib/i18n";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -12,7 +12,7 @@ export default function Leaderboard({ open, onOpenChange, listId }) {
 
   useEffect(() => {
     if (!open) return;
-    base44.entities.PurchaseHistory.filter({ list_id: listId }, "-created_date", 500)
+    loadPurchaseHistory(listId, 500)
       .then(setHistory).catch(() => {});
   }, [open, listId]);
 
