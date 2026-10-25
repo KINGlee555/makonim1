@@ -146,10 +146,11 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   useEffect(() => {
     if (!open) return;
     const term = normalizeProductText(deferredQuery);
-    if (term.length < 2 && selectedCategory === "all") { setStoredProducts([]); return; }
+    if (!term && selectedCategory === "all") { setStoredProducts([]); return; }
     let cancelled = false;
     const timer = window.setTimeout(() => {
-      searchStoredCatalog({ query: deferredQuery, category: term.length < 2 ? selectedCategory : "", limit: 150 })
+      // מאות הראשונה כבר נשלפת מהקטלוג השמור, וכל אות נוספת מצמצמת את ההצעות
+      searchStoredCatalog({ query: deferredQuery, category: term ? "" : selectedCategory, limit: 150 })
         .then(products => { if (!cancelled) setStoredProducts(products); })
         .catch(() => {});
     }, 150);

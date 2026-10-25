@@ -38,11 +38,12 @@ export async function searchStoredCatalog({ query = "", category = "", limit = 1
 
   const filter = {};
   if (category) filter.category = category;
-  if (term.length >= 2) {
+  if (term.length >= 1) {
     // מילת החיפוש הראשונה מסוננת בשרת; שאר המילים מסוננות מיד אחר כך במסך.
     const first = query.trim().replace(/[%.,()/\\-]/g, " ").replace(/\s+/g, " ").trim().split(" ")[0] || "";
-    if (first.length < 2) return [];
-    filter.name = { $regex: first };
+    if (!first) return [];
+    // מאות ראשונה ההצעות מופיעות מיד — לפי המוצרים שמתחילים באות הזו
+    filter.name = { $regex: first.length === 1 ? `^${first}` : first };
   }
   if (!Object.keys(filter).length) return [];
 
