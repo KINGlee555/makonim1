@@ -148,6 +148,8 @@
   html {
     width: 100%;
     overflow-x: clip;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
 
   body {
@@ -156,6 +158,8 @@
     max-width: 100%;
     -webkit-tap-highlight-color: transparent;
     overflow-x: clip;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
 
   /* גלילה חלקה של העמוד עצמו בלבד — לא על כל אלמנט, כדי לא להעמיס על מסכים של 120Hz */
@@ -727,7 +731,7 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-credit { margin-inline-start: auto; padding: 5px 14px; border-radius: 999px; background: #FFD400; }
 
 /* פס הפעולות התחתון */
-.pst-dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 40; display: flex; max-width: 1200px; height: 100px; margin: 0 auto; border-top: 4px solid #0B3A4D; background: #fff; }
+.pst-dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 40; display: flex; max-width: 1200px; height: calc(100px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); margin: 0 auto; border-top: 4px solid #0B3A4D; background: #fff; }
 .pst-dock button { flex: 1; padding: 0; border: 0; color: #0B3A4D; font-family: var(--font-display); font-size: 22px; font-weight: 400; text-transform: uppercase; }
 .pst-dock .pst-add { background: #FFD400; }
 .pst-dock .pst-fin { background: #FF3B5D; color: #fff; }
@@ -788,7 +792,7 @@ html.easy-mode [role="dialog"] .text-xl {
   .pst-tools .pst-panel { margin: 16px 40px 0; }
   .pst-ft { gap: 12px 22px; padding: 30px 40px 0; font-size: 15px; }
   .pst-page { padding-bottom: 170px; }
-  .pst-dock { height: 116px; }
+  .pst-dock { height: calc(116px + env(safe-area-inset-bottom, 0px)); }
   .pst-dock button { font-size: 28px; }
   .pst-dock .pst-scan { width: 80px; height: 80px; top: -40px; border-width: 5px; }
   .pst-dock .pst-scan svg { width: 34px; height: 34px; }
@@ -848,7 +852,7 @@ html.easy-mode [role="dialog"] .text-xl {
   .pst-ft { gap: 12px 26px; padding: 34px 64px 0; font-size: 16px; }
   .pst-credit { padding: 6px 16px; }
   .pst-page { padding-bottom: 190px; }
-  .pst-dock { height: 130px; border-top-width: 5px; }
+  .pst-dock { height: calc(130px + env(safe-area-inset-bottom, 0px)); border-top-width: 5px; }
   .pst-dock button { font-size: 36px; }
   .pst-dock .pst-scan { width: 88px; height: 88px; top: -44px; }
   .pst-dock .pst-scan svg { width: 38px; height: 38px; }
@@ -1351,3 +1355,32 @@ html:not(.skin-poster) .pst-why-n { color: hsl(var(--pst-pink)); }
 
 /* חלונות צפים */
 html:not(.skin-poster) [role="dialog"] { border: 1px solid hsl(var(--skin-line)); box-shadow: var(--skin-shadow); }
+
+/* ===== iOS WebView: התאמות מגע וגלילה ===== */
+/* בלי בחירת טקסט ופופ-אפ העתקה בלחיצה כפולה על כפתורים, תגיות ואייקונים */
+button,
+[role="button"],
+a,
+svg,
+img,
+.pst-tag,
+.pst-deal,
+.pst-remind,
+.pst-chip,
+.pst-num,
+.pst-credit,
+.pst-card,
+.pst-lrow-v {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* יעד נגיעה של לפחות 44px לפקדים ברשימה במסכי טלפון */
+@media (max-width: 639px) {
+  .pst-q button { width: 44px; height: 44px; }
+  .pst-q span { min-width: 32px; }
+  .pst-buy { height: 44px; }
+  .pst-more, .pst-remove { width: 44px; height: 44px; }
+  .pst-amount, .pst-unit { height: 44px; }
+}

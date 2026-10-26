@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, Camera, Loader2 } from "lucide-react";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { User, Camera, Loader2, Trash2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { saveLocalName, loadLocalName } from "@/lib/userName";
 import { useT } from "@/lib/i18n";
@@ -14,6 +15,23 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
   const [photoUrl, setPhotoUrl] = useState(currentUser?.profile_image_url || "");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  // מחיקת החשבון: השרת מאמת את המבקש ומוחק את הפרופיל שלו, ואז המשתמש מנותק מהאפליקציה
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      await base44.functions.invoke("deleteMyAccount", { confirm_email: confirmEmail.trim() });
+      base44.auth.logout("/login");
+    } catch (err) {
+      const reason = err?.response?.data?.error;
+      setDeleteError(reason === "email_mismatch" ? t("profile.deleteEmailMismatch") : t("profile.deleteError"));
+      setDeleting(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!name.trim()) return;
@@ -115,6 +133,53 @@ export default function ProfileDialog({ open, onOpenChange, currentUser, onNameU
           >
             {saving ? t("profile.saving") : t("profile.save")}
           </Button>
+
+          {!forceName && (
+            <div className="pt-3 border-t border-border">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 rounded-xl text-base text-destructive border-destructive/40 hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    {t("profile.deleteAccount")}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="max-w-sm mx-auto">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t("profile.deleteTitle")}</AlertDialogTitle>
+                    <AlertDialogDescription>{t("profile.deleteBody")}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="space-y-2">
+                    <label htmlFor="delete-account-email" className="text-sm font-medium">
+                      {t("profile.deleteEmailLabel")}
+                    </label>
+                    <Input
+                      id="delete-account-email"
+                      type="email"
+                      dir="ltr"
+                      value={confirmEmail}
+                      onChange={(e) => setConfirmEmail(e.target.value)}
+                      placeholder="name@example.com"
+                      className="h-12 rounded-xl text-base"
+                    />
+                    {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                  </div>
+                  <AlertDialogFooter className="gap-2">
+                    <AlertDialogCancel disabled={deleting}>{t("profile.deleteCancel")}</AlertDialogCancel>
+                    <Button
+                      variant="destructive"
+                      onClick={handleDeleteAccount}
+                      disabled={deleting || !confirmEmail.trim()}
+                    >
+                      {deleting ? t("profile.deleting") : t("profile.deleteConfirm")}
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

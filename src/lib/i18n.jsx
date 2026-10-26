@@ -115,6 +115,15 @@ const translations = {
     "profile.required": "חובה להזין שם כדי להמשיך",
     "profile.addPhoto": "הוסף תמונה",
     "profile.changePhoto": "שנה תמונה",
+    "profile.deleteAccount": "מחיקת החשבון",
+    "profile.deleteTitle": "למחוק את החשבון לצמיתות?",
+    "profile.deleteBody": "הפרופיל והגישה לחשבון יימחקו מיד. זו פעולה שאי אפשר לבטל.",
+    "profile.deleteEmailLabel": "לאישור, הקלידו את כתובת המייל שאיתה נרשמתם",
+    "profile.deleteCancel": "ביטול",
+    "profile.deleteConfirm": "מחיקה לצמיתות",
+    "profile.deleting": "מוחק...",
+    "profile.deleteError": "המחיקה לא הצליחה. נסו שוב.",
+    "profile.deleteEmailMismatch": "המייל שהוקלד לא תואם לחשבון.",
 
     // SettingsDialog
     "settings.title": "הגדרות",
@@ -943,6 +952,15 @@ const translations = {
     "profile.required": "A name is required to continue",
     "profile.addPhoto": "Add Photo",
     "profile.changePhoto": "Change Photo",
+    "profile.deleteAccount": "Delete Account",
+    "profile.deleteTitle": "Delete your account permanently?",
+    "profile.deleteBody": "Your profile and access to the account will be deleted right away. This cannot be undone.",
+    "profile.deleteEmailLabel": "To confirm, type the email address you signed up with",
+    "profile.deleteCancel": "Cancel",
+    "profile.deleteConfirm": "Delete permanently",
+    "profile.deleting": "Deleting...",
+    "profile.deleteError": "We could not delete the account. Please try again.",
+    "profile.deleteEmailMismatch": "That email does not match this account.",
 
     // SettingsDialog
     "settings.title": "Settings",
@@ -1771,6 +1789,15 @@ const translations = {
     "profile.required": "Необходимо ввести имя",
     "profile.addPhoto": "Добавить фото",
     "profile.changePhoto": "Изменить фото",
+    "profile.deleteAccount": "Удалить аккаунт",
+    "profile.deleteTitle": "Удалить аккаунт навсегда?",
+    "profile.deleteBody": "Профиль и доступ к аккаунту удаляются сразу. Это действие нельзя отменить.",
+    "profile.deleteEmailLabel": "Для подтверждения введите почту, с которой вы регистрировались",
+    "profile.deleteCancel": "Отмена",
+    "profile.deleteConfirm": "Удалить навсегда",
+    "profile.deleting": "Удаление...",
+    "profile.deleteError": "Не удалось удалить аккаунт. Попробуйте ещё раз.",
+    "profile.deleteEmailMismatch": "Эта почта не совпадает с аккаунтом.",
 
     // SettingsDialog
     "settings.title": "Настройки",
