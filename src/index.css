@@ -627,6 +627,14 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-num-t { background: #fff; color: #0B3A4D; }
 .pst-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 
+/* סינון התוצאות — כדורי בחירה בכרזה */
+.pst-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.pst-chips::-webkit-scrollbar { display: none; }
+.pst-chip { flex: none; padding: 8px 16px; border: 3px solid #0B3A4D; border-radius: 999px; background: #fff; color: #0B3A4D; font-size: 14px; font-weight: 800; }
+.pst-chip-on { background: #FFD400; }
+.dark .pst-chip { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-chip-on { background: #FFD400; color: #0B3A4D; }
+
 /* כמה מוצרים יש באפליקציה — מספר אמיתי מהמסד, גלוי כבר בפתיח */
 .pst-trust { display: inline-block; margin-top: 16px; padding: 8px 18px; border: 3px solid #0B3A4D; border-radius: 999px; background: #fff; color: #0B3A4D; font-size: 14px; font-weight: 800; }
 .pst-btn { padding: 10px 20px; border: 3px solid #0B3A4D; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 16px; font-weight: 800; }

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Loader2, MapPinned, Tag } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import DealShelfRow from "@/components/deals/DealShelfRow";
+import DealsFilterBar from "@/components/deals/DealsFilterBar";
 import SponsoredShelfCard from "@/components/deals/SponsoredShelfCard";
 import NearbyDeals from "@/components/NearbyDeals";
-import { fetchChainDeals, readDealsCache, writeDealsCache } from "@/lib/chainDeals";
+import { dealDiscount, fetchChainDeals, readDealsCache, writeDealsCache } from "@/lib/chainDeals";
 import { SUPERMARKETS } from "@/lib/supermarkets";
 import { useT } from "@/lib/i18n";
 
@@ -35,19 +36,29 @@ export default function DealsShelf({ onAddProduct, onOpenAllDeals, bare = false 
   const [deals, setDeals] = useState(() => readDealsCache(SHELF_KEY));
   const [loading, setLoading] = useState(false);
   const [showNearby, setShowNearby] = useState(false);
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     let cancelled = false;
     const day = new Date().toISOString().slice(0, 10);
 
+    const showRows = (rows) => setDeals(current => (current.length
+      ? current
+      : bestPerProduct((rows || []).map(row => ({ ...row, chain_name: row.chain_name || chainName(row.chain) })))));
+
+    // אין מבצעים מדווחים להיום? מציגים את המבצעים האחרונים שנמשכו — המקטע לא נשאר בלי מבצע.
+    async function latestDeals() {
+      try {
+        const rows = await base44.entities.ChainDeal.filter({ deal_price: { $gt: 0 } }, "-day", 60);
+        if (!cancelled) showRows(rows);
+      } catch {
+        // אין מה למשוך כרגע — נשאר מה שכבר נטען
+      }
+    }
+
     // 1. מה שכבר נמשך היום מהרשתות יושב במסד — מוצג מיד, בלי לקרוא שוב לקבצים
     base44.entities.ChainDeal.filter({ day, deal_price: { $gt: 0 } }, "-created_date", 60)
-      .then(rows => {
-        if (cancelled || !rows?.length) return;
-        setDeals(current => (current.length
-          ? current
-          : bestPerProduct(rows.map(row => ({ ...row, chain_name: row.chain_name || chainName(row.chain) })))));
-      })
+      .then(rows => (rows?.length ? showRows(rows) : latestDeals()))
       .catch(() => {});
 
     // 2. רענון שקט מול קבצי המבצעים של הרשתות — פעם ביום, ואחר כך מהמטמון של השרת
@@ -73,7 +84,14 @@ export default function DealsShelf({ onAddProduct, onOpenAllDeals, bare = false 
     price: deal.deal_price || 0, category: t("summary.other"), image_url: "",
   });
 
-  const shown = deals.slice(0, SHOWN);
+  // הסינון על התוצאות: הכול, רשת אחת, או ההנחות הגדולות — וכשמסננים מציגים יותר שורות.
+  const chains = useMemo(() => [...new Map(deals.map(deal => [deal.chain, deal.chain_name || chainName(deal.chain)])).entries()]
+    .map(([id, name]) => ({ id, name })), [deals]);
+  // "הנחות גדולות" מציג את המבצעים עם ההנחה הגדולה ביותר — כך תמיד יש מה להראות.
+  const matches = filter === "all" ? deals
+    : filter === "big" ? [...deals].sort((a, b) => dealDiscount(b) - dealDiscount(a)).slice(0, 12)
+      : deals.filter(deal => deal.chain === filter);
+  const shown = matches.slice(0, filter === "all" ? SHOWN : SHOWN * 3);
 
   return (
     <section className={bare ? undefined : "pst-panel-slot"}>
@@ -86,6 +104,8 @@ export default function DealsShelf({ onAddProduct, onOpenAllDeals, bare = false 
       <div className={bare ? undefined : "pst-panel"}>
         <SponsoredShelfCard />
 
+        {deals.length > 0 && <DealsFilterBar value={filter} onChange={setFilter} chains={chains} />}
+
         {shown.map((deal, index) => (
           <DealShelfRow key={`${deal.chain}-${deal.barcode}-${index}`} deal={deal} onAdd={addDeal} />
         ))}
@@ -95,7 +115,9 @@ export default function DealsShelf({ onAddProduct, onOpenAllDeals, bare = false 
             <Loader2 className="h-4 w-4 animate-spin" />{t("deals.loading")}
           </p>
         )}
-        {!loading && !shown.length && <p className="pst-empty mt-3">{t("shelf.empty")}</p>}
+        {!loading && !shown.length && (
+          <p className="pst-empty mt-3">{deals.length ? t("filter.none") : t("shelf.empty")}</p>
+        )}
 
         <div className="pst-acts">
           <button type="button" onClick={onOpenAllDeals} className="pst-btn pst-btn-sm">{t("shelf.all")}</button>

@@ -62,6 +62,16 @@ export function dealPriceText(deal) {
   return multiBuyText(deal) || `₪${Number(deal.deal_price || 0).toFixed(2)}`;
 }
 
+// אחוז ההנחה של מבצע: מהמסמך של הרשת, ואם לא דווח — לפי המחיר שלפני המבצע.
+export function dealDiscount(deal) {
+  if (!deal) return 0;
+  const reported = Number(deal.discount_rate ?? deal.discount ?? 0);
+  if (reported > 0) return Math.round(reported);
+  const full = Number(deal.price || 0);
+  const now = Number(deal.deal_price || 0);
+  return full > 0 && now > 0 && now < full ? Math.round((1 - now / full) * 100) : 0;
+}
+
 // ===== מטמון המבצעים בדפדפן =====
 // המבצעים של היום נשמרים גם במכשיר, כך שהחלון נפתח עם מבצעים מיד והרענון ממשיך ברקע.
 const CACHE_PREFIX = "makonim-deals-v1";

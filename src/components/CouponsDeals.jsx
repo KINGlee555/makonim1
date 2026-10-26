@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus, Search, Sparkles, Tag } from "lucide-react";
-import { fetchChainDealsInGroups, dealPriceText, multiBuyText, listDealsKey, readDealsCache, writeDealsCache } from "@/lib/chainDeals";
+import { dealDiscount, fetchChainDealsInGroups, dealPriceText, multiBuyText, listDealsKey, readDealsCache, writeDealsCache } from "@/lib/chainDeals";
 import ChainLogo from "@/components/ChainLogo";
+import DealsFilterBar from "@/components/deals/DealsFilterBar";
 import { useT } from "@/lib/i18n";
 
 // מטמון המבצעים הכלליים של היום במכשיר — החלון נפתח איתם מיד
@@ -19,8 +20,17 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState("");
   const [fallback, setFallback] = useState(false);
+  const [filter, setFilter] = useState("all");
 
   const signature = useMemo(() => listDealsKey(items), [items]);
+
+  // הסינון על התוצאות שנטענו: הכול, רשת אחת, או ההנחות הגדולות בלבד
+  const chains = useMemo(() => [...new Map(deals.map(deal => [deal.chain, deal.chain_name || deal.chain])).entries()]
+    .map(([id, name]) => ({ id, name })), [deals]);
+  // "הנחות גדולות" מציג את המבצעים עם ההנחה הגדולה ביותר — כך תמיד יש תוצאות להראות
+  const visibleDeals = filter === "all" ? deals
+    : filter === "big" ? [...deals].sort((a, b) => dealDiscount(b) - dealDiscount(a)).slice(0, 12)
+      : deals.filter(deal => deal.chain === filter);
 
   const load = useCallback(async (which, searchTerm) => {
     setFallback(false);
@@ -60,6 +70,7 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
     if (!open) return;
     setSearched("");
     setQuery("");
+    setFilter("all");
     load(tab, "");
   }, [open, tab, signature]);
 
@@ -99,6 +110,8 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
           </Button>
         </form>
 
+        {deals.length > 0 && <DealsFilterBar value={filter} onChange={setFilter} chains={chains} />}
+
         <div className="flex-1 space-y-2 overflow-y-auto pb-2">
           {loading && deals.length === 0 && (
             <div className="flex items-center justify-center gap-2 py-12 text-market-ink">
@@ -119,7 +132,11 @@ export default function CouponsDeals({ open, onOpenChange, items, onAddProduct }
             </p>
           )}
 
-          {deals.map((deal, index) => (
+          {!loading && visibleDeals.length === 0 && deals.length > 0 && (
+            <p className="rounded-2xl bg-market-track px-4 py-8 text-center text-[15px] font-black text-market-ink">{t("filter.none")}</p>
+          )}
+
+          {visibleDeals.map((deal, index) => (
             <div key={`${deal.chain}-${deal.barcode}-${index}`} className="flex items-center gap-3 rounded-2xl border-2 border-market-ink/20 bg-card p-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[15px] font-black text-market-ink">{deal.name || deal.barcode}</p>

@@ -1,5 +1,5 @@
 import ListItemRow from "@/components/minimal/ListItemRow";
-import EmptyListSuggestions from "@/components/EmptyListSuggestions";
+import AreaDeals from "@/components/deals/AreaDeals";
 import UnavailableItem from "@/components/UnavailableItem";
 import SectionRunner from "@/components/poster/SectionRunner";
 import { posterPhoto } from "@/lib/categoryPoster";
@@ -13,6 +13,7 @@ export default function ListItemsSection({
   onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder,
   onUnavailable, onToggleFavorite, onChangePhoto, onUpdateDetails, onSuggestPhoto,
   onReportPrice, onPhotoFound, onRestore, onAddProduct, onOpenSearch, onOpenScanner, onOpenShoppingMode,
+  listId, onOpenAllDeals,
 }) {
   const t = useT();
 
@@ -100,7 +101,7 @@ export default function ListItemsSection({
                 <button type="button" onClick={onOpenScanner} className="pst-btn">{t("barcode.title")}</button>
                 <button type="button" onClick={onOpenShoppingMode} className="pst-btn">{t("shoppingMode.title")}</button>
               </div>
-              <EmptyListSuggestions onAddProduct={onAddProduct} />
+              <AreaDeals listId={listId} items={pendingItems} onAddProduct={onAddProduct} onOpenAllDeals={onOpenAllDeals} />
             </div>
           </div>
         </section>

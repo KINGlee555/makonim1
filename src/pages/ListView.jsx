@@ -163,9 +163,11 @@ export default function ListView() {
           onOpenSearch={() => show("search")}
           onOpenScanner={() => show("scanner")}
           onOpenShoppingMode={() => show("shopping")}
+          listId={listId}
+          onOpenAllDeals={() => show("deals")}
         />
 
-        {!simple && (
+        {!simple && (shoppingItems.length > 0 || unavailableItems.length > 0) && (
           <DealsShelf
             onAddProduct={handleAddProduct}
             onOpenAllDeals={() => show("deals")}
