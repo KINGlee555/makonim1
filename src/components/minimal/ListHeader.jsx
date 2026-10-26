@@ -3,51 +3,49 @@ import EasyModeToggle from "@/components/EasyModeToggle";
 import HeaderMenu from "@/components/HeaderMenu";
 import { useT } from "@/lib/i18n";
 
-const HERO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/95682f2e0_generated_812359bc.jpg";
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/77de857b8_generated_image.png";
+const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
 
-// פתיח המסך: תמונת שוק, שם הרשימה ושני המספרים הגדולים, ומתחת שורת הפעולות.
+// פתיח הכרזה: מיתוג, שם הרשימה, שני המספרים הגדולים ומתחת שורת הפעולות — הכול על צהוב שטוח.
 export default function ListHeader({ list, userName, itemCount, total, onOpenProfile, onOpenSettings, onOpenShare, onOpenQr, onRename }) {
   const t = useT();
 
   return (
-    <div className="shf-hero">
-      <img src={HERO} alt="" className="shf-hero-bg" />
-      <div className="shf-scrim" />
+    <div className="pst-hero">
+      <div className="pst-brand">
+        <span>MaKonim</span>
+        <img src={LOGO} alt="MaKonim" />
+        {userName && (
+          <button type="button" onClick={onOpenProfile} className="pst-greet">
+            {t("header.greeting", { name: userName })}
+          </button>
+        )}
+      </div>
 
-      <div className="shf-hero-in">
-        <div className="shf-brand">
-          <span>MaKonim</span>
-          <img src={LOGO} alt="MaKonim" />
-          {userName && <span className="shf-greet">{t("header.greeting", { name: userName })}</span>}
+      <div className="pst-row">
+        <h1 className="pst-ttl">
+          <button type="button" onClick={onRename} title={t("rename.button")}>
+            <span className="truncate">{list.title}</span>
+            <Pencil strokeWidth={2.4} />
+          </button>
+        </h1>
+
+        <div className="pst-nums">
+          <span className="pst-num">
+            {t("list.total")}
+            <b>₪{total.toFixed(2)}</b>
+          </span>
+          <span className="pst-num pst-num-t">
+            {t("list.toBuy")}
+            <b>{itemCount}</b>
+          </span>
         </div>
+      </div>
 
-        <div className="shf-row">
-          <h1 className="shf-ttl">
-            <button type="button" onClick={onRename} title={t("rename.button")}>
-              <span className="truncate">{list.title}</span>
-              <Pencil className="h-[26px] w-[26px] shrink-0" strokeWidth={2.2} />
-            </button>
-          </h1>
-
-          <div className="shf-nums">
-            <span className="shf-num">
-              {t("list.toBuy")}
-              <b>{itemCount}</b>
-            </span>
-            <span className="shf-num shf-num-t">
-              {t("list.total")}
-              <b>₪{total.toFixed(2)}</b>
-            </span>
-          </div>
-        </div>
-
-        <div className="shf-acts">
-          <EasyModeToggle pill className="shf-btn shf-btn-sol" />
-          <button type="button" onClick={onOpenShare} className="shf-btn">{t("header.share")}</button>
-          <button type="button" onClick={onOpenQr} className="shf-btn">{t("share.qrButton")}</button>
-          <HeaderMenu className="shf-btn" onOpenProfile={onOpenProfile} onOpenSettings={onOpenSettings} />
-        </div>
+      <div className="pst-acts">
+        <EasyModeToggle pill className="pst-btn pst-btn-s" />
+        <button type="button" onClick={onOpenShare} className="pst-btn">{t("header.share")}</button>
+        <button type="button" onClick={onOpenQr} className="pst-btn">{t("share.qrButton")}</button>
+        <HeaderMenu className="pst-btn" onOpenProfile={onOpenProfile} onOpenSettings={onOpenSettings} />
       </div>
     </div>
   );

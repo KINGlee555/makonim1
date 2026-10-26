@@ -34,13 +34,11 @@ export default function NotificationPrompt({ list, onEnabled }) {
   };
 
   return (
-    <div className="shf-push">
-      <div className="shf-push-in">
-        <span className="min-w-0">{t("notify.enableHint")}</span>
-        <button type="button" onClick={enable} disabled={busy} className="shf-push-btn shrink-0">
-          {t("notify.enable")}
-        </button>
-      </div>
+    <div className="pst-note">
+      <span className="min-w-0">{t("notify.enableHint")}</span>
+      <button type="button" onClick={enable} disabled={busy} className="shrink-0">
+        {t("notify.enable")}
+      </button>
     </div>
   );
 }

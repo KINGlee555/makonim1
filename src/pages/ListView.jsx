@@ -22,6 +22,9 @@ import { loadAllProducts } from "@/lib/loadAllProducts";
 import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/lib/categoryOrder";
 import { lineCost } from "@/lib/units";
 
+// תמונת השוק הרחבה שמתחת להתראה — חלק משפת הכרזה של המסך
+const COLLAGE = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/41f073a97_generated_b58619a5.jpg";
+
 export default function ListView() {
   const { listId } = useParams();
   const t = useT();
@@ -60,12 +63,14 @@ export default function ListView() {
 
   if (loading) {
     return (
-      <div className="shf-page min-h-screen">
-        <div className="mx-auto w-full max-w-[940px] space-y-3 px-5 py-6 sm:px-10">
-          <div className="h-[220px] rounded-[14px] bg-[#f1f1f1]" />
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-[190px] rounded-[14px] bg-[#f1f1f1]" />
-          ))}
+      <div className="pst-page min-h-screen">
+        <div className="mx-auto w-full max-w-[1200px] space-y-3 px-4 py-6 sm:px-10">
+          <div className="h-[220px] rounded-[18px] bg-[#f1f1f1]" />
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-[190px] rounded-[18px] bg-[#f1f1f1]" />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -73,8 +78,8 @@ export default function ListView() {
 
   if (!list) {
     return (
-      <div className="shf-page flex min-h-screen items-center justify-center">
-        <p className="shf-nm text-[22px]">{t("list.notFound")}</p>
+      <div className="pst-page flex min-h-screen items-center justify-center">
+        <p className="text-[22px] font-black">{t("list.notFound")}</p>
       </div>
     );
   }
@@ -108,7 +113,7 @@ export default function ListView() {
   });
 
   return (
-    <div className="shf-page min-h-screen">
+    <div className="pst-page min-h-screen">
       <ListHeader
         list={list}
         userName={user?.full_name}
@@ -122,14 +127,16 @@ export default function ListView() {
       />
 
       {otherShoppers.length > 0 && (
-        <p className="shf-note">{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
+        <p className="pst-note">{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
       )}
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
 
+      <img src={COLLAGE} alt="" className="pst-collage" />
+
       <CategoryBar categories={groupedCategories.map(([category]) => category)} />
 
-      <main className="mx-auto w-full max-w-[940px] px-5 pb-[150px] sm:px-10 sm:pb-[190px]">
+      <main>
         <ListItemsSection
           groupedCategories={groupedCategories}
           pendingItems={shoppingItems}

@@ -12,7 +12,7 @@ export default function AppFooter() {
   }, []);
 
   return (
-    <footer className="shf-ft">
+    <footer className="pst-ft">
       <Link to="/about">אודות</Link>
       <Link to="/contact">יצירת קשר</Link>
       {isAdmin && (
@@ -23,7 +23,7 @@ export default function AppFooter() {
           <Link to="/premium-members">מנויי פרימיום</Link>
         </>
       )}
-      <span className="shf-credit">{t("footer.credit")}</span>
+      <span className="pst-credit">{t("footer.credit")}</span>
     </footer>
   );
 }

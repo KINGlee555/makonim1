@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Bell, Plus, Minus, MoreVertical, Pencil, CircleSlash2, Star, Camera, Send, Flag } from "lucide-react";
+import { Bell, Pencil, CircleSlash2, Star, Camera, Send, Flag } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import WeightQuantity from "@/components/minimal/WeightQuantity";
 import { dealPriceText } from "@/lib/chainDeals";
@@ -8,7 +8,7 @@ import { isGram, isWeight, maxQuantity, quantityStep } from "@/lib/units";
 import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-// אריח אחד למוצר: תמונה עם תג מחיר, שם, מבצע אם יש, ומתחת שורת פעולות — כמות, "קניתי" ותפריט.
+// אריח מוצר בכרזה: תמונה עגולה עם תג מחיר, שם, מבצע אם יש, ומתחת שורת פעולות — כמות, "קניתי" ותפריט.
 function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, onUpdateDetails, onReportPrice, deal, isFavorite, viewerName, className }) {
   const t = useT();
   const unit = item.unit || "unit";
@@ -37,88 +37,88 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
 
   return (
     <article
-      className={`shf-tile ${className || ""}`}
-      style={className ? undefined : { animationDelay: `${Math.min(index, 8) * 0.1 + 0.1}s` }}
+      className={`pst-tile ${className || ""}`}
+      style={className ? undefined : { animationDelay: `${Math.min(index, 8) * 0.1}s` }}
     >
-      <div className="shf-ph">
+      <div className="pst-ph">
         <button type="button" onClick={() => onNavigate && onNavigate(item)} aria-label={`${t("productItem.navigate")}: ${item.name}`}>
           <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode}
             onFound={(url) => onPhotoFound && onPhotoFound(item, url)} className="h-full w-full" />
         </button>
-        {price > 0 && <span className="shf-tag">{priceText}</span>}
       </div>
+      {price > 0 && <span className="pst-tag">{priceText}</span>}
 
-      <div className="shf-body">
-        <span className="shf-nm line-clamp-3">{item.name}</span>
-        {secondary && <span className="shf-meta">{secondary}</span>}
+      <div className="pst-body">
+        <span className="pst-nm line-clamp-3">{item.name}</span>
+        {secondary && <span className="pst-meta">{secondary}</span>}
         {deal && (
-          <span className="shf-deal">
+          <span className="pst-deal">
             {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}
           </span>
         )}
         {item.remind_at && (
-          <span className={`shf-remind ${isReminderDue(item) ? "shf-remind-due" : ""}`}>
+          <span className={`pst-remind ${isReminderDue(item) ? "pst-remind-due" : ""}`}>
             <Bell className="h-3.5 w-3.5 shrink-0" />{reminder}
           </span>
         )}
 
-        <div className="shf-ctl">
+        <div className="pst-ctl">
           {byWeight ? (
             <WeightQuantity item={item} unit={unit} unitLabel={unitLabel}
               onUpdateQuantity={onUpdateQuantity} onRemove={onRemove} onSwitchUnit={switchWeightUnit} />
           ) : (
-            <div className="shf-q">
+            <div className="pst-q">
               <button type="button" aria-label="הפחתה"
                 onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}>
-                <Minus className="h-4 w-4" strokeWidth={2.5} />
+                −
               </button>
               <span>{quantity}</span>
               <button type="button" aria-label="הוספה" disabled={quantity >= max}
                 onClick={() => onUpdateQuantity(item, quantity + step)}>
-                <Plus className="h-4 w-4" strokeWidth={2.5} />
+                +
               </button>
             </div>
           )}
 
-          <button type="button" onClick={() => onToggleBought(item)} className="shf-buy">
+          <button type="button" onClick={() => onToggleBought(item)} className="pst-buy">
             {t("productItem.bought")}
           </button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`} className="shf-more">
-                <MoreVertical className="h-5 w-5" strokeWidth={2.5} />
+              <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`} className="pst-more">
+                ⋮
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-52 rounded-[12px] border-[#171A1C]">
-              <DropdownMenuItem onClick={() => onToggleFavorite(item)}>
-                <Star className={`me-2 h-4 w-4 ${isFavorite ? "fill-big-accent text-big-accent" : ""}`} />
+            <DropdownMenuContent align="start" className="pst-menu w-52">
+              <DropdownMenuItem className="pst-mi" onClick={() => onToggleFavorite(item)}>
+                <Star className={`me-2 h-4 w-4 ${isFavorite ? "fill-[#FFD400] text-[#FFD400]" : ""}`} />
                 {isFavorite ? t("favorites.remove") : t("favorites.save")}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(item)}>
+              <DropdownMenuItem className="pst-mi" onClick={() => onEdit(item)}>
                 <Pencil className="me-2 h-4 w-4" />{t("productItem.edit")}
               </DropdownMenuItem>
               {onSetReminder && (
-                <DropdownMenuItem onClick={() => onSetReminder(item)}>
+                <DropdownMenuItem className="pst-mi" onClick={() => onSetReminder(item)}>
                   <Bell className="me-2 h-4 w-4" />{t("reminder.button")}
                 </DropdownMenuItem>
               )}
               {onChangePhoto && (
-                <DropdownMenuItem onClick={() => onChangePhoto(item)}>
+                <DropdownMenuItem className="pst-mi" onClick={() => onChangePhoto(item)}>
                   <Camera className="me-2 h-4 w-4" />{t("productItem.changePhoto")}
                 </DropdownMenuItem>
               )}
               {onSuggestPhoto && (
-                <DropdownMenuItem onClick={() => onSuggestPhoto(item)}>
+                <DropdownMenuItem className="pst-mi" onClick={() => onSuggestPhoto(item)}>
                   <Send className="me-2 h-4 w-4" />{t("suggest.menu")}
                 </DropdownMenuItem>
               )}
               {onReportPrice && (
-                <DropdownMenuItem onClick={() => onReportPrice(item)}>
+                <DropdownMenuItem className="pst-mi" onClick={() => onReportPrice(item)}>
                   <Flag className="me-2 h-4 w-4" />{t("report.menu")}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => onUnavailable(item)}>
+              <DropdownMenuItem className="pst-mi" onClick={() => onUnavailable(item)}>
                 <CircleSlash2 className="me-2 h-4 w-4" />{t("productItem.notFound")}
               </DropdownMenuItem>
             </DropdownMenuContent>

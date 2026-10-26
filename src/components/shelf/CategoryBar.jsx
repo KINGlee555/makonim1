@@ -3,10 +3,10 @@ export default function CategoryBar({ categories }) {
   if (!categories.length) return null;
 
   return (
-    <div className="shf-bar">
-      <div className="shf-bar-in">
+    <div className="pst-bar">
+      <div className="pst-bar-in">
         {categories.map((category, index) => (
-          <span key={category} className={index === 0 ? "shf-bar-a" : index === 1 ? "shf-bar-b" : ""}>
+          <span key={category} className={index === 0 ? "pst-bar-a" : index === 1 ? "pst-bar-b" : ""}>
             {category}
           </span>
         ))}

@@ -33,19 +33,22 @@ export default function MoreTools({
     .map(member => member.user_name || member.user_email.split("@")[0]);
 
   const tools = [
-    { id: "presence", label: t("presence.open"), note: people.slice(0, 2).join(" · ") || t("presence.alone"), tone: "shf-card-t" },
-    ...(simple ? [] : [{ id: "basket", label: t("basket.title"), tone: "shf-card-b" }]),
-    { id: "departments", label: t("big.departments"), note: groupedCategories.slice(0, 3).map(([category]) => category).join(" · "), tone: "shf-card-k" },
+    { id: "presence", label: t("presence.open"), note: people.slice(0, 2).join(" · ") || t("presence.alone") },
+    ...(simple ? [] : [{ id: "basket", label: t("basket.title") }]),
+    { id: "departments", label: t("big.departments"), note: groupedCategories.slice(0, 3).map(([category]) => category).join(" · ") },
     ...(simple ? [] : [{ id: "smart", label: t("big.smartStart") }]),
-    { id: "drops", label: t("drops.title"), tone: "shf-card-b" },
-    { id: "monthly", label: t("monthly.title"), tone: "shf-card-t" },
-    { id: "delivery", label: t("courier.open"), tone: "shf-card-k" },
+    { id: "drops", label: t("drops.title") },
+    { id: "monthly", label: t("monthly.title") },
+    { id: "delivery", label: t("courier.open") },
     ...(simple ? [] : [
       { id: "more", label: t("list.moreFeatures") },
-      { id: "sponsored", label: t("sponsored.label"), tone: "shf-card-b" },
-      { id: "premium", label: t("premium.open"), tone: "shf-card-t" },
+      { id: "sponsored", label: t("sponsored.label") },
+      { id: "premium", label: t("premium.open") },
     ]),
   ];
+
+  // שתי שורות כרטיסים כמו בכרזה — כל שורה נגללת הצידה כשהמסך צר
+  const rows = [tools.slice(0, 6), tools.slice(6)].filter(row => row.length);
 
   const panels = {
     presence: <SharedWithStrip list={list} members={members} myEmail={myEmail} onOpen={() => show("share")} />,
@@ -106,11 +109,13 @@ export default function MoreTools({
   };
 
   return (
-    <section className="shf-tools">
+    <section className="pst-tools">
       <h2>{t("list.moreFeatures")}</h2>
-      {boughtCount > 0 && <p className="shf-meta mb-3">{t("list.boughtSection")} · {boughtCount}</p>}
-      <ToolStrip tools={tools} open={open} onToggle={toggle} />
-      {open && <div className="shf-panel">{panels[open]}</div>}
+      {boughtCount > 0 && <p className="pst-tools-note">{t("list.boughtSection")} · {boughtCount}</p>}
+      {rows.map((row, index) => (
+        <ToolStrip key={index} tools={row} open={open} onToggle={toggle} className={index === 1 ? "pst-strip-2" : ""} />
+      ))}
+      {open && <div className="pst-panel">{panels[open]}</div>}
     </section>
   );
 }
