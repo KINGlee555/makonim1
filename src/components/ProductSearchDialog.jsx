@@ -279,12 +279,12 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[calc(100%-1rem)] max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden rounded-3xl !flex animate-scale-in">
+      <DialogContent className="pst-tall-dialog w-[calc(100%-1rem)] max-w-md sm:max-w-2xl flex flex-col p-0 overflow-hidden rounded-3xl !flex animate-scale-in">
         <DialogHeader className="px-5 pt-5 pb-3 flex-row items-center space-y-0">
           <DialogTitle className="text-xl font-bold">{t("search.title")}</DialogTitle>
         </DialogHeader>
 
-        <div className="px-5 space-y-3">
+        <div className="px-5 space-y-2">
           <div className="flex gap-2">
             <Input placeholder={t("search.placeholder")} value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -298,8 +298,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           </div>
           {byWeight && <p className="text-xs font-semibold text-primary">{t("search.weightHint")}</p>}
 
-          {/* כל המחלקות גלויות על המסך — בלי גלילה לצדדים */}
-          <div className="flex flex-wrap gap-1.5">
+          {/* שורת מחלקות אחת שנגללת sideways — התוצאות מקבלות את שאר המסך */}
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
             {categoryPills.map((cat) => (
               <button
                 key={cat.id}
@@ -350,7 +350,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
         <div className="flex-1 overflow-y-auto px-5 pb-5 mt-3 min-h-0">
           {/* Loading skeleton grid */}
           {(loadingProducts || categoryLoading) && !query && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="rounded-2xl bg-card border border-border/50 overflow-hidden">
                   <div className="h-32 bg-muted shimmer" />
@@ -372,7 +372,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
                 </div>
                 <p className="text-sm font-bold text-foreground">{t("search.suggestions")}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {filteredSuggestions.map((product, idx) => renderProductCard(product, idx))}
               </div>
             </div>
@@ -387,7 +387,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
                 </div>
                 <p className="text-sm font-bold text-foreground">{t("search.staples")}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {staples.map((product, idx) => renderProductCard(product, idx))}
               </div>
             </section>
@@ -399,7 +399,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
               {departmentGroups.map(({ category, items: categoryProducts }) => (
                 <section key={category}>
                   <p className="mb-3 px-1 text-sm font-bold text-muted-foreground">{category}</p>
-                  <div className="grid grid-cols-2 gap-3 animate-fade-in">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 animate-fade-in">
                     {categoryProducts.map((product, idx) => renderProductCard(product, idx))}
                   </div>
                 </section>
@@ -413,7 +413,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
               {staples.length > 0 && (
                 <p className="mb-3 px-1 text-sm font-bold text-muted-foreground">{t("search.moreProducts")}</p>
               )}
-              <div className="grid grid-cols-2 gap-3 animate-fade-in">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 animate-fade-in">
                 {catalogResults.map((product, idx) => renderProductCard(product, idx))}
               </div>
             </section>

@@ -12,6 +12,9 @@ const DATABASES: Database[] = [
   { host: "world.openproductsfacts.org", source: "open_products_facts", name: "קטלוג ישראלי — בית" }
 ];
 
+// ארבעת המאגרים עצמם — למי ששואל תמונה של מוצר לפי הברקוד שלו, מאגר אחד בכל פעם
+export const OPEN_DATABASES = DATABASES;
+
 const HEADERS = {
   "User-Agent": "MaKonim/1.0 (+https://makonim-share-shop.base44.app)",
   Accept: "application/json"

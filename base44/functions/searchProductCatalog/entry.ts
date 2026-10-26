@@ -1,65 +1,8 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { searchPriceCatalog, priceByBarcode, categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
-import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
+import { fetchOpenJson, photosForBarcodes } from "../../shared/productPhotos.ts";
 
 const OFF_FIELDS = "code,image_front_url,image_url,brands,product_name";
-
-// OFF rate-limits bursts — retry a couple of times with a short backoff.
-async function fetchWithRetry(url: string, label: string) {
-  const headers = { "User-Agent": `MaKonim/1.0 (${label})` };
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const response = await fetch(url, { headers, signal: AbortSignal.timeout(20000) });
-    if (response.ok) return response;
-    console.error("catalog request failed", label, response.status, attempt);
-    if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1)));
-  }
-  return null;
-}
-
-// Real photos of the exact barcode. Known barcodes come from our own cache (including
-// "no photo" results); only new ones are looked up in the barcode catalog.
-async function imagesForCodes(base44: any, codes: string[]) {
-  const images = new Map<string, string>();
-  if (!codes.length) return images;
-  const cached = await base44.asServiceRole.entities.CatalogImage.filter({ barcode: { $in: codes } }, "-created_date", codes.length);
-  const known = new Set<string>();
-  for (const row of cached) {
-    known.add(row.barcode);
-    if (row.image_url) images.set(row.barcode, row.image_url);
-  }
-  const fresh = codes.filter((code) => !known.has(code));
-  const batches: string[][] = [];
-  for (let i = 0; i < fresh.length; i += 40) batches.push(fresh.slice(i, i + 40));
-  const resolved: string[] = [];
-  await Promise.all(batches.map(async (batch) => {
-    const params = new URLSearchParams({ code: batch.join(","), fields: OFF_FIELDS, page_size: "40" });
-    const response = await fetchWithRetry(`https://world.openfoodfacts.org/api/v2/search?${params}`, "barcode photos");
-    if (!response) return;
-    const data = await response.json();
-    resolved.push(...batch);
-    for (const product of data.products || []) {
-      const image = String(product.image_front_url || product.image_url || "").replace(/^http:/, "https:");
-      if (image) images.set(String(product.code), image);
-    }
-  }));
-  // ברקוד שאין לו תמונה במאגר המזון נבדק גם במאגרי הטיפוח, המזון לחיות ומוצרי הבית.
-  const stillMissing = fresh.filter((code) => !images.has(code));
-  if (stillMissing.length) {
-    const more = await photosFromOpenDatabases(stillMissing, { skipFoodFacts: true });
-    for (const [code, image] of more) images.set(code, image);
-    resolved.push(...stillMissing);
-  }
-  if (resolved.length) {
-    // Two lookups can reach the same new barcode at the same time; the second insert is
-    // refused as a duplicate and can simply be ignored.
-    try {
-      await base44.asServiceRole.entities.CatalogImage.bulkCreate(resolved.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
-    } catch (error) {
-      console.error("catalog image store skipped", error instanceof Error ? error.message : error);
-    }
-  }
-  return images;
-}
 
 function toProduct(item: any, image: string) {
   const name = displayName(item);
@@ -113,9 +56,8 @@ export default async function(req: Request): Promise<Response> {
       const params = new URLSearchParams({
         categories_tags_en: "snacks", countries_tags_en: "israel", page: "1", page_size: "250", sort_by: "unique_scans_n", fields: OFF_FIELDS
       });
-      const response = await fetchWithRetry(`https://world.openfoodfacts.org/api/v2/search?${params}`, "Israeli snack catalog");
-      if (!response) return Response.json({ error: "Catalog unavailable" }, { status: 502 });
-      const data = await response.json();
+      const data = await fetchOpenJson(`https://world.openfoodfacts.org/api/v2/search?${params}`, "Israeli snack catalog");
+      if (!data) return Response.json({ error: "Catalog unavailable" }, { status: 502 });
       const products: any[] = [];
       const seen = new Set<string>();
       for (const raw of data.products || []) {
@@ -133,7 +75,7 @@ export default async function(req: Request): Promise<Response> {
     const started = Date.now();
     const priced = await searchPriceCatalog(query, 80);
     const pricedAt = Date.now();
-    const images = await imagesForCodes(base44, priced.map((item) => item.code));
+    const images = await photosForBarcodes(base44, priced.map((item: any) => item.code));
     const products = priced.filter((item) => images.has(item.code)).slice(0, limit)
       .map((item) => toProduct(item, images.get(item.code) as string));
 

@@ -4,7 +4,8 @@ import { getSpecificProductImage } from "@/lib/productImages";
 import { detectBrand, pickBestPhoto } from "@/lib/productPhotoMatch";
 import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { getCachedPhoto, cachePhoto, isPhotoMiss, cachePhotoMiss, isBrokenPhoto, markPhotoBroken } from "@/lib/photoCache";
-import { getProductEmoji } from "@/lib/productEmoji";
+import { photoByBarcode } from "@/lib/barcodePhotos";
+import { ShoppingBasket } from "lucide-react";
 
 // כמה חיפושי תמונה רצים במקביל — רשימה ארוכה מתמלאת מהר, בלי להציף את הקטלוג
 const MAX_CONCURRENT = 6;
@@ -57,6 +58,13 @@ async function findRealPhoto(name, brand, barcode, avoid = "") {
   if (usable(exact, avoid)) {
     cachePhoto(name, exact);
     return exact;
+  }
+
+  // התמונה של הברקוד הזה במאגרים הפתוחים — המוצר עצמו, לא ניחוש לפי שם
+  const fromDatabases = await photoByBarcode(barcode);
+  if (usable(fromDatabases, avoid)) {
+    cachePhoto(name, fromDatabases);
+    return fromDatabases;
   }
 
   const queries = [name];
@@ -131,7 +139,7 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
   if (!src) {
     return (
       <div className={`photo-tile flex items-center justify-center bg-market-surface ${className}`} role="img" aria-label={name}>
-        <span className="photo-emoji leading-none">{getProductEmoji(name, category)}</span>
+        <ShoppingBasket className="h-[38%] w-[38%] text-market-ink/25" strokeWidth={1.6} />
       </div>
     );
   }
