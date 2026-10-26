@@ -72,6 +72,11 @@ module.exports = {
   				'attn-soft': 'hsl(var(--big-attn-soft))',
   				'attn-ink': 'hsl(var(--big-attn-ink))'
   			},
+  			pst: {
+  				ink: 'hsl(var(--pst-ink))',
+  				yellow: 'hsl(var(--pst-yellow))',
+  				pink: 'hsl(var(--pst-pink))'
+  			},
   			market: {
   				ink: 'hsl(var(--market-ink))',
   				pink: 'hsl(var(--market-pink))',

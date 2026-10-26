@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AppFooter from "../components/AppFooter";
+import PosterPage from "@/components/poster/PosterPage";
 import { useT } from "@/lib/i18n";
 
 export default function JoinList() {
@@ -72,70 +72,67 @@ export default function JoinList() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/30 px-4 py-10">
-      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
-        <div className="text-center w-full max-w-md bg-card border border-primary/15 rounded-3xl p-8 shadow-xl shadow-primary/10">
-        <img
-          src="https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/77de857b8_generated_image.png"
-          alt="MaKonim logo"
-          className="w-20 h-20 rounded-3xl object-cover mx-auto mb-6 shadow-lg shadow-primary/20"
-        />
-
-        {status === "loading" && (
+    <PosterPage
+      icon={Users}
+      title="הצטרפות לרשימה"
+      subtitle={listTitle ? `הרשימה: ${listTitle}` : t("join.searching")}
+      back="/"
+    >
+      <div className="pst-panel mx-auto w-full max-w-md text-center">
+        {(status === "loading" || status === "joining") && (
           <>
-            <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-xl text-muted-foreground">{t("join.searching")}</p>
-          </>
-        )}
-
-        {status === "joining" && (
-          <>
-            <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-xl text-muted-foreground">{t("join.joining")}</p>
+            <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin" />
+            <p className="text-[19px] font-black">
+              {status === "loading" ? t("join.searching") : t("join.joining")}
+            </p>
           </>
         )}
 
         {status === "success" && (
           <>
-            <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.success")}</h2>
-            <p className="text-xl text-muted-foreground">{t("join.joinedToList", { title: listTitle })}</p>
+            <CheckCircle className="mx-auto mb-4 h-12 w-12" />
+            <h2 className="text-[24px] font-black leading-tight">{t("join.success")}</h2>
+            <p className="mt-2 text-[17px] font-bold text-[#0B3A4D]/70">
+              {t("join.joinedToList", { title: listTitle })}
+            </p>
           </>
         )}
 
         {status === "already" && (
           <>
-            <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.alreadyIn")}</h2>
-            <p className="text-xl text-muted-foreground">{t("join.movingTo", { title: listTitle })}</p>
+            <CheckCircle className="mx-auto mb-4 h-12 w-12" />
+            <h2 className="text-[24px] font-black leading-tight">{t("join.alreadyIn")}</h2>
+            <p className="mt-2 text-[17px] font-bold text-[#0B3A4D]/70">
+              {t("join.movingTo", { title: listTitle })}
+            </p>
           </>
         )}
 
         {status === "error" && (
           <>
-            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.notFound")}</h2>
-            <p className="text-lg text-muted-foreground mb-6">{t("join.notFoundDesc")}</p>
-            <Button onClick={() => navigate("/")} className="h-14 px-8 rounded-2xl text-lg">
+            <h2 className="text-[24px] font-black leading-tight">{t("join.notFound")}</h2>
+            <p className="mt-2 text-[16px] font-bold text-[#0B3A4D]/70">{t("join.notFoundDesc")}</p>
+            <Button onClick={() => navigate("/")} className="mt-6 h-14 px-8 text-lg font-black">
               {t("join.backHome")}
             </Button>
-            <div className="mt-3">
-              <Link to="/demo" className="text-primary hover:underline">{t("join.seeDemo")}</Link>
+            <div className="mt-4">
+              <Link to="/demo" className="font-black text-[#0B3A4D] underline decoration-[#FF3B5D] decoration-[3px]">
+                {t("join.seeDemo")}
+              </Link>
             </div>
           </>
         )}
 
         {status === "full" && (
           <>
-            <h2 className="text-2xl font-bold text-foreground mb-2">{t("join.full")}</h2>
-            <p className="text-lg text-muted-foreground mb-6">{t("join.fullDesc")}</p>
-            <Button onClick={() => navigate("/")} className="h-14 px-8 rounded-2xl text-lg">
+            <h2 className="text-[24px] font-black leading-tight">{t("join.full")}</h2>
+            <p className="mt-2 text-[16px] font-bold text-[#0B3A4D]/70">{t("join.fullDesc")}</p>
+            <Button onClick={() => navigate("/")} className="mt-6 h-14 px-8 text-lg font-black">
               {t("join.backHome")}
             </Button>
           </>
         )}
-        </div>
       </div>
-      <AppFooter />
-    </div>
+    </PosterPage>
   );
 }

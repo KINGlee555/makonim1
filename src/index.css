@@ -1,139 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --font-rubik: 'Rubik', sans-serif;
-    /* Colorful market design direction — a fixed brand palette, not theme colors */
+    --font-rubik: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    /* ===== כרזת שוק — שפת העיצוב של כל האפליקציה ===== */
+    --pst-ink: 197 75% 17%;
+    --pst-yellow: 43 100% 51%;
+    --pst-pink: 349 100% 65%;
+    /* הצבעים שהמסכים הקודמים השתמשו בהם — כולם מצביעים לאותה כרזה */
     --market-ink: 197 75% 17%;
     --market-pink: 349 100% 65%;
     --market-yellow: 43 100% 51%;
-    --market-yellow-deep: 41 100% 44%;
-    --market-blue: 195 82% 38%;
+    --market-yellow-deep: 41 100% 45%;
+    --market-blue: 197 75% 17%;
     --market-surface: 0 0% 100%;
-    --market-pink-soft: 347 100% 95%;
+    --market-pink-soft: 349 100% 94%;
     --market-yellow-soft: 44 100% 89%;
-    --market-blue-soft: 195 74% 91%;
-    --market-track: 196 61% 94%;
-    --market-pink-tint: 348 100% 97%;
-    /* Quiet minimal screen — white canvas, hairline rules, one teal accent */
+    --market-blue-soft: 197 60% 90%;
+    --market-track: 197 40% 90%;
+    --market-pink-tint: 349 100% 97%;
     --font-system: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     --ui-canvas: 0 0% 100%;
-    --ui-ink: 221 39% 11%;
-    --ui-muted: 220 9% 46%;
-    --ui-line: 220 13% 91%;
-    --ui-line-soft: 210 20% 96%;
-    --ui-surface: 210 20% 96%;
-    --ui-accent: 173 84% 34%;
-    /* מסך גדול ופשוט — לבן, דיו, טורקיז וצהוב לתשומת לב */
-    --big-canvas: 36 70% 96%;
-    --big-ink: 0 0% 11%;
-    --big-muted: 196 16% 38%;
-    --big-line: 174 32% 84%;
-    --big-line-soft: 174 44% 90%;
-    --big-surface: 174 60% 93%;
-    --big-accent: 174 82% 31%;
-    --big-turquoise: 174 62% 42%;
-    --big-pink: 349 100% 60%;
-    --big-blue: 195 82% 38%;
-    --big-yellow: 43 100% 47%;
-    --big-attn: 44 99% 48%;
-    --big-attn-soft: 47 100% 90%;
-    --big-attn-ink: 44 100% 27%;
-    --background: 36 33% 94%;
-    --foreground: 181 61% 15%;
+    --ui-ink: 197 75% 17%;
+    --ui-muted: 197 25% 38%;
+    --ui-line: 197 75% 17%;
+    --ui-line-soft: 197 30% 80%;
+    --ui-surface: 44 100% 92%;
+    --ui-accent: 197 75% 17%;
+    --big-canvas: 0 0% 100%;
+    --big-ink: 197 75% 17%;
+    --big-muted: 197 25% 38%;
+    --big-line: 197 75% 17%;
+    --big-line-soft: 197 30% 80%;
+    --big-surface: 44 100% 92%;
+    --big-accent: 197 75% 17%;
+    --big-turquoise: 197 75% 17%;
+    --big-pink: 349 100% 65%;
+    --big-blue: 197 75% 17%;
+    --big-yellow: 43 100% 51%;
+    --big-attn: 43 100% 51%;
+    --big-attn-soft: 44 100% 89%;
+    --big-attn-ink: 197 75% 17%;
+    /* צבעי המערכת — לבן, דיו, צהוב וורוד */
+    --background: 0 0% 100%;
+    --foreground: 197 75% 17%;
     --card: 0 0% 100%;
-    --card-foreground: 181 61% 15%;
+    --card-foreground: 197 75% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 181 61% 15%;
-    --primary: 174 69% 44%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 174 45% 93%;
-    --secondary-foreground: 181 55% 22%;
-    --muted: 36 25% 93%;
-    --muted-foreground: 181 15% 42%;
-    --accent: 25 95% 55%;
-    --accent-foreground: 25 60% 20%;
-    --destructive: 0 84% 60%;
+    --popover-foreground: 197 75% 17%;
+    --primary: 197 75% 17%;
+    --primary-foreground: 43 100% 51%;
+    --secondary: 43 100% 51%;
+    --secondary-foreground: 197 75% 17%;
+    --muted: 197 30% 94%;
+    --muted-foreground: 197 25% 38%;
+    --accent: 349 100% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 80% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 36 22% 88%;
-    --input: 36 22% 88%;
-    --ring: 174 69% 44%;
-    --chart-1: 174 69% 44%;
-    --chart-2: 103 70% 65%;
-    --chart-3: 25 95% 55%;
-    --chart-4: 199 60% 60%;
-    --chart-5: 280 60% 65%;
-    --radius: 1rem;
-    --sidebar-background: 210 20% 98%;
-    --sidebar-foreground: 200 30% 12%;
-    --sidebar-primary: 177 50% 46%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 177 48% 94%;
-    --sidebar-accent-foreground: 177 55% 25%;
-    --sidebar-border: 180 15% 92%;
-    --sidebar-ring: 199 89% 48%;
+    --border: 197 75% 17%;
+    --input: 197 75% 17%;
+    --ring: 197 75% 17%;
+    --chart-1: 43 100% 51%;
+    --chart-2: 349 100% 65%;
+    --chart-3: 197 75% 17%;
+    --chart-4: 174 60% 42%;
+    --chart-5: 25 95% 55%;
+    --radius: 0.25rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 197 75% 17%;
+    --sidebar-primary: 197 75% 17%;
+    --sidebar-primary-foreground: 43 100% 51%;
+    --sidebar-accent: 43 100% 51%;
+    --sidebar-accent-foreground: 197 75% 17%;
+    --sidebar-border: 197 75% 17%;
+    --sidebar-ring: 197 75% 17%;
   }
 
   .dark {
-    --background: 200 25% 7%;
-    --foreground: 180 30% 93%;
-    --card: 200 22% 11%;
-    --card-foreground: 180 30% 93%;
-    --popover: 200 22% 11%;
-    --popover-foreground: 180 30% 93%;
-    --primary: 177 55% 55%;
-    --primary-foreground: 200 25% 7%;
-    --secondary: 200 20% 16%;
-    --secondary-foreground: 180 30% 93%;
-    --muted: 200 18% 16%;
-    --muted-foreground: 180 15% 58%;
-    --accent: 25 90% 58%;
-    --accent-foreground: 25 60% 15%;
-    --destructive: 0 70% 50%;
+    --background: 197 45% 7%;
+    --foreground: 0 0% 97%;
+    --card: 197 35% 11%;
+    --card-foreground: 0 0% 97%;
+    --popover: 197 35% 11%;
+    --popover-foreground: 0 0% 97%;
+    --primary: 43 100% 51%;
+    --primary-foreground: 197 75% 17%;
+    --secondary: 197 40% 18%;
+    --secondary-foreground: 0 0% 97%;
+    --muted: 197 35% 16%;
+    --muted-foreground: 197 20% 66%;
+    --accent: 349 100% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 65% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 200 18% 18%;
-    --input: 200 18% 18%;
-    --ring: 199 85% 55%;
-    --chart-1: 199 85% 55%;
-    --chart-2: 103 60% 60%;
-    --chart-3: 25 90% 58%;
-    --chart-4: 199 50% 45%;
-    --chart-5: 280 55% 65%;
-    --sidebar-background: 200 22% 9%;
-    --sidebar-foreground: 180 25% 90%;
-    --sidebar-primary: 199 85% 55%;
-    --sidebar-primary-foreground: 200 25% 7%;
-    --sidebar-accent: 200 20% 16%;
-    --sidebar-accent-foreground: 180 30% 93%;
-    --sidebar-border: 200 18% 18%;
-    --sidebar-ring: 199 85% 55%;
-    /* Quiet minimal screen, on a dark canvas */
-    --ui-canvas: 221 39% 7%;
-    --ui-ink: 210 20% 96%;
-    --ui-muted: 217 11% 62%;
-    --ui-line: 217 19% 22%;
-    --ui-line-soft: 217 19% 16%;
-    --ui-surface: 217 19% 16%;
-    --ui-accent: 173 72% 45%;
-    /* מסך גדול ופשוט — אותה שפה על קנבס כהה */
-    --big-canvas: 197 26% 10%;
-    --big-ink: 0 0% 96%;
-    --big-muted: 190 14% 68%;
-    --big-line: 186 18% 27%;
-    --big-line-soft: 190 16% 19%;
-    --big-surface: 190 22% 16%;
-    --big-accent: 174 70% 45%;
-    --big-turquoise: 174 60% 52%;
-    --big-pink: 349 95% 70%;
-    --big-blue: 195 85% 62%;
-    --big-yellow: 44 95% 58%;
-    --big-attn: 44 95% 55%;
-    --big-attn-soft: 44 50% 22%;
-    --big-attn-ink: 44 95% 74%;
+    --border: 197 45% 32%;
+    --input: 197 45% 32%;
+    --ring: 43 100% 51%;
+    --chart-1: 43 100% 51%;
+    --chart-2: 349 100% 65%;
+    --chart-3: 197 20% 82%;
+    --chart-4: 174 60% 45%;
+    --chart-5: 25 90% 58%;
+    --sidebar-background: 197 35% 11%;
+    --sidebar-foreground: 0 0% 97%;
+    --sidebar-primary: 43 100% 51%;
+    --sidebar-primary-foreground: 197 75% 17%;
+    --sidebar-accent: 197 40% 18%;
+    --sidebar-accent-foreground: 0 0% 97%;
+    --sidebar-border: 197 45% 32%;
+    --sidebar-ring: 43 100% 51%;
+    /* מסכים פנימיים על קנבס כהה */
+    --ui-canvas: 197 45% 7%;
+    --ui-ink: 0 0% 97%;
+    --ui-muted: 197 20% 66%;
+    --ui-line: 197 45% 32%;
+    --ui-line-soft: 197 40% 22%;
+    --ui-surface: 197 40% 18%;
+    --ui-accent: 43 100% 51%;
+    --big-canvas: 197 45% 7%;
+    --big-ink: 0 0% 97%;
+    --big-muted: 197 20% 66%;
+    --big-line: 197 45% 32%;
+    --big-line-soft: 197 40% 22%;
+    --big-surface: 197 40% 18%;
+    --big-accent: 43 100% 51%;
+    --big-turquoise: 43 100% 51%;
+    --big-pink: 349 100% 65%;
+    --big-blue: 43 100% 51%;
+    --big-yellow: 43 100% 51%;
+    --big-attn: 43 100% 51%;
+    --big-attn-soft: 197 40% 22%;
+    --big-attn-ink: 43 100% 51%;
   }
 }
 
@@ -853,3 +853,206 @@ html.easy-mode .pst-buy { height: 46px; font-size: 17px; }
 html.easy-mode .pst-more, html.easy-mode .pst-remove { width: 46px; height: 46px; }
 html.easy-mode .pst-amount { width: 70px; height: 46px; }
 html.easy-mode .pst-card { height: 130px; }
+
+/* ===== מסכי הפנים — אותה כרזת שוק, בלי פס הפעולות התחתון ===== */
+.pst-inner {
+  padding-bottom: 28px;
+}
+
+/* פתיח המסך: פס צהוב עם המיתוג, כפתור חזרה וכותרת המסך */
+.pst-top {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 16px;
+  background: #FFD400;
+  animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.pst-top::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -18px;
+  height: 18px;
+  background: #FFD400;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%);
+  pointer-events: none;
+}
+
+.pst-topline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pst-topline .pst-brand { font-size: 15px; letter-spacing: .12em; }
+.pst-topline .pst-brand img { width: 34px; height: 34px; border-width: 3px; border-radius: 9px; }
+
+.pst-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  margin-inline-start: auto;
+  padding: 0;
+  border: 3px solid #0B3A4D;
+  border-radius: 50%;
+  background: #fff;
+  color: #0B3A4D;
+}
+
+.pst-back svg { width: 20px; height: 20px; }
+
+.pst-top h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 0;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+
+.pst-top h1 svg { width: 26px; height: 26px; flex: none; }
+
+.pst-top p {
+  margin: 8px 0 0;
+  max-width: 660px;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(11, 58, 77, .78);
+}
+
+/* גוף המסך */
+.pst-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 26px 16px 12px;
+  animation: pstRise .6s .12s both;
+}
+
+/* פס כותרת למקטע בתוך המסך */
+.pst-h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 26px 0 12px;
+  padding: 10px 16px;
+  background: #FFD400;
+  color: #0B3A4D;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.pst-h2-b { background: #FF3B5D; color: #fff; }
+.pst-h2 small { margin-inline-start: auto; font-size: 15px; font-weight: 900; }
+
+/* שורה בתוך רשימה: כרטיס לבן עם מסגרת דיו וצל קשיח */
+.pst-lrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 3px solid #0B3A4D;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 4px 4px 0 #0B3A4D;
+}
+
+.pst-lrow + .pst-lrow { margin-top: 10px; }
+.pst-lrow-t { flex: 1; min-width: 0; font-size: 16px; font-weight: 900; line-height: 1.2; }
+.pst-lrow-s { font-size: 13px; font-weight: 700; color: rgba(11, 58, 77, .7); }
+.pst-lrow-v { flex: none; font-size: 17px; font-weight: 900; }
+
+/* מצב ריק */
+.pst-empty {
+  padding: 30px 20px;
+  border: 3px dashed #0B3A4D;
+  border-radius: 20px;
+  background: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: rgba(11, 58, 77, .7);
+}
+
+/* טורי טופס */
+.pst-field { display: flex; flex-direction: column; gap: 6px; }
+.pst-field > span, .pst-field > label { font-size: 14px; font-weight: 900; }
+
+.pst-inner input:not([type="checkbox"]):not([type="radio"]),
+.pst-inner textarea,
+.pst-inner select {
+  border: 3px solid #0B3A4D;
+  border-radius: 14px;
+  background: #fff;
+  color: #0B3A4D;
+  font-weight: 700;
+}
+
+.pst-inner input::placeholder,
+.pst-inner textarea::placeholder { color: rgba(11, 58, 77, .45); font-weight: 600; }
+.pst-inner label { font-weight: 900; }
+
+/* כפתורים בכרטיסים: מסגרת דיו עבה וכפתור גלולה */
+.pst-inner .pst-panel button {
+  border: 3px solid #0B3A4D;
+  border-radius: 999px;
+  box-shadow: none;
+  font-weight: 900;
+}
+
+/* שורת כרטיסים בשתי עמודות במסכים רחבים */
+.pst-cards { display: grid; gap: 14px; }
+
+@media (min-width: 640px) {
+  .pst-top { padding: 24px 40px 22px; }
+  .pst-top::after { bottom: -22px; height: 22px; }
+  .pst-topline .pst-brand { font-size: 17px; }
+  .pst-topline .pst-brand img { width: 40px; height: 40px; }
+  .pst-top h1 { font-size: 42px; }
+  .pst-top h1 svg { width: 32px; height: 32px; }
+  .pst-top p { font-size: 16px; }
+  .pst-main { padding: 34px 40px 16px; }
+  .pst-h2 { padding: 12px 20px; font-size: 24px; }
+  .pst-inner { padding-bottom: 40px; }
+  .pst-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .pst-top { padding: 30px 64px 26px; }
+  .pst-top h1 { font-size: 52px; }
+  .pst-top h1 svg { width: 38px; height: 38px; }
+  .pst-main { padding: 40px 64px 20px; }
+  .pst-h2 { font-size: 28px; }
+  .pst-cards { gap: 18px; }
+  .pst-inner { padding-bottom: 48px; }
+}
+
+/* חלונות ופאנלים צפים — אותה מסגרת דיו */
+[role="dialog"] {
+  border: 3px solid #0B3A4D;
+  border-radius: 18px;
+  box-shadow: 6px 6px 0 #0B3A4D;
+}
+
+.dark [role="dialog"] {
+  border-color: #FFD400;
+  box-shadow: 6px 6px 0 #FFD400;
+}
+
+/* מצב גדול ונוח גם במסכי הפנים */
+html.easy-mode .pst-nm { font-size: 19px; }
+html.easy-mode .pst-lrow-t { font-size: 18px; }
+html.easy-mode .pst-lrow-s { font-size: 15px; }
+html.easy-mode .pst-h2 { font-size: 24px; }
+html.easy-mode .pst-top p { font-size: 17px; }
+html.easy-mode .pst-inner input:not([type="checkbox"]):not([type="radio"]),
+html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }

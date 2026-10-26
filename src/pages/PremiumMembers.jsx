@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import AppHeader from "../components/AppHeader";
+import PosterPage from "@/components/poster/PosterPage";
 import AppFooter from "../components/AppFooter";
 import PremiumMemberRow from "@/components/premium/PremiumMemberRow";
 import PremiumLeadRow from "@/components/premium/PremiumLeadRow";
@@ -124,64 +124,35 @@ export default function PremiumMembers() {
 
   if (isAdmin === null) {
     return (
-      <div className="min-h-screen bg-background">
-        <AppHeader />
-        <div className="responsive-container mx-auto px-4 py-6">
-          <div className="h-24 rounded-3xl bg-muted shimmer" />
-        </div>
-      </div>
+      <PosterPage icon={Crown} title="מנויי פרימיום">
+        <div className="h-24 border-[3px] border-[#0B3A4D] shimmer" />
+      </PosterPage>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background">
-        <AppHeader
-          rightAction={
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => navigate("/")}>
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          }
-        />
-        <main className="responsive-container mx-auto px-4 py-10 text-center">
-          <p className="text-lg font-semibold text-foreground">המסך הזה מיועד לבעל האפליקציה בלבד</p>
-        </main>
-      </div>
+      <PosterPage icon={Crown} title="מנויי פרימיום">
+        <p className="pst-empty">המסך הזה מיועד לבעל האפליקציה בלבד</p>
+      </PosterPage>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <AppHeader
-        rightAction={
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => navigate("/")}>
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-        }
-      />
-      <main className="responsive-container mx-auto px-4 py-6 sm:py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-primary/10">
-            <Crown className="h-6 w-6 text-primary" />
-          </div>
+    <PosterPage icon={Crown} title="מנויי פרימיום" subtitle="מפעילים מנוי אחרי תשלום ב-Bit או בהעברה">
+      <div>
+        <div className="pst-panel flex items-center gap-3">
+          <Wallet className="h-6 w-6 flex-shrink-0" />
           <div>
-            <h1 className="text-2xl font-bold text-foreground">מנויי פרימיום</h1>
-            <p className="text-muted-foreground">מפעילים מנוי אחרי תשלום ב-Bit או בהעברה</p>
-          </div>
-        </div>
-
-        <div className="mb-6 flex items-center gap-3 rounded-3xl border border-primary/15 bg-card p-5">
-          <Wallet className="h-6 w-6 flex-shrink-0 text-primary" />
-          <div>
-            <p className="text-sm text-muted-foreground">מנויים פעילים</p>
-            <p className="text-xl font-bold text-foreground">
+            <p className="text-[14px] font-bold text-[#0B3A4D]/70">מנויים פעילים</p>
+            <p className="text-[20px] font-black">
               {activeMembers.length} · ₪{revenue.toFixed(0)} שנגבו
             </p>
           </div>
         </div>
 
-        <section className="mb-7 rounded-3xl border border-border bg-card p-5">
-          <h2 className="mb-3 text-lg font-semibold text-foreground">הוספת מנוי</h2>
+        <section className="pst-panel mt-6">
+          <h2 className="mb-3 text-[20px] font-black">הוספת מנוי</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <Input placeholder="שם המנוי" value={form.user_name} onChange={e => setForm(f => ({ ...f, user_name: e.target.value }))} />
             <Input placeholder="מייל המנוי" value={form.user_email} onChange={e => setForm(f => ({ ...f, user_email: e.target.value }))} />
@@ -218,10 +189,10 @@ export default function PremiumMembers() {
           </Button>
         </section>
 
-        <section className="mb-7">
-          <h2 className="mb-3 text-lg font-semibold text-foreground">פניות של מחכים לפרימיום ({leads.length})</h2>
+        <section>
+          <h2 className="pst-h2 mt-8">פניות של מחכים לפרימיום ({leads.length})</h2>
           {leads.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-border p-4 text-sm text-muted-foreground">
+            <p className="pst-empty">
               עדיין אין פניות. כל מי שלוחץ "אני רוצה פרימיום" באפליקציה יופיע כאן.
             </p>
           ) : (
@@ -234,9 +205,9 @@ export default function PremiumMembers() {
         </section>
 
         <section>
-          <h2 className="mb-3 text-lg font-semibold text-foreground">מנויים ({members.length})</h2>
+          <h2 className="pst-h2 mt-8">מנויים ({members.length})</h2>
           {members.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-border p-4 text-sm text-muted-foreground">עדיין אין מנויים.</p>
+            <p className="pst-empty">עדיין אין מנויים.</p>
           ) : (
             <div className="space-y-3">
               {members.map(member => (
@@ -253,9 +224,7 @@ export default function PremiumMembers() {
             </div>
           )}
         </section>
-
-        <AppFooter />
-      </main>
-    </div>
+      </div>
+    </PosterPage>
   );
 }

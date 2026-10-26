@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Button } from "@/components/ui/button";
-import AppHeader from "../components/AppHeader";
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { ShoppingBag, History } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
-import AppFooter from "../components/AppFooter";
-import ReceiptScanner from "../components/ReceiptScanner";
+import PosterPage from "@/components/poster/PosterPage";
+import ReceiptScanner from "@/components/ReceiptScanner";
 import PremiumLock from "@/components/premium/PremiumLock";
 import usePremium from "@/hooks/usePremium";
 import { useT } from "@/lib/i18n";
 
+// היסטוריית הקניות בשפת הכרזה: שני המספרים הגדולים למעלה, וכל תאריך הוא מקטע עם שורות מוצר.
 export default function ShoppingHistory() {
   const { listId } = useParams();
-  const navigate = useNavigate();
   const t = useT();
   const { isPremium } = usePremium();
   const [records, setRecords] = useState([]);
@@ -38,72 +36,57 @@ export default function ShoppingHistory() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <AppHeader
-        rightAction={
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => navigate(`/list/${listId}`)}>
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-        }
-      />
-      <main className="responsive-container mx-auto px-4 py-6 sm:py-8">
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-1">{t("history.title")}</h1>
-            <p className="text-muted-foreground">{t("history.desc")}</p>
-          </div>
-          {isPremium ? <ReceiptScanner listId={listId} onScanned={loadHistory} /> : <PremiumLock hint={t("premium.f3")} />}
+    <PosterPage icon={History} title={t("history.title")} subtitle={t("history.desc")} back={`/list/${listId}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="pst-nums">
+          <span className="pst-num">
+            {t("history.totalExpenses")}
+            <b>₪{totalSpent.toFixed(2)}</b>
+          </span>
+          <span className="pst-num pst-num-t">
+            {t("history.itemsBought")}
+            <b>{records.length}</b>
+          </span>
         </div>
+        {isPremium ? <ReceiptScanner listId={listId} onScanned={loadHistory} /> : <PremiumLock hint={t("premium.f3")} />}
+      </div>
 
-        <div className="bg-card border border-primary/15 rounded-3xl p-5 mb-7 flex items-center justify-between shadow-lg shadow-primary/10">
-          <div>
-            <p className="text-sm text-muted-foreground">{t("history.totalExpenses")}</p>
-            <p className="text-2xl font-bold text-primary">₪{totalSpent.toFixed(2)}</p>
-          </div>
-          <div className="text-end">
-            <p className="text-sm text-muted-foreground">{t("history.itemsBought")}</p>
-            <p className="text-2xl font-bold text-foreground">{records.length}</p>
-          </div>
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-[#0B3A4D]/25 border-t-[#0B3A4D]" />
         </div>
-
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-          </div>
-        ) : records.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-              <ShoppingBag className="w-10 h-10 text-muted-foreground" />
-            </div>
-            <p className="text-xl font-medium text-foreground mb-1">{t("history.noHistory")}</p>
-            <p className="text-muted-foreground">{t("history.noHistoryDesc")}</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {Object.entries(byDate).map(([date, items]) => (
-              <div key={date}>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-2 px-2">{date}</h3>
-                <div className="space-y-2">
-                  {items.map(r => (
-                    <div key={r.id} className="flex items-center gap-3 bg-card border border-primary/10 rounded-2xl p-3 shadow-sm">
-                      <ProductPhoto name={r.item_name} category={r.category} className="w-12 h-12 rounded-xl flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground truncate">{r.item_name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {r.quantity > 1 ? `${r.quantity} ${t("history.units")} · ` : ""}₪{(r.price || 0).toFixed(2)}
-                          {r.bought_by ? ` · ${r.bought_by}` : ""}
-                        </p>
-                      </div>
-                      <span className="text-sm font-semibold text-primary">₪{((r.price || 0) * (r.quantity || 1)).toFixed(2)}</span>
-                    </div>
-                  ))}
+      ) : records.length === 0 ? (
+        <div className="pst-empty mt-6">
+          <ShoppingBag className="mx-auto mb-3 h-10 w-10" />
+          <p className="text-[19px] font-black text-[#0B3A4D]">{t("history.noHistory")}</p>
+          <p className="mt-1">{t("history.noHistoryDesc")}</p>
+        </div>
+      ) : (
+        Object.entries(byDate).map(([date, items]) => (
+          <section key={date}>
+            <h2 className="pst-h2">
+              <span>{date}</span>
+              <small>{items.length}</small>
+            </h2>
+            <div>
+              {items.map(r => (
+                <div key={r.id} className="pst-lrow">
+                  <ProductPhoto name={r.item_name} category={r.category}
+                    className="h-12 w-12 flex-none rounded-full border-[3px] border-[#0B3A4D] object-cover" />
+                  <div className="pst-lrow-t">
+                    <p className="truncate">{r.item_name}</p>
+                    <p className="pst-lrow-s">
+                      {r.quantity > 1 ? `${r.quantity} ${t("history.units")} · ` : ""}₪{(r.price || 0).toFixed(2)}
+                      {r.bought_by ? ` · ${r.bought_by}` : ""}
+                    </p>
+                  </div>
+                  <span className="pst-lrow-v">₪{((r.price || 0) * (r.quantity || 1)).toFixed(2)}</span>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-        <AppFooter />
-      </main>
-    </div>
+              ))}
+            </div>
+          </section>
+        ))
+      )}
+    </PosterPage>
   );
 }

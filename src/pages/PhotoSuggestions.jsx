@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, ImagePlus, Loader2 } from "lucide-react";
+import { ImagePlus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import PhotoSuggestionCard from "@/components/PhotoSuggestionCard";
-import AppFooter from "@/components/AppFooter";
+import PosterPage from "@/components/poster/PosterPage";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 
@@ -53,21 +52,8 @@ export default function PhotoSuggestions() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <div className="market-page min-h-screen bg-market-surface pb-16">
-      <main className="mx-auto max-w-lg px-4 py-6 md:max-w-2xl md:px-10">
-        <div className="mb-5 flex items-center gap-3">
-          <Link to="/" aria-label={t("admin.back")}
-            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border-[3px] border-market-ink bg-market-yellow text-market-ink">
-            <ArrowRight className="h-5 w-5" />
-          </Link>
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-[24px] font-black leading-tight text-market-ink">
-              <ImagePlus className="h-6 w-6 text-market-pink" />{t("admin.title")}
-            </h1>
-            <p className="text-sm font-bold text-muted-foreground">{t("admin.subtitle")}</p>
-          </div>
-        </div>
-
+    <PosterPage icon={ImagePlus} title={t("admin.title")} subtitle={t("admin.subtitle")} back="/">
+      <div>
         {loading && (
           <div className="flex items-center justify-center py-16 text-market-ink">
             <Loader2 className="h-7 w-7 animate-spin" />
@@ -75,15 +61,11 @@ export default function PhotoSuggestions() {
         )}
 
         {!loading && !isAdmin && (
-          <p className="rounded-3xl border-[3px] border-market-ink bg-market-pink-soft px-5 py-6 text-center text-[17px] font-black text-market-ink">
-            {t("admin.noAccess")}
-          </p>
+          <p className="pst-empty border-solid bg-[#FF3B5D]/10">{t("admin.noAccess")}</p>
         )}
 
         {!loading && isAdmin && suggestions.length === 0 && (
-          <p className="rounded-3xl border-[3px] border-market-ink bg-market-yellow-soft px-5 py-8 text-center text-[18px] font-black text-market-ink">
-            {t("admin.none")}
-          </p>
+          <p className="pst-empty border-solid bg-[#FFD400]">{t("admin.none")}</p>
         )}
 
         {!loading && isAdmin && suggestions.length > 0 && (
@@ -94,9 +76,7 @@ export default function PhotoSuggestions() {
             ))}
           </div>
         )}
-
-        <AppFooter />
-      </main>
-    </div>
+      </div>
+    </PosterPage>
   );
 }

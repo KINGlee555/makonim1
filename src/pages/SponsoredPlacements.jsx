@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ArrowRight } from "lucide-react";
+import { Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import AppFooter from "../components/AppFooter";
+import PosterPage from "@/components/poster/PosterPage";
 import SponsoredPlacementRow from "../components/sponsored/SponsoredPlacementRow";
 import { useT } from "@/lib/i18n";
 
@@ -73,24 +72,16 @@ export default function SponsoredPlacements() {
 
   if (status !== "ready") {
     return (
-      <div className="market-page min-h-screen bg-market-surface p-8 text-center text-[17px] font-black text-market-ink">
-        {status === "loading" ? t("app.loading") : t("sponsored.adminOnly")}
-      </div>
+      <PosterPage icon={Megaphone} title={t("sponsored.admin")}>
+        <p className="pst-empty">{status === "loading" ? t("app.loading") : t("sponsored.adminOnly")}</p>
+      </PosterPage>
     );
   }
 
   return (
-    <div className="market-page min-h-screen bg-market-surface pb-16">
-      <main className="mx-auto max-w-lg px-4 py-6 md:max-w-2xl md:px-12">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-[15px] font-black text-market-blue no-underline">
-          <ArrowRight className="h-4 w-4" />
-          {t("sponsored.back")}
-        </Link>
-
-        <h1 className="mt-3 text-[28px] font-black leading-tight tracking-[-1px] text-market-ink">{t("sponsored.admin")}</h1>
-        <p className="mt-1 text-[15px] font-bold text-market-ink/70">{t("sponsored.subtitle")}</p>
-
-        <section className="mt-5 space-y-3.5 rounded-[30px] border-[3px] border-market-ink bg-market-surface p-5">
+    <PosterPage icon={Megaphone} title={t("sponsored.admin")} subtitle={t("sponsored.subtitle")} back="/" backLabel={t("sponsored.back")}>
+      <div>
+        <section className="pst-panel space-y-3.5">
           <div>
             <Label className="text-[14px] font-black text-market-ink">{t("sponsored.chain")}</Label>
             <Input value={form.chain_name} onChange={e => setForm(f => ({ ...f, chain_name: e.target.value }))} />
@@ -110,7 +101,7 @@ export default function SponsoredPlacements() {
           <Button
             onClick={handleAdd}
             disabled={saving}
-            className="h-12 w-full rounded-[24px] bg-market-pink text-[16px] font-black text-white hover:bg-market-pink hover:text-white"
+            className="h-12 w-full bg-[#FF3B5D] text-[16px] font-black text-white hover:bg-[#FF3B5D] hover:text-white"
           >
             {saving ? t("sponsored.saving") : t("sponsored.save")}
           </Button>
@@ -118,15 +109,13 @@ export default function SponsoredPlacements() {
 
         <section className="mt-6 space-y-3">
           {slots.length === 0 && (
-            <p className="text-center text-[15px] font-bold text-market-ink/60">{t("sponsored.empty")}</p>
+            <p className="pst-empty">{t("sponsored.empty")}</p>
           )}
           {slots.map(slot => (
             <SponsoredPlacementRow key={slot.id} slot={slot} onToggle={handleToggle} onDelete={handleDelete} />
           ))}
         </section>
-
-        <AppFooter />
-      </main>
-    </div>
+      </div>
+    </PosterPage>
   );
 }
