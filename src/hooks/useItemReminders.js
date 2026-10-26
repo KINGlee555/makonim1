@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
 import { requestNotificationPermission, sendNotification } from "@/hooks/useListNotifications";
 import { useT } from "@/lib/i18n";
 import { isReminderDue } from "@/lib/reminders";
 
-// תזכורות שהגיע זמנן: התראה במכשיר (בזמן שהאפליקציה פתוחה) וסימון שהתזכורת נשלחה,
-// כדי שלא תחזור שוב. הבדיקה חוזרת כל חצי דקה.
+// Reminders that are due: device notification (while the app is open) and marking the reminder as sent,
+// so it doesn't repeat. The check runs every half minute.
 export function useItemReminders(items) {
   const t = useT();
   const busy = useRef(false);
@@ -21,9 +20,12 @@ export function useItemReminders(items) {
         if (permission === "granted") {
           due.forEach(item => sendNotification(t("reminder.title"), item.name));
         }
-        await Promise.all(due.map(item => base44.entities.ListItem.update(item.id, { reminder_sent: true })));
+
+        // TODO: Update the item's reminder_sent flag to true in your new backend
+        // Simulating backend update for now
+        await Promise.all(due.map(item => new Promise(resolve => setTimeout(resolve, 100))));
       } catch {
-        // תזכורת שלא נשלחה תנסה שוב בסבב הבא
+        // A reminder that wasn't sent will try again in the next cycle
       } finally {
         busy.current = false;
       }

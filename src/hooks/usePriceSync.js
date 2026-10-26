@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 
 const BATCH_SIZE = 20;
 const STALE_THRESHOLD_HOURS = 20;
@@ -8,7 +7,7 @@ const SYNC_HOUR = 7; // 7 AM daily price refresh
 /**
  * Daily price sync — runs on app load.
  * Checks if it's past 7 AM and prices haven't been synced since last 7 AM.
- * If stale, updates the stalest batch via InvokeLLM with web search.
+ * If stale, updates the stalest batch via backend with web search.
  * Also sets a timer to sync at the next 7 AM if the app stays open.
  */
 export function usePriceSync() {
@@ -20,8 +19,10 @@ export function usePriceSync() {
 
     const checkAndSync = async () => {
       try {
-        // Get the stalest products (oldest last_updated first)
-        const products = await base44.entities.Product.list("last_updated", BATCH_SIZE);
+        // TODO: Get the stalest products (oldest last_updated first) from your new backend
+        // Mocking an empty array for now
+        const products = [];
+
         if (products.length === 0) return;
 
         const oldest = products[0];
@@ -44,28 +45,11 @@ export function usePriceSync() {
 
         const productNames = products.map(p => p.name);
 
-        const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `Search the web for current average prices in Israeli supermarkets (Shufersal, Rami Levi, Victory, Yochananof, Osher Ad, Mega, Tiv Taam, Yenot Bitan, Coop, Osher Ad) for these grocery products. Return the average retail price in NIS (₪) for each product based on current online prices. If you cannot find an exact match, estimate based on similar products. Products: ${JSON.stringify(productNames)}`,
-          add_context_from_internet: true,
-          model: "gemini_3_flash",
-          response_json_schema: {
-            type: "object",
-            properties: {
-              prices: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    name: { type: "string" },
-                    price: { type: "number" }
-                  },
-                  required: ["name", "price"]
-                }
-              }
-            },
-            required: ["prices"]
-          }
-        });
+        // TODO: Call your new backend endpoint that triggers the LLM/price scraping logic
+        // Simulating a network request for now
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const result = { prices: [] }; // Mock empty response
 
         if (cancelled) return;
 
@@ -73,9 +57,9 @@ export function usePriceSync() {
         const updates = [];
         for (const item of updatedPrices) {
           const product = products.find(p =>
-            p.name === item.name ||
-            p.name.includes(item.name) ||
-            item.name.includes(p.name)
+              p.name === item.name ||
+              p.name.includes(item.name) ||
+              item.name.includes(p.name)
           );
           if (product && item.price > 0) {
             updates.push({
@@ -86,10 +70,10 @@ export function usePriceSync() {
           }
         }
 
-        // אותו מוצר יכול להימצא פעמיים באותו סבב — מאחדים לפי מזהה כדי לא לשלוח כפילות
+        // The same product might be found twice in the same batch — unify by ID to avoid sending duplicates
         const uniqueUpdates = [...new Map(updates.map(u => [u.id, u])).values()];
         if (uniqueUpdates.length > 0 && !cancelled) {
-          await base44.entities.Product.bulkUpdate(uniqueUpdates);
+          // TODO: Bulk update the products in your new backend database
         }
       } catch {
         // Silent fail — don't disrupt user experience

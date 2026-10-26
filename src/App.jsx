@@ -31,81 +31,81 @@ import Unsubscribe from './pages/Unsubscribe';
 const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact", "/demo", "/unsubscribe"];
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
-  const location = useLocation();
-  const isAuthPage = AUTH_PATHS.includes(location.pathname);
+    const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
+    const location = useLocation();
+    const isAuthPage = AUTH_PATHS.includes(location.pathname);
 
-  // Redirect to login only when auth is required AND we're not already on an auth page
-  // (prevents infinite redirect loop when landing on /join/:code while unauthenticated)
-  useEffect(() => {
-    if (authError?.type === 'auth_required' && !isAuthPage) {
-      navigateToLogin();
+    // Redirect to login only when auth is required AND we're not already on an auth page
+    // (prevents infinite redirect loop when landing on /join/:code while unauthenticated)
+    useEffect(() => {
+        if (authError?.type === 'auth_required' && !isAuthPage) {
+            navigateToLogin();
+        }
+    }, [authError, isAuthPage, navigateToLogin]);
+
+    // The user's saved skin preference takes precedence — this ensures their choice syncs across devices
+    useEffect(() => {
+        applyUserSkin(user);
+    }, [user]);
+
+    // Show loading spinner while checking app public settings or auth
+    if (isLoadingPublicSettings || isLoadingAuth) {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+            </div>
+        );
     }
-  }, [authError, isAuthPage, navigateToLogin]);
 
-  // העיצוב שנשמר על המשתמש עצמו גובר — כך הבחירה עוברת איתו בין מכשירים
-  useEffect(() => {
-    applyUserSkin(user);
-  }, [user]);
+    // Handle authentication errors
+    if (authError) {
+        if (authError.type === 'user_not_registered') {
+            return <UserNotRegisteredError />;
+        } else if (authError.type === 'auth_required' && !isAuthPage) {
+            return null;
+        }
+    }
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+    // Render the main app
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
+        <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/demo" element={<DemoList />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/list/:listId" element={<ListView />} />
+            <Route path="/join/:shareCode" element={<JoinList />} />
+            <Route path="/history/:listId" element={<ShoppingHistory />} />
+            <Route path="/summary/:listId" element={<ShoppingSummary />} />
+            <Route path="/photo-suggestions" element={<PhotoSuggestions />} />
+            <Route path="/price-reports" element={<PriceReports />} />
+            <Route path="/sponsored" element={<SponsoredPlacements />} />
+            <Route path="/premium-members" element={<PremiumMembers />} />
+            <Route path="*" element={<PageNotFound />} />
+        </Routes>
     );
-  }
-
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required' && !isAuthPage) {
-      return null;
-    }
-  }
-
-  // Render the main app
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/demo" element={<DemoList />} />
-      <Route path="/unsubscribe" element={<Unsubscribe />} />
-      <Route path="/" element={<Home />} />
-      <Route path="/list/:listId" element={<ListView />} />
-      <Route path="/join/:shareCode" element={<JoinList />} />
-      <Route path="/history/:listId" element={<ShoppingHistory />} />
-      <Route path="/summary/:listId" element={<ShoppingSummary />} />
-      <Route path="/photo-suggestions" element={<PhotoSuggestions />} />
-      <Route path="/price-reports" element={<PriceReports />} />
-      <Route path="/sponsored" element={<SponsoredPlacements />} />
-      <Route path="/premium-members" element={<PremiumMembers />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
-  );
 };
 
 
 function App() {
 
-  return (
-    <LanguageProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
-      </AuthProvider>
-    </LanguageProvider>
-  )
+    return (
+        <LanguageProvider>
+            <AuthProvider>
+                <QueryClientProvider client={queryClientInstance}>
+                    <Router>
+                        <AuthenticatedApp />
+                    </Router>
+                    <Toaster />
+                </QueryClientProvider>
+            </AuthProvider>
+        </LanguageProvider>
+    )
 }
 
 export default App

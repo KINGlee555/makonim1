@@ -1,4 +1,3 @@
-import { base44 } from "@/api/base44Client";
 import { israeliProducts } from "@/lib/israeliProducts";
 import { curatedProducts } from "@/lib/curatedProducts";
 import { petProducts } from "@/lib/petProducts";
@@ -24,7 +23,7 @@ function buildCatalog(remoteProducts) {
     if (!product?.name || !product?.category || typeof product.price !== "number") return;
     const key = `${normalizeProductText(product.name)}|${normalizeProductText(product.brand)}`;
     if (!unique.has(key)) {
-      // רק תמונה של המוצר עצמו נכנסת לקטלוג — ולמוצר ממותג רק התמונה האמיתית שלו
+      // Only the product's own image enters the catalog — and for branded products, only their real image
       const specific = product.image_url || (product.brand ? "" : getSpecificProductImage(product.name));
       unique.set(key, prepareProduct({
         ...product,
@@ -38,7 +37,13 @@ function buildCatalog(remoteProducts) {
 
 async function fetchCatalog(maxProducts) {
   let remote = [];
-  try { remote = await base44.entities.Product.list("-name", Math.min(maxProducts, 5000)); } catch { /* curated catalog remains available offline */ }
+  try {
+    // TODO: Fetch remote products from your new backend database
+    // Mocking an empty array for now
+    // remote = await newBackend.getProducts(Math.min(maxProducts, 5000));
+    remote = [];
+  } catch { /* curated catalog remains available offline */ }
+
   const products = buildCatalog(remote);
   if (maxProducts >= 5000) {
     try {

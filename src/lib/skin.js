@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
 
-// ערכת העיצוב של המשתמש — מקום אחד שמחזיק את הבחירה, כדי שכל המסכים והכפתורים
-// יתנהגו אותו דבר. ברירת המחדל היא הערכה הרגועה והסולידית.
+// User's skin preference — one place to hold the selection so all screens and buttons
+// behave the same. Default is the quiet, solid skin.
 const KEY = "app_skin";
 export const QUIET = "quiet";
 export const POSTER = "poster";
@@ -21,7 +20,7 @@ export function applySkin(skin) {
   try { localStorage.setItem(KEY, poster ? POSTER : QUIET); } catch {}
 }
 
-// הבחירה של המשתמש עצמו גוברת על מה שנשמר במכשיר — כך העיצוב עובר איתו בין מכשירים
+// The user's own choice overrides what's saved on the device — so the design moves with them between devices
 export function applyUserSkin(user) {
   if (!user?.skin) return;
   applySkin(user.skin === POSTER ? POSTER : QUIET);
@@ -33,7 +32,9 @@ export function useSkin() {
   const choose = (skin) => {
     setPoster(skin === POSTER);
     applySkin(skin);
-    base44.auth.updateMe({ skin: skin === POSTER ? POSTER : QUIET }).catch(() => {});
+
+    // TODO: Update user's skin preference in your new backend database
+    // Example: newBackend.updateUserPreferences({ skin: skin === POSTER ? POSTER : QUIET })
   };
 
   return { poster, choose };

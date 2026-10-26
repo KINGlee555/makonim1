@@ -1,5 +1,3 @@
-import { base44 } from "@/api/base44Client";
-
 // Every chain that publishes an official price-transparency feed, in display order.
 export const CHAINS = [
   { id: "shufersal", name: "שופרסל" },
@@ -36,9 +34,10 @@ export const OTHER_CHAINS = CHAINS.map(chain => chain.id).filter(id => !FAST_CHA
 // Real shelf prices for a basket: items with a barcode are matched exactly,
 // the rest are matched by name against the chains' price files.
 export async function fetchChainPrices(items, chains) {
-  const response = await base44.functions.invoke("chainPrices", {
-    items: items.map(item => ({ name: item.name, barcode: item.barcode || "" })),
-    chains
-  });
-  return response.data || {};
+  // TODO: Replace with your new backend cloud function or API endpoint to fetch chain prices
+  // Simulating a network request for now
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  // Mocking an empty response object
+  return {};
 }

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 
 const HEARTBEAT_MS = 30000;
-const ONLINE_MS = 2 * 60 * 1000;
+const ONLINE_MS = 2 * 60 * 1000; // 2 minutes
 
-// נוכחות ברשימה: כל מי שפותח את הרשימה מסמן "אני כאן" כל חצי דקה,
-// ומי שסימן לאחרונה נחשב מחובר עכשיו — בלי תלות במצב קנייה ובלי ניחושים.
+// List presence: anyone who opens the list marks "I am here" every half minute,
+// and whoever pinged recently is considered connected now — regardless of shopping mode and without guessing.
 export function isHere(member) {
   if (!member?.last_seen) return false;
   return Date.now() - new Date(member.last_seen).getTime() < ONLINE_MS;
@@ -20,17 +19,28 @@ export function useListPresence(listId, user) {
     if (!listId || !email) return;
     let cancelled = false;
 
-    const read = () => base44.entities.ListPresence.filter({ list_id: listId }, "-last_seen", 20)
-      .then(list => { if (!cancelled) setMembers(list); })
-      .catch(() => {});
+    const read = async () => {
+      try {
+        // TODO: Fetch presence records for this listId from your new backend
+        // Mocking an empty list of members for now
+        const list = [];
+        if (!cancelled) setMembers(list);
+      } catch {
+        // Ignore errors
+      }
+    };
 
     const beat = async () => {
       const stamp = new Date().toISOString();
       try {
-        const mine = await base44.entities.ListPresence.filter({ list_id: listId, user_email: email }, "-created_date", 1);
-        if (mine.length) await base44.entities.ListPresence.update(mine[0].id, { last_seen: stamp, user_name: name });
-        else await base44.entities.ListPresence.create({ list_id: listId, user_email: email, user_name: name, last_seen: stamp });
-      } catch { /* נוכחות לא חייבת לעצור את הרשימה */ }
+        // TODO: Implement presence heartbeat in your new backend (upsert record)
+        // Example: await newBackend.upsertPresence({ list_id: listId, user_email: email, user_name: name, last_seen: stamp });
+
+        // Simulating network delay for now
+        await new Promise(resolve => setTimeout(resolve, 300));
+      } catch {
+        /* Presence shouldn't block the list */
+      }
       read();
     };
 

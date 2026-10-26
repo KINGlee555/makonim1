@@ -79,7 +79,8 @@ const translations = {
     "share.linkCopied": "הקישור הועתק!",
     "share.shareNote": "שתף את הקישור עם משפחה וחברים והם יצטרפו לרשימה אוטומטית!",
     "share.invalidEmail": "כתובת מייל לא תקינה",
-    // ParticipantsDialog — ניהול משתתפים ע״י המזמין
+
+    // ParticipantsDialog
     "participants.button": "משתתפים",
     "participants.title": "ניהול משתתפים",
     "participants.count": "{count} מתוך {max} משתתפים",
@@ -369,7 +370,7 @@ const translations = {
     "list.ungroup": "בטל קיבוץ",
     "list.moreFeatures": "עוד כלים",
 
-    // מסך גדול ופשוט — שני הכפתורים הגדולים וכותרות הכלים
+    // Big and simple
     "big.add": "הוסף מוצר",
     "big.finish": "סיימתי לקנות",
     "big.departments": "מחלקות",
@@ -570,7 +571,7 @@ const translations = {
     "footer.suggestions": "הצעות תמונה",
 
     // Voice quick add
-    "voice.title": "הוספה קולית",
+    "voiceAdd.title": "הוספה קולית",
     "voice.desc": "דבר את הרשימה שלך ונסדר אותה לפי החנות הקרובה",
     "voice.start": "התחל דיבור",
     "voice.stop": "עצור",
@@ -663,7 +664,7 @@ const translations = {
     "courier.requested": "בקשת משלוח",
     "courier.done": "סמן כבוצע",
 
-    // כלים חכמים על המסך הראשון
+    // Smart tools on the first screen
     "tools.bestValue": "הכי משתלם",
     "tools.bestValueHint": "כמה עולה הסל בכל רשת",
     "tools.checking": "בודק מחירים...",
@@ -697,7 +698,7 @@ const translations = {
     "tools.preferred": "מועדף",
     "tools.estimatedHours": "שעות פתיחה משוערות — כדאי לוודא מול הסניף הקרוב",
 
-    // איסוף עצמי — סל מוכן לחנות
+    // Self pickup
     "pickup.open": "איסוף עצמי",
     "pickup.title": "איסוף עצמי",
     "pickup.subtitle": "בוחרים רשת, מקבלים את הסל המדויק עם מחירי המדף, ומעבירים לחנות כדי לסגור איסוף.",
@@ -720,11 +721,11 @@ const translations = {
     "pickup.openHours": "שעות איסוף היום",
     "pickup.handoffNote": "ההזמנה עצמה נסגרת באתר או בטלפון של הרשת — הסל כאן מוכן עם כמויות ומחירים.",
 
-    // חיפוש מוצרים
+    // Product search
     "search.staples": "קונים בדרך כלל",
     "search.moreProducts": "עוד מוצרים",
 
-    // נרכש לאחרונה
+    // Recently bought
     "recent.title": "נרכש לאחרונה",
     "reminder.button": "תזכורת",
     "reminder.title": "תזכורת לקנייה",
@@ -747,7 +748,7 @@ const translations = {
     "fillLast.added": "{count} פריטים חזרו לרשימה",
     "fillLast.error": "המילוי נכשל, נסו שוב",
 
-    // דיווח מחיר, מקורות המחיר, ירידת מחיר והצטרפות בקוד QR
+    // Price report, price sources, price drop and QR join
     "report.menu": "המחיר לא נכון",
     "report.title": "דיווח על מחיר לא נכון",
     "report.desc": "ספרו מה המחיר שראיתם בחנות — אחרי אישור הוא יתעדכן לכל המשפחה.",
@@ -789,7 +790,7 @@ const translations = {
     "share.qrAccountHint": "מי שאין לו חשבון עובר הרשמה קצרה ואז חוזר להצטרפות לרשימה.",
     "share.qrSend": "שלחו לחבר/ה",
 
-    // סיכום חודשי, רשימת דוגמה לאורח וקישור אליה ממסכי הפתיחה
+    // Monthly summary, guest sample list and links to it from the entry screens
     "monthly.title": "סיכום חודשי",
     "monthly.full": "לסיכום המלא",
     "monthly.thisMonth": "החודש",
@@ -817,7 +818,7 @@ const translations = {
     "auth.login.seeDemo": "לצפייה ברשימת דוגמה",
     "join.seeDemo": "לצפייה ברשימת דוגמה",
 
-    // חנויות חיות מחמד — קטלוג חי עם תמונות, מחירים ומבצעים
+    // Pet stores
     "pet.title": "מוצרים לחנות חיות",
     "pet.hint": "מחירים חיים מ־7 חנויות חיות בישראל — תמונות, מבצעים ושקים גדולים, ישירות מהחנויות",
     "pet.search": "חפשו מוצר לחנות החיות",
@@ -1206,7 +1207,7 @@ const translations = {
     "list.ungroup": "Ungroup",
     "list.moreFeatures": "More Tools",
 
-    // Big and simple — the two large buttons and the tools headings
+    // Big and simple
     "big.add": "Add product",
     "big.finish": "Finished shopping",
     "big.departments": "Departments",
@@ -1407,7 +1408,7 @@ const translations = {
     "footer.suggestions": "Photo suggestions",
 
     // Voice quick add
-    "voice.title": "Voice Add",
+    "voiceAdd.title": "Voice Add",
     "voice.desc": "Speak your list and we'll sort by nearest store",
     "voice.start": "Start speaking",
     "voice.stop": "Stop",
@@ -1534,7 +1535,7 @@ const translations = {
     "tools.preferred": "Preferred",
     "tools.estimatedHours": "Estimated opening hours — worth checking with the nearby branch",
 
-    // Self pickup — a basket ready for the store
+    // Self pickup
     "pickup.open": "Self pickup",
     "pickup.title": "Self pickup",
     "pickup.subtitle": "Pick a chain, get the exact basket at shelf prices, and send it to the store to arrange pickup.",
@@ -1654,7 +1655,7 @@ const translations = {
     "auth.login.seeDemo": "See a sample list",
     "join.seeDemo": "See a sample list",
 
-    // Pet stores — a live catalog with photos, prices and deals
+    // Pet stores
     "pet.title": "Pet store products",
     "pet.hint": "Live prices from 7 Israeli pet stores, with photos, deals and big bags",
     "pet.search": "Search a pet product",
@@ -1753,7 +1754,8 @@ const translations = {
     "share.linkCopied": "Ссылка скопирована!",
     "share.shareNote": "Поделитесь ссылкой с семьёй и друзьями — они присоединятся автоматически!",
     "share.invalidEmail": "Неверный email",
-    // ParticipantsDialog — приглашающий управляет участниками
+
+    // ParticipantsDialog
     "participants.button": "Участники",
     "participants.title": "Управление участниками",
     "participants.count": "{count} из {max} участников",
@@ -2058,7 +2060,7 @@ const translations = {
     "basket.empty": "Список пуст",
     "list.moreFeatures": "Ещё инструменты",
 
-    // Крупный простой экран — две большие кнопки и заголовки инструментов
+    // Big and simple
     "big.add": "Добавить товар",
     "big.finish": "Закончил покупки",
     "big.departments": "Отделы",
@@ -2131,6 +2133,17 @@ const translations = {
     "filter.big": "Большие скидки",
     "filter.label": "Фильтр акций",
     "filter.none": "В этом фильтре акций нет — выберите другой",
+    "shelf.title": "Реальные акции из сетей",
+    "shelf.all": "Все акции",
+    "shelf.nearby": "Акции рядом",
+    "shelf.until": "до {date}",
+    "shelf.empty": "Акций пока нет, попробуем позже",
+    "shelf.forRent": "Рекламное место сдаётся",
+    "shelf.rentNote": "Здесь могут быть магазины из вашего района",
+    "shelf.rentCta": "Подробнее",
+    "area.title": "Акции в моём районе",
+    "area.pet": "Корм для питомцев по акции",
+    "area.petHint": "Корм для собак и кошек по скидке в зоомагазинах",
     "suggest.menu": "Предложить фото",
     "suggest.title": "Предложить новое фото",
     "suggest.desc": "Нашли фото лучше для {name}? Загрузите его, и оно уйдёт менеджеру приложения. После одобрения оно обновится везде.",
@@ -2158,7 +2171,7 @@ const translations = {
     "footer.suggestions": "Фото на одобрение",
 
     // Voice quick add
-    "voice.title": "Голосовой ввод",
+    "voiceAdd.title": "Голосовой ввод",
     "voice.desc": "Назовите список, и мы отсортируем по ближайшему магазину",
     "voice.start": "Начать",
     "voice.stop": "Стоп",
@@ -2335,7 +2348,7 @@ const translations = {
     "fillLast.added": "{count} товаров вернулись в список",
     "fillLast.error": "Не удалось заполнить, попробуйте снова",
 
-    // Сообщение о цене, источники цен, снижение цены и QR-код
+    // Сообщение о цене
     "report.menu": "Цена неверная",
     "report.title": "Сообщить о неверной цене",
     "report.desc": "Напишите цену, которую вы видели в магазине — после проверки она обновится для всей семьи.",
@@ -2377,7 +2390,7 @@ const translations = {
     "share.qrAccountHint": "У кого нет аккаунта — короткая регистрация и возврат к присоединению.",
     "share.qrSend": "Отправить",
 
-    // Итоги месяца, пример списка для гостя и ссылки на него
+    // Итоги месяца
     "monthly.title": "Итоги месяца",
     "monthly.full": "Полные итоги",
     "monthly.thisMonth": "Этот месяц",
@@ -2405,7 +2418,7 @@ const translations = {
     "auth.login.seeDemo": "Посмотреть пример списка",
     "join.seeDemo": "Посмотреть пример списка",
 
-    // Зоомагазины — живой каталог с фото, ценами и скидками
+    // Зоомагазины
     "pet.title": "Товары зоомагазинов",
     "pet.hint": "Живые цены из 7 израильских зоомагазинов — фото, скидки и большие мешки",
     "pet.search": "Поиск товара для питомца",
@@ -2460,9 +2473,9 @@ export function LanguageProvider({ children }) {
   }, [lang]);
 
   return (
-    <LanguageContext.Provider value={{ lang, dir, setLang, t }}>
-      {children}
-    </LanguageContext.Provider>
+      <LanguageContext.Provider value={{ lang, dir, setLang, t }}>
+        {children}
+      </LanguageContext.Provider>
   );
 }
 

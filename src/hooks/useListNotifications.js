@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
 import { useT } from "@/lib/i18n";
 
 const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
@@ -20,14 +19,14 @@ export function sendNotification(title, body) {
   try {
     new Notification(title, { body, icon: LOGO, badge: LOGO });
   } catch {
-    // דפדפנים (למשל אייפון בלי הוספה למסך הבית) לא מאפשרים התראה מתוך הדף
+    // Browsers (e.g., iPhone without adding to home screen) do not allow in-page notifications
   }
 }
 
 /**
- * התראות בזמן אמת על הרשימה המשותפת — כשמישהו מהמשפחה מוסיף מוצר
- * או מסמן מוצר כנקנה. ההתראה מופיעה במכשיר גם כשהאפליקציה פתוחה ברקע,
- * כדי שלא צריך להיכנס אליה כל רגע.
+ * Real-time notifications for the shared list — when someone in the family adds a product
+ * or marks a product as bought. The notification appears on the device even when the app is open in the background,
+ * so you don't have to constantly check it.
  */
 export function useListNotifications(listId, enabled, myUserId) {
   const t = useT();
@@ -37,10 +36,13 @@ export function useListNotifications(listId, enabled, myUserId) {
     if (!listId || !enabled) return;
     if (!notificationsSupported() || Notification.permission !== "granted") return;
 
-    const unsubscribe = base44.entities.ListItem.subscribe((event) => {
+    // TODO: Implement real-time subscription for ListItem updates in your new backend (e.g., Supabase realtime)
+    /*
+    const unsubscribe = newBackend.subscribeToListItemUpdates(listId, (event) => {
       const data = event.data;
       if (!data || data.list_id !== listId) return;
-      // מי שעשה את הפעולה במכשיר הזה — לא מקבל התראה על עצמו
+
+      // The person who performed the action on this device — does not get a notification about themselves
       if (myUserId && data.created_by_id === myUserId) return;
 
       if (event.type === "create") {
@@ -53,5 +55,10 @@ export function useListNotifications(listId, enabled, myUserId) {
     });
 
     return unsubscribe;
+    */
+
+    const mockUnsubscribe = () => {};
+    return mockUnsubscribe;
+
   }, [listId, enabled, myUserId, t]);
 }

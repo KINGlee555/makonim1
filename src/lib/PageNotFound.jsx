@@ -1,9 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home } from 'lucide-react';
 import AppFooter from '@/components/AppFooter';
-import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-
 
 export default function PageNotFound({}) {
     const location = useLocation();
@@ -13,14 +11,20 @@ export default function PageNotFound({}) {
         queryKey: ['user'],
         queryFn: async () => {
             try {
-                const user = await base44.auth.me();
-                return { user, isAuthenticated: true };
+                // TODO: Replace with your new backend's auth check (e.g., supabase.auth.getUser())
+                // Mocking an unauthenticated state for now
+                const user = null;
+
+                if (user) {
+                    return { user, isAuthenticated: true };
+                }
+                return { user: null, isAuthenticated: false };
             } catch (error) {
                 return { user: null, isAuthenticated: false };
             }
         }
     });
-    
+
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-secondary/30">
             <div className="max-w-md w-full text-center">
@@ -35,7 +39,7 @@ export default function PageNotFound({}) {
                             The page <span className="font-medium text-foreground">"{pageName}"</span> could not be found in this application.
                         </p>
                     </div>
-                    {isFetched && authData.isAuthenticated && authData.user?.role === 'admin' && (
+                    {isFetched && authData?.isAuthenticated && authData.user?.role === 'admin' && (
                         <div className="p-4 bg-secondary rounded-2xl border border-primary/10 text-left">
                             <p className="text-sm font-medium text-secondary-foreground">Admin Note</p>
                             <p className="text-sm text-muted-foreground mt-1">This page has not been added to the app.</p>

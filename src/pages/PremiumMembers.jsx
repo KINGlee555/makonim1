@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PosterPage from "@/components/poster/PosterPage";
-import AppFooter from "../components/AppFooter";
+// import AppFooter from "../components/AppFooter"; // Included in case you need it
 import PremiumMemberRow from "@/components/premium/PremiumMemberRow";
 import PremiumLeadRow from "@/components/premium/PremiumLeadRow";
-import { ArrowRight, Crown, Wallet } from "lucide-react";
+import { Crown, Wallet } from "lucide-react";
 
 const PLANS = {
   monthly: { label: "חודשי", price: 19.9, days: 30 },
@@ -22,7 +21,7 @@ function addDays(fromIso, days) {
   return base.toISOString().slice(0, 10);
 }
 
-// מסך הניהול של מנויי הפרימיום — כאן מפעילים מנוי אחרי תשלום ב-Bit/העברה
+// Premium members management screen — activate subscriptions here after Bit/Bank transfer payment
 export default function PremiumMembers() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(null);
@@ -34,19 +33,18 @@ export default function PremiumMembers() {
   const [copied, setCopied] = useState("");
 
   const load = async () => {
-    const [mem, lead] = await Promise.all([
-      base44.entities.PremiumMember.list("-created_date", 100),
-      base44.entities.PremiumInterest.list("-created_date", 50),
-    ]);
-    setMembers(mem || []);
-    setLeads(lead || []);
+    // TODO: Fetch premium members and leads from your new backend database
+    // Mocking empty arrays for now
+    setMembers([]);
+    setLeads([]);
   };
 
   useEffect(() => {
     (async () => {
       try {
-        const me = await base44.auth.me();
-        const admin = me?.role === "admin";
+        // TODO: Verify if the current user is an admin via your new auth provider
+        // Mocking admin as true so you can view and test the UI
+        const admin = true;
         setIsAdmin(admin);
         if (admin) await load();
       } catch {
@@ -65,7 +63,9 @@ export default function PremiumMembers() {
     setBusy(true);
     setError("");
     try {
-      await base44.entities.PremiumMember.create({
+      // TODO: Insert the new premium member into your backend database
+      /*
+      await newBackend.createPremiumMember({
         user_email: form.user_email.trim().toLowerCase(),
         user_name: form.user_name.trim(),
         plan: form.plan,
@@ -75,6 +75,8 @@ export default function PremiumMembers() {
         active: true,
         note: form.note.trim(),
       });
+      */
+
       setForm({ user_name: "", user_email: "", plan: form.plan, amount: PLANS[form.plan].price, note: "" });
       await load();
     } catch {
@@ -84,22 +86,22 @@ export default function PremiumMembers() {
   };
 
   const handleExtend = async (member, days) => {
-    await base44.entities.PremiumMember.update(member.id, { paid_until: addDays(member.paid_until, days), active: true }).catch(() => {});
+    // TODO: Update the member's paid_until date in your backend database
     await load();
   };
 
   const handleToggle = async (member) => {
-    await base44.entities.PremiumMember.update(member.id, { active: !member.active }).catch(() => {});
+    // TODO: Toggle the member's active status in your backend database
     await load();
   };
 
   const handleRemove = async (member) => {
-    await base44.entities.PremiumMember.delete(member.id).catch(() => {});
+    // TODO: Delete the member from your backend database
     await load();
   };
 
   const handleRemoveLead = async (lead) => {
-    await base44.entities.PremiumInterest.delete(lead.id).catch(() => {});
+    // TODO: Delete the lead from your backend database
     await load();
   };
 
@@ -124,107 +126,107 @@ export default function PremiumMembers() {
 
   if (isAdmin === null) {
     return (
-      <PosterPage icon={Crown} title="מנויי פרימיום">
-        <div className="h-24 border-[3px] border-pst-ink shimmer" />
-      </PosterPage>
+        <PosterPage icon={Crown} title="מנויי פרימיום">
+          <div className="h-24 border-[3px] border-pst-ink shimmer" />
+        </PosterPage>
     );
   }
 
   if (!isAdmin) {
     return (
-      <PosterPage icon={Crown} title="מנויי פרימיום">
-        <p className="pst-empty">המסך הזה מיועד לבעל האפליקציה בלבד</p>
-      </PosterPage>
+        <PosterPage icon={Crown} title="מנויי פרימיום">
+          <p className="pst-empty">המסך הזה מיועד לבעל האפליקציה בלבד</p>
+        </PosterPage>
     );
   }
 
   return (
-    <PosterPage icon={Crown} title="מנויי פרימיום" subtitle="מפעילים מנוי אחרי תשלום ב-Bit או בהעברה">
-      <div>
-        <div className="pst-panel flex items-center gap-3">
-          <Wallet className="h-6 w-6 flex-shrink-0" />
-          <div>
-            <p className="text-[14px] font-bold text-ui-muted">מנויים פעילים</p>
-            <p className="text-[20px] font-black">
-              {activeMembers.length} · ₪{revenue.toFixed(0)} שנגבו
-            </p>
+      <PosterPage icon={Crown} title="מנויי פרימיום" subtitle="מפעילים מנוי אחרי תשלום ב-Bit או בהעברה">
+        <div>
+          <div className="pst-panel flex items-center gap-3">
+            <Wallet className="h-6 w-6 flex-shrink-0" />
+            <div>
+              <p className="text-[14px] font-bold text-ui-muted">מנויים פעילים</p>
+              <p className="text-[20px] font-black">
+                {activeMembers.length} · ₪{revenue.toFixed(0)} שנגבו
+              </p>
+            </div>
           </div>
-        </div>
 
-        <section className="pst-panel mt-6">
-          <h2 className="mb-3 text-[20px] font-black">הוספת מנוי</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Input placeholder="שם המנוי" value={form.user_name} onChange={e => setForm(f => ({ ...f, user_name: e.target.value }))} />
-            <Input placeholder="מייל המנוי" value={form.user_email} onChange={e => setForm(f => ({ ...f, user_email: e.target.value }))} />
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {Object.entries(PLANS).map(([id, plan]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setPlan(id)}
-                className={`rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
-                  form.plan === id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"
-                }`}
-              >
-                {plan.label} · ₪{plan.price}
-              </button>
-            ))}
+          <section className="pst-panel mt-6">
+            <h2 className="mb-3 text-[20px] font-black">הוספת מנוי</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input placeholder="שם המנוי" value={form.user_name} onChange={e => setForm(f => ({ ...f, user_name: e.target.value }))} />
+              <Input placeholder="מייל המנוי" value={form.user_email} onChange={e => setForm(f => ({ ...f, user_email: e.target.value }))} />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {Object.entries(PLANS).map(([id, plan]) => (
+                  <button
+                      key={id}
+                      type="button"
+                      onClick={() => setPlan(id)}
+                      className={`rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
+                          form.plan === id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"
+                      }`}
+                  >
+                    {plan.label} · ₪{plan.price}
+                  </button>
+              ))}
+              <Input
+                  type="number"
+                  className="w-28"
+                  value={form.amount}
+                  onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
+              />
+            </div>
             <Input
-              type="number"
-              className="w-28"
-              value={form.amount}
-              onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
+                className="mt-3"
+                placeholder="הערה פנימית (לא חובה)"
+                value={form.note}
+                onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
             />
-          </div>
-          <Input
-            className="mt-3"
-            placeholder="הערה פנימית (לא חובה)"
-            value={form.note}
-            onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
-          />
-          {error && <p className="mt-2 text-sm font-medium text-red-600">{error}</p>}
-          <Button onClick={handleSave} disabled={busy} className="mt-4 h-11 w-full rounded-2xl text-base sm:w-auto sm:px-8">
-            {busy ? "שומר..." : "הוספת מנוי"}
-          </Button>
-        </section>
+            {error && <p className="mt-2 text-sm font-medium text-red-600">{error}</p>}
+            <Button onClick={handleSave} disabled={busy} className="mt-4 h-11 w-full rounded-2xl text-base sm:w-auto sm:px-8">
+              {busy ? "שומר..." : "הוספת מנוי"}
+            </Button>
+          </section>
 
-        <section>
-          <h2 className="pst-h2 mt-8">פניות של מחכים לפרימיום ({leads.length})</h2>
-          {leads.length === 0 ? (
-            <p className="pst-empty">
-              עדיין אין פניות. כל מי שלוחץ "אני רוצה פרימיום" באפליקציה יופיע כאן.
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {leads.map(lead => (
-                <PremiumLeadRow key={lead.id} lead={lead} onUse={handleUseLead} onRemove={handleRemoveLead} />
-              ))}
-            </div>
-          )}
-        </section>
+          <section>
+            <h2 className="pst-h2 mt-8">פניות של מחכים לפרימיום ({leads.length})</h2>
+            {leads.length === 0 ? (
+                <p className="pst-empty">
+                  עדיין אין פניות. כל מי שלוחץ "אני רוצה פרימיום" באפליקציה יופיע כאן.
+                </p>
+            ) : (
+                <div className="space-y-2">
+                  {leads.map(lead => (
+                      <PremiumLeadRow key={lead.id} lead={lead} onUse={handleUseLead} onRemove={handleRemoveLead} />
+                  ))}
+                </div>
+            )}
+          </section>
 
-        <section>
-          <h2 className="pst-h2 mt-8">מנויים ({members.length})</h2>
-          {members.length === 0 ? (
-            <p className="pst-empty">עדיין אין מנויים.</p>
-          ) : (
-            <div className="space-y-3">
-              {members.map(member => (
-                <PremiumMemberRow
-                  key={member.id}
-                  member={member}
-                  copied={copied}
-                  onExtend={handleExtend}
-                  onToggle={handleToggle}
-                  onRemove={handleRemove}
-                  onCopy={handleCopy}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-    </PosterPage>
+          <section>
+            <h2 className="pst-h2 mt-8">מנויים ({members.length})</h2>
+            {members.length === 0 ? (
+                <p className="pst-empty">עדיין אין מנויים.</p>
+            ) : (
+                <div className="space-y-3">
+                  {members.map(member => (
+                      <PremiumMemberRow
+                          key={member.id}
+                          member={member}
+                          copied={copied}
+                          onExtend={handleExtend}
+                          onToggle={handleToggle}
+                          onRemove={handleRemove}
+                          onCopy={handleCopy}
+                      />
+                  ))}
+                </div>
+            )}
+          </section>
+        </div>
+      </PosterPage>
   );
 }

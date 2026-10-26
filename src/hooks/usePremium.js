@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 
-// המנוי נמכר ידנית (Bit / העברה) ומופעל על ידי בעל האפליקציה,
-// ולכן הבדיקה היא מול רשומת המנוי של המשתמש המחובר.
+// The subscription is sold manually (Bit / Bank transfer) and activated by the app owner,
+// so the check is against the connected user's subscription record.
 export function memberIsActive(member) {
   if (!member || member.active === false || !member.paid_until) return false;
   return new Date(`${member.paid_until}T23:59:59`).getTime() >= Date.now();
@@ -20,18 +19,25 @@ export default function usePremium() {
     let cancelled = false;
     (async () => {
       try {
-        const me = await base44.auth.me();
-        if (!me?.email) {
+        // TODO: Fetch the current user from your new backend (e.g., supabase.auth.getUser())
+        // Mocking user as null for now. To test premium flow, change this to an object with an email.
+        const mockMe = null;
+
+        if (!mockMe?.email) {
           if (!cancelled) setState({ loading: false, isPremium: false, member: null });
           return;
         }
-        // עם אפשרויות הבקשה חוזרת כ"עמוד" ולכן קוראים את items
-        const page = await base44.entities.PremiumMember.filter(
-          { user_email: me.email, active: true },
-          { sort: "-created_date", limit: 1 }
-        );
+
+        // TODO: Fetch the PremiumMember record for this email from your new backend
+        // Simulating a network request for now
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Mocking the result as an empty array (meaning no active premium subscription)
+        const page = { items: [] };
+
         const member = (page?.items || [])[0] || null;
         const active = memberIsActive(member);
+
         if (!cancelled) setState({ loading: false, isPremium: active, member: active ? member : null });
       } catch {
         if (!cancelled) setState({ loading: false, isPremium: false, member: null });

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +21,9 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      // TODO: Replace with your new backend's login logic (e.g., supabase.auth.signInWithPassword)
+      // Simulating a network request for now
+      await new Promise(resolve => setTimeout(resolve, 1000));
       window.location.href = returnTo;
     } catch (err) {
       setError(err.message || t("auth.login.error"));
@@ -32,45 +33,45 @@ export default function Login() {
   };
 
   return (
-    <AuthLayout
-      icon={LogIn}
-      title={t("auth.login.title")}
-      subtitle={t("auth.login.subtitle")}
-      footer={
-        <>
-          {t("auth.login.noAccount")}{" "}
-          <Link to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")} className="text-primary font-medium hover:underline">
-            {t("auth.login.createOne")}
-          </Link>
-          <span className="mt-2 block">
+      <AuthLayout
+          icon={LogIn}
+          title={t("auth.login.title")}
+          subtitle={t("auth.login.subtitle")}
+          footer={
+            <>
+              {t("auth.login.noAccount")}{" "}
+              <Link to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")} className="text-primary font-medium hover:underline">
+                {t("auth.login.createOne")}
+              </Link>
+              <span className="mt-2 block">
             <Link to="/demo" className="text-primary font-medium hover:underline">{t("auth.login.seeDemo")}</Link>
           </span>
-        </>
-      }
-    >
-      {error && <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{error}</div>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("auth.login.email")}</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-            <Input id="email" type="email" autoComplete="email" autoFocus placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12 rounded-xl border-primary/15 bg-secondary/20" required />
+            </>
+          }
+      >
+        {error && <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">{t("auth.login.email")}</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <Input id="email" type="email" autoComplete="email" autoFocus placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12 rounded-xl border-primary/15 bg-secondary/20" required />
+            </div>
           </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">{t("auth.login.password")}</Label>
-            <Link to="/forgot-password" className="text-xs text-primary hover:underline">{t("auth.login.forgotPassword")}</Link>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t("auth.login.password")}</Label>
+              <Link to="/forgot-password" className="text-xs text-primary hover:underline">{t("auth.login.forgotPassword")}</Link>
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <Input id="password" type="password" autoComplete="current-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12 rounded-xl border-primary/15 bg-secondary/20" required />
+            </div>
           </div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-            <Input id="password" type="password" autoComplete="current-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12 rounded-xl border-primary/15 bg-secondary/20" required />
-          </div>
-        </div>
-        <Button type="submit" className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-primary/20" disabled={loading}>
-          {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("auth.login.loading")}</>) : t("auth.login.submit")}
-        </Button>
-      </form>
-    </AuthLayout>
+          <Button type="submit" className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-primary/20" disabled={loading}>
+            {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("auth.login.loading")}</>) : t("auth.login.submit")}
+          </Button>
+        </form>
+      </AuthLayout>
   );
 }

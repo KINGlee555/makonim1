@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { requestNotificationPermission, notificationsSupported } from "@/hooks/useListNotifications";
 import { useT } from "@/lib/i18n";
 import { toast } from "@/components/ui/use-toast";
 
-// שורת הפעלה קטנה מעל הרשימה: נגיעה אחת ומקבלים התראה במכשיר
-// כשמישהו מהמשפחה מוסיף מוצר או מסמן מוצר כנקנה.
+// Small prompt bar above the list: one tap and you get device notifications
+// when a family member adds a product or marks a product as bought.
 export default function NotificationPrompt({ list, onEnabled }) {
   const t = useT();
   const [busy, setBusy] = useState(false);
@@ -24,7 +23,9 @@ export default function NotificationPrompt({ list, onEnabled }) {
       return;
     }
     try {
-      await base44.entities.ShoppingList.update(list.id, { push_enabled: true });
+      // TODO: Update the list's push_enabled flag to true in your new backend
+      // Simulating a network request for now
+      await new Promise(resolve => setTimeout(resolve, 500));
       if (onEnabled) onEnabled();
     } catch {
       toast({ title: t("settings.error") });
@@ -34,11 +35,11 @@ export default function NotificationPrompt({ list, onEnabled }) {
   };
 
   return (
-    <div className="pst-note">
-      <span className="min-w-0">{t("notify.enableHint")}</span>
-      <button type="button" onClick={enable} disabled={busy} className="shrink-0">
-        {t("notify.enable")}
-      </button>
-    </div>
+      <div className="pst-note">
+        <span className="min-w-0">{t("notify.enableHint")}</span>
+        <button type="button" onClick={enable} disabled={busy} className="shrink-0">
+          {t("notify.enable")}
+        </button>
+      </div>
   );
 }

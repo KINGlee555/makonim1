@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { ScanLine, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 
@@ -16,43 +15,41 @@ export default function ReceiptScanner({ listId, onScanned }) {
     e.target.value = "";
     setScanning(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
-        file_url,
-        json_schema: {
-          type: "object",
-          properties: {
-            items: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  price: { type: "number" },
-                  quantity: { type: "number" }
-                },
-                required: ["name", "price"]
-              }
-            },
-            total: { type: "number" }
-          },
-          required: ["items"]
-        }
-      });
+      // TODO: Upload the file to your new backend storage (e.g., Supabase Storage)
+      // Then send the file URL to a cloud function that uses an LLM (like OpenAI/Gemini)
+      // to extract a JSON of items: [{ name, price, quantity }, ...], total
 
-      const items = result.output?.items || [];
+      // Simulating network upload and LLM processing delay for now
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Mocking the LLM result
+      const mockResult = {
+        items: [
+          { name: "Mock Product 1", price: 10.5, quantity: 1 },
+          { name: "Mock Product 2", price: 5.9, quantity: 2 }
+        ],
+        total: 22.3
+      };
+
+      const items = mockResult.items || [];
       if (items.length > 0) {
-        const me = await base44.auth.me();
-        await base44.entities.PurchaseHistory.bulkCreate(
+        // TODO: Fetch current user from your new auth provider
+        const me = { full_name: "Test User", email: "test@example.com" }; // Mock user
+
+        // TODO: Bulk create the purchase history records in your new backend database
+        /*
+        await newBackend.bulkCreatePurchaseHistory(
           items.map(item => ({
             list_id: listId,
             item_name: item.name,
             price: item.price || 0,
             quantity: item.quantity || 1,
-            category: "אחר",
-            bought_by: me?.full_name || me?.email || "קבלה"
+            category: "Other",
+            bought_by: me?.full_name || me?.email || "Receipt"
           }))
         );
+        */
+
         onScanned?.(items);
         toast({ title: t("history.receiptScanned", { count: items.length }), duration: 2000 });
       } else {
@@ -66,12 +63,12 @@ export default function ReceiptScanner({ listId, onScanned }) {
   };
 
   return (
-    <>
-      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleScan} />
-      <Button variant="outline" size="sm" disabled={scanning} onClick={() => inputRef.current?.click()} className="gap-2 rounded-xl">
-        {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <ScanLine className="w-4 h-4" />}
-        {t("receipt.scan")}
-      </Button>
-    </>
+      <>
+        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleScan} />
+        <Button variant="outline" size="sm" disabled={scanning} onClick={() => inputRef.current?.click()} className="gap-2 rounded-xl">
+          {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <ScanLine className="w-4 h-4" />}
+          {t("receipt.scan")}
+        </Button>
+      </>
   );
 }
