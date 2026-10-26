@@ -100,7 +100,7 @@ export async function openCountryProducts({ country = "israel", pages = 2, pageS
           source: database.source,
           source_name: database.name,
           // נכנס רק מוצר שנמכר בישראל — מוצר שקיים רק בחו"ל פשוט לא נכנס לקטלוג.
-          israeli: (raw.countries_tags || []).includes(`en:${country}`)
+          israeli: (raw.countries_tags || []).length === 0 || (raw.countries_tags || []).includes(`en:${country}`)
         }))
         .filter((item) => item.code && item.image && item.name && item.israeli);
       candidates.sort((a, b) => Number(hebrew(b.name)) - Number(hebrew(a.name)));
