@@ -614,9 +614,9 @@ html.easy-mode [role="dialog"] .text-xl {
 /* פתיח צהוב שטוח — מיתוג, שם הרשימה, שני המספרים ושורת הפעולות */
 .pst-hero { position: relative; max-width: 1200px; margin: 0 auto; padding: 24px 16px 22px; background: #FFD400; animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both; }
 .pst-hero::after { content: ""; position: absolute; inset-inline: 0; bottom: -22px; height: 22px; background: #FFD400; clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%); z-index: 2; pointer-events: none; }
-.pst-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+.pst-brand { display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
 .pst-brand img { width: 40px; height: 40px; border: 3px solid #0B3A4D; border-radius: 10px; object-fit: cover; }
-.pst-greet { margin-inline-start: auto; padding: 6px 14px; border: 0; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 14px; font-weight: 800; letter-spacing: 0; }
+.pst-greet { padding: 6px 14px; border: 0; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 14px; font-weight: 800; letter-spacing: 0; }
 .pst-row { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
 .pst-ttl { margin: 0; max-width: 560px; font-family: var(--font-display); font-size: 44px; font-weight: 400; line-height: 1.06; letter-spacing: -.01em; text-transform: uppercase; }
 .pst-ttl button { display: flex; align-items: flex-end; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; }
@@ -648,7 +648,6 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-note button:disabled { opacity: .6; }
 
 /* תמונת השוק שמתחת להתראה */
-.pst-collage { display: block; width: calc(100% - 32px); height: 150px; margin: 20px auto 0; border: 3px solid #0B3A4D; border-radius: 18px; object-fit: cover; animation: pstRise .7s .45s both; }
 
 /* פס המחלקות שנצמד לראש המסך */
 .pst-bar { position: sticky; top: 0; z-index: 5; max-width: 1200px; margin: 18px auto 0; padding: 12px 16px; border-bottom: 4px solid #0B3A4D; background: #fff; }
@@ -751,7 +750,6 @@ html.easy-mode [role="dialog"] .text-xl {
   .pst-acts { gap: 14px; margin-top: 26px; }
   .pst-btn { padding: 12px 24px; font-size: 17px; }
   .pst-note { width: calc(100% - 80px); margin-top: 52px; padding: 16px 24px; font-size: 17px; }
-  .pst-collage { width: calc(100% - 80px); height: 200px; margin-top: 26px; border-width: 4px; border-radius: 22px; }
   .pst-bar { margin-top: 26px; padding: 14px 40px; }
   .pst-bar-in { gap: 12px; }
   .pst-bar-in span { padding: 10px 20px; font-size: 16px; }
@@ -814,7 +812,6 @@ html.easy-mode [role="dialog"] .text-xl {
   .pst-btn-sm { padding: 8px 16px; font-size: 14px; }
   .pst-note { width: calc(100% - 128px); max-width: 1072px; margin-top: 64px; padding: 16px 26px; font-size: 18px; }
   .pst-note button { padding: 10px 22px; font-size: 16px; }
-  .pst-collage { width: calc(100% - 128px); max-width: 1072px; height: 240px; margin-top: 30px; border-radius: 26px; }
   .pst-bar { margin-top: 30px; padding: 16px 64px; }
   .pst-bar-in span { padding: 10px 24px; font-size: 17px; }
   .pst-sec { margin-top: 44px; }
@@ -895,8 +892,10 @@ html.easy-mode .pst-card { height: 130px; }
 }
 
 .pst-topline {
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -922,10 +921,13 @@ html.easy-mode .pst-card { height: 130px; }
 
 /* שורת הפעולות בפס העליון — מצב כהה וחזרה */
 .pst-topacts {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-inline-start: auto;
 }
 
 .pst-topacts .pst-back { margin-inline-start: 0; }
@@ -1191,7 +1193,6 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 .dark .pst-inner input::placeholder,
 .dark .pst-inner textarea::placeholder { color: rgba(245, 241, 235, .5); }
 .dark .pst-inner .pst-panel button { border-color: #FFD400; }
-.dark .pst-collage { border-color: #FFD400; }
 .dark .pst-note { background: #12303b; }
 .dark .pst-ft a { color: #f5f1eb; }
 .dark .pst-dock { border-top-color: #FFD400; background: #0b1f27; }
@@ -1199,3 +1200,154 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 .dark .pst-credit { color: #0B3A4D; }
 .dark .pst-spon { border-color: #FFD400; box-shadow: 4px 4px 0 #FFD400; }
 .dark .pst-n { color: #fff; }
+
+/* ===================================================================
+   ערכת עיצוב לכל משתמש
+   ברירת המחדל: רגועה וסולידית — משטחים שקטים, מסגרות דקות וצללים רכים.
+   "כרזת שוק" (skin-poster): הערכה הצבעונית, למי שבוחר בה.
+   =================================================================== */
+
+:root {
+  /* שלוש הבסיסיות של הכרזה — בערכה הרגועה הן שקטות */
+  --pst-ink: 199 30% 20%;
+  --pst-yellow: 40 24% 92%;
+  --pst-pink: 16 42% 48%;
+  /* משטחים, מסגרות וצללים של הערכה הרגועה */
+  --skin-canvas: 0 0% 100%;
+  --skin-band: 200 20% 97%;
+  --skin-surface: 0 0% 100%;
+  --skin-surface-2: 200 18% 96%;
+  --skin-line: 200 14% 84%;
+  --skin-ink: 199 30% 20%;
+  --skin-ink-soft: 199 18% 40%;
+  --skin-danger: 8 45% 45%;
+  --skin-shadow: 0 1px 2px hsl(200 25% 15% / .05), 0 10px 24px hsl(200 25% 15% / .06);
+}
+
+.dark {
+  --skin-canvas: 197 30% 8%;
+  --skin-band: 197 24% 11%;
+  --skin-surface: 197 24% 14%;
+  --skin-surface-2: 197 22% 18%;
+  --skin-line: 197 18% 27%;
+  --skin-ink: 195 18% 92%;
+  --skin-ink-soft: 195 14% 68%;
+  --skin-danger: 8 55% 62%;
+  --pst-ink: 200 24% 16%;
+  --pst-yellow: 40 20% 88%;
+  --skin-shadow: 0 1px 2px hsl(0 0% 0% / .3), 0 10px 24px hsl(0 0% 0% / .22);
+}
+
+.skin-poster {
+  --pst-ink: 197 75% 17%;
+  --pst-yellow: 43 100% 51%;
+  --pst-pink: 349 100% 65%;
+}
+
+/* צל הכרזה הקשיח — בערכה הרגועה הוא הופך לצל רך */
+.pst-shadow { box-shadow: 6px 6px 0 hsl(var(--pst-pink)); }
+
+html:not(.skin-poster) .pst-shadow { box-shadow: var(--skin-shadow); }
+
+/* --- מסך הרשימה --- */
+html:not(.skin-poster) .pst-page { background: hsl(var(--skin-canvas)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-page button:hover { box-shadow: var(--skin-shadow); }
+html:not(.skin-poster) .pst-page button:focus-visible,
+html:not(.skin-poster) .pst-page a:focus-visible { outline: 2px solid hsl(var(--skin-ink)); outline-offset: 2px; }
+html:not(.skin-poster) .pst-tools button:focus-visible { outline-color: hsl(var(--skin-ink)); }
+
+html:not(.skin-poster) .pst-hero { background: hsl(var(--skin-band)); border-bottom: 1px solid hsl(var(--skin-line)); }
+html:not(.skin-poster) .pst-hero::after { display: none; }
+html:not(.skin-poster) .pst-brand img { border: 1px solid hsl(var(--skin-line)); border-radius: 10px; }
+html:not(.skin-poster) .pst-greet { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-ttl { color: hsl(var(--skin-ink)); }
+
+html:not(.skin-poster) .pst-num { border: 0; background: hsl(var(--pst-ink)); color: #fff; box-shadow: none; }
+html:not(.skin-poster) .pst-num-t { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-trust { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-btn { border: 0; background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-btn:hover { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-btn-s { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-note { background: hsl(var(--pst-ink)); }
+html:not(.skin-poster) .pst-note button { background: hsl(var(--pst-yellow)); color: hsl(var(--pst-ink)); }
+
+/* פס המחלקות */
+html:not(.skin-poster) .pst-bar { border-bottom: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); }
+html:not(.skin-poster) .pst-bar-in span { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); }
+html:not(.skin-poster) .pst-bar-in .pst-bar-a { border-color: hsl(var(--pst-ink)); background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-bar-in .pst-bar-b { border-color: hsl(var(--pst-yellow)); background: hsl(var(--pst-yellow)); color: hsl(var(--pst-ink)); }
+
+/* מקטעים ואריחי מוצרים */
+html:not(.skin-poster) .pst-sh-a { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-sh-b { background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-sh .pst-n { background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-wedge { display: none; }
+html:not(.skin-poster) .pst-tile { border: 1px solid hsl(var(--skin-line)); border-radius: 16px; box-shadow: var(--skin-shadow); }
+html:not(.skin-poster) .pst-ph { border: 1px solid hsl(var(--skin-line)); }
+html:not(.skin-poster) .pst-nm { color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-meta { color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-tag { border: 0; background: hsl(var(--pst-pink)); color: #fff; }
+html:not(.skin-poster) .pst-deal { border: 1px solid hsl(var(--pst-yellow)); background: hsl(var(--pst-yellow)); color: hsl(var(--pst-ink)); }
+html:not(.skin-poster) .pst-remind { background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-remind-due { background: hsl(var(--skin-danger)); color: #fff; }
+html:not(.skin-poster) .pst-q { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); }
+html:not(.skin-poster) .pst-q button { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-buy { background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-buy:hover { background: hsl(var(--pst-pink)); color: #fff; }
+html:not(.skin-poster) .pst-more,
+html:not(.skin-poster) .pst-amount,
+html:not(.skin-poster) .pst-unit,
+html:not(.skin-poster) .pst-remove { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-unit { background: hsl(var(--skin-surface-2)); border-color: hsl(var(--skin-surface-2)); }
+html:not(.skin-poster) .pst-remove { color: hsl(var(--skin-danger)); }
+html:not(.skin-poster) .pst-menu { border: 1px solid hsl(var(--skin-line)); box-shadow: var(--skin-shadow); }
+html:not(.skin-poster) .pst-mi { color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-mi:hover,
+html:not(.skin-poster) .pst-mi[data-highlighted] { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-panel { border: 1px solid hsl(var(--skin-line)); border-radius: 18px; box-shadow: var(--skin-shadow); }
+
+/* עוד כלים, תחתית ופס הפעולות */
+html:not(.skin-poster) .pst-tools { border-top: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-band)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-tools h2 { color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-card { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-card:nth-child(3n+2) { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-card:nth-child(3n) { background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-card-on { outline: 2px solid hsl(var(--pst-ink)); outline-offset: 2px; }
+html:not(.skin-poster) .pst-tools .pst-panel { background: hsl(var(--skin-surface)); }
+html:not(.skin-poster) .pst-ft { color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-ft a { color: hsl(var(--skin-ink)); text-decoration-color: hsl(var(--pst-pink)); text-decoration-thickness: 1px; }
+html:not(.skin-poster) .pst-credit { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-dock { border-top: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); }
+html:not(.skin-poster) .pst-dock button { color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-dock .pst-add { background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-dock .pst-fin { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-dock .pst-scan { border-color: hsl(var(--skin-surface)); background: hsl(var(--pst-ink)); color: #fff; box-shadow: var(--skin-shadow); }
+
+/* מסכי הפנים */
+html:not(.skin-poster) .pst-top { background: hsl(var(--skin-band)); border-bottom: 1px solid hsl(var(--skin-line)); }
+html:not(.skin-poster) .pst-top::after { display: none; }
+html:not(.skin-poster) .pst-top h1 { color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-top p { color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-back { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-h2 { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-h2-b { background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .pst-lrow { border: 1px solid hsl(var(--skin-line)); border-radius: 16px; box-shadow: var(--skin-shadow); }
+html:not(.skin-poster) .pst-thumb { border: 1px solid hsl(var(--skin-line)); }
+html:not(.skin-poster) .pst-lrow-t,
+html:not(.skin-poster) .pst-lrow-v { color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-lrow-s { color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-spon { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); box-shadow: var(--skin-shadow); }
+html:not(.skin-poster) .pst-spon-s { color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-spon-tag { background: hsl(var(--pst-yellow)); color: hsl(var(--pst-ink)); }
+html:not(.skin-poster) .pst-empty { border: 1px dashed hsl(var(--skin-line)); color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-inner input:not([type="checkbox"]):not([type="radio"]),
+html:not(.skin-poster) .pst-inner textarea,
+html:not(.skin-poster) .pst-inner select { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-inner .pst-panel button { border: 1px solid hsl(var(--skin-line)); }
+html:not(.skin-poster) .pst-why { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); box-shadow: var(--skin-shadow); }
+html:not(.skin-poster) .pst-why:nth-child(3n+2) { background: hsl(var(--skin-surface-2)); }
+html:not(.skin-poster) .pst-why:nth-child(3n) { background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-why-n { color: hsl(var(--pst-pink)); }
+
+/* חלונות צפים */
+html:not(.skin-poster) [role="dialog"] { border: 1px solid hsl(var(--skin-line)); box-shadow: var(--skin-shadow); }

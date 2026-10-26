@@ -101,7 +101,7 @@ export default function SponsoredPlacements() {
           <Button
             onClick={handleAdd}
             disabled={saving}
-            className="h-12 w-full bg-[#FF3B5D] text-[16px] font-black text-white hover:bg-[#FF3B5D] hover:text-white"
+            className="h-12 w-full bg-pst-pink text-[16px] font-black text-white hover:bg-pst-pink hover:text-white"
           >
             {saving ? t("sponsored.saving") : t("sponsored.save")}
           </Button>

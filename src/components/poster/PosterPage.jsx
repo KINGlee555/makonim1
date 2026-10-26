@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import AppFooter from "@/components/AppFooter";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import SkinToggle from "@/components/SkinToggle";
 
 const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
 
@@ -17,6 +18,7 @@ export default function PosterPage({ title, subtitle, icon: Icon, back = "/", ba
             <img src={LOGO} alt="MaKonim" />
           </span>
           <div className="pst-topacts">
+            <SkinToggle className="pst-back" />
             <DarkModeToggle className="pst-back" />
             <Link to={back} className="pst-back" aria-label={backLabel} title={backLabel}>
               <ArrowRight />

@@ -14,17 +14,17 @@ export default function Contact() {
       <div className="pst-panel">
         <a
           href={`mailto:${CONTACT_EMAIL}?subject=MaKonim`}
-          className="flex items-center gap-3 border-[3px] border-[#0B3A4D] bg-[#0B3A4D] px-4 py-4 text-[16px] font-black text-[#FFD400]"
+          className="flex items-center gap-3 border border-pst-ink bg-pst-ink px-4 py-4 text-[16px] font-black text-pst-yellow"
         >
           <Mail className="h-5 w-5 flex-shrink-0" />
           <span className="min-w-0 break-all">{CONTACT_EMAIL}</span>
         </a>
 
-        <div className="mt-5 flex items-start gap-2 border-[3px] border-[#0B3A4D] bg-[#FFD400] p-4 text-[14px] font-bold leading-relaxed">
+        <div className="mt-5 flex items-start gap-2 border border-pst-ink bg-pst-yellow p-4 text-[14px] font-bold leading-relaxed">
           <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
           <span>
             האפליקציה מפותחת ומתוחזקת על ידי אלן נוביצקי. מידע נוסף על האפליקציה נמצא{" "}
-            <Link to="/about" className="font-black underline decoration-[#0B3A4D] decoration-[3px]">
+            <Link to="/about" className="font-black underline decoration-pst-ink decoration-[3px]">
               בעמוד האודות
             </Link>
             .

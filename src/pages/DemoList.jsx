@@ -31,8 +31,8 @@ export default function DemoList() {
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {demoMembers.map(name => (
-            <span key={name} className="flex items-center gap-2 rounded-full border-[3px] border-[#0B3A4D] px-3 py-1 text-[14px] font-black">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FFD400] text-[13px] font-black">{name[0]}</span>
+            <span key={name} className="flex items-center gap-2 rounded-full border-[3px] border-pst-ink px-3 py-1 text-[14px] font-black">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-pst-yellow text-[13px] font-black">{name[0]}</span>
               {name}
             </span>
           ))}
@@ -45,7 +45,7 @@ export default function DemoList() {
           <Sparkles className="h-5 w-5" />
           {t("demo.basketTitle")}
         </p>
-        <p className="mt-2 text-[21px] font-black leading-tight text-[#FF3B5D]">
+        <p className="mt-2 text-[21px] font-black leading-tight text-pst-pink">
           {t("demo.basketCheapest", { amount: savings.toFixed(2), chain: demoSavings.cheapestChain })}
         </p>
         <p className="mt-1 text-[13px] font-bold text-ui-muted">
@@ -65,7 +65,7 @@ export default function DemoList() {
           <div className="mt-4">
             {items.map(item => (
               <div key={item.name} className="pst-lrow">
-                <span className="flex h-12 w-12 flex-none items-center justify-center rounded-full border-[3px] border-[#0B3A4D] bg-[#FFD400] text-[22px]">
+                <span className="flex h-12 w-12 flex-none items-center justify-center rounded-full border-[3px] border-pst-ink bg-pst-yellow text-[22px]">
                   {item.emoji}
                 </span>
                 <div className="pst-lrow-t">

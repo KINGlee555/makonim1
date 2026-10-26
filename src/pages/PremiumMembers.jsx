@@ -125,7 +125,7 @@ export default function PremiumMembers() {
   if (isAdmin === null) {
     return (
       <PosterPage icon={Crown} title="מנויי פרימיום">
-        <div className="h-24 border-[3px] border-[#0B3A4D] shimmer" />
+        <div className="h-24 border-[3px] border-pst-ink shimmer" />
       </PosterPage>
     );
   }

@@ -61,11 +61,11 @@ export default function PhotoSuggestions() {
         )}
 
         {!loading && !isAdmin && (
-          <p className="pst-empty border-solid bg-[#FF3B5D]/10">{t("admin.noAccess")}</p>
+          <p className="pst-empty border-solid bg-pst-pink/10">{t("admin.noAccess")}</p>
         )}
 
         {!loading && isAdmin && suggestions.length === 0 && (
-          <p className="pst-empty border-solid bg-[#FFD400]">{t("admin.none")}</p>
+          <p className="pst-empty border-solid bg-pst-yellow">{t("admin.none")}</p>
         )}
 
         {!loading && isAdmin && suggestions.length > 0 && (

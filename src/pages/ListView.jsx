@@ -24,7 +24,6 @@ import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/l
 import { lineCost } from "@/lib/units";
 
 // תמונת השוק הרחבה שמתחת להתראה — חלק משפת הכרזה של המסך
-const COLLAGE = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/41f073a97_generated_b58619a5.jpg";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -131,8 +130,6 @@ export default function ListView() {
       )}
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
-
-      <img src={COLLAGE} alt="" className="pst-collage" />
 
       <CategoryBar categories={groupedCategories.map(([category]) => category)} />
 

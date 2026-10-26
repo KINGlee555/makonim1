@@ -92,7 +92,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="pst-menu w-52">
               <DropdownMenuItem className="pst-mi" onClick={() => onToggleFavorite(item)}>
-                <Star className={`me-2 h-4 w-4 ${isFavorite ? "fill-[#FFD400] text-[#FFD400]" : ""}`} />
+                <Star className={`me-2 h-4 w-4 ${isFavorite ? "fill-pst-yellow text-pst-yellow" : ""}`} />
                 {isFavorite ? t("favorites.remove") : t("favorites.save")}
               </DropdownMenuItem>
               <DropdownMenuItem className="pst-mi" onClick={() => onEdit(item)}>

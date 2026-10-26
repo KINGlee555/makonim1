@@ -59,7 +59,7 @@ export default function ShoppingSummary() {
     <PosterPage icon={BarChart3} title={t("summary.title")} subtitle={t("summary.desc")} back={`/list/${listId}`}>
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-9 w-9 animate-spin rounded-full border-4 border-[#0B3A4D]/25 border-t-[#0B3A4D]" />
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-pst-ink/25 border-t-pst-ink" />
         </div>
       ) : records.length === 0 ? (
         <div className="pst-empty">
@@ -69,7 +69,7 @@ export default function ShoppingSummary() {
         </div>
       ) : (
         <>
-          <div className="border-[3px] border-[#0B3A4D] bg-[#0B3A4D] p-6 text-[#FFD400] shadow-[6px_6px_0_#FF3B5D]">
+          <div className="border border-pst-ink bg-pst-ink p-6 text-pst-yellow pst-shadow">
             <p className="text-[15px] font-bold">{t("summary.totalSpent")}</p>
             <p className="mt-1 text-[40px] font-black leading-none">₪{totalSpent.toFixed(2)}</p>
             <p className="mt-2 text-[14px] font-bold">{records.length} {t("summary.itemsBought")}</p>
@@ -81,13 +81,13 @@ export default function ShoppingSummary() {
               <div key={cat}>
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center gap-2 text-[15px] font-black">
-                    <ProductPhoto name="" category={cat} className="h-9 w-9 flex-none rounded-full border-[3px] border-[#0B3A4D] object-cover" />
+                    <ProductPhoto name="" category={cat} className="h-9 w-9 flex-none rounded-full border-[3px] border-pst-ink object-cover" />
                     <span className="truncate">{cat}</span>
                   </span>
                   <span className="flex-none text-[15px] font-black">₪{data.total.toFixed(2)}</span>
                 </div>
-                <div className="h-4 overflow-hidden rounded-full border-[3px] border-[#0B3A4D] bg-white">
-                  <div className="h-full bg-[#FF3B5D]" style={{ width: `${(data.total / maxTotal) * 100}%` }} />
+                <div className="h-4 overflow-hidden rounded-full border-[3px] border-pst-ink bg-white">
+                  <div className="h-full bg-pst-pink" style={{ width: `${(data.total / maxTotal) * 100}%` }} />
                 </div>
                 <p className="pst-lrow-s mt-1">{data.count} {t("summary.items")}</p>
               </div>
@@ -123,7 +123,7 @@ export default function ShoppingSummary() {
             </span>
           </div>
           {weekChange !== null && (
-            <p className={`mt-3 inline-flex items-center gap-2 border-[3px] border-[#0B3A4D] px-4 py-2 text-[15px] font-black ${weekChange > 0 ? "bg-[#FF3B5D] text-white" : "bg-[#FFD400]"}`}>
+            <p className={`mt-3 inline-flex items-center gap-2 border border-pst-ink px-4 py-2 text-[15px] font-black ${weekChange > 0 ? "bg-pst-pink text-white" : "bg-pst-yellow"}`}>
               {weekChange > 0 ? "↑" : "↓"} {Math.abs(weekChange)}% {t("weekly.vsLastWeek")}
             </p>
           )}

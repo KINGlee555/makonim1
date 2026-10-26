@@ -116,7 +116,7 @@ export default function JoinList() {
               {t("join.backHome")}
             </Button>
             <div className="mt-4">
-              <Link to="/demo" className="font-black text-ui-ink underline decoration-[#FF3B5D] decoration-[3px]">
+              <Link to="/demo" className="font-black text-ui-ink underline decoration-pst-pink decoration-[3px]">
                 {t("join.seeDemo")}
               </Link>
             </div>

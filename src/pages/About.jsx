@@ -31,7 +31,7 @@ export default function About() {
           <p>
             MaKonim מפותחת ומתוחזקת על ידי אלן נוביצקי, כפרויקט עצמאי שנולד מצורך אמיתי בבית.
             יש רעיון, באג או בקשת פיצ׳ר? נשמח לשמוע דרך{" "}
-            <Link to="/contact" className="font-black text-ui-ink underline decoration-[#FF3B5D] decoration-[3px]">
+            <Link to="/contact" className="font-black text-ui-ink underline decoration-pst-pink decoration-[3px]">
               עמוד יצירת הקשר
             </Link>
             .

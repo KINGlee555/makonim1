@@ -15,11 +15,6 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
       <div className="pst-brand">
         <span>MaKonim</span>
         <img src={LOGO} alt="MaKonim" />
-        {userName && (
-          <button type="button" onClick={onOpenProfile} className="pst-greet">
-            {t("header.greeting", { name: userName })}
-          </button>
-        )}
       </div>
 
       <div className="pst-row">
@@ -43,6 +38,11 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
       </div>
 
       <div className="pst-acts">
+        {userName && (
+          <button type="button" onClick={onOpenProfile} className="pst-greet">
+            {t("header.greeting", { name: userName })}
+          </button>
+        )}
         <EasyModeToggle pill className="pst-btn pst-btn-s" />
         <button type="button" onClick={onOpenShare} className="pst-btn">{t("header.share")}</button>
         <button type="button" onClick={onOpenQr} className="pst-btn">{t("share.qrButton")}</button>

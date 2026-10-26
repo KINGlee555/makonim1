@@ -53,7 +53,7 @@ export default function ShoppingHistory() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-9 w-9 animate-spin rounded-full border-4 border-[#0B3A4D]/25 border-t-[#0B3A4D]" />
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-pst-ink/25 border-t-pst-ink" />
         </div>
       ) : records.length === 0 ? (
         <div className="pst-empty mt-6">
@@ -72,7 +72,7 @@ export default function ShoppingHistory() {
               {items.map(r => (
                 <div key={r.id} className="pst-lrow">
                   <ProductPhoto name={r.item_name} category={r.category}
-                    className="h-12 w-12 flex-none rounded-full border-[3px] border-[#0B3A4D] object-cover" />
+                    className="h-12 w-12 flex-none rounded-full border-[3px] border-pst-ink object-cover" />
                   <div className="pst-lrow-t">
                     <p className="truncate">{r.item_name}</p>
                     <p className="pst-lrow-s">

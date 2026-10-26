@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <div dir="rtl" className="pst-page pst-inner flex min-h-screen items-center justify-center px-4">
       <div className="pst-panel flex items-center gap-4">
-        <span className="flex h-14 w-14 flex-none items-center justify-center rounded-full border-[3px] border-[#0B3A4D] bg-[#FFD400]">
+        <span className="flex h-14 w-14 flex-none items-center justify-center rounded-full border border-pst-ink bg-pst-yellow">
           <ShoppingCart className="h-7 w-7 animate-pulse" />
         </span>
         <p className="text-lg font-black">{t("app.loading")}</p>

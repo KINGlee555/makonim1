@@ -7,6 +7,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { LanguageProvider } from '@/lib/i18n';
+import { applyUserSkin } from '@/lib/skin';
 // Add page imports here
 import Home from './pages/Home';
 import ListView from './pages/ListView';
@@ -29,7 +30,7 @@ import PremiumMembers from './pages/PremiumMembers';
 const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact", "/demo"];
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
   const location = useLocation();
   const isAuthPage = AUTH_PATHS.includes(location.pathname);
 
@@ -40,6 +41,11 @@ const AuthenticatedApp = () => {
       navigateToLogin();
     }
   }, [authError, isAuthPage, navigateToLogin]);
+
+  // העיצוב שנשמר על המשתמש עצמו גובר — כך הבחירה עוברת איתו בין מכשירים
+  useEffect(() => {
+    applyUserSkin(user);
+  }, [user]);
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {

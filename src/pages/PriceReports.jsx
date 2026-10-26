@@ -76,11 +76,11 @@ export default function PriceReports() {
         )}
 
         {!loading && !isAdmin && (
-          <p className="pst-empty border-solid bg-[#FF3B5D]/10">{t("admin.noAccess")}</p>
+          <p className="pst-empty border-solid bg-pst-pink/10">{t("admin.noAccess")}</p>
         )}
 
         {!loading && isAdmin && reports.length === 0 && (
-          <p className="pst-empty border-solid bg-[#FFD400]">{t("adminPrices.none")}</p>
+          <p className="pst-empty border-solid bg-pst-yellow">{t("adminPrices.none")}</p>
         )}
 
         {!loading && isAdmin && reports.length > 0 && (

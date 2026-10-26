@@ -14,6 +14,10 @@ const translations = {
     "header.settings": "הגדרות",
     "header.share": "שתף",
     "header.more": "עוד",
+    "header.design": "עיצוב",
+    "design.title": "ערכת עיצוב",
+    "design.quiet": "רגוע וסולידי",
+    "design.poster": "כרזת שוק (צבעוני)",
     "header.language": "שפה",
 
     // Footer
@@ -828,6 +832,10 @@ const translations = {
     "header.settings": "Settings",
     "header.share": "Share",
     "header.more": "More",
+    "header.design": "Design",
+    "design.title": "Design theme",
+    "design.quiet": "Calm and solid",
+    "design.poster": "Market poster (colorful)",
     "header.language": "Language",
 
     // Footer
@@ -1642,6 +1650,10 @@ const translations = {
     "header.settings": "Настройки",
     "header.share": "Поделиться",
     "header.more": "Ещё",
+    "header.design": "Дизайн",
+    "design.title": "Оформление",
+    "design.quiet": "Спокойная",
+    "design.poster": "Яркая афиша (цветная)",
     "header.language": "Язык",
 
     // Footer
