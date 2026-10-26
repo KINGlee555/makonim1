@@ -5,6 +5,7 @@ import QuickAddBar from "../components/QuickAddBar";
 import AppFooter from "../components/AppFooter";
 import MoreTools from "../components/list/MoreTools";
 import ListItemsSection from "@/components/list/ListItemsSection";
+import CategoryBar from "@/components/shelf/CategoryBar";
 import ListDialogs from "@/components/list/ListDialogs";
 import { useShoppingList } from "@/hooks/useShoppingList";
 import { useListDialogs } from "@/hooks/useListDialogs";
@@ -20,7 +21,6 @@ import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/lib/categoryOrder";
 import { lineCost } from "@/lib/units";
-import { bigAlert } from "@/lib/bigUi";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -60,12 +60,11 @@ export default function ListView() {
 
   if (loading) {
     return (
-      <div className="big-page min-h-screen bg-big-canvas font-system font-semibold">
-        <div className="mx-auto w-full max-w-[940px] space-y-3 px-5 py-6 sm:px-7">
-          <div className="h-16 rounded-[18px] bg-big-surface shimmer" />
-          <div className="h-12 rounded-[18px] bg-big-surface shimmer" />
+      <div className="shf-page min-h-screen">
+        <div className="mx-auto w-full max-w-[940px] space-y-3 px-5 py-6 sm:px-10">
+          <div className="h-[220px] rounded-[14px] bg-[#f1f1f1]" />
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-[92px] rounded-[18px] bg-big-surface shimmer" />
+            <div key={i} className="h-[190px] rounded-[14px] bg-[#f1f1f1]" />
           ))}
         </div>
       </div>
@@ -74,8 +73,8 @@ export default function ListView() {
 
   if (!list) {
     return (
-      <div className="big-page flex min-h-screen items-center justify-center bg-big-canvas font-system">
-        <p className="text-[24px] font-semibold text-big-ink">{t("list.notFound")}</p>
+      <div className="shf-page flex min-h-screen items-center justify-center">
+        <p className="shf-nm text-[22px]">{t("list.notFound")}</p>
       </div>
     );
   }
@@ -109,7 +108,7 @@ export default function ListView() {
   });
 
   return (
-    <div className="big-page min-h-screen bg-big-canvas font-system font-semibold text-big-ink tabular-nums">
+    <div className="shf-page min-h-screen">
       <ListHeader
         list={list}
         userName={user?.full_name}
@@ -122,14 +121,17 @@ export default function ListView() {
         onRename={() => show("rename")}
       />
 
-      <main className="mx-auto w-full max-w-[940px] px-5 pb-[170px] sm:px-7 sm:pb-[200px]">
-        {otherShoppers.length > 0 && (
-          <p className={`${bigAlert} mt-5`}>{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
-        )}
+      {otherShoppers.length > 0 && (
+        <p className="shf-note">{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
+      )}
 
-        <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
+      <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
 
+      <CategoryBar categories={groupedCategories.map(([category]) => category)} />
+
+      <main className="mx-auto w-full max-w-[940px] px-5 pb-[150px] sm:px-10 sm:pb-[190px]">
         <ListItemsSection
+          groupedCategories={groupedCategories}
           pendingItems={shoppingItems}
           unavailableItems={unavailableItems}
           favorites={favorites}

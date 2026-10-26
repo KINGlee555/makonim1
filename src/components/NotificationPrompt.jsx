@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Bell } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { requestNotificationPermission, notificationsSupported } from "@/hooks/useListNotifications";
 import { useT } from "@/lib/i18n";
@@ -35,13 +34,13 @@ export default function NotificationPrompt({ list, onEnabled }) {
   };
 
   return (
-    <button type="button" onClick={enable}
-      className="big-in mt-5 flex w-full items-center gap-3 rounded-[18px] border-2 border-big-attn bg-big-attn-soft px-4 py-3 text-start hover:opacity-90">
-      <Bell className="h-7 w-7 shrink-0 text-big-attn-ink" strokeWidth={2.2} />
-      <span className="flex min-w-0 flex-col">
-        <span className="text-[19px] leading-tight text-big-attn-ink">{t("notify.enable")}</span>
-        <span className="truncate text-[14px] text-big-attn-ink/80">{t("notify.enableHint")}</span>
-      </span>
-    </button>
+    <div className="shf-push">
+      <div className="shf-push-in">
+        <span className="min-w-0">{t("notify.enableHint")}</span>
+        <button type="button" onClick={enable} disabled={busy} className="shf-push-btn shrink-0">
+          {t("notify.enable")}
+        </button>
+      </div>
+    </div>
   );
 }

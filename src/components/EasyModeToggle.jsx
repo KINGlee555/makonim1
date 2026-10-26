@@ -3,7 +3,7 @@ import { Type } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { uiPill } from "@/lib/minimalUi";
 
-export default function EasyModeToggle({ pill = false }) {
+export default function EasyModeToggle({ pill = false, className = "" }) {
   const t = useT();
   const [easy, setEasy] = useState(() => localStorage.getItem("easyMode") === "true");
 
@@ -21,7 +21,7 @@ export default function EasyModeToggle({ pill = false }) {
 
   if (pill) {
     return (
-      <button type="button" onClick={() => setEasy(e => !e)} aria-label={label} title={label} className={uiPill}>
+      <button type="button" onClick={() => setEasy(e => !e)} aria-label={label} title={label} className={className || uiPill}>
         {label}
       </button>
     );

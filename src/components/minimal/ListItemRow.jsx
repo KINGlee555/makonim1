@@ -6,11 +6,9 @@ import { dealPriceText } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
 import { isGram, isWeight, maxQuantity, quantityStep } from "@/lib/units";
 import { isReminderDue, reminderText } from "@/lib/reminders";
-import { cardTint } from "@/lib/cardTints";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-// כרטיס צבעוני אחד למוצר: תמונה עם טבעת וטור שם־מחיר למעלה, וכל הפעולות ברצועה בתחתית.
-// גוון הכרטיס נגזר מהמחלקה של המוצר, כדי שהרשימה תיקרא כמקטעי צבע בגלילה.
+// אריח אחד למוצר: תמונה עם תג מחיר, שם, מבצע אם יש, ומתחת שורת פעולות — כמות, "קניתי" ותפריט.
 function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, onUpdateDetails, onReportPrice, deal, isFavorite, viewerName, className }) {
   const t = useT();
   const unit = item.unit || "unit";
@@ -39,98 +37,93 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
 
   return (
     <article
-      className={`mkc-card ${cardTint(item.category)} ${className || ""}`}
-      style={className ? undefined : { animationDelay: `${Math.min(index, 8) * 0.1 + 0.04}s` }}
+      className={`shf-tile ${className || ""}`}
+      style={className ? undefined : { animationDelay: `${Math.min(index, 8) * 0.1 + 0.1}s` }}
     >
-      <div className="mkc-top">
-        <button type="button" onClick={() => onNavigate && onNavigate(item)} aria-label={`${t("productItem.navigate")}: ${item.name}`} className="shrink-0 rounded-full">
+      <div className="shf-ph">
+        <button type="button" onClick={() => onNavigate && onNavigate(item)} aria-label={`${t("productItem.navigate")}: ${item.name}`}>
           <ProductPhoto name={item.name} category={item.category} imageUrl={item.image_url} barcode={item.barcode}
-            onFound={(url) => onPhotoFound && onPhotoFound(item, url)} className="mkc-photo" />
+            onFound={(url) => onPhotoFound && onPhotoFound(item, url)} className="h-full w-full" />
         </button>
-
-        <div className="mkc-name">
-          <span className="line-clamp-2">{item.name}</span>
-          {secondary && <span className="mkc-meta">{secondary}</span>}
-          {(item.remind_at || deal) && (
-            <span className="mkc-tags">
-              {item.remind_at && (
-                <span className={`mkc-tag ${isReminderDue(item) ? "mkc-tag-due" : ""}`}>
-                  <Bell className="h-3 w-3 shrink-0" />{reminder}
-                </span>
-              )}
-              {deal && (
-                <span className="mkc-tag">
-                  {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}
-                </span>
-              )}
-            </span>
-          )}
-        </div>
-
-        {price > 0 && <span className="mkc-price">{priceText}</span>}
+        {price > 0 && <span className="shf-tag">{priceText}</span>}
       </div>
 
-      <div className="mkc-controls">
-        {byWeight ? (
-          <WeightQuantity item={item} unit={unit} unitLabel={unitLabel}
-            onUpdateQuantity={onUpdateQuantity} onRemove={onRemove} onSwitchUnit={switchWeightUnit} />
-        ) : (
-          <div className="mkc-qty">
-            <button type="button" aria-label="הפחתה" className="mkc-step"
-              onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}>
-              <Minus className="h-4 w-4" strokeWidth={2.5} />
-            </button>
-            <span className="mkc-count">{quantity}</span>
-            <button type="button" aria-label="הוספה" disabled={quantity >= max} className="mkc-step"
-              onClick={() => onUpdateQuantity(item, quantity + step)}>
-              <Plus className="h-4 w-4" strokeWidth={2.5} />
-            </button>
-          </div>
+      <div className="shf-body">
+        <span className="shf-nm line-clamp-3">{item.name}</span>
+        {secondary && <span className="shf-meta">{secondary}</span>}
+        {deal && (
+          <span className="shf-deal">
+            {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}
+          </span>
+        )}
+        {item.remind_at && (
+          <span className={`shf-remind ${isReminderDue(item) ? "shf-remind-due" : ""}`}>
+            <Bell className="h-3.5 w-3.5 shrink-0" />{reminder}
+          </span>
         )}
 
-        <button type="button" onClick={() => onToggleBought(item)} aria-label={t("productItem.bought")} className="mkc-bought">
-          {t("productItem.bought")}
-        </button>
+        <div className="shf-ctl">
+          {byWeight ? (
+            <WeightQuantity item={item} unit={unit} unitLabel={unitLabel}
+              onUpdateQuantity={onUpdateQuantity} onRemove={onRemove} onSwitchUnit={switchWeightUnit} />
+          ) : (
+            <div className="shf-q">
+              <button type="button" aria-label="הפחתה"
+                onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}>
+                <Minus className="h-4 w-4" strokeWidth={2.5} />
+              </button>
+              <span>{quantity}</span>
+              <button type="button" aria-label="הוספה" disabled={quantity >= max}
+                onClick={() => onUpdateQuantity(item, quantity + step)}>
+                <Plus className="h-4 w-4" strokeWidth={2.5} />
+              </button>
+            </div>
+          )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`} className="mkc-more">
-              <MoreVertical className="h-4 w-4" strokeWidth={2.5} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-52 rounded-xl border-big-line">
-            <DropdownMenuItem onClick={() => onToggleFavorite(item)}>
-              <Star className={`me-2 h-4 w-4 ${isFavorite ? "fill-big-accent text-big-accent" : ""}`} />
-              {isFavorite ? t("favorites.remove") : t("favorites.save")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(item)}>
-              <Pencil className="me-2 h-4 w-4" />{t("productItem.edit")}
-            </DropdownMenuItem>
-            {onSetReminder && (
-              <DropdownMenuItem onClick={() => onSetReminder(item)}>
-                <Bell className="me-2 h-4 w-4" />{t("reminder.button")}
+          <button type="button" onClick={() => onToggleBought(item)} className="shf-buy">
+            {t("productItem.bought")}
+          </button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" aria-label={`${t("productItem.more")}: ${item.name}`} className="shf-more">
+                <MoreVertical className="h-5 w-5" strokeWidth={2.5} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52 rounded-[12px] border-[#171A1C]">
+              <DropdownMenuItem onClick={() => onToggleFavorite(item)}>
+                <Star className={`me-2 h-4 w-4 ${isFavorite ? "fill-big-accent text-big-accent" : ""}`} />
+                {isFavorite ? t("favorites.remove") : t("favorites.save")}
               </DropdownMenuItem>
-            )}
-            {onChangePhoto && (
-              <DropdownMenuItem onClick={() => onChangePhoto(item)}>
-                <Camera className="me-2 h-4 w-4" />{t("productItem.changePhoto")}
+              <DropdownMenuItem onClick={() => onEdit(item)}>
+                <Pencil className="me-2 h-4 w-4" />{t("productItem.edit")}
               </DropdownMenuItem>
-            )}
-            {onSuggestPhoto && (
-              <DropdownMenuItem onClick={() => onSuggestPhoto(item)}>
-                <Send className="me-2 h-4 w-4" />{t("suggest.menu")}
+              {onSetReminder && (
+                <DropdownMenuItem onClick={() => onSetReminder(item)}>
+                  <Bell className="me-2 h-4 w-4" />{t("reminder.button")}
+                </DropdownMenuItem>
+              )}
+              {onChangePhoto && (
+                <DropdownMenuItem onClick={() => onChangePhoto(item)}>
+                  <Camera className="me-2 h-4 w-4" />{t("productItem.changePhoto")}
+                </DropdownMenuItem>
+              )}
+              {onSuggestPhoto && (
+                <DropdownMenuItem onClick={() => onSuggestPhoto(item)}>
+                  <Send className="me-2 h-4 w-4" />{t("suggest.menu")}
+                </DropdownMenuItem>
+              )}
+              {onReportPrice && (
+                <DropdownMenuItem onClick={() => onReportPrice(item)}>
+                  <Flag className="me-2 h-4 w-4" />{t("report.menu")}
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={() => onUnavailable(item)}>
+                <CircleSlash2 className="me-2 h-4 w-4" />{t("productItem.notFound")}
               </DropdownMenuItem>
-            )}
-            {onReportPrice && (
-              <DropdownMenuItem onClick={() => onReportPrice(item)}>
-                <Flag className="me-2 h-4 w-4" />{t("report.menu")}
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem onClick={() => onUnavailable(item)}>
-              <CircleSlash2 className="me-2 h-4 w-4" />{t("productItem.notFound")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </article>
   );

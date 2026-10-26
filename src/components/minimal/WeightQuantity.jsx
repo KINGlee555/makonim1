@@ -37,21 +37,21 @@ export default function WeightQuantity({ item, unit, unitLabel, onUpdateQuantity
   };
 
   return (
-    <div className="mkc-qty">
+    <div className="shf-group">
       <input
         value={text}
         inputMode="decimal"
         aria-label={`${t("productItem.weight")} ${unitLabel ? `(${unitLabel})` : ""}`}
-        className="mkc-amount"
+        className="shf-amount"
         onChange={(event) => setText(event.target.value)}
         onFocus={(event) => event.currentTarget.select()}
         onBlur={(event) => commit(event.target.value)}
         onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
       />
-      <button type="button" onClick={onSwitchUnit} aria-pressed={unit === "kg"} aria-label={t("productItem.switchUnit")} className="mkc-unit">
+      <button type="button" onClick={onSwitchUnit} aria-pressed={unit === "kg"} aria-label={t("productItem.switchUnit")} className="shf-unit">
         {unitLabel}
       </button>
-      <button type="button" onClick={() => onRemove?.(item)} aria-label={t("productItem.remove")} className="mkc-step mkc-remove">
+      <button type="button" onClick={() => onRemove?.(item)} aria-label={t("productItem.remove")} className="shf-remove">
         <Trash2 className="h-4 w-4" strokeWidth={2.5} />
       </button>
     </div>

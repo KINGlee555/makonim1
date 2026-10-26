@@ -11,7 +11,7 @@ import { toast } from "@/components/ui/use-toast";
 import { uiPill } from "@/lib/minimalUi";
 
 // כל ההגדרות הקטנות של המסך במקום אחד — במקום שורה עמוסה של כפתורים בראש
-export default function HeaderMenu({ onOpenProfile, onOpenSettings }) {
+export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = "" }) {
   const t = useT();
   const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(isDarkTheme);
@@ -33,7 +33,7 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" aria-label={t("header.more")} title={t("header.more")} className={`${uiPill} inline-flex items-center gap-1`}>
+        <button type="button" aria-label={t("header.more")} title={t("header.more")} className={`${className || uiPill} inline-flex items-center gap-1`}>
           {t("header.more")}
           <ChevronDown className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />
         </button>

@@ -764,3 +764,191 @@ html.easy-mode .mkc-list .mkc-more { width: 40px; height: 40px; }
 html.easy-mode .mkc-list .mkc-bought { height: 40px; font-size: 15px; }
 html.easy-mode .mkc-list .mkc-unit { height: 40px; font-size: 14px; }
 html.easy-mode .mkc-list .mkc-amount { width: 84px; height: 40px; font-size: 18px; }
+
+/* ===== לוח מדפים — שפת העיצוב של מסך הרשימה ===== */
+.shf-page {
+  background: #fff;
+  color: #171A1C;
+  font-family: "Arial Black", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-weight: 900;
+}
+
+/* פתיח עם תמונת שוק, כותרת הרשימה ושני המספרים */
+.shf-hero { position: relative; overflow: hidden; padding: 24px 20px 26px; }
+.shf-hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.shf-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(23, 26, 28, .72), rgba(23, 26, 28, .55)); }
+.shf-hero-in { position: relative; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; width: 100%; max-width: 940px; animation: shfRise .7s cubic-bezier(.22, 1, .36, 1) both; }
+
+.shf-brand { display: flex; align-items: center; gap: 12px; color: #fff; font-size: 20px; font-weight: 900; }
+.shf-brand img { width: 44px; height: 44px; flex: none; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
+.shf-greet { font: 600 16px system-ui, Arial, sans-serif; opacity: .9; }
+
+.shf-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+.shf-ttl { display: flex; align-items: center; gap: 12px; color: #fff; font-size: 30px; font-weight: 900; line-height: 1.1; letter-spacing: -.5px; }
+.shf-ttl button { display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; cursor: pointer; }
+.shf-ttl button:hover { opacity: .85; }
+.shf-ttl button:focus-visible { outline: 3px solid #4EA5D9; outline-offset: 3px; border-radius: 8px; }
+.shf-nums { display: flex; gap: 26px; }
+.shf-num { display: flex; flex-direction: column; gap: 2px; color: #fff; font: 700 15px system-ui, Arial, sans-serif; }
+.shf-num b { font-size: 40px; line-height: 1; font-weight: 900; }
+.shf-num-t b { color: #F4A58B; }
+
+.shf-acts { display: flex; flex-wrap: wrap; gap: 10px; }
+.shf-btn { cursor: pointer; border: 2px solid #fff; border-radius: 10px; background: transparent; color: #fff; padding: 10px 18px; font: 700 16px system-ui, Arial, sans-serif; transition: background .2s, color .2s, box-shadow .2s; }
+.shf-btn:hover { background: #fff; color: #171A1C; }
+.shf-btn:active { opacity: .8; }
+.shf-btn:focus-visible { outline: 3px solid #4EA5D9; outline-offset: 2px; }
+.shf-btn-sol { background: #E4572E; border-color: #E4572E; }
+.shf-btn-sol:hover { background: #fff; border-color: #fff; color: #E4572E; }
+
+/* שורת ההתראות למשפחה */
+.shf-push { background: #4EA5D9; color: #171A1C; padding: 14px 20px; font: 800 17px system-ui, Arial, sans-serif; }
+.shf-push-in { margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; width: 100%; max-width: 940px; }
+.shf-push-btn { cursor: pointer; border: 2px solid #171A1C; border-radius: 10px; background: transparent; color: #171A1C; padding: 10px 18px; font: 700 16px system-ui, Arial, sans-serif; transition: background .2s, color .2s, box-shadow .2s; }
+.shf-push-btn:hover { background: #171A1C; color: #fff; }
+.shf-push-btn:active { opacity: .8; }
+.shf-push-btn:focus-visible { outline: 3px solid #171A1C; outline-offset: 2px; }
+.shf-small-btn { cursor: pointer; border: 2px solid #171A1C; border-radius: 10px; background: transparent; color: #171A1C; padding: 8px 12px; font: 700 14px system-ui, Arial, sans-serif; transition: background .2s, color .2s; }
+.shf-small-btn:hover { background: #171A1C; color: #fff; }
+.shf-small-btn:focus-visible { outline: 3px solid #4EA5D9; outline-offset: 2px; }
+
+/* מי קונה עכשיו */
+.shf-note { display: block; margin: 22px auto; width: 100%; max-width: 940px; padding: 12px 20px; border-radius: 12px; background: #171A1C; color: #fff; font: 800 16px system-ui, Arial, sans-serif; }
+
+/* פס המחלקות שנצמד לראש המסך */
+.shf-bar { position: sticky; top: 0; z-index: 30; padding: 12px 0; background: #171A1C; animation: shfBar 6s ease-in-out infinite alternate; }
+.shf-bar-in { margin: 0 auto; display: flex; gap: 8px; overflow-x: auto; width: 100%; max-width: 940px; padding: 0 20px; scrollbar-width: none; }
+.shf-bar-in::-webkit-scrollbar { display: none; }
+.shf-bar span { flex: none; padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .12); color: #fff; font: 800 15px system-ui, Arial, sans-serif; }
+.shf-bar .shf-bar-a { background: #E4572E; }
+.shf-bar .shf-bar-b { background: #4EA5D9; color: #171A1C; }
+
+/* מקטע מחלקה ואריחי המוצרים */
+.shf-sec { padding: 22px 0 8px; }
+.shf-sh { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding: 12px 20px; border-radius: 12px; color: #fff; font-size: 22px; font-weight: 900; }
+.shf-sh-1 { background: #E4572E; }
+.shf-sh-2 { background: #4EA5D9; color: #171A1C; }
+.shf-sh-3 { background: #171A1C; }
+.shf-sh .shf-n { flex: none; padding: 2px 14px; border-radius: 8px; background: #fff; color: #171A1C; font-size: 18px; }
+
+.shf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.shf-tile { display: flex; flex-direction: column; overflow: hidden; border: 2px solid #171A1C; border-radius: 14px; background: #fff; animation: shfRise .6s cubic-bezier(.22, 1, .36, 1) both; }
+.shf-tile.animate-slide-out { animation: slideOut .3s ease-out forwards; }
+.shf-ph { position: relative; aspect-ratio: 3 / 2; background: #f1f1f1; }
+.shf-ph > img, .shf-ph > button, .shf-ph > button > img, .shf-ph > .photo-tile { display: block; width: 100%; height: 100%; }
+.shf-ph > img, .shf-ph > button > img { object-fit: cover; }
+.shf-ph > button { padding: 0; border: 0; background: none; cursor: pointer; }
+.shf-ph > button:focus-visible { outline: 3px solid #4EA5D9; outline-offset: -3px; }
+.shf-ph > .photo-tile { background: #e8f2fa; }
+.shf-tag { position: absolute; top: 10px; inset-inline-start: 10px; padding: 4px 10px; border: 2px solid #fff; border-radius: 8px; background: #171A1C; color: #fff; font: 900 17px system-ui, Arial, sans-serif; }
+.shf-body { display: flex; flex: 1; flex-direction: column; gap: 8px; padding: 10px 12px 12px; }
+.shf-nm { font-size: 17px; font-weight: 900; line-height: 1.15; }
+.shf-meta { font: 600 13px system-ui, Arial, sans-serif; color: #555; }
+.shf-deal { align-self: flex-start; padding: 3px 10px; border-radius: 999px; background: #E4572E; color: #fff; font: 700 13px system-ui, Arial, sans-serif; }
+.shf-remind { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; padding: 3px 10px; border-radius: 999px; background: #4EA5D9; color: #171A1C; font: 700 13px system-ui, Arial, sans-serif; }
+.shf-remind-due { background: #E4572E; color: #fff; }
+
+.shf-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: auto; }
+.shf-group { display: flex; align-items: center; gap: 7px; }
+.shf-q { display: flex; align-items: center; overflow: hidden; border: 2px solid #171A1C; border-radius: 10px; }
+.shf-q button { width: 34px; height: 38px; border: 0; background: #f1f1f1; font: 900 18px system-ui, Arial, sans-serif; cursor: pointer; transition: background .2s; }
+.shf-q button:hover:not(:disabled) { background: #4EA5D9; }
+.shf-q button:disabled { opacity: .4; cursor: default; }
+.shf-q button:focus-visible { outline: 3px solid #E4572E; outline-offset: -3px; }
+.shf-q span { min-width: 28px; text-align: center; font-size: 17px; font-weight: 900; }
+.shf-buy { flex: 1; min-width: 84px; height: 38px; padding: 0 10px; border: 0; border-radius: 10px; background: #E4572E; color: #fff; font: 900 16px system-ui, Arial, sans-serif; cursor: pointer; transition: background .2s, box-shadow .2s; }
+.shf-buy:hover { background: #c8431f; box-shadow: 0 4px 0 #171A1C; }
+.shf-buy:active { opacity: .85; }
+.shf-buy:focus-visible { outline: 3px solid #4EA5D9; outline-offset: 2px; }
+.shf-more { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: none; border: 2px solid #171A1C; border-radius: 10px; background: #fff; color: #171A1C; cursor: pointer; transition: background .2s; }
+.shf-more:hover { background: #4EA5D9; }
+.shf-more:focus-visible { outline: 3px solid #E4572E; outline-offset: 2px; }
+
+/* מוצר לפי משקל — שדה משקל, החלפת יחידה והסרה */
+.shf-amount { width: 62px; height: 38px; padding: 0 6px; border: 2px solid #171A1C; border-radius: 10px; background: #fff; color: #171A1C; font: 900 16px system-ui, Arial, sans-serif; text-align: center; }
+.shf-amount:focus-visible { outline: 3px solid #E4572E; outline-offset: 2px; }
+.shf-unit { height: 38px; padding: 0 9px; border: 2px solid #171A1C; border-radius: 10px; background: #f1f1f1; color: #171A1C; font: 900 13px system-ui, Arial, sans-serif; cursor: pointer; transition: background .2s; }
+.shf-unit:hover { background: #4EA5D9; }
+.shf-unit:focus-visible { outline: 3px solid #E4572E; outline-offset: 2px; }
+.shf-remove { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: none; border: 2px solid #171A1C; border-radius: 10px; background: #fff; color: #E4572E; cursor: pointer; transition: background .2s; }
+.shf-remove:hover { background: #fdeee8; }
+.shf-remove:focus-visible { outline: 3px solid #E4572E; outline-offset: 2px; }
+
+/* "עוד כלים" — שורת כרטיסים שנגללת הצידה, והכלי שנבחר נפתח מתחתיה */
+.shf-tools { padding: 26px 0 8px; }
+.shf-tools h2 { margin: 0 0 14px; font-size: 26px; font-weight: 900; }
+.shf-strip { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+.shf-strip::-webkit-scrollbar { display: none; }
+.shf-card { display: flex; flex-direction: column; gap: 8px; flex: 0 0 200px; min-height: 112px; padding: 16px; border: 2px solid #171A1C; border-radius: 14px; background: #fff; color: #171A1C; font: 800 17px system-ui, Arial, sans-serif; text-align: start; cursor: pointer; transition: box-shadow .2s; }
+.shf-card:hover, .shf-card-on { box-shadow: 0 5px 0 #171A1C; }
+.shf-card:focus-visible { outline: 3px solid #4EA5D9; outline-offset: 2px; }
+.shf-card small { margin-top: auto; font: 600 14px system-ui, Arial, sans-serif; opacity: .9; }
+.shf-card-t { background: #E4572E; border-color: #E4572E; color: #fff; }
+.shf-card-b { background: #4EA5D9; border-color: #4EA5D9; }
+.shf-card-k { background: #171A1C; color: #fff; }
+.shf-panel { margin-top: 4px; padding: 16px; border: 2px solid #171A1C; border-radius: 14px; background: #fff; animation: shfRise .5s cubic-bezier(.22, 1, .36, 1) both; }
+
+/* סרגל הפעולות התחתון */
+.shf-dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 40; padding: 0 12px max(12px, env(safe-area-inset-bottom)); }
+.shf-dock-in { margin: 0 auto; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 940px; padding: 12px; border: 2px solid #171A1C; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(23, 26, 28, .16); }
+.shf-add, .shf-fin { flex: 1; height: 56px; border: 0; border-radius: 12px; font: 900 17px system-ui, Arial, sans-serif; cursor: pointer; transition: box-shadow .2s, background .2s; }
+.shf-add { background: #E4572E; color: #fff; }
+.shf-fin { background: #4EA5D9; color: #171A1C; }
+.shf-add:hover, .shf-fin:hover { box-shadow: 0 5px 0 #171A1C; }
+.shf-add:active, .shf-fin:active { opacity: .85; }
+.shf-add:focus-visible, .shf-fin:focus-visible { outline: 3px solid #171A1C; outline-offset: 2px; }
+.shf-scan { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex: none; border: 2px solid #171A1C; border-radius: 50%; background: #fff; color: #171A1C; cursor: pointer; transition: background .2s; }
+.shf-scan:hover { background: #4EA5D9; }
+.shf-scan:focus-visible { outline: 3px solid #E4572E; outline-offset: 2px; }
+
+/* תחתית העמוד */
+.shf-ft { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; padding: 28px 0 36px; color: #555; font: 700 16px system-ui, Arial, sans-serif; }
+.shf-ft a { color: #171A1C; text-decoration: none; cursor: pointer; transition: color .2s; }
+.shf-ft a:hover { color: #E4572E; }
+.shf-ft .shf-credit { width: 100%; text-align: center; font-size: 15px; }
+
+@keyframes shfRise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes shfBar { from { background: #171A1C; } to { background: #2a3338; } }
+
+@media (min-width: 640px) {
+  .shf-hero { padding: 28px 40px 30px; }
+  .shf-greet { font-size: 17px; }
+  .shf-ttl { font-size: 50px; }
+  .shf-nums { gap: 34px; }
+  .shf-num { font-size: 17px; }
+  .shf-num b { font-size: 64px; }
+  .shf-push { padding: 14px 40px; font-size: 18px; }
+  .shf-note { padding: 12px 40px; }
+  .shf-bar-in { padding: 0 40px; }
+  .shf-sh { font-size: 26px; }
+  .shf-sh .shf-n { font-size: 22px; }
+  .shf-grid { gap: 14px; }
+  .shf-tag { padding: 4px 12px; font-size: 22px; }
+  .shf-body { gap: 10px; padding: 12px 14px 14px; }
+  .shf-nm { font-size: 22px; }
+  .shf-meta, .shf-deal, .shf-remind { font-size: 14px; }
+  .shf-ctl, .shf-group { gap: 10px; }
+  .shf-q button { width: 38px; height: 40px; font-size: 20px; }
+  .shf-q span { min-width: 36px; font-size: 20px; }
+  .shf-buy { height: 44px; font-size: 20px; }
+  .shf-more, .shf-remove { width: 44px; height: 44px; }
+  .shf-amount { width: 72px; height: 44px; font-size: 19px; }
+  .shf-unit { height: 44px; font-size: 15px; }
+  .shf-tools h2 { font-size: 30px; }
+  .shf-card { flex: 0 0 250px; min-height: 130px; font-size: 19px; }
+  .shf-card small { font-size: 15px; }
+  .shf-panel { padding: 20px; }
+  .shf-dock-in { gap: 14px; padding: 14px; }
+  .shf-add, .shf-fin { height: 64px; font-size: 26px; }
+  .shf-scan { width: 64px; height: 64px; }
+  .shf-ft { padding: 28px 40px 36px; }
+}
+
+/* מצב גדול ונוח — אותם אריחים, במידות נוחות יותר */
+html.easy-mode .shf-nm { font-size: 19px; }
+html.easy-mode .shf-tag { font-size: 20px; }
+html.easy-mode .shf-q button, html.easy-mode .shf-more, html.easy-mode .shf-buy,
+html.easy-mode .shf-unit, html.easy-mode .shf-remove, html.easy-mode .shf-amount { height: 46px; }
+html.easy-mode .shf-q button { width: 42px; }
+html.easy-mode .shf-more, html.easy-mode .shf-remove { width: 46px; }
+html.easy-mode .shf-amount { width: 84px; }
