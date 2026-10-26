@@ -50,12 +50,23 @@ export default function ItemDetailsDialog({ item, onClose, onSave }) {
     <Dialog open={!!item} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-sm rounded-3xl">
         <DialogHeader><DialogTitle>{t("itemDetails.title")}</DialogTitle></DialogHeader>
-        <label className="space-y-2 text-sm font-semibold">
-          <span>{t("itemDetails.unit")}</span>
-          <select value={unit} onChange={(event) => changeUnit(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-3">
-            {UNITS.map((value) => <option key={value} value={value}>{t(`unit.${value}`)}</option>)}
-          </select>
-        </label>
+        <div className="space-y-2">
+          <span className="text-sm font-semibold">{t("itemDetails.unit")}</span>
+          <div role="radiogroup" aria-label={t("itemDetails.unit")} className="flex flex-wrap gap-2">
+            {UNITS.map((value) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={unit === value}
+                onClick={() => changeUnit(value)}
+                className={`min-h-[44px] rounded-xl border-2 border-input px-4 text-sm font-bold ${unit === value ? "bg-primary text-primary-foreground" : "bg-background"}`}
+              >
+                {t(`unit.${value}`)}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {byWeight && (
           <div className="space-y-2">
