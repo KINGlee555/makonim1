@@ -6,6 +6,7 @@
 // אין שום קריאה החוצה, הכל כבר שמור.
 
 import { CHAINS, chainDataFile, type Chain } from "./priceTransparency.ts";
+import { photosFromOpenDatabases } from "./openCatalog.ts";
 
 // כל הרשתות הגדולות בישראל. הראשונות מפרסמות גם קבצי מבצעים; הנוספות מפרסמות
 // קובץ מחירים בפורטל השקיפות, ומהן אנחנו לוקחים מוצרים לקטלוג.
@@ -190,6 +191,14 @@ export async function photosForCodes(codes: string[], maxSingle = 450) {
     await Promise.allSettled(wave.map((code) => searchOnePhoto(code, images)));
     for (const code of wave) checked.push(code);
     await pause(2000);
+  }
+
+  // סיבוב שלישי: ברקוד שלא נמצא במאגר המזון נבדק גם במאגרי הטיפוח, החיות ומוצרי הבית.
+  // מוגבל בכמות כמו הסיבוב האישי, כדי שכל קריאה תישאר בזמן שסופרים.
+  const openBatch = pendingCodes.filter((code) => !images.has(code)).slice(0, 240);
+  if (openBatch.length) {
+    const more = await photosFromOpenDatabases(openBatch, { skipFoodFacts: true });
+    for (const [code, image] of more) images.set(code, image);
   }
 
   // ברקוד עם תמונה תמיד נחשב בדוק; ברקודים שנשארו בלי תמונה ייבדקו שוב בהמשך.

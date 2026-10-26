@@ -1,5 +1,6 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { searchPriceCatalog, priceByBarcode, categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
+import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
 
 const OFF_FIELDS = "code,image_front_url,image_url,brands,product_name";
 
@@ -41,6 +42,13 @@ async function imagesForCodes(base44: any, codes: string[]) {
       if (image) images.set(String(product.code), image);
     }
   }));
+  // ברקוד שאין לו תמונה במאגר המזון נבדק גם במאגרי הטיפוח, המזון לחיות ומוצרי הבית.
+  const stillMissing = fresh.filter((code) => !images.has(code));
+  if (stillMissing.length) {
+    const more = await photosFromOpenDatabases(stillMissing, { skipFoodFacts: true });
+    for (const [code, image] of more) images.set(code, image);
+    resolved.push(...stillMissing);
+  }
   if (resolved.length) {
     // Two lookups can reach the same new barcode at the same time; the second insert is
     // refused as a duplicate and can simply be ignored.
