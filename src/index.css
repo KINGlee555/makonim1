@@ -982,6 +982,13 @@ html.easy-mode .pst-card { height: 130px; }
 }
 
 .pst-lrow + .pst-lrow { margin-top: 10px; }
+
+/* שטח הפרסום בפס המבצעים — כרטיס ורוד מסומן, בפריים הראשון של הפס */
+.pst-spon { display: flex; align-items: center; gap: 12px; padding: 12px; border: 3px solid #0B3A4D; border-radius: 18px; background: #FF3B5D; color: #fff; box-shadow: 4px 4px 0 #0B3A4D; text-decoration: none; }
+.pst-spon + .pst-lrow { margin-top: 10px; }
+.pst-spon-t { flex: 1; min-width: 0; font-size: 15px; font-weight: 900; line-height: 1.2; }
+.pst-spon-s { display: block; font-size: 12px; font-weight: 800; color: rgba(255, 255, 255, .86); }
+.pst-spon-tag { flex: none; padding: 4px 12px; border-radius: 999px; background: #FFD400; color: #0B3A4D; font-size: 13px; font-weight: 900; text-decoration: none; }
 .pst-lrow-t { flex: 1; min-width: 0; font-size: 16px; font-weight: 900; line-height: 1.2; }
 .pst-lrow-s { font-size: 13px; font-weight: 700; color: rgba(11, 58, 77, .7); }
 .pst-lrow-v { flex: none; font-size: 17px; font-weight: 900; }
@@ -1174,4 +1181,5 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 .dark .pst-dock { border-top-color: #FFD400; background: #0b1f27; }
 .dark .pst-tools { background: #071e27; }
 .dark .pst-credit { color: #0B3A4D; }
+.dark .pst-spon { border-color: #FFD400; box-shadow: 4px 4px 0 #FFD400; }
 .dark .pst-n { color: #fff; }

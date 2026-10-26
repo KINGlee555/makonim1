@@ -4,6 +4,7 @@ import ListHeader from "../components/minimal/ListHeader";
 import QuickAddBar from "../components/QuickAddBar";
 import AppFooter from "../components/AppFooter";
 import MoreTools from "../components/list/MoreTools";
+import DealsShelf from "@/components/deals/DealsShelf";
 import ListItemsSection from "@/components/list/ListItemsSection";
 import CategoryBar from "@/components/shelf/CategoryBar";
 import ListDialogs from "@/components/list/ListDialogs";
@@ -164,6 +165,13 @@ export default function ListView() {
           onOpenScanner={() => show("scanner")}
           onOpenShoppingMode={() => show("shopping")}
         />
+
+        {!simple && (
+          <DealsShelf
+            onAddProduct={handleAddProduct}
+            onOpenAllDeals={() => show("deals")}
+          />
+        )}
 
         <MoreTools
           list={list}

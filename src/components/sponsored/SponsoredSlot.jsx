@@ -1,20 +1,13 @@
-import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { ExternalLink } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import useSponsoredSlot from "@/hooks/useSponsoredSlot";
 import { getChainLogo } from "@/lib/chainLogos";
 import { uiSection, uiSectionLabel, uiEnter } from "@/lib/minimalUi";
 
 // The paid placement a chain bought — one slot, clearly marked as sponsored.
 export default function SponsoredSlot({ delay = 0 }) {
   const t = useT();
-  const [slot, setSlot] = useState(null);
-
-  useEffect(() => {
-    base44.entities.SponsoredPlacement.filter({ active: true }, "-priority", 1)
-      .then(rows => setSlot((Array.isArray(rows) ? rows : rows.items || [])[0] || null))
-      .catch(() => {});
-  }, []);
+  const slot = useSponsoredSlot();
 
   if (!slot?.url) return null;
   const logo = getChainLogo(slot.chain_name || "");
