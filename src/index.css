@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Secular+One&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --font-rubik: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-rubik: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-display: "Secular One", "Rubik", system-ui, -apple-system, Arial, sans-serif;
     /* ===== כרזת שוק — שפת העיצוב של כל האפליקציה ===== */
     --pst-ink: 197 75% 17%;
     --pst-yellow: 43 100% 51%;
@@ -587,7 +590,7 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-page {
   background: #fff;
   color: #0B3A4D;
-  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-rubik);
   padding-bottom: 150px;
 }
 
@@ -611,16 +614,16 @@ html.easy-mode [role="dialog"] .text-xl {
 /* פתיח צהוב שטוח — מיתוג, שם הרשימה, שני המספרים ושורת הפעולות */
 .pst-hero { position: relative; max-width: 1200px; margin: 0 auto; padding: 24px 16px 22px; background: #FFD400; animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both; }
 .pst-hero::after { content: ""; position: absolute; inset-inline: 0; bottom: -22px; height: 22px; background: #FFD400; clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%); z-index: 2; pointer-events: none; }
-.pst-brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+.pst-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
 .pst-brand img { width: 40px; height: 40px; border: 3px solid #0B3A4D; border-radius: 10px; object-fit: cover; }
 .pst-greet { margin-inline-start: auto; padding: 6px 14px; border: 0; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 14px; font-weight: 800; letter-spacing: 0; }
 .pst-row { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
-.pst-ttl { margin: 0; max-width: 560px; font-size: 44px; font-weight: 900; line-height: 1; letter-spacing: -.02em; text-transform: uppercase; }
+.pst-ttl { margin: 0; max-width: 560px; font-family: var(--font-display); font-size: 44px; font-weight: 400; line-height: 1.06; letter-spacing: -.01em; text-transform: uppercase; }
 .pst-ttl button { display: flex; align-items: flex-end; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; }
 .pst-ttl svg { width: 24px; height: 24px; flex: none; margin-bottom: 4px; }
 .pst-nums { display: flex; gap: 12px; }
 .pst-num { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 8px 16px 4px; border: 3px solid #0B3A4D; border-radius: 16px; background: #FF3B5D; color: #fff; font-size: 14px; font-weight: 800; box-shadow: 5px 5px 0 #0B3A4D; }
-.pst-num b { margin-top: 2px; font-size: 40px; font-weight: 900; line-height: 1; font-stretch: condensed; letter-spacing: -.03em; }
+.pst-num b { margin-top: 2px; font-family: var(--font-display); font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -.02em; }
 .pst-num-t { background: #fff; color: #0B3A4D; }
 .pst-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 .pst-btn { padding: 10px 20px; border: 3px solid #0B3A4D; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 16px; font-weight: 800; }
@@ -646,7 +649,7 @@ html.easy-mode [role="dialog"] .text-xl {
 
 /* מקטע מחלקה — פס כרזה, תמונת המחלקה, טריז אלכסוני ואריחי המוצרים */
 .pst-sec { max-width: 1200px; margin: 28px auto 0; }
-.pst-sh { margin: 0; padding: 12px 16px; font-size: 24px; font-weight: 900; line-height: 1; letter-spacing: -.01em; text-transform: uppercase; position: relative; overflow: hidden; }
+.pst-sh { margin: 0; padding: 12px 16px; font-family: var(--font-display); font-size: 24px; font-weight: 400; line-height: 1.1; letter-spacing: -.01em; text-transform: uppercase; position: relative; overflow: hidden; }
 .pst-sh-in { display: flex; align-items: center; gap: 12px; }
 .pst-sh-a { background: #FFD400; animation: pstInR .7s both; }
 .pst-sh-b { background: #FF3B5D; color: #fff; animation: pstInL .7s both; }
@@ -715,7 +718,7 @@ html.easy-mode [role="dialog"] .text-xl {
 
 /* פס הפעולות התחתון */
 .pst-dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 40; display: flex; max-width: 1200px; height: 100px; margin: 0 auto; border-top: 4px solid #0B3A4D; background: #fff; }
-.pst-dock button { flex: 1; padding: 0; border: 0; color: #0B3A4D; font-size: 22px; font-weight: 900; text-transform: uppercase; }
+.pst-dock button { flex: 1; padding: 0; border: 0; color: #0B3A4D; font-family: var(--font-display); font-size: 22px; font-weight: 400; text-transform: uppercase; }
 .pst-dock .pst-add { background: #FFD400; }
 .pst-dock .pst-fin { background: #FF3B5D; color: #fff; }
 .pst-dock .pst-scan { position: absolute; left: 50%; top: -36px; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; width: 68px; height: 68px; flex: none; border: 4px solid #fff; border-radius: 50%; background: #0B3A4D; color: #FFD400; }
@@ -906,15 +909,26 @@ html.easy-mode .pst-card { height: 130px; }
 
 .pst-back svg { width: 20px; height: 20px; }
 
+/* שורת הפעולות בפס העליון — מצב כהה וחזרה */
+.pst-topacts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+
+.pst-topacts .pst-back { margin-inline-start: 0; }
+
 .pst-top h1 {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 16px 0 0;
+  font-family: var(--font-display);
   font-size: 30px;
-  font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -.02em;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -.01em;
   text-transform: uppercase;
 }
 
@@ -945,9 +959,10 @@ html.easy-mode .pst-card { height: 130px; }
   padding: 10px 16px;
   background: #FFD400;
   color: #0B3A4D;
+  font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 900;
-  line-height: 1.1;
+  font-weight: 400;
+  line-height: 1.2;
   text-transform: uppercase;
 }
 
@@ -1012,6 +1027,32 @@ html.easy-mode .pst-card { height: 130px; }
 /* שורת כרטיסים בשתי עמודות במסכים רחבים */
 .pst-cards { display: grid; gap: 14px; }
 
+/* כרטיסי ההבטחות במסך הפתיחה — ממוספרים כמו כרזה */
+.pst-why {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 3px solid #0B3A4D;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 5px 5px 0 #0B3A4D;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.pst-why:nth-child(3n+2) { background: #FFD400; }
+.pst-why:nth-child(3n) { background: #FF3B5D; color: #fff; }
+
+.pst-why-n {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+}
+
 @media (min-width: 640px) {
   .pst-top { padding: 24px 40px 22px; }
   .pst-top::after { bottom: -22px; height: 22px; }
@@ -1024,6 +1065,8 @@ html.easy-mode .pst-card { height: 130px; }
   .pst-h2 { padding: 12px 20px; font-size: 24px; }
   .pst-inner { padding-bottom: 40px; }
   .pst-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pst-why { padding: 20px; font-size: 16px; }
+  .pst-why-n { font-size: 44px; }
 }
 
 @media (min-width: 1024px) {
@@ -1056,3 +1099,79 @@ html.easy-mode .pst-h2 { font-size: 24px; }
 html.easy-mode .pst-top p { font-size: 17px; }
 html.easy-mode .pst-inner input:not([type="checkbox"]):not([type="radio"]),
 html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
+
+/* ===== מצב כהה — אותה כרזת שוק, על דיו ===== */
+.dark .pst-page { background: #0b1f27; color: #f5f1eb; }
+
+/* הטקסט שיושב על הפסים הצהובים/ורודים נשאר דיו */
+.dark .pst-top,
+.dark .pst-top h1,
+.dark .pst-top p,
+.dark .pst-hero,
+.dark .pst-hero .pst-ttl,
+.dark .pst-brand,
+.dark .pst-h2,
+.dark .pst-sh,
+.dark .pst-card { color: #0B3A4D; }
+
+.dark .pst-num { color: #fff; }
+.dark .pst-num-t { color: #0B3A4D; }
+.dark .pst-h2-b,
+.dark .pst-sh-b,
+.dark .pst-sh .pst-n,
+.dark .pst-card:nth-child(3n+2) { color: #fff; }
+
+/* כרטיסים לבנים הופכים למשטחי דיו עם מסגרת וצל צהובים */
+.dark .pst-panel,
+.dark .pst-tile,
+.dark .pst-lrow,
+.dark .pst-why,
+.dark .pst-empty,
+.dark .pst-menu { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+
+.dark .pst-panel,
+.dark .pst-tile,
+.dark .pst-why { box-shadow: 5px 5px 0 #FFD400; }
+
+.dark .pst-lrow { box-shadow: 4px 4px 0 #FFD400; }
+.dark .pst-empty { border-style: dashed; }
+.dark .pst-lrow-s { color: rgba(245, 241, 235, .72); }
+.dark .pst-why:nth-child(3n+2) { background: #FFD400; color: #0B3A4D; }
+.dark .pst-why:nth-child(3n) { background: #FF3B5D; color: #fff; }
+
+/* אריח המוצר */
+.dark .pst-ph { border-color: #FFD400; }
+.dark .pst-meta { color: rgba(245, 241, 235, .72); }
+.dark .pst-q,
+.dark .pst-amount,
+.dark .pst-unit,
+.dark .pst-more,
+.dark .pst-remove { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-q button { color: #0B3A4D; }
+.dark .pst-buy { background: #FFD400; color: #0B3A4D; }
+.dark .pst-buy:hover { background: #FF3B5D; color: #fff; }
+.dark .pst-remove { color: #FF8FA3; }
+.dark .pst-deal,
+.dark .pst-tag { border-color: #FFD400; }
+
+/* פסים, כפתורים ושדות במסכי הפנים */
+.dark .pst-back,
+.dark .pst-btn { border-color: #FFD400; background: #12303b; }
+.dark .pst-back { color: #FFD400; }
+.dark .pst-bar { border-bottom-color: #FFD400; background: #0b1f27; }
+.dark .pst-bar-in span { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-bar-in .pst-bar-a { background: #FFD400; color: #0B3A4D; }
+.dark .pst-bar-in .pst-bar-b { background: #FF3B5D; color: #fff; }
+.dark .pst-inner input:not([type="checkbox"]):not([type="radio"]),
+.dark .pst-inner textarea,
+.dark .pst-inner select { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-inner input::placeholder,
+.dark .pst-inner textarea::placeholder { color: rgba(245, 241, 235, .5); }
+.dark .pst-inner .pst-panel button { border-color: #FFD400; }
+.dark .pst-collage { border-color: #FFD400; }
+.dark .pst-note { background: #12303b; }
+.dark .pst-ft a { color: #f5f1eb; }
+.dark .pst-dock { border-top-color: #FFD400; background: #0b1f27; }
+.dark .pst-tools { background: #071e27; }
+.dark .pst-credit { color: #0B3A4D; }
+.dark .pst-n { color: #fff; }

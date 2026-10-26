@@ -58,7 +58,7 @@ export default function ShoppingHistory() {
       ) : records.length === 0 ? (
         <div className="pst-empty mt-6">
           <ShoppingBag className="mx-auto mb-3 h-10 w-10" />
-          <p className="text-[19px] font-black text-[#0B3A4D]">{t("history.noHistory")}</p>
+          <p className="text-[19px] font-black text-ui-ink">{t("history.noHistory")}</p>
           <p className="mt-1">{t("history.noHistoryDesc")}</p>
         </div>
       ) : (

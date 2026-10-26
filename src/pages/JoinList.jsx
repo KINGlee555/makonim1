@@ -92,7 +92,7 @@ export default function JoinList() {
           <>
             <CheckCircle className="mx-auto mb-4 h-12 w-12" />
             <h2 className="text-[24px] font-black leading-tight">{t("join.success")}</h2>
-            <p className="mt-2 text-[17px] font-bold text-[#0B3A4D]/70">
+            <p className="mt-2 text-[17px] font-bold text-ui-muted">
               {t("join.joinedToList", { title: listTitle })}
             </p>
           </>
@@ -102,7 +102,7 @@ export default function JoinList() {
           <>
             <CheckCircle className="mx-auto mb-4 h-12 w-12" />
             <h2 className="text-[24px] font-black leading-tight">{t("join.alreadyIn")}</h2>
-            <p className="mt-2 text-[17px] font-bold text-[#0B3A4D]/70">
+            <p className="mt-2 text-[17px] font-bold text-ui-muted">
               {t("join.movingTo", { title: listTitle })}
             </p>
           </>
@@ -111,12 +111,12 @@ export default function JoinList() {
         {status === "error" && (
           <>
             <h2 className="text-[24px] font-black leading-tight">{t("join.notFound")}</h2>
-            <p className="mt-2 text-[16px] font-bold text-[#0B3A4D]/70">{t("join.notFoundDesc")}</p>
+            <p className="mt-2 text-[16px] font-bold text-ui-muted">{t("join.notFoundDesc")}</p>
             <Button onClick={() => navigate("/")} className="mt-6 h-14 px-8 text-lg font-black">
               {t("join.backHome")}
             </Button>
             <div className="mt-4">
-              <Link to="/demo" className="font-black text-[#0B3A4D] underline decoration-[#FF3B5D] decoration-[3px]">
+              <Link to="/demo" className="font-black text-ui-ink underline decoration-[#FF3B5D] decoration-[3px]">
                 {t("join.seeDemo")}
               </Link>
             </div>
@@ -126,7 +126,7 @@ export default function JoinList() {
         {status === "full" && (
           <>
             <h2 className="text-[24px] font-black leading-tight">{t("join.full")}</h2>
-            <p className="mt-2 text-[16px] font-bold text-[#0B3A4D]/70">{t("join.fullDesc")}</p>
+            <p className="mt-2 text-[16px] font-bold text-ui-muted">{t("join.fullDesc")}</p>
             <Button onClick={() => navigate("/")} className="mt-6 h-14 px-8 text-lg font-black">
               {t("join.backHome")}
             </Button>

@@ -37,7 +37,7 @@ export default function DemoList() {
             </span>
           ))}
         </div>
-        <p className="mt-3 text-[13px] font-bold text-[#0B3A4D]/70">{t("demo.shareNote")}</p>
+        <p className="mt-3 text-[13px] font-bold text-ui-muted">{t("demo.shareNote")}</p>
       </section>
 
       <section className="pst-panel mt-4">
@@ -48,7 +48,7 @@ export default function DemoList() {
         <p className="mt-2 text-[21px] font-black leading-tight text-[#FF3B5D]">
           {t("demo.basketCheapest", { amount: savings.toFixed(2), chain: demoSavings.cheapestChain })}
         </p>
-        <p className="mt-1 text-[13px] font-bold text-[#0B3A4D]/70">
+        <p className="mt-1 text-[13px] font-bold text-ui-muted">
           {t("demo.basketTotal", { total: demoBasketTotal.toFixed(2) })} · {t("demo.sampleTag")}
         </p>
       </section>
@@ -81,12 +81,12 @@ export default function DemoList() {
 
       <section className="pst-panel mt-6 text-center">
         <p className="text-[20px] font-black leading-tight">{t("demo.ctaTitle")}</p>
-        <p className="mt-1 text-[14px] font-bold text-[#0B3A4D]/70">{t("demo.ctaSub")}</p>
+        <p className="mt-1 text-[14px] font-bold text-ui-muted">{t("demo.ctaSub")}</p>
         <Link to="/register" className="pst-btn mt-4 inline-flex w-full items-center justify-center gap-2">
           {t("demo.cta")}
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <p className="mt-3 text-[13px] font-bold text-[#0B3A4D]/70">{t("demo.haveLink")}</p>
+        <p className="mt-3 text-[13px] font-bold text-ui-muted">{t("demo.haveLink")}</p>
       </section>
     </PosterPage>
   );

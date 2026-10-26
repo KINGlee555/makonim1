@@ -6,6 +6,7 @@ module.exports = {
   	extend: {
   		fontFamily: {
   			rubik: ['var(--font-rubik)'],
+  			display: ['var(--font-display)'],
   			system: ['var(--font-system)']
   		},
   		borderRadius: {

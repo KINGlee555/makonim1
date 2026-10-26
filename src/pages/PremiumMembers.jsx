@@ -144,7 +144,7 @@ export default function PremiumMembers() {
         <div className="pst-panel flex items-center gap-3">
           <Wallet className="h-6 w-6 flex-shrink-0" />
           <div>
-            <p className="text-[14px] font-bold text-[#0B3A4D]/70">מנויים פעילים</p>
+            <p className="text-[14px] font-bold text-ui-muted">מנויים פעילים</p>
             <p className="text-[20px] font-black">
               {activeMembers.length} · ₪{revenue.toFixed(0)} שנגבו
             </p>

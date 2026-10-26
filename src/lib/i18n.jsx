@@ -181,6 +181,7 @@ const translations = {
     "welcome.p1": "רשימה אחת לכל המשפחה — כולם רואים ומעדכנים באותו רגע",
     "welcome.p2": "מחירי רשתות אמיתיים והשוואת סל לפני שקונים",
     "welcome.p3": "מבצעים, ניווט לחנות ואיסוף עצמי עם סל מוכן לחנות",
+    "welcome.band": "מה מקבלים",
     "welcome.namePlaceholder": "מה שמך?",
     "welcome.start": "בוא נתחיל לקנות 🛒",
 
@@ -972,6 +973,7 @@ const translations = {
     "welcome.p1": "One list for the whole family — everyone sees and updates it live",
     "welcome.p2": "Real chain prices and basket comparison before you buy",
     "welcome.p3": "Deals, store navigation and self pickup with a ready basket",
+    "welcome.band": "What you get",
     "welcome.namePlaceholder": "What's your name?",
     "welcome.start": "Let's start shopping 🛒",
 
@@ -1763,6 +1765,7 @@ const translations = {
     "welcome.p1": "Один список для всей семьи — все видят и обновляют сразу",
     "welcome.p2": "Реальные цены сетей и сравнение корзины до покупки",
     "welcome.p3": "Акции, навигация к магазину и самовывоз с готовой корзиной",
+    "welcome.band": "Что вы получаете",
     "welcome.namePlaceholder": "Как вас зовут?",
     "welcome.start": "Начнём покупки 🛒",
 

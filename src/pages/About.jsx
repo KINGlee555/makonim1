@@ -10,7 +10,7 @@ export default function About() {
       subtitle="רשימת קניות משפחתית משותפת — רשימה אחת לכל הבית"
     >
       <div className="pst-panel">
-        <div className="space-y-4 text-[15px] font-bold leading-relaxed text-[#0B3A4D]/80">
+        <div className="space-y-4 text-[15px] font-bold leading-relaxed text-ui-muted">
           <p>
             MaKonim היא אפליקציית רשימות קניות משפחתית משותפת. במקום פתקים על המקרר או הודעות
             וואטסאפ שנעלמות, כל המשפחה מנהלת רשימה אחת שמתעדכנת בזמן אמת: מה שאבא מוסיף בבית
@@ -31,7 +31,7 @@ export default function About() {
           <p>
             MaKonim מפותחת ומתוחזקת על ידי אלן נוביצקי, כפרויקט עצמאי שנולד מצורך אמיתי בבית.
             יש רעיון, באג או בקשת פיצ׳ר? נשמח לשמוע דרך{" "}
-            <Link to="/contact" className="font-black text-[#0B3A4D] underline decoration-[#FF3B5D] decoration-[3px]">
+            <Link to="/contact" className="font-black text-ui-ink underline decoration-[#FF3B5D] decoration-[3px]">
               עמוד יצירת הקשר
             </Link>
             .

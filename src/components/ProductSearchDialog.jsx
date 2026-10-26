@@ -255,13 +255,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />
           </button>
           {nearest && (
-            <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium text-primary shadow-sm flex items-center gap-1">
+            <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium text-pst-ink shadow-sm flex items-center gap-1">
               <MapPin className="w-3 h-3" />
               {nearest.distance} {t("search.km")}
             </div>
           )}
           <div className={`absolute bottom-2 right-2 w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-all active:scale-90 ${
-            isAdded ? "bg-primary text-white" : "bg-white text-primary"
+            isAdded ? "bg-pst-ink text-white" : "bg-white text-pst-ink"
           }`}>
             {isAdded ? <CheckCircle className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
           </div>

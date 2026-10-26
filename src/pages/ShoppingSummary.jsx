@@ -64,7 +64,7 @@ export default function ShoppingSummary() {
       ) : records.length === 0 ? (
         <div className="pst-empty">
           <BarChart3 className="mx-auto mb-3 h-10 w-10" />
-          <p className="text-[19px] font-black text-[#0B3A4D]">{t("summary.noData")}</p>
+          <p className="text-[19px] font-black text-ui-ink">{t("summary.noData")}</p>
           <p className="mt-1">{t("summary.noDataDesc")}</p>
         </div>
       ) : (
