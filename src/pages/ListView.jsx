@@ -32,7 +32,6 @@ export default function ListView() {
   const dialogs = useListDialogs();
   const { show } = dialogs;
 
-  const [showSuggestions, setShowSuggestions] = useState(true);
   const [categoryOrder, setCategoryOrder] = useState(loadCategoryOrder);
   const [allProducts, setAllProducts] = useState([]);
 
@@ -183,13 +182,11 @@ export default function ListView() {
           members={presence.members}
           myEmail={user?.email}
           simple={simple}
-          showSuggestions={showSuggestions}
           favorites={favorites}
           refreshing={refreshing}
           isOwner={isOwner}
           onAddProduct={handleAddProduct}
           onToggleFavorite={handleToggleFavorite}
-          onToggleSuggestions={() => setShowSuggestions(v => !v)}
           onRefresh={handleRefresh}
           onReload={loadData}
           show={show}

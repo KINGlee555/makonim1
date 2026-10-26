@@ -30,7 +30,7 @@ function bestPerProduct(list) {
 
 // מבצעים אמיתיים מהרשתות על מסך הבית, מאותם קבצי שקיפות רשמיים — ובאותו מקטע
 // יושב גם המקום הממומן, שטח הפרסום של האתר.
-export default function DealsShelf({ onAddProduct, onOpenAllDeals }) {
+export default function DealsShelf({ onAddProduct, onOpenAllDeals, bare = false }) {
   const t = useT();
   const [deals, setDeals] = useState(() => readDealsCache(SHELF_KEY));
   const [loading, setLoading] = useState(false);
@@ -76,14 +76,14 @@ export default function DealsShelf({ onAddProduct, onOpenAllDeals }) {
   const shown = deals.slice(0, SHOWN);
 
   return (
-    <section className="pst-panel-slot">
+    <section className={bare ? undefined : "pst-panel-slot"}>
       <h2 className="pst-h2">
         <Tag className="h-5 w-5 flex-none" />
         {t("shelf.title")}
         <small>{t("deals.updated")}</small>
       </h2>
 
-      <div className="pst-panel">
+      <div className={bare ? undefined : "pst-panel"}>
         <SponsoredShelfCard />
 
         {shown.map((deal, index) => (

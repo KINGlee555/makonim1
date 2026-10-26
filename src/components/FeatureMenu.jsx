@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Sparkles, Crown, Truck, RefreshCw, Users, ChevronDown, PawPrint, QrCode } from "lucide-react";
+import { ScanLine, ClipboardList, Route, CalendarDays, Receipt, Trophy, Tag, Mic, Calculator, ArrowUpDown, Scale, Layers, Crown, Truck, RefreshCw, Users, ChevronDown, PawPrint, QrCode } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { uiBarPill, uiOutline, uiPill, uiPillRow } from "@/lib/minimalUi";
 
-export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenPetStore, onOpenQr, onOpenGroupBy, grouped, onOpenSuggestions, onRefresh, refreshing, onOpenParticipants, readerSlot, bar }) {
+export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTemplates, onOpenScanner, onOpenRoute, onOpenMenu, onOpenDeals, onOpenSplit, onOpenLeaderboard, onOpenVoice, onOpenDealCalculator, onOpenCategoryOrder, onOpenPremium, onOpenCourier, onOpenPetStore, onOpenQr, onOpenGroupBy, grouped, onRefresh, refreshing, onOpenParticipants, readerSlot, bar }) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -47,7 +47,6 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
     { icon: Calculator, label: "מחשבון מבצעים", onClick: onOpenDealCalculator },
     { icon: ArrowUpDown, label: "סדר המחלקות", onClick: onOpenCategoryOrder },
     ...(onOpenGroupBy ? [{ icon: Layers, label: grouped ? t("list.ungroup") : t("list.groupByCategory"), onClick: onOpenGroupBy }] : []),
-    { icon: Sparkles, label: t("smart.title"), onClick: onOpenSuggestions },
     { icon: Route, label: t("route.title"), onClick: onOpenRoute },
     { icon: Crown, label: t("premium.open"), onClick: onOpenPremium },
   ];

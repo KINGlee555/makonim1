@@ -9,7 +9,7 @@ import MonthlySummary from "@/components/MonthlySummary";
 import DeliveryNotice from "@/components/DeliveryNotice";
 import SponsoredSlot from "@/components/sponsored/SponsoredSlot";
 import PremiumBanner from "@/components/PremiumBanner";
-import SmartSuggestions from "@/components/SmartSuggestions";
+import AreaDeals from "@/components/deals/AreaDeals";
 import RecentlyBought from "@/components/RecentlyBought";
 import FillFromLastWeek from "@/components/FillFromLastWeek";
 import ToolStrip from "@/components/shelf/ToolStrip";
@@ -20,8 +20,8 @@ import usePremium from "@/hooks/usePremium";
 // וכל כלי נפתח בלחיצה אחת מתחת לשורה — בלי ערימה של מקטעים.
 export default function MoreTools({
   list, listId, items, pendingItems, groupedCategories, boughtCount, members, myEmail,
-  simple, showSuggestions, favorites, refreshing, isOwner,
-  onAddProduct, onToggleFavorite, onToggleSuggestions, onRefresh, onReload, show,
+  simple, favorites, refreshing, isOwner,
+  onAddProduct, onToggleFavorite, onRefresh, onReload, show,
 }) {
   const t = useT();
   const { isPremium } = usePremium();
@@ -36,7 +36,7 @@ export default function MoreTools({
     { id: "presence", label: t("presence.open"), note: people.slice(0, 2).join(" · ") || t("presence.alone") },
     ...(simple ? [] : [{ id: "basket", label: t("basket.title") }]),
     { id: "departments", label: t("big.departments"), note: groupedCategories.slice(0, 3).map(([category]) => category).join(" · ") },
-    ...(simple ? [] : [{ id: "smart", label: t("big.smartStart") }]),
+    ...(simple ? [] : [{ id: "area", label: t("area.title") }]),
     { id: "drops", label: t("drops.title") },
     { id: "monthly", label: t("monthly.title") },
     { id: "delivery", label: t("courier.open") },
@@ -64,10 +64,10 @@ export default function MoreTools({
         ))}
       </div>
     ),
-    smart: (
+    area: (
       <>
+        <AreaDeals listId={listId} items={pendingItems} onAddProduct={onAddProduct} onOpenAllDeals={() => show("deals")} />
         <FillFromLastWeek listId={listId} currentItems={items} onFilled={onReload} />
-        {showSuggestions && <SmartSuggestions listId={listId} currentItems={items} onAddProduct={onAddProduct} delay={0.1} />}
         <RecentlyBought listId={listId} delay={0.1} />
       </>
     ),
@@ -94,7 +94,6 @@ export default function MoreTools({
           onOpenCourier={() => show("courier")}
           onOpenPetStore={() => show("pet")}
           onOpenQr={() => show("qr")}
-          onOpenSuggestions={onToggleSuggestions}
           onRefresh={onRefresh}
           refreshing={refreshing}
           onOpenParticipants={isOwner ? () => show("participants") : null}

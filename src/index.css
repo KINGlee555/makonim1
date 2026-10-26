@@ -983,6 +983,10 @@ html.easy-mode .pst-card { height: 130px; }
 
 .pst-lrow + .pst-lrow { margin-top: 10px; }
 
+/* תמונת המוצר הקטנה בשורות המבצעים */
+.pst-thumb { width: 56px; height: 56px; flex: none; border: 3px solid #0B3A4D; border-radius: 14px; background: #fff; object-fit: contain; }
+.dark .pst-thumb { border-color: #FFD400; background: #12303b; }
+
 /* שטח הפרסום בפס המבצעים — כרטיס ורוד מסומן, בפריים הראשון של הפס */
 .pst-spon { display: flex; align-items: center; gap: 12px; padding: 12px; border: 3px solid #0B3A4D; border-radius: 18px; background: #FF3B5D; color: #fff; box-shadow: 4px 4px 0 #0B3A4D; text-decoration: none; }
 .pst-spon + .pst-lrow { margin-top: 10px; }
