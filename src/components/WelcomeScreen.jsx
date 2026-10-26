@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { loadLocalName } from "@/lib/userName";
 import { useT } from "@/lib/i18n";
 import PosterPage from "@/components/poster/PosterPage";
+import CatalogTrust from "@/components/CatalogTrust";
 
 const COLLAGE = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/41f073a97_generated_b58619a5.jpg";
 
@@ -22,6 +23,8 @@ export default function WelcomeScreen({ onNameSubmit }) {
   return (
     <PosterPage title={t("welcome.title")} subtitle={t("welcome.subtitle")} back="/" backLabel="MaKonim">
       <img src={COLLAGE} alt="" className="pst-collage" />
+
+      <CatalogTrust />
 
       <h2 className="pst-h2">{t("welcome.band")}</h2>
       <div className="pst-cards">

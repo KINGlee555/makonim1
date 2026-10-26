@@ -185,6 +185,13 @@ const translations = {
     "welcome.namePlaceholder": "מה שמך?",
     "welcome.start": "בוא נתחיל לקנות 🛒",
 
+    // Catalog trust
+    "trust.band": "הקטלוג שלנו",
+    "trust.total": "מוצרים ישראלים בקטלוג — הכול מהרשתות בישראל",
+    "trust.market": "מוצרי סופרמרקט עם מחירי רשתות אמיתיים",
+    "trust.pet": "מוצרי חיות מחמד עם תמונה אמיתית",
+    "trust.line": "{total} מוצרים ישראלים בקטלוג",
+
     // ProductItem
     "productItem.navigate": "ניווט",
     "productItem.undoBought": "בטל קנייה",
@@ -988,6 +995,13 @@ const translations = {
     "welcome.namePlaceholder": "What's your name?",
     "welcome.start": "Let's start shopping 🛒",
 
+    // Catalog trust
+    "trust.band": "Our catalog",
+    "trust.total": "Israeli products in the catalog — all from Israeli chains",
+    "trust.market": "Supermarket products with real chain prices",
+    "trust.pet": "Pet products with a real photo",
+    "trust.line": "{total} Israeli products in the catalog",
+
     // ProductItem
     "productItem.navigate": "Navigate",
     "productItem.undoBought": "Undo purchase",
@@ -1790,6 +1804,13 @@ const translations = {
     "welcome.band": "Что вы получаете",
     "welcome.namePlaceholder": "Как вас зовут?",
     "welcome.start": "Начнём покупки 🛒",
+
+    // Catalog trust
+    "trust.band": "Наш каталог",
+    "trust.total": "израильских товаров в каталоге — всё из сетей Израиля",
+    "trust.market": "товары супермаркетов с реальными ценами сетей",
+    "trust.pet": "товары для питомцев с настоящим фото",
+    "trust.line": "{total} израильских товаров в каталоге",
 
     // ProductItem
     "productItem.navigate": "Навигация",

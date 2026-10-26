@@ -626,6 +626,9 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-num b { margin-top: 2px; font-family: var(--font-display); font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -.02em; }
 .pst-num-t { background: #fff; color: #0B3A4D; }
 .pst-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+
+/* כמה מוצרים יש באפליקציה — מספר אמיתי מהמסד, גלוי כבר בפתיח */
+.pst-trust { display: inline-block; margin-top: 16px; padding: 8px 18px; border: 3px solid #0B3A4D; border-radius: 999px; background: #fff; color: #0B3A4D; font-size: 14px; font-weight: 800; }
 .pst-btn { padding: 10px 20px; border: 3px solid #0B3A4D; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 16px; font-weight: 800; }
 .pst-btn:hover { background: #fff; color: #0B3A4D; }
 .pst-btn-s { background: #FF3B5D; color: #fff; }
@@ -1126,6 +1129,7 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 .dark .pst-card { color: #0B3A4D; }
 
 .dark .pst-num { color: #fff; }
+.dark .pst-trust { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
 .dark .pst-num-t { color: #0B3A4D; }
 .dark .pst-h2-b,
 .dark .pst-sh-b,

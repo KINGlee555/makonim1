@@ -6,10 +6,10 @@
 type Database = { host: string; source: string; name: string };
 
 const DATABASES: Database[] = [
-  { host: "world.openfoodfacts.org", source: "open_food_facts", name: "קטלוג עולמי — מזון" },
-  { host: "world.openbeautyfacts.org", source: "open_beauty_facts", name: "קטלוג עולמי — טיפוח" },
-  { host: "world.openpetfoodfacts.org", source: "open_pet_food_facts", name: "קטלוג עולמי — חיות" },
-  { host: "world.openproductsfacts.org", source: "open_products_facts", name: "קטלוג עולמי — בית" }
+  { host: "world.openfoodfacts.org", source: "open_food_facts", name: "קטלוג ישראלי — מזון" },
+  { host: "world.openbeautyfacts.org", source: "open_beauty_facts", name: "קטלוג ישראלי — טיפוח" },
+  { host: "world.openpetfoodfacts.org", source: "open_pet_food_facts", name: "קטלוג ישראלי — חיות" },
+  { host: "world.openproductsfacts.org", source: "open_products_facts", name: "קטלוג ישראלי — בית" }
 ];
 
 const HEADERS = {
@@ -18,7 +18,7 @@ const HEADERS = {
 };
 
 const PHOTO_FIELDS = "code,image_front_url,image_url";
-const PRODUCT_FIELDS = "code,product_name,brands,image_front_url,image_url,quantity";
+const PRODUCT_FIELDS = "code,product_name,brands,image_front_url,image_url,quantity,countries_tags";
 
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -98,9 +98,11 @@ export async function openCountryProducts({ country = "israel", pages = 2, pageS
           quantity: String(raw.quantity || ""),
           image: realPhoto(raw),
           source: database.source,
-          source_name: database.name
+          source_name: database.name,
+          // נכנס רק מוצר שנמכר בישראל — מוצר שקיים רק בחו"ל פשוט לא נכנס לקטלוג.
+          israeli: (raw.countries_tags || []).includes(`en:${country}`)
         }))
-        .filter((item) => item.code && item.image && item.name);
+        .filter((item) => item.code && item.image && item.name && item.israeli);
       candidates.sort((a, b) => Number(hebrew(b.name)) - Number(hebrew(a.name)));
       products.push(...candidates);
       if (rows.length < pageSize) break;

@@ -81,15 +81,20 @@ function nameQueries(query: string) {
   return [...new Set(queries.filter((value: string) => value.length >= 3))];
 }
 
-// Some Israeli barcodes have no photo in the barcode catalog. A name search there often
-// still finds the very same product, so those real photos join the results as a second
-// source (they carry no shelf price, so they never outrank the priced products).
-async function photosByName(query: string) {
-  const params = new URLSearchParams({ search_terms: query, search_simple: "1", action: "process", json: "1", page_size: "24", fields: OFF_FIELDS });
-  const response = await fetchWithRetry(`https://world.openfoodfacts.org/cgi/search.pl?${params}`, "product photo search");
-  if (!response) return [];
-  const data = await response.json();
-  return (data.products || []).filter((product: any) => product.image_front_url || product.image_url);
+// מקור ישראלי בלבד: מוצרים מהקטלוג שלנו — כלומר מוצרים של הרשתות בישראל — שיש להם תמונה
+// אמיתית של הברקוד. כך אין פנייה למאגר בחו"ל, וכל מוצר שנכנס לתוצאות נמכר בישראל.
+async function photosByName(base44: any, query: string) {
+  const safe = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  try {
+    const result = await base44.asServiceRole.entities.CatalogProduct.filter(
+      { name: { $regex: safe }, image_url: { $ne: "" } }, "-created_date", 24
+    );
+    const rows = Array.isArray(result) ? result : result?.items || [];
+    return rows.map((row: any) => ({ code: row.barcode, product_name: row.name, brands: row.brand, image_url: row.image_url }));
+  } catch (error) {
+    console.error("catalog name search skipped", error instanceof Error ? error.message : error);
+    return [];
+  }
 }
 
 export default async function(req: Request): Promise<Response> {
@@ -137,7 +142,7 @@ export default async function(req: Request): Promise<Response> {
     const extras: any[] = [];
     if (query.length >= 3) {
       for (const nameQuery of nameQueries(query)) {
-        for (const raw of await photosByName(nameQuery)) {
+        for (const raw of await photosByName(base44, nameQuery)) {
           const code = String(raw.code);
           const image = String(raw.image_front_url || raw.image_url || "").replace(/^http:/, "https:");
           if (!code || !image || known.has(code)) continue;
