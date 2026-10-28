@@ -22,6 +22,8 @@ import { useListMessages } from "@/hooks/useListMessages";
 import NotificationPrompt from "@/components/NotificationPrompt";
 import LiveMembersBar from "@/components/live/LiveMembersBar";
 import LanguageNotice from "@/components/LanguageNotice";
+import IdentitySyncPrompt from "@/components/IdentitySyncPrompt";
+import useIdentitySync from "@/hooks/useIdentitySync";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
@@ -56,6 +58,8 @@ export default function ListView() {
   const chainDeals = useChainDeals(items);
   // מי נמצא איתך ברשימה — נוכחות חיה, מתעדכנת כל חצי דקה
   const presence = useListPresence(listId, user);
+  // שם אחד = רשימה אחת: אם השם כבר משויך לרשימה אחרת, נדרש אישור של המשתמש
+  const identity = useIdentitySync(list, user);
   // מצב פשוט — מסתיר כל מה שאינו הכרחי לקנייה עצמה; הכל נשאר נגיש דרך "עוד כלים"
   const [simple] = useSimpleMode();
   // התראות בזמן אמת במכשיר — כשמישהו מהמשפחה מוסיף מוצר או מסמן מוצר כנקנה
@@ -154,6 +158,15 @@ export default function ListView() {
       />
 
       <LanguageNotice />
+
+      {identity.conflict && (
+        <IdentitySyncPrompt
+          conflict={identity.conflict}
+          listTitle={list.title}
+          onApprove={identity.approve}
+          onDismiss={identity.dismiss}
+        />
+      )}
 
       {otherShoppers.length > 0 && (
         <p className="pst-note">{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>

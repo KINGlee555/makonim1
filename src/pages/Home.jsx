@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { ShoppingCart } from "lucide-react";
 import WelcomeScreen from "../components/WelcomeScreen";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
+import { findIdentity } from "@/lib/memberIdentity";
 import { lastListId } from "@/lib/lastList";
 import { useT } from "@/lib/i18n";
 
@@ -44,6 +45,18 @@ export default function Home() {
       try {
         await base44.entities.ShoppingList.get(savedId);
         navigate(`/list/${savedId}`, { replace: true });
+        return;
+      } catch {}
+    }
+    // הזהות: שם אחד תמיד חוזר לאותה רשימה — גם במכשיר חדש, וגם ממייל שהוזמן לרשימה
+    const identity = await findIdentity({
+      name: me.full_name || loadLocalName(),
+      email: me.email,
+    }).catch(() => null);
+    if (identity?.list_id) {
+      try {
+        await base44.entities.ShoppingList.get(identity.list_id);
+        navigate(`/list/${identity.list_id}`, { replace: true });
         return;
       } catch {}
     }

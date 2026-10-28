@@ -6,6 +6,7 @@ import { Copy, Check, Mail, Send, Loader2, Link as LinkIcon, MessageCircle, Radi
 import { toast } from "@/components/ui/use-toast";
 import { base44 } from "@/api/base44Client";
 import { buildInvitationEmailBody, INVITATION_SUBJECT } from "@/lib/invitationEmail";
+import { reserveEmailForList } from "@/lib/memberIdentity";
 import JoinQrCode from "@/components/JoinQrCode";
 import { useT } from "@/lib/i18n";
 
@@ -61,13 +62,23 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser, ite
     }
     setSending(true);
     try {
+      // הכתובת "נתפסת" לרשימה הזו — כדי שתמיד נחזור לאותה רשימה עם אותו מייל
+      const reservation = await reserveEmailForList({
+        email: trimmed, listId: list?.id, listTitle: list?.title,
+      }).catch(() => ({ ok: true }));
       await base44.integrations.Core.SendEmail({
         to: trimmed,
         subject: INVITATION_SUBJECT,
         body: buildInvitationEmailBody({ shareLink, senderName, listTitle: list?.title }),
         from_name: "מה קונים?",
       });
-      toast({ title: t("share.inviteSent", { email: trimmed }), duration: 3000 });
+      toast({
+        title: t("share.inviteSent", { email: trimmed }),
+        description: reservation.ok
+          ? undefined
+          : `המייל הזה כבר משויך לרשימה «${reservation.listTitle || "אחרת"}» — ההצטרפות לכאן תחייב את אישורו.`,
+        duration: reservation.ok ? 3000 : 6000,
+      });
       setEmail("");
     } catch (e) {
       toast({

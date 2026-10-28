@@ -13,6 +13,7 @@ import PremiumLock from "@/components/premium/PremiumLock";
 import usePremium from "@/hooks/usePremium";
 import { SUPERMARKET_NAMES, getPreferredSupermarket, setPreferredSupermarket } from "@/lib/supermarkets";
 import ChainLogo from "@/components/ChainLogo";
+import ContactSyncBlock from "@/components/ContactSyncBlock";
 
 export default function SettingsDialog({ open, onOpenChange, list }) {
   const t = useT();
@@ -127,6 +128,8 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
               <p className="text-sm text-muted-foreground truncate">{t("settings.whatsappDesc")}</p>
             </div>
           </a>
+
+          <ContactSyncBlock list={list} />
 
           {/* Supermarket preference */}
           <div className="bg-muted/50 rounded-2xl p-4 animate-slide-up stagger-3 overflow-hidden">
