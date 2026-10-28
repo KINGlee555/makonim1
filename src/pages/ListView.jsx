@@ -22,6 +22,7 @@ import LiveMembersBar from "@/components/live/LiveMembersBar";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
+import { saveLastList } from "@/lib/lastList";
 import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/lib/categoryOrder";
 import { lineCost } from "@/lib/units";
 
@@ -65,6 +66,7 @@ export default function ListView() {
 
   useEffect(() => {
     setSeenMessages(Number(localStorage.getItem(`mk_messages_seen_${listId}`) || 0));
+    saveLastList(listId);
   }, [listId]);
 
   const markMessagesSeen = () => {

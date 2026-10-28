@@ -5,6 +5,7 @@ import { detectBrand, pickBestPhoto } from "@/lib/productPhotoMatch";
 import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { getCachedPhoto, cachePhoto, isPhotoMiss, cachePhotoMiss, isBrokenPhoto, markPhotoBroken } from "@/lib/photoCache";
 import { photoByBarcode } from "@/lib/barcodePhotos";
+import { chainPhotoUrl } from "@/lib/chainPhotos";
 import { ShoppingBasket } from "lucide-react";
 
 // כמה חיפושי תמונה רצים במקביל — רשימה ארוכה מתמלאת מהר, בלי להציף את הקטלוג
@@ -96,7 +97,10 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
   const known = useRef(getCachedPhoto(name));
   const found = useRef(onFound);
   found.current = onFound;
-  const [src, setSrc] = useState(usable(imageUrl, "") ? imageUrl : known.current || typePhoto);
+  // תמונת הרשת של המוצר לפי הברקוד — נטענת מיד, בלי לחכות לחיפוש
+  const chainPhoto = barcode ? chainPhotoUrl(barcode) : "";
+  const usableChain = usable(chainPhoto, "");
+  const [src, setSrc] = useState(usable(imageUrl, "") ? imageUrl : known.current || (usableChain ? chainPhoto : "") || typePhoto);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,6 +113,11 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
     const remembered = getCachedPhoto(name);
     if (remembered) {
       setSrc(remembered);
+      return () => { cancelled = true; };
+    }
+
+    if (usableChain) {
+      setSrc(chainPhoto);
       return () => { cancelled = true; };
     }
 
@@ -129,7 +138,7 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
     });
 
     return () => { cancelled = true; };
-  }, [name, imageUrl, brand, barcode, typePhoto, lookup]);
+  }, [name, imageUrl, brand, barcode, typePhoto, lookup, chainPhoto, usableChain]);
 
   // תמונה שלא נטענה — נזכור אותה וננסה למצוא תמונה אמיתית אחרת לאותו מוצר
   const recover = (failed) => {

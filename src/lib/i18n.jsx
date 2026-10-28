@@ -11,6 +11,11 @@ const translations = {
 
     // Header
     "header.greeting": "שלום {name}",
+    "header.back": "חזרה",
+    "header.nav": "ניווט במסכים",
+    "header.myList": "הרשימה שלי",
+    "header.history": "היסטוריית קניות",
+    "header.summary": "סיכום חודשי",
     "header.changeName": "שנה שם",
     "header.settings": "הגדרות",
     "header.share": "שתף",
@@ -848,6 +853,11 @@ const translations = {
 
     // Header
     "header.greeting": "Hi {name}",
+    "header.back": "Back",
+    "header.nav": "Screen navigation",
+    "header.myList": "My list",
+    "header.history": "Purchase history",
+    "header.summary": "Monthly summary",
     "header.changeName": "Change name",
     "header.settings": "Settings",
     "header.share": "Share",
@@ -1685,6 +1695,11 @@ const translations = {
 
     // Header
     "header.greeting": "Привет, {name}",
+    "header.back": "Назад",
+    "header.nav": "Навигация по экранам",
+    "header.myList": "Мой список",
+    "header.history": "История покупок",
+    "header.summary": "Итоги месяца",
     "header.changeName": "Изменить имя",
     "header.settings": "Настройки",
     "header.share": "Поделиться",

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Check, ChevronDown, Moon, Palette, SlidersHorizontal, Sun } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Check, ChevronDown, History, Info, Moon, Palette, SlidersHorizontal, Sun } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
@@ -10,10 +11,12 @@ import { POSTER, QUIET, useSkin } from "@/lib/skin";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { toast } from "@/components/ui/use-toast";
 import { uiPill } from "@/lib/minimalUi";
+import { lastListId } from "@/lib/lastList";
 
 // כל ההגדרות הקטנות של המסך במקום אחד — במקום שורה עמוסה של כפתורים בראש
 export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = "" }) {
   const t = useT();
+  const navigate = useNavigate();
   const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(isDarkTheme);
   const [simple, setSimpleMode] = useSimpleMode();
@@ -75,6 +78,22 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = 
             {lang === language.code && <Check className="h-4 w-4 text-ui-accent" />}
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-[12px] font-normal text-ui-muted">{t("header.nav")}</DropdownMenuLabel>
+        {lastListId() && (
+          <DropdownMenuItem onClick={() => navigate(`/history/${lastListId()}`)}>
+            <History className="me-2 h-4 w-4" />
+            {t("header.history")}
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={() => navigate("/about")}>
+          <Info className="me-2 h-4 w-4" />
+          אודות
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/contact")}>
+          <Info className="me-2 h-4 w-4" />
+          יצירת קשר
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
