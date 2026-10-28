@@ -936,6 +936,32 @@ html.easy-mode .pst-card { height: 130px; }
 
 .pst-topacts .pst-back { margin-inline-start: 0; }
 
+/* כפתור החזרה — בצד ההתחלה של השורה (ימין בעברית), חץ שמצביע לאחור ומילה לידו */
+.pst-backlink {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 12px 0 14px;
+  border: 3px solid #0B3A4D;
+  border-radius: 999px;
+  background: #fff;
+  color: #0B3A4D;
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pst-backlink svg { width: 18px; height: 18px; flex: none; }
+.pst-backlink:hover { background: #0B3A4D; color: #FFD400; }
+.pst-backlink:active { opacity: .8; }
+.pst-backlink span { line-height: 1; }
+
 .pst-top h1 {
   display: flex;
   align-items: center;
@@ -1185,8 +1211,10 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 
 /* פסים, כפתורים ושדות במסכי הפנים */
 .dark .pst-back,
+.dark .pst-backlink,
 .dark .pst-btn { border-color: #FFD400; background: #12303b; }
-.dark .pst-back { color: #FFD400; }
+.dark .pst-back,
+.dark .pst-backlink { color: #FFD400; }
 .dark .pst-bar { border-bottom-color: #FFD400; background: #0b1f27; }
 .dark .pst-bar-in span { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
 .dark .pst-bar-in .pst-bar-a { background: #FFD400; color: #0B3A4D; }
@@ -1332,7 +1360,8 @@ html:not(.skin-poster) .pst-top { background: hsl(var(--skin-band)); border-bott
 html:not(.skin-poster) .pst-top::after { display: none; }
 html:not(.skin-poster) .pst-top h1 { color: hsl(var(--skin-ink)); }
 html:not(.skin-poster) .pst-top p { color: hsl(var(--skin-ink-soft)); }
-html:not(.skin-poster) .pst-back { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .pst-back,
+html:not(.skin-poster) .pst-backlink { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
 html:not(.skin-poster) .pst-h2 { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
 html:not(.skin-poster) .pst-h2-b { background: hsl(var(--pst-ink)); color: #fff; }
 html:not(.skin-poster) .pst-lrow { border: 1px solid hsl(var(--skin-line)); border-radius: 16px; box-shadow: var(--skin-shadow); }

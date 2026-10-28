@@ -17,12 +17,13 @@ export default function PosterPage({ title, subtitle, icon: Icon, back = "/", ba
             <span>MaKonim</span>
             <img src={LOGO} alt="MaKonim" />
           </span>
+          <Link to={back} className="pst-backlink" aria-label={backLabel} title={backLabel}>
+            <ArrowRight />
+            <span>חזרה</span>
+          </Link>
           <div className="pst-topacts">
             <SkinToggle className="pst-back" />
             <DarkModeToggle className="pst-back" />
-            <Link to={back} className="pst-back" aria-label={backLabel} title={backLabel}>
-              <ArrowRight />
-            </Link>
           </div>
         </div>
 
