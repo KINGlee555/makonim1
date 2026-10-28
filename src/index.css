@@ -1867,6 +1867,33 @@ html:not(.skin-poster) .pst-page {
   .pst-totals-slot { padding: 0 40px; }
 }
 
+/* ===== שורת המקור והאחריות של המחירים — מתחת לסה״כ ===== */
+.pst-price-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 1200px;
+  margin: 8px auto 0;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: rgba(11, 58, 77, .72);
+}
+
+.pst-price-note svg { margin-top: 2px; flex: none; }
+
+html:not(.skin-poster) .pst-price-note { color: hsl(var(--skin-ink-soft)); }
+.dark .pst-price-note { color: rgba(245, 241, 235, .74); }
+
+@media (min-width: 640px) {
+  .pst-price-note { padding: 0 28px; font-size: 13px; }
+}
+
+@media (min-width: 1024px) {
+  .pst-price-note { padding: 0 40px; }
+}
+
 /* ===== הסבר קצר ליד "מצב גדול ונוח" ===== */
 .pst-easy {
   display: inline-flex;

@@ -1,6 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
-export default async function(req) {
+// אין כאן המצאת מחירים.
+// המחירים היחידים שמוצגים באפליקציה מגיעים מקבצי שקיפות המחירים הרשמיים של הרשתות
+// (buildCatalog ו-chainPrices), ולכן הפונקציה הזו לא כותבת מחירים משוערים לשום מקום.
+// היא בודקת מה נאסף היום בפועל ומחזירה דוח אמת — כדי שנדע מיד אם הסנכרון האמיתי נתקע.
+const rowsOf = (result: any): any[] => (Array.isArray(result) ? result : result?.items || []);
+
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
 
@@ -14,43 +20,34 @@ export default async function(req) {
       // No user (called from workflow) — proceed with service role
     }
 
-    const products = await base44.asServiceRole.entities.Product.list("-name", 500);
+    const day = new Date().toISOString().slice(0, 10);
 
-    if (!products || products.length === 0) {
-      return Response.json({ success: true, message: "No products to sync", synced: 0 });
+    let shelfPricesToday = 0;
+    let catalogToday = 0;
+    try {
+      shelfPricesToday = rowsOf(await base44.asServiceRole.entities.ChainPrice.filter({ day }, '-created_date', 1)).length;
+    } catch (error) {
+      console.error('chain price check failed', error instanceof Error ? error.message : error);
+    }
+    try {
+      catalogToday = rowsOf(await base44.asServiceRole.entities.CatalogProduct.filter({ day }, '-created_date', 1)).length;
+    } catch (error) {
+      console.error('catalog check failed', error instanceof Error ? error.message : error);
     }
 
-    // Simulate daily price sync across Israeli supermarkets
-    // Deterministic variation based on date so prices are stable within a day
-    const now = new Date();
-    const daySeed = now.getDate() + (now.getMonth() + 1) * 31 + now.getFullYear();
-
-    const updates = products.map(p => {
-      const nameSeed = (p.name || "").charCodeAt(0) + (p.name || "").charCodeAt((p.name || "").length - 1);
-      // ±8% daily variation, deterministic per product+day
-      const variation = (((daySeed * 37 + nameSeed * 13) % 200) - 100) / 1000;
-      const basePrice = p.price || 10;
-      const newPrice = Math.max(0.5, Math.round((basePrice * (1 + variation)) * 100) / 100);
-      return {
-        id: p.id,
-        price: newPrice,
-        last_updated: now.toISOString()
-      };
-    });
-
-    // Bulk update in batches of 100
-    for (let i = 0; i < updates.length; i += 100) {
-      const batch = updates.slice(i, i + 100);
-      await base44.asServiceRole.entities.Product.bulkUpdate(batch);
-    }
+    const upToDate = shelfPricesToday > 0 || catalogToday > 0;
+    console.log('real price check', { day, shelfPricesToday, catalogToday });
 
     return Response.json({
       success: true,
-      message: `Synced ${updates.length} products across supermarkets`,
-      synced: updates.length,
-      date: now.toISOString()
+      message: upToDate
+        ? 'המחירים של היום נאספו מקבצי השקיפות הרשמיים'
+        : 'לא נאספו מחירים להיום — יש להריץ את איסוף הקטלוג',
+      day,
+      realPricesForToday: upToDate,
+      synced: 0
     });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error instanceof Error ? error.message : 'Price check failed' }, { status: 500 });
   }
 }

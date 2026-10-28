@@ -7,11 +7,11 @@ import MoreTools from "../components/list/MoreTools";
 import DealsShelf from "@/components/deals/DealsShelf";
 import ListItemsSection from "@/components/list/ListItemsSection";
 import ListTotals from "@/components/minimal/ListTotals";
+import PriceNotice from "@/components/minimal/PriceNotice";
 import CategoryBar from "@/components/shelf/CategoryBar";
 import ListDialogs from "@/components/list/ListDialogs";
 import { useShoppingList } from "@/hooks/useShoppingList";
 import { useListDialogs } from "@/hooks/useListDialogs";
-import { usePriceSync } from "@/hooks/usePriceSync";
 import { useWarmChainPrices } from "@/hooks/useWarmChainPrices";
 import { useListPresence } from "@/hooks/useListPresence";
 import { useItemReminders } from "@/hooks/useItemReminders";
@@ -46,8 +46,7 @@ export default function ListView() {
     handleAddProduct, handleAddMultiple, handleRemoveItem,
   } = useShoppingList(listId, { t, onNeedProfile: () => show("profile") });
 
-  // מרוויחים מחירים אמיתיים מהרשתות ברקע, כדי שהשוואה תיפתח מיד
-  usePriceSync();
+  // מחירים אמיתיים מהרשתות ברקע, כדי שהשוואה תיפתח מיד
   useWarmChainPrices(items);
   // תזכורות לפריטים שהגיע זמנן
   useItemReminders(items);
@@ -191,6 +190,7 @@ export default function ListView() {
         />
 
         <ListTotals itemCount={pendingItems.length} total={totalPrice} />
+        <PriceNotice />
 
         {!simple && (shoppingItems.length > 0 || unavailableItems.length > 0) && (
           <DealsShelf
