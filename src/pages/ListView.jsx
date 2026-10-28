@@ -133,6 +133,7 @@ export default function ListView() {
   return (
     <div className="pst-page min-h-screen">
       <ListHeader
+        list={list}
         userName={user?.full_name}
         onOpenProfile={() => show("profile")}
         onOpenSettings={() => show("settings")}

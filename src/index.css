@@ -1801,6 +1801,34 @@ html:not(.skin-poster) .pst-live-invite { border: 1px dashed hsl(var(--skin-line
   .pst-hero .pst-brand img { width: 88px; height: 88px; border-radius: 24px; }
 }
 
+/* ===== שם הרשימה שאני נמצא בה — צמוד ללוגו, שלא תהיה שאלה ===== */
+.pst-listname {
+  width: fit-content;
+  max-width: 100%;
+  margin: 10px auto 0;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: rgba(11, 58, 77, .1);
+  color: #0b3a4d;
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html:not(.skin-poster) .pst-listname {
+  background: hsl(var(--skin-surface-2));
+  color: hsl(var(--skin-ink));
+}
+
+.dark .pst-listname { background: rgba(255, 255, 255, .14); color: #f5f1eb; }
+
+@media (min-width: 640px) {
+  .pst-listname { margin-top: 12px; padding: 5px 18px; font-size: 15px; }
+}
+
 /* ===== רקע נעים לכל האפליקציה — הילה רכה למעלה וגוון עדין לגוף ===== */
 .pst-page {
   background:

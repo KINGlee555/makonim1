@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { ShoppingCart } from "lucide-react";
 import WelcomeScreen from "../components/WelcomeScreen";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
+import { lastListId } from "@/lib/lastList";
 import { useT } from "@/lib/i18n";
 
 export default function Home() {
@@ -36,10 +37,20 @@ export default function Home() {
 
   const goToList = async (me) => {
     setStatus("redirecting");
+    // קודם כל הרשימה שנשמרה במכשיר הזה — כך תמיד חוזרים לאותה רשימה,
+    // גם בלי חשבון, וכל אחד מקבל רשימה משלו.
+    const savedId = lastListId();
+    if (savedId) {
+      try {
+        await base44.entities.ShoppingList.get(savedId);
+        navigate(`/list/${savedId}`, { replace: true });
+        return;
+      } catch {}
+    }
     const allLists = await base44.entities.ShoppingList.list("-created_date", 50);
     // הרשימה שלי: מה שרשום על שמי, מה ששיתפתי, או רשימה שנוצרה לפני שנשמר הבעלים —
     // כדי לחזור תמיד לאותה רשימה משותפת במקום לפתוח רשימה חדשה בכל כניסה
-    const myLists = allLists.filter(l =>
+    const myLists = !me.email ? [] : allLists.filter(l =>
       l.owner_email === me.email ||
       l.created_by === me.email ||
       (l.shared_with || []).includes(me.email) ||
