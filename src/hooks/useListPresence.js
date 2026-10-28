@@ -36,7 +36,9 @@ export function useListPresence(listId, user) {
 
     beat();
     const interval = setInterval(beat, HEARTBEAT_MS);
-    return () => { cancelled = true; clearInterval(interval); };
+    // סנכרון פשוט: כל שינוי בנוכחות מגיע מיד, בלי לחכות לפעימה הבאה
+    const unsubscribe = base44.entities.ListPresence.subscribe(() => { if (!cancelled) read(); });
+    return () => { cancelled = true; clearInterval(interval); unsubscribe?.(); };
   }, [listId, email, name]);
 
   return { members, online: members.filter(isHere) };

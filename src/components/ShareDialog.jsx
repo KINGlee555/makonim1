@@ -14,6 +14,7 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser, ite
   const [copied, setCopied] = useState(false);
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
+  const [phone, setPhone] = useState("");
 
   const shareLink = `${window.location.origin}/join/${list?.share_code}`;
   const senderName = currentUser?.full_name || currentUser?.email || "";
@@ -80,6 +81,34 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser, ite
     }
   };
 
+  // הזמנה למספר טלפון: המספר נשמר ברשימה ונפתחת שיחת וואטסאפ עם קישור ההצטרפות
+  const phoneDigits = phone.replace(/\D/g, "");
+  const phoneLocal = phoneDigits.startsWith("972") ? `0${phoneDigits.slice(3)}` : phoneDigits;
+  const phoneOk = phoneLocal.length >= 9 && phoneLocal.length <= 11;
+  const waNumber = phoneDigits.startsWith("972")
+    ? phoneDigits
+    : phoneDigits.startsWith("0")
+      ? `972${phoneDigits.slice(1)}`
+      : phoneDigits;
+  const inviteText = itemCount > 0
+    ? t("share.whatsappText", { title: list?.title || t("app.name"), count: itemCount, link: shareLink })
+    : t("share.whatsappTextEmpty", { title: list?.title || t("app.name"), link: shareLink });
+
+  const handlePhoneInvite = async () => {
+    if (!phoneOk) {
+      toast({ title: t("share.phoneInvalid"), variant: "destructive", duration: 2500 });
+      return;
+    }
+    try {
+      const phones = Array.from(new Set([...(list?.invited_phones || []), phoneLocal]));
+      await base44.entities.ShoppingList.update(list.id, { invited_phones: phones });
+      toast({ title: t("share.phoneSaved"), duration: 2500 });
+      setPhone("");
+    } catch {
+      toast({ title: t("share.emailFailed"), variant: "destructive", duration: 3000 });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md mx-auto">
@@ -133,6 +162,34 @@ export default function ShareDialog({ open, onOpenChange, list, currentUser, ite
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2">{t("share.emailNote")}</p>
+          </div>
+
+          <div>
+            <label className="text-base font-medium text-foreground mb-2 flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-primary" />
+              {t("share.phoneTitle")}
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="tel"
+                inputMode="tel"
+                dir="ltr"
+                placeholder={t("share.phonePlaceholder")}
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                className="h-12 min-w-0 flex-1 rounded-xl border border-input bg-transparent px-3 text-sm text-foreground"
+              />
+              <a
+                href={phoneOk ? `https://wa.me/${waNumber}?text=${encodeURIComponent(inviteText)}` : undefined}
+                target="_blank"
+                rel="noreferrer"
+                onClick={handlePhoneInvite}
+                className={`flex h-12 flex-shrink-0 items-center gap-1.5 rounded-xl px-4 text-sm font-bold no-underline transition-opacity ${phoneOk ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+              >
+                <MessageCircle className="h-4 w-4" />
+                {t("share.phoneSend")}
+              </a>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">

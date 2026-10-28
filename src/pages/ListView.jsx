@@ -16,7 +16,9 @@ import { useListPresence } from "@/hooks/useListPresence";
 import { useItemReminders } from "@/hooks/useItemReminders";
 import { useChainDeals } from "@/hooks/useChainDeals";
 import { useListNotifications } from "@/hooks/useListNotifications";
+import { useListMessages } from "@/hooks/useListMessages";
 import NotificationPrompt from "@/components/NotificationPrompt";
+import LiveMembersBar from "@/components/live/LiveMembersBar";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
@@ -55,6 +57,20 @@ export default function ListView() {
   const [simple] = useSimpleMode();
   // התראות בזמן אמת במכשיר — כשמישהו מהמשפחה מוסיף מוצר או מסמן מוצר כנקנה
   useListNotifications(listId, !!list?.push_enabled, user?.id);
+  // הודעות המשתתפים מגיעות מיד, והמונה מראה מה עוד לא ראיתי
+  const { messages, sendMessage } = useListMessages(listId, user);
+  const incomingMessages = messages.filter(message => message.from_email !== (user?.email || ""));
+  const [seenMessages, setSeenMessages] = useState(0);
+  const unreadMessages = Math.max(0, incomingMessages.length - seenMessages);
+
+  useEffect(() => {
+    setSeenMessages(Number(localStorage.getItem(`mk_messages_seen_${listId}`) || 0));
+  }, [listId]);
+
+  const markMessagesSeen = () => {
+    setSeenMessages(incomingMessages.length);
+    localStorage.setItem(`mk_messages_seen_${listId}`, String(incomingMessages.length));
+  };
 
   useEffect(() => {
     loadAllProducts(1000).then(setAllProducts).catch(() => {});
@@ -122,6 +138,16 @@ export default function ListView() {
         onOpenSettings={() => show("settings")}
         onOpenShare={() => show("share")}
         onOpenQr={() => show("qr")}
+      />
+
+      <LiveMembersBar
+        list={list}
+        members={presence.members}
+        myEmail={user?.email}
+        myName={user?.full_name}
+        unread={unreadMessages}
+        onOpenShare={() => show("share")}
+        onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
       />
 
       {otherShoppers.length > 0 && (
@@ -208,6 +234,8 @@ export default function ListView() {
         favorites={favorites}
         user={user}
         allProducts={allProducts}
+        messages={messages}
+        onSendMessage={sendMessage}
         actions={{
           userName: userNameRef.current,
           onListUpdated: (patch) => setList(prev => ({ ...prev, ...patch })),

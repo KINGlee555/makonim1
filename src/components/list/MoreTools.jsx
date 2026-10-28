@@ -26,7 +26,11 @@ export default function MoreTools({
   const t = useT();
   const { isPremium } = usePremium();
   const [open, setOpen] = useState("");
-  const toggle = (id) => setOpen(current => (current === id ? "" : id));
+  // איסוף עצמי נפתח בחלון משלו — יש בו הרבה פרטים, לא רק פאנל
+  const toggle = (id) => {
+    if (id === "pickup") { show("pickup"); return; }
+    setOpen(current => (current === id ? "" : id));
+  };
 
   const people = members
     .filter(member => member.user_email && member.user_email !== myEmail)
@@ -34,6 +38,7 @@ export default function MoreTools({
 
   const tools = [
     { id: "presence", label: t("presence.open"), note: people.slice(0, 2).join(" · ") || t("presence.alone") },
+    { id: "pickup", label: t("pickup.open"), note: t("pickup.toolsHint") },
     ...(simple ? [] : [{ id: "basket", label: t("basket.title") }]),
     { id: "departments", label: t("big.departments"), note: groupedCategories.slice(0, 3).map(([category]) => category).join(" · ") },
     ...(simple ? [] : [{ id: "area", label: t("area.title") }]),

@@ -27,10 +27,13 @@ import CategoryOrderDialog from "@/components/CategoryOrderDialog";
 import VoiceQuickAdd from "@/components/VoiceQuickAdd";
 import PremiumDialog from "@/components/PremiumDialog";
 import CourierDeliveryDialog from "@/components/CourierDeliveryDialog";
+import PickupOrderDialog from "@/components/PickupOrderDialog";
+import ListMessagesDialog from "@/components/live/ListMessagesDialog";
 
 // כל חלונות העזר של הרשימה מרוכזים כאן — המסך עצמו רק אומר איזה חלון לפתוח
 export default function ListDialogs({
   dialogs, listId, list, pendingItems, shoppingItems, favorites, user, allProducts, actions,
+  messages, onSendMessage,
 }) {
   const { open, show, hide, bind } = dialogs;
 
@@ -76,6 +79,8 @@ export default function ListDialogs({
       <VoiceQuickAdd {...bind("voice")} onAddProduct={actions.onAddProduct} allProducts={allProducts} />
       <PremiumDialog {...bind("premium")} />
       <CourierDeliveryDialog {...bind("courier")} listId={listId} items={pendingItems} userName={actions.userName} />
+      <PickupOrderDialog {...bind("pickup")} listId={listId} items={pendingItems} userName={actions.userName} />
+      <ListMessagesDialog {...bind("messages")} messages={messages} onSend={onSendMessage} myEmail={user?.email} />
     </>
   );
 }

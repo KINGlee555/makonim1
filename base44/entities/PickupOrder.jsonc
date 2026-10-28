@@ -1,0 +1,81 @@
+{
+  "name": "PickupOrder",
+  "type": "object",
+  "properties": {
+    "list_id": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05e8\u05e9\u05d9\u05de\u05d4 \u05e9\u05de\u05de\u05e0\u05d4 \u05e0\u05d1\u05e0\u05ea\u05d4 \u05d4\u05d4\u05d6\u05de\u05e0\u05d4"
+    },
+    "chain": {
+      "type": "string",
+      "default": "",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05e8\u05e9\u05ea \u05e9\u05d0\u05dc\u05d9\u05d4 \u05de\u05d6\u05de\u05d9\u05e0\u05d9\u05dd (shufersal, rami_levy, ...)"
+    },
+    "chain_name": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05e8\u05e9\u05ea \u05dc\u05d0\u05d9\u05e1\u05d5\u05e3"
+    },
+    "branch": {
+      "type": "string",
+      "maxLength": 80,
+      "default": "",
+      "description": "\u05d4\u05e1\u05e0\u05d9\u05e3 \u05e9\u05de\u05de\u05e0\u05d5 \u05d0\u05d5\u05e1\u05e4\u05d9\u05dd"
+    },
+    "contact_name": {
+      "type": "string",
+      "maxLength": 60,
+      "default": "",
+      "description": "\u05e9\u05dd \u05d4\u05de\u05d6\u05de\u05d9\u05df"
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 20,
+      "default": "",
+      "description": "\u05d8\u05dc\u05e4\u05d5\u05df \u05dc\u05d9\u05e6\u05d9\u05e8\u05ea \u05e7\u05e9\u05e8 \u05e2\u05dd \u05d4\u05de\u05d6\u05de\u05d9\u05df"
+    },
+    "pickup_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "\u05de\u05ea\u05d9 \u05de\u05d2\u05d9\u05e2\u05d9\u05dd \u05dc\u05d0\u05e1\u05d5\u05e3"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 160,
+      "default": "",
+      "description": "\u05d4\u05e2\u05e8\u05d4 \u05dc\u05d7\u05e0\u05d5\u05ea"
+    },
+    "items_count": {
+      "type": "number",
+      "default": 0,
+      "description": "\u05de\u05e1\u05e4\u05e8 \u05d4\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05d1\u05d4\u05d6\u05de\u05e0\u05d4"
+    },
+    "total": {
+      "type": "number",
+      "default": 0,
+      "description": "\u05e1\u05d4\u05f4\u05db \u05d4\u05d4\u05d6\u05de\u05e0\u05d4 \u05dc\u05e4\u05d9 \u05de\u05d7\u05d9\u05e8\u05d9 \u05d4\u05de\u05d3\u05e3"
+    },
+    "basket": {
+      "type": "string",
+      "description": "\u05e0\u05d5\u05e1\u05d7 \u05d4\u05d4\u05d6\u05de\u05e0\u05d4 \u05d4\u05de\u05dc\u05d0 \u2014 \u05e0\u05e9\u05dc\u05d7 \u05dc\u05d7\u05e0\u05d5\u05ea \u05d5\u05de\u05d5\u05e6\u05d2 \u05dc\u05de\u05e9\u05ea\u05ea\u05e4\u05d9\u05dd"
+    },
+    "created_by_name": {
+      "type": "string",
+      "default": "",
+      "description": "\u05de\u05d9 \u05d9\u05e6\u05e8 \u05d0\u05ea \u05d4\u05d4\u05d6\u05de\u05e0\u05d4"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "collected",
+        "cancelled"
+      ],
+      "default": "open",
+      "description": "\u05de\u05e6\u05d1 \u05d4\u05d4\u05d6\u05de\u05e0\u05d4"
+    }
+  },
+  "required": [
+    "list_id",
+    "chain_name"
+  ]
+}

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import heExtra from "@/lib/locales/heExtra";
 
 const STORAGE_KEY = "app_language";
 
@@ -2429,6 +2430,9 @@ const translations = {
     "pet.nav": "Маршрут: {store}",
   },
 };
+
+// מפתחות חדשים מגיעים מקובץ נפרד ומתווספים לעברית
+Object.assign(translations.he, heExtra);
 
 const LanguageContext = createContext();
 
