@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400..900&family=Secular+One&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --font-rubik: "Open Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-    --font-display: "Open Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-rubik: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-display: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     /* ===== כרזת שוק — שפת העיצוב של כל האפליקציה ===== */
     --pst-ink: 197 75% 17%;
     --pst-yellow: 43 100% 51%;

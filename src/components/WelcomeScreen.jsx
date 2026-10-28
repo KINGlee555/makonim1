@@ -1,51 +1,88 @@
 import { useState } from "react";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { loadLocalName } from "@/lib/userName";
-import { useT } from "@/lib/i18n";
-import PosterPage from "@/components/poster/PosterPage";
+import { useLanguage } from "@/lib/i18n";
+import welcomeCopy from "@/lib/locales/welcomeCopy";
+import SkipLink from "@/components/SkipLink";
+import DarkModeToggle from "@/components/DarkModeToggle";
+import SkinToggle from "@/components/SkinToggle";
+import AppFooter from "@/components/AppFooter";
 import CatalogTrust from "@/components/CatalogTrust";
+import "@/styles/welcome.css";
 
-// מסך הפתיחה בשפת כרזת השוק: שלוש הבטחות בכרטיסי כרזה ממוספרים,
-// ומתחת כרטיס עם השם — ומשם ממשיכים ישר לרשימה.
+const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
+
+// מסך הפתיחה: שורה אחת של כותרת, תיבת שם גדולה וכפתור אחד.
+// כל מה שלא הכרחי כדי להתחיל לקנות — לא נמצא כאן.
 export default function WelcomeScreen({ onNameSubmit }) {
-  const t = useT();
+  const { lang } = useLanguage();
+  const copy = welcomeCopy[lang] || welcomeCopy.he;
   const [name, setName] = useState(loadLocalName());
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (!name.trim()) return;
     onNameSubmit(name.trim());
   };
 
   return (
-    <PosterPage title={t("welcome.title")} subtitle={t("welcome.subtitle")} back="/" backLabel="MaKonim">
-      <CatalogTrust />
+    <div dir="rtl" className="pst-page pst-inner welcome-page">
+      <SkipLink />
 
-      <h2 className="pst-h2">{t("welcome.band")}</h2>
-      <div className="pst-cards">
-        {[t("welcome.p1"), t("welcome.p2"), t("welcome.p3")].map((line, index) => (
-          <div key={line} className="pst-why">
-            <span className="pst-why-n">{index + 1}</span>
-            <p className="min-w-0">{line}</p>
-          </div>
-        ))}
-      </div>
+      <header className="welcome-top">
+        <span className="welcome-logo">
+          <img src={LOGO} alt="MaKonim" />
+          <span>MaKonim</span>
+        </span>
+        <div className="welcome-top-acts">
+          <SkinToggle className="pst-back" />
+          <DarkModeToggle className="pst-back" />
+        </div>
+      </header>
 
-      <div className="pst-panel mx-auto mt-7 w-full max-w-md">
-        <Input
-          placeholder={t("welcome.namePlaceholder")}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          className="h-14 text-center text-lg"
-          maxLength={64}
-          autoFocus
-        />
-        <Button onClick={handleSubmit} disabled={!name.trim()} className="mt-4 h-14 w-full text-lg font-black">
-          {t("welcome.start")}
-        </Button>
-      </div>
-    </PosterPage>
+      <main id="main-content" className="welcome-main">
+        <p className="welcome-eyebrow">
+          <Sparkles className="h-3.5 w-3.5" />
+          {copy.eyebrow}
+        </p>
+
+        <h1 className="welcome-title">
+          {copy.title1}
+          <br />
+          <em>{copy.title2}</em>
+        </h1>
+        <p className="welcome-sub">{copy.sub}</p>
+
+        <form className="welcome-card" onSubmit={handleSubmit}>
+          <input
+            className="welcome-input"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder={copy.placeholder}
+            aria-label={copy.placeholder}
+            maxLength={64}
+            autoFocus
+          />
+          <button type="submit" className="welcome-cta" disabled={!name.trim()}>
+            {copy.cta}
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+        </form>
+
+        <div className="welcome-chips">
+          {copy.chips.map((chip) => (
+            <span key={chip} className="welcome-chip">{chip}</span>
+          ))}
+        </div>
+
+        <div className="welcome-trust">
+          <CatalogTrust compact />
+        </div>
+
+        <div className="mt-auto pt-6">
+          <AppFooter />
+        </div>
+      </main>
+    </div>
   );
 }
