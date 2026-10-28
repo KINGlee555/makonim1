@@ -27,8 +27,8 @@ export default async function (req) {
     const body = await req.json().catch(() => ({}));
     const requested = Array.isArray(body?.chains) && body.chains.length ? body.chains : DEFAULT_CHAINS;
     // כמה מוצרים לסרוק מקובץ המחירים, וכמה מהם לבדוק מול קטלוג התמונות בקריאה הזאת.
-    const scan = Math.min(Math.max(Number(body?.scan) || 6000, 200), 30000);
-    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 2500);
+    const scan = Math.min(Math.max(Number(body?.scan) || 6000, 200), 60000);
+    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 12000);
     const startedAt = Date.now();
     const report = [];
 
@@ -52,16 +52,15 @@ export default async function (req) {
         const { items, day } = await chainCatalogItems(chain, scan);
 
         // ברקוד שכבר בדקנו בעבר (גם אם לא נמצאה לו תמונה) לא נבדק שוב — כך כל הרצה
-        // ממשיכה הלאה ומתקדמת למוצרים חדשים.
+        // ממשיכה הלאה ומתקדמת למוצרים חדשים. בדיקה בקבוצות גדולות של 400 מוצרים,
+        // כדי לכסות את כל קובץ המחירים בלי לחרוג ממגבלת הקריאות של השרת.
         const known = new Set<string>();
         const candidates = [];
-        for (let i = 0; i < items.length && i < MAX_CHUNKS * 150; i += 150) {
-          const slice = items.slice(i, i + 150);
-          const codes = slice.map((item) => item.code);
-          const stored = await base44.asServiceRole.entities.CatalogProduct.filter({ barcode: { $in: codes } }, "-created_date", 150);
-          const seen = await base44.asServiceRole.entities.CatalogImage.filter({ barcode: { $in: codes } }, "-created_date", 150);
+        const CHUNK = 400;
+        for (let i = 0; i < items.length && i < MAX_CHUNKS * CHUNK; i += CHUNK) {
+          const slice = items.slice(i, i + CHUNK);
+          const stored = await base44.asServiceRole.entities.CatalogProduct.filter({ barcode: { $in: slice.map((item) => item.code) } }, "-created_date", CHUNK);
           for (const row of stored || []) known.add(row.barcode);
-          for (const row of seen || []) known.add(row.barcode);
           for (const item of slice) if (!known.has(item.code)) candidates.push(item);
         }
 
@@ -138,7 +137,7 @@ export default async function (req) {
       }
 
       // 2. מוצרים חדשים עם תמונה אמיתית מהמאגרים הפתוחים — רק כאלה שעוד אין לנו.
-      const want = Math.min(Math.max(Number(body?.importLimit) || 400, 0), 2000);
+      const want = Math.min(Math.max(Number(body?.importLimit) || 400, 0), 3500);
       if (want) {
         // כל הרצה ממשיכה מהדף שאליו הגענו במאגר (נשמר ב-OpenCatalogSync) — ולכן
         // הקטלוג ממשיך לגדול בכל הרצה יומית ולא חוזר על אותם מוצרים.
@@ -146,11 +145,11 @@ export default async function (req) {
         const syncBySource = new Map<string, any>((syncRows || []).map((row: any) => [row.source, row]));
         const pageBySource: Record<string, number> = {};
         for (const source of OPEN_SOURCES) pageBySource[source] = Math.max(1, Number(syncBySource.get(source)?.next_page) || 1);
-        const candidates = await openCountryProducts({ pages: 2, pageBySource });
+        const candidates = await openCountryProducts({ pages: 6, pageSize: 300, pageBySource });
         const fresh: typeof candidates = [];
-        for (let i = 0; i < candidates.length; i += 100) {
-          const slice = candidates.slice(i, i + 100);
-          const stored = await base44.asServiceRole.entities.CatalogProduct.filter({ barcode: { $in: slice.map((item) => item.code) } }, "-created_date", 100);
+        for (let i = 0; i < candidates.length; i += 400) {
+          const slice = candidates.slice(i, i + 400);
+          const stored = await base44.asServiceRole.entities.CatalogProduct.filter({ barcode: { $in: slice.map((item) => item.code) } }, "-created_date", 400);
           const known = new Set((stored || []).map((row) => row.barcode));
           for (const item of slice) if (!known.has(item.code)) fresh.push(item);
         }
@@ -173,7 +172,7 @@ export default async function (req) {
         for (const source of OPEN_SOURCES) {
           const row = syncBySource.get(source);
           const data = {
-            next_page: (pageBySource[source] || 1) + 2,
+            next_page: (pageBySource[source] || 1) + 6,
             imported: (Number(row?.imported) || 0) + (open.perSource[source] || 0),
             last_run: new Date().toISOString()
           };

@@ -34,7 +34,7 @@
               "open": true,
               "openOnly": true,
               "backfill": 400,
-              "importLimit": 800
+              "importLimit": 3500
             }
           },
           "then": "catalog_king_store",
@@ -52,8 +52,8 @@
               "chains": [
                 "king_store"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_zol_ve_gadol",
@@ -71,8 +71,8 @@
               "chains": [
                 "zol_ve_gadol"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_super_sapir",
@@ -90,8 +90,8 @@
               "chains": [
                 "super_sapir"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_maayan_2000",
@@ -109,8 +109,8 @@
               "chains": [
                 "maayan_2000"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_city_market",
@@ -128,8 +128,8 @@
               "chains": [
                 "city_market"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_shuk_hair",
@@ -147,8 +147,8 @@
               "chains": [
                 "shuk_hair"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_shefa_berkat_hashem",
@@ -166,8 +166,8 @@
               "chains": [
                 "shefa_berkat_hashem"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_of_ve_hodu_bareket",
@@ -185,8 +185,8 @@
               "chains": [
                 "of_ve_hodu_bareket"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_mishnat_yosef",
@@ -204,8 +204,8 @@
               "chains": [
                 "mishnat_yosef"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_good_pharm",
@@ -223,8 +223,8 @@
               "chains": [
                 "good_pharm"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_dor_alon",
@@ -242,8 +242,8 @@
               "chains": [
                 "dor_alon"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "catalog_yilo",
@@ -261,8 +261,8 @@
               "chains": [
                 "yilo"
               ],
-              "scan": 8000,
-              "perChain": 2500
+              "scan": 45000,
+              "perChain": 12000
             }
           },
           "then": "end",

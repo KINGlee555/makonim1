@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Secular+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400..800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --font-rubik: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-    --font-display: "Secular One", "Rubik", system-ui, -apple-system, Arial, sans-serif;
+    --font-rubik: "Open Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-display: "Open Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     /* ===== כרזת שוק — שפת העיצוב של כל האפליקציה ===== */
     --pst-ink: 197 75% 17%;
     --pst-yellow: 43 100% 51%;
@@ -618,16 +618,16 @@ html.easy-mode [role="dialog"] .text-xl {
 /* פתיח צהוב שטוח — מיתוג, שם הרשימה, שני המספרים ושורת הפעולות */
 .pst-hero { position: relative; max-width: 1200px; margin: 0 auto; padding: 24px 16px 22px; background: #FFD400; animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both; }
 .pst-hero::after { content: ""; position: absolute; inset-inline: 0; bottom: -22px; height: 22px; background: #FFD400; clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%); z-index: 2; pointer-events: none; }
-.pst-brand { display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+.pst-brand { display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .pst-brand img { width: 40px; height: 40px; border: 3px solid #0B3A4D; border-radius: 10px; object-fit: cover; }
 .pst-greet { padding: 6px 14px; border: 0; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 14px; font-weight: 800; letter-spacing: 0; }
 .pst-row { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
-.pst-ttl { margin: 0; max-width: 560px; font-family: var(--font-display); font-size: 44px; font-weight: 400; line-height: 1.06; letter-spacing: -.01em; text-transform: uppercase; }
+.pst-ttl { margin: 0; max-width: 560px; font-family: var(--font-display); font-size: 44px; font-weight: 700; line-height: 1.06; letter-spacing: -.01em; text-transform: uppercase; }
 .pst-ttl button { display: flex; align-items: flex-end; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; }
 .pst-ttl svg { width: 24px; height: 24px; flex: none; margin-bottom: 4px; }
 .pst-nums { display: flex; gap: 12px; }
 .pst-num { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 8px 16px 4px; border: 3px solid #0B3A4D; border-radius: 16px; background: #FF3B5D; color: #fff; font-size: 14px; font-weight: 800; box-shadow: 5px 5px 0 #0B3A4D; }
-.pst-num b { margin-top: 2px; font-family: var(--font-display); font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -.02em; }
+.pst-num b { margin-top: 2px; font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: -.02em; }
 .pst-num-t { background: #fff; color: #0B3A4D; }
 .pst-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 
@@ -663,7 +663,7 @@ html.easy-mode [role="dialog"] .text-xl {
 
 /* מקטע מחלקה — פס כרזה, תמונת המחלקה, טריז אלכסוני ואריחי המוצרים */
 .pst-sec { max-width: 1200px; margin: 28px auto 0; }
-.pst-sh { margin: 0; padding: 12px 16px; font-family: var(--font-display); font-size: 24px; font-weight: 400; line-height: 1.1; letter-spacing: -.01em; text-transform: uppercase; position: relative; overflow: hidden; }
+.pst-sh { margin: 0; padding: 12px 16px; font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; text-transform: uppercase; position: relative; overflow: hidden; }
 .pst-sh-in { display: flex; align-items: center; gap: 12px; }
 .pst-sh-a { background: #FFD400; animation: pstInR .7s both; }
 .pst-sh-b { background: #FF3B5D; color: #fff; animation: pstInL .7s both; }
@@ -732,7 +732,7 @@ html.easy-mode [role="dialog"] .text-xl {
 
 /* פס הפעולות התחתון */
 .pst-dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 40; display: flex; max-width: 1200px; height: calc(74px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); margin: 0 auto; border-top: 3px solid #0B3A4D; background: #fff; }
-.pst-dock button { flex: 1; padding: 0; border: 0; color: #0B3A4D; font-family: var(--font-display); font-size: 17px; font-weight: 400; text-transform: uppercase; }
+.pst-dock button { flex: 1; padding: 0; border: 0; color: #0B3A4D; font-family: var(--font-display); font-size: 17px; font-weight: 700; text-transform: uppercase; }
 .pst-dock .pst-add { background: #FFD400; }
 .pst-dock .pst-fin { background: #FF3B5D; color: #fff; }
 .pst-dock .pst-scan { position: absolute; left: 50%; top: -23px; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; flex: none; border: 3px solid #fff; border-radius: 50%; background: #0B3A4D; color: #FFD400; }
@@ -943,7 +943,7 @@ html.easy-mode .pst-card { height: 130px; }
   margin: 16px 0 0;
   font-family: var(--font-display);
   font-size: 30px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: -.01em;
   text-transform: uppercase;
@@ -978,7 +978,7 @@ html.easy-mode .pst-card { height: 130px; }
   color: #0B3A4D;
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -1077,7 +1077,7 @@ html.easy-mode .pst-card { height: 130px; }
   flex: none;
   font-family: var(--font-display);
   font-size: 34px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1;
 }
 

@@ -17,10 +17,6 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
       </div>
 
       <div className="pst-row">
-        <h1 className="pst-ttl">
-          <span className="truncate">{list.title}</span>
-        </h1>
-
         <div className="pst-nums">
           <span className="pst-num">
             {t("list.total")}
