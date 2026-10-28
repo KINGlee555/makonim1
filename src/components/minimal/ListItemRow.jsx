@@ -1,9 +1,10 @@
 import { memo } from "react";
-import { Bell, Pencil, CircleSlash2, Star, Camera, Send, Flag } from "lucide-react";
+import { Bell, Pencil, CircleSlash2, Star, Camera, Send, Flag, Clock } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import WeightQuantity from "@/components/minimal/WeightQuantity";
 import { dealPriceText } from "@/lib/chainDeals";
-import { useT } from "@/lib/i18n";
+import { useLanguage, useT } from "@/lib/i18n";
+import { addedText } from "@/lib/itemAdded";
 import { isGram, isWeight, maxQuantity, quantityStep } from "@/lib/units";
 import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -11,6 +12,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 // אריח מוצר בכרזה: תמונה עגולה עם תג מחיר, שם, מבצע אם יש, ומתחת שורת פעולות — כמות, "קניתי" ותפריט.
 function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, onUpdateDetails, onReportPrice, deal, isFavorite, viewerName, className }) {
   const t = useT();
+  const { lang } = useLanguage();
+  // מי הוסיף את המוצר ומתי — גלוי על כל שורה
+  const addedLine = addedText(item, lang);
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
   const step = quantityStep(unit);
@@ -48,11 +52,16 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
       </div>
       <div className="pst-body">
         <span className="pst-nm line-clamp-2">{item.name}</span>
-        {(price > 0 || unitLabel || secondary) && (
+        {(price > 0 || unitLabel || secondary || addedLine) && (
           <span className="pst-line-sub">
             {price > 0 && <span className="pst-price">{priceText}</span>}
             {unitLabel && <span className="pst-meta">{unitLabel}</span>}
             {secondary && <span className="pst-meta">{secondary}</span>}
+            {addedLine && (
+              <span className="pst-meta inline-flex items-center gap-1">
+                <Clock className="h-3 w-3 shrink-0" />{addedLine}
+              </span>
+            )}
           </span>
         )}
         {deal && (

@@ -209,7 +209,8 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
       list_id: listId, name: product.name, barcode: product.barcode || "",
       price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
-      status: "pending", quantity: 1, unit, note: ""
+      status: "pending", quantity: 1, unit, note: "",
+      added_by: userNameRef.current || ""
     });
     setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
   }, [listId]);
@@ -218,7 +219,8 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
     const rows = products.map(p => ({
       list_id: listId, name: p.name, barcode: p.barcode || "", price: p.price || 0,
       image_url: p.image_url || "", category: p.category || "אחר",
-      status: "pending", quantity: 1, unit: isWeightSold(p) ? "kg" : "unit"
+      status: "pending", quantity: 1, unit: isWeightSold(p) ? "kg" : "unit",
+      added_by: userNameRef.current || ""
     }));
     try {
       const created = await base44.entities.ListItem.bulkCreate(rows);

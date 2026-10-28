@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
+import { loadLocalName } from "@/lib/userName";
 
 const TEMPLATES = [
   { id: "weekly", emoji: "🛒", names: ["חלב", "לחם", "ביצים", "גבינה לבנה", "יוגורט", "עגבניות", "מלפפון", "בצל", "שמן זית", "מלח", "קפה", "סוכר", "שמן קנולה", "טונה", "פסטה", "אורז"] },
@@ -28,7 +29,7 @@ export default function ListTemplates({ open, onOpenChange, listId, allProducts,
         .map(name => allProducts.find(p => p.name === name || p.name.includes(name) || name.includes(p.name)))
         .filter(Boolean);
       const items = (matched.length > 0 ? matched : template.names.map(name => ({ name, price: 0, image_url: "", category: "אחר" })))
-        .map(p => ({ list_id: listId, name: p.name, price: p.price || 0, image_url: p.image_url || "", category: p.category || "אחר", status: "pending", quantity: 1 }));
+        .map(p => ({ list_id: listId, name: p.name, price: p.price || 0, image_url: p.image_url || "", category: p.category || "אחר", status: "pending", quantity: 1, added_by: loadLocalName() }));
       await base44.entities.ListItem.bulkCreate(items);
       toast({ title: t("templates.added", { count: items.length }), duration: 2000 });
       if (onAdded) onAdded();

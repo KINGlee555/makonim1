@@ -6,6 +6,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useT } from "@/lib/i18n";
 import { uiEnter, uiSection } from "@/lib/minimalUi";
 import { isWeightSold } from "@/lib/weightProducts";
+import { loadLocalName } from "@/lib/userName";
 
 const DAYS_BACK = 14;
 const HISTORY_LIMIT = 200;
@@ -50,7 +51,8 @@ export default function FillFromLastWeek({ listId, currentItems, onFilled }) {
         image_url: "",
         status: "pending",
         quantity: 1,
-        unit: isWeightSold({ name: product.name, category: product.category }) ? "kg" : "unit"
+        unit: isWeightSold({ name: product.name, category: product.category }) ? "kg" : "unit",
+        added_by: loadLocalName()
       })));
       toast({ title: t("fillLast.added", { count: created.length }), duration: 3000 });
       onFilled();

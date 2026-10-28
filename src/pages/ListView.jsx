@@ -21,6 +21,7 @@ import { useListNotifications } from "@/hooks/useListNotifications";
 import { useListMessages } from "@/hooks/useListMessages";
 import NotificationPrompt from "@/components/NotificationPrompt";
 import LiveMembersBar from "@/components/live/LiveMembersBar";
+import LanguageNotice from "@/components/LanguageNotice";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { useT } from "@/lib/i18n";
 import { loadAllProducts } from "@/lib/loadAllProducts";
@@ -151,6 +152,8 @@ export default function ListView() {
         onOpenShare={() => show("share")}
         onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
       />
+
+      <LanguageNotice />
 
       {otherShoppers.length > 0 && (
         <p className="pst-note">{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
