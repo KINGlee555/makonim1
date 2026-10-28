@@ -1413,8 +1413,8 @@ img,
 .pst-tile.pst-line {
   flex-direction: row;
   align-items: flex-start;
-  gap: 10px;
-  padding: 8px 10px;
+  gap: 8px;
+  padding: 6px 10px;
   border-width: 2px;
   border-radius: 14px;
   box-shadow: 3px 3px 0 #0B3A4D;
@@ -1422,9 +1422,9 @@ img,
 
 /* תמונת המוצר הקטנה בקצה השורה */
 .pst-tile.pst-line .pst-ph {
-  width: 52px;
-  height: 52px;
-  max-width: 52px;
+  width: 48px;
+  height: 48px;
+  max-width: 48px;
   margin: 0;
   flex: none;
   aspect-ratio: auto;
@@ -1499,3 +1499,90 @@ html.easy-mode .pst-tile.pst-line .pst-more,
 html.easy-mode .pst-tile.pst-line .pst-remove { width: 44px; height: 44px; }
 html.easy-mode .pst-tile.pst-line .pst-amount,
 html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
+
+/* ===== מסך רשימה מכווץ — פחות גלילה, פחות חיפוש: כל מה שחשוב קרוב וקומפקטי ===== */
+.pst-hero { padding: 10px 12px; }
+.pst-hero::after { bottom: -10px; height: 10px; }
+.pst-brand { gap: 8px; font-size: 13px; }
+.pst-brand img { width: 26px; height: 26px; border-width: 2px; border-radius: 7px; }
+.pst-row { flex-direction: column; align-items: stretch; gap: 8px; margin-top: 8px; }
+.pst-ttl { font-size: 24px; line-height: 1.08; }
+.pst-nums { gap: 8px; }
+.pst-num { flex: 1; min-width: 0; padding: 4px 10px 3px; border-width: 2px; border-radius: 10px; font-size: 12px; box-shadow: 3px 3px 0 #0B3A4D; }
+.pst-num b { font-size: 22px; }
+.pst-acts { gap: 6px; margin-top: 8px; }
+.pst-btn { padding: 6px 12px; border-width: 2px; font-size: 13px; }
+.pst-greet { padding: 4px 10px; font-size: 12px; }
+.pst-trust { margin-top: 8px; padding: 3px 10px; border-width: 2px; font-size: 12px; }
+
+/* שורת ההתראה למשפחה */
+.pst-note { margin-top: 12px; padding: 8px 12px; border-radius: 12px; font-size: 13px; }
+.pst-note button { padding: 6px 14px; font-size: 13px; }
+
+/* פס המחלקות שנצמד לראש המסך */
+.pst-bar { margin-top: 8px; padding: 6px 12px; border-bottom-width: 2px; }
+.pst-bar-in { gap: 6px; }
+.pst-bar-in span { padding: 5px 12px; border-width: 2px; font-size: 13px; }
+
+/* מקטעי המחלקות */
+.pst-sec { margin-top: 12px; }
+.pst-sh { padding: 6px 12px; font-size: 16px; }
+.pst-sh-in { gap: 8px; }
+.pst-sh .pst-n { min-width: 28px; padding: 1px 7px; border-radius: 8px; font-size: 14px; }
+.pst-runner { width: 22px; height: 22px; }
+.pst-list { gap: 6px; padding: 8px 12px 0; }
+
+/* כרטיסי המידע והמקטעים המשניים */
+.pst-panel-slot { margin-top: 10px; padding: 0 12px; }
+.pst-panel { padding: 14px; border-width: 2px; border-radius: 16px; }
+.pst-tools { margin-top: 12px; padding: 12px 0 16px; }
+.pst-tools h2 { margin: 0 12px 8px; font-size: 18px; }
+.pst-tools-note { margin: 0 12px 6px; font-size: 12px; }
+.pst-strip { gap: 8px; padding: 0 12px; }
+.pst-strip-2 { margin-top: 8px; }
+.pst-card { width: 124px; height: 70px; padding: 8px 10px; border-width: 2px; border-radius: 12px; font-size: 13px; }
+.pst-card small { font-size: 11px; }
+.pst-tools .pst-panel { margin: 10px 12px 0; }
+.pst-ft { padding: 16px 12px 0; font-size: 13px; }
+
+@media (min-width: 640px) {
+  .pst-hero { padding: 14px 28px; }
+  .pst-hero::after { bottom: -14px; height: 14px; }
+  .pst-brand { gap: 10px; font-size: 15px; }
+  .pst-brand img { width: 32px; height: 32px; border-radius: 9px; }
+  .pst-row { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 16px; margin-top: 10px; }
+  .pst-ttl { font-size: 34px; }
+  .pst-nums { gap: 10px; }
+  .pst-num { flex: none; min-width: 118px; padding: 6px 14px 4px; border-radius: 14px; font-size: 13px; box-shadow: 4px 4px 0 #0B3A4D; }
+  .pst-num b { font-size: 32px; }
+  .pst-acts { gap: 8px; margin-top: 12px; }
+  .pst-btn { padding: 7px 16px; font-size: 14px; }
+  .pst-greet { padding: 6px 14px; font-size: 13px; }
+  .pst-note { width: calc(100% - 56px); margin-top: 16px; padding: 8px 14px; font-size: 14px; }
+  .pst-bar { padding: 8px 28px; }
+  .pst-sh { padding: 8px 28px; font-size: 20px; }
+  .pst-list { padding: 10px 28px 0; }
+  .pst-panel-slot { padding: 0 28px; }
+  .pst-tools { padding: 14px 0 18px; }
+  .pst-tools h2 { margin: 0 28px 10px; font-size: 20px; }
+  .pst-tools-note { margin: 0 28px 8px; }
+  .pst-strip { padding: 0 28px; }
+  .pst-card { width: 148px; height: 82px; font-size: 15px; }
+  .pst-tools .pst-panel { margin: 12px 28px 0; }
+  .pst-ft { padding: 20px 28px 0; font-size: 14px; }
+}
+
+@media (min-width: 1024px) {
+  .pst-hero { padding: 18px 40px; }
+  .pst-ttl { font-size: 42px; }
+  .pst-num { min-width: 136px; }
+  .pst-num b { font-size: 40px; }
+  .pst-sh { padding: 10px 40px; font-size: 24px; }
+  .pst-list { padding: 12px 40px 0; }
+  .pst-panel-slot { padding: 0 40px; }
+  .pst-tools h2 { margin: 0 40px 12px; font-size: 22px; }
+  .pst-tools-note { margin: 0 40px 8px; }
+  .pst-strip { padding: 0 40px; }
+  .pst-tools .pst-panel { margin: 14px 40px 0; }
+  .pst-ft { padding: 22px 40px 0; }
+}

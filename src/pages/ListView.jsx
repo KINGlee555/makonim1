@@ -122,7 +122,6 @@ export default function ListView() {
         onOpenSettings={() => show("settings")}
         onOpenShare={() => show("share")}
         onOpenQr={() => show("qr")}
-        onRename={() => show("rename")}
       />
 
       {otherShoppers.length > 0 && (

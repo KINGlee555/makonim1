@@ -4,7 +4,6 @@ import ParticipantsDialog from "@/components/ParticipantsDialog";
 import ProductSearchDialog from "@/components/ProductSearchDialog";
 import ProfileDialog from "@/components/ProfileDialog";
 import SettingsDialog from "@/components/SettingsDialog";
-import RenameListDialog from "@/components/RenameListDialog";
 import NavigateToStoreDialog from "@/components/NavigateToStoreDialog";
 import ItemDetailsDialog from "@/components/ItemDetailsDialog";
 import ChangePhotoDialog from "@/components/ChangePhotoDialog";
@@ -46,8 +45,6 @@ export default function ListDialogs({
       <ProfileDialog {...bind("profile")} currentUser={user} onNameUpdated={actions.onNameUpdated}
         forceName={!user?.full_name} />
       <SettingsDialog {...bind("settings")} list={list} />
-      <RenameListDialog {...bind("rename")} list={list}
-        onRenamed={(title) => actions.onListUpdated({ title })} />
       <NavigateToStoreDialog {...bind("navigate")} product={open.navigate} />
 
       <ItemDetailsDialog item={open.edit} onClose={() => hide("edit")} onSave={actions.onUpdateDetails} />
