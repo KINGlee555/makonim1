@@ -87,13 +87,16 @@ async function findRealPhoto(name, brand, barcode, avoid = "") {
 // מציג תמונה אמיתית של המוצר עצמו: התמונה ששמורה על המוצר, תמונה שכבר נמצאה לשם הזה,
 // תמונה מדויקת לפי ברקוד, או התאמה ממותגת מהקטלוג. תמונה שלא נטענת מוחלפת בתמונה אחרת,
 // ואם אין תמונה אמיתית בכלל — מוצג האייקון של המוצר, אף פעם לא מלבן ריק.
-export default function ProductPhoto({ name, category, imageUrl, brand: brandProp, barcode, className = "", onFound }) {
+export default function ProductPhoto({ name, category, imageUrl, brand: brandProp, barcode, className = "", onFound, lookup = true }) {
   const brand = brandProp || detectBrand(name);
   const keywordPhoto = brand ? "" : getSpecificProductImage(name);
+  // אין תמונה מדויקת? תמונה אמיתית של סוג המוצר (המחלקה שלו) — עדיף מציור אפור
+  const categoryPhoto = getSpecificProductImage(category || "");
+  const typePhoto = keywordPhoto || categoryPhoto;
   const known = useRef(getCachedPhoto(name));
   const found = useRef(onFound);
   found.current = onFound;
-  const [src, setSrc] = useState(usable(imageUrl, "") ? imageUrl : known.current || keywordPhoto);
+  const [src, setSrc] = useState(usable(imageUrl, "") ? imageUrl : known.current || typePhoto);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,8 +112,8 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
       return () => { cancelled = true; };
     }
 
-    setSrc(keywordPhoto);
-    if ((!name && !barcode) || missedNow.has(name) || isPhotoMiss(name)) return () => { cancelled = true; };
+    setSrc(typePhoto);
+    if (!lookup || (!name && !barcode) || missedNow.has(name) || isPhotoMiss(name)) return () => { cancelled = true; };
 
     limitLookup(() => findRealPhoto(name, brand, barcode)).then(real => {
       if (cancelled) return;
@@ -126,14 +129,15 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
     });
 
     return () => { cancelled = true; };
-  }, [name, imageUrl, brand, barcode, keywordPhoto]);
+  }, [name, imageUrl, brand, barcode, typePhoto, lookup]);
 
   // תמונה שלא נטענה — נזכור אותה וננסה למצוא תמונה אמיתית אחרת לאותו מוצר
   const recover = (failed) => {
     markPhotoBroken(failed, name);
+    if (!lookup) { setSrc(typePhoto || ""); return; }
     limitLookup(() => findRealPhoto(name, brand, barcode, failed))
-      .then(alternate => setSrc(alternate || keywordPhoto || ""))
-      .catch(() => setSrc(keywordPhoto || ""));
+      .then(alternate => setSrc(alternate || typePhoto || ""))
+      .catch(() => setSrc(typePhoto || ""));
   };
 
   if (!src) {

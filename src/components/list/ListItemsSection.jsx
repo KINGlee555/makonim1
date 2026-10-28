@@ -82,8 +82,9 @@ export default function ListItemsSection({
         <section className="pst-sec">
           <div className="pst-panel-slot">
             <div className="pst-panel">
-              <p className="pst-nm text-[20px] sm:text-[24px]">{t("list.empty")}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
+              <p className="pst-empty-title">{t("list.empty")}</p>
+              <p className="pst-empty-desc">{t("list.emptyDesc")}</p>
+              <div className="pst-empty-acts">
                 <button type="button" onClick={onOpenSearch} className="pst-btn">{t("quickAdd.search")}</button>
                 <button type="button" onClick={onOpenScanner} className="pst-btn">{t("barcode.title")}</button>
                 <button type="button" onClick={onOpenShoppingMode} className="pst-btn">{t("shoppingMode.title")}</button>
