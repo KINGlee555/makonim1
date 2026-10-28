@@ -37,7 +37,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
 
   return (
     <article
-      className={`pst-tile ${className || ""}`}
+      className={`pst-tile pst-line ${className || ""}`}
       style={className ? undefined : { animationDelay: `${Math.min(index, 8) * 0.1}s` }}
     >
       <div className="pst-ph">
@@ -46,11 +46,15 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
             onFound={(url) => onPhotoFound && onPhotoFound(item, url)} className="h-full w-full" />
         </button>
       </div>
-      {price > 0 && <span className="pst-tag">{priceText}</span>}
-
       <div className="pst-body">
-        <span className="pst-nm line-clamp-3">{item.name}</span>
-        {secondary && <span className="pst-meta">{secondary}</span>}
+        <span className="pst-nm line-clamp-2">{item.name}</span>
+        {(price > 0 || unitLabel || secondary) && (
+          <span className="pst-line-sub">
+            {price > 0 && <span className="pst-price">{priceText}</span>}
+            {unitLabel && <span className="pst-meta">{unitLabel}</span>}
+            {secondary && <span className="pst-meta">{secondary}</span>}
+          </span>
+        )}
         {deal && (
           <span className="pst-deal">
             {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}

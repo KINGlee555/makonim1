@@ -1401,3 +1401,101 @@ img,
   max-height: 92vh;
   max-height: 92dvh;
 }
+
+/* ===== רשימת מוצרים קומפקטית — שורה אחת לכל מוצר, בלי אריחים גדולים ===== */
+.pst-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px 0;
+}
+
+.pst-tile.pst-line {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-width: 2px;
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 #0B3A4D;
+}
+
+/* תמונת המוצר הקטנה בקצה השורה */
+.pst-tile.pst-line .pst-ph {
+  width: 52px;
+  height: 52px;
+  max-width: 52px;
+  margin: 0;
+  flex: none;
+  aspect-ratio: auto;
+  border-width: 2px;
+  border-radius: 12px;
+}
+
+.pst-tile.pst-line .pst-body { gap: 3px; }
+.pst-tile.pst-line .pst-nm { min-height: 0; font-size: 15px; line-height: 1.2; }
+
+/* שורת המשנה: מחיר, יחידה והערה */
+.pst-line-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pst-line-sub .pst-meta { font-size: 12px; }
+
+.pst-price {
+  padding: 1px 8px;
+  border: 2px solid #0B3A4D;
+  border-radius: 999px;
+  background: #FFD400;
+  color: #0B3A4D;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.pst-tile.pst-line .pst-deal,
+.pst-tile.pst-line .pst-remind { padding: 1px 8px; font-size: 11px; }
+.pst-tile.pst-line .pst-ctl { gap: 5px; margin-top: 2px; padding-top: 4px; }
+.pst-tile.pst-line .pst-q button { width: 40px; height: 40px; font-size: 20px; }
+.pst-tile.pst-line .pst-q span { min-width: 24px; font-size: 16px; }
+.pst-tile.pst-line .pst-buy { height: 40px; min-width: 56px; padding: 0 8px; font-size: 14px; }
+.pst-tile.pst-line .pst-more { width: 40px; height: 40px; font-size: 18px; }
+.pst-tile.pst-line .pst-amount { width: 46px; height: 40px; padding: 0 4px; font-size: 15px; }
+.pst-tile.pst-line .pst-unit { height: 40px; padding: 0 6px; font-size: 12px; }
+.pst-tile.pst-line .pst-remove { width: 36px; height: 40px; }
+
+@media (min-width: 640px) {
+  .pst-list { gap: 10px; padding: 16px 40px 0; }
+  .pst-tile.pst-line { padding: 10px 14px; border-radius: 16px; }
+  .pst-tile.pst-line .pst-ph { width: 60px; height: 60px; max-width: 60px; }
+  .pst-tile.pst-line .pst-nm { font-size: 17px; }
+  .pst-tile.pst-line .pst-buy { height: 42px; font-size: 16px; }
+  .pst-tile.pst-line .pst-q button,
+  .pst-tile.pst-line .pst-more,
+  .pst-tile.pst-line .pst-remove,
+  .pst-tile.pst-line .pst-amount,
+  .pst-tile.pst-line .pst-unit { height: 42px; }
+  .pst-tile.pst-line .pst-q button,
+  .pst-tile.pst-line .pst-more,
+  .pst-tile.pst-line .pst-remove { width: 42px; }
+}
+
+@media (min-width: 1024px) {
+  .pst-list { padding: 20px 64px 0; }
+}
+
+.dark .pst-price { border-color: #FFD400; }
+
+html:not(.skin-poster) .pst-price {
+  border: 1px solid hsl(var(--skin-line));
+  background: hsl(var(--pst-yellow));
+  color: hsl(var(--pst-ink));
+}
+
+/* מצב גדול ונוח — שורות מרווחות יותר, פקדים גדולים */
+html.easy-mode .pst-tile.pst-line .pst-nm { font-size: 18px; }
+html.easy-mode .pst-tile.pst-line .pst-body { gap: 6px; }
+html.easy-mode .pst-tile.pst-line .pst-q button { width: 42px; height: 44px; }
+html.easy-mode .pst-tile.pst-line .pst-buy { height: 44px; }
+html.easy-mode .pst-tile.pst-line .pst-more,
+html.easy-mode .pst-tile.pst-line .pst-remove { width: 44px; height: 44px; }
+html.easy-mode .pst-tile.pst-line .pst-amount,
+html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }

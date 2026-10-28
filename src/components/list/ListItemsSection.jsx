@@ -2,7 +2,6 @@ import ListItemRow from "@/components/minimal/ListItemRow";
 import AreaDeals from "@/components/deals/AreaDeals";
 import UnavailableItem from "@/components/UnavailableItem";
 import SectionRunner from "@/components/poster/SectionRunner";
-import { posterPhoto } from "@/lib/categoryPoster";
 import { dealForItem } from "@/lib/chainDeals";
 import { useT } from "@/lib/i18n";
 
@@ -24,10 +23,6 @@ export default function ListItemsSection({
 
         return (
           <section key={category} className="pst-sec">
-            {sectionIndex > 0 && (
-              <div className={`pst-wedge pst-wedge-up ${pink ? "" : "pst-wedge-b"}`} />
-            )}
-
             <h2 className={`pst-sh ${pink ? "pst-sh-b" : "pst-sh-a"}`}>
               <span className="pst-sh-in">
                 <SectionRunner tone={pink ? "yellow" : "ink"} />
@@ -36,15 +31,7 @@ export default function ListItemsSection({
               </span>
             </h2>
 
-            <div className="pst-sech">
-              <img src={posterPhoto(category)} alt="" />
-            </div>
-
-            {sectionIndex === 0 && groupedCategories.length > 1 && (
-              <div className="pst-wedge" />
-            )}
-
-            <div className="pst-grid">
+            <div className="pst-list">
               {categoryItems.map((item, index) => (
                 <ListItemRow
                   key={item.id}
