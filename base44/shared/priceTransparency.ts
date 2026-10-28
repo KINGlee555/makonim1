@@ -105,6 +105,38 @@ async function cerberusFile(chain: Chain, kind: FileKind) {
   };
 }
 
+// קובץ המחירים העדכני של כמה סניפים באותה רשת — לכל סניף מבחר משלו, ולכן איחוד
+// שלהם מכניס לקטלוג מוצרים שלא מופיעים בסניף היחיד שקראנו עד היום.
+export async function cerberusBranchFiles(chain: Chain, kind: FileKind, branches: number) {
+  const session = await cerberusSession(chain.user as string, chain.password || "");
+  const dir = await fetch(`${CERBERUS}/file/json/dir`, {
+    method: "POST",
+    headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: session.cookie },
+    body: new URLSearchParams({ csrftoken: session.csrf, sEcho: "1", iDisplayLength: "500", sSearch: FILE_KIND[kind].search })
+  });
+  const text = await dir.text();
+  if (!text.startsWith("{")) {
+    sessions.delete(`${chain.user}:${chain.password || ""}`);
+    throw new Error(`${chain.id}: price file listing unavailable`);
+  }
+  const names: string[] = (JSON.parse(text).aaData || []).map((row: any) => row.fname).filter(Boolean);
+  const dated = names.map((name) => ({ name, day: (name.match(/-(\d{8})-\d{4,6}\.gz$/) || [])[1] || "" }))
+    .filter((entry) => entry.day).sort((a, b) => (a.day < b.day ? 1 : -1));
+  if (!dated.length) throw new Error(`${chain.id}: no price file found`);
+
+  // החדש ביותר מכל סניף (הקובץ נושא את מספר הסניף) — עד מספר הסניפים שהתבקש.
+  const perStore = new Map<string, { name: string; day: string }>();
+  for (const entry of dated) {
+    const store = entry.name.split("-")[1] || entry.name;
+    if (!perStore.has(store)) perStore.set(store, entry);
+  }
+  return [...perStore.values()].slice(0, Math.max(1, branches)).map((entry) => ({
+    url: `${CERBERUS}/file/d/${entry.name}`,
+    headers: { ...UA, Cookie: session.cookie },
+    day: `${entry.day.slice(0, 4)}-${entry.day.slice(4, 6)}-${entry.day.slice(6, 8)}`
+  }));
+}
+
 async function shufersalFile(chain: Chain, kind: FileKind) {
   const listing = await fetch(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=${SHUFERSAL_CAT[kind]}&storeId=${chain.store}`, { headers: UA });
   const html = await listing.text();

@@ -29,6 +29,10 @@ export default async function (req) {
     // כמה מוצרים לסרוק מקובץ המחירים, וכמה מהם לבדוק מול קטלוג התמונות בקריאה הזאת.
     const scan = Math.min(Math.max(Number(body?.scan) || 6000, 200), 60000);
     const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 12000);
+    // כמה סניפים לכל רשת קוראים בקריאה הזאת — האיחוד מכניס מוצרים שלא קיימים בסניף אחד.
+    const branches = Math.min(Math.max(Number(body?.branches) || 1, 1), 8);
+    // גם מוצרי קוד פנימי (ירקות, מעדנייה, מאפייה) נכנסים לקטלוג — בלי כפילויות לפי שם.
+    const includeInternal = body?.includeInternal !== false;
     const startedAt = Date.now();
     const report = [];
 
@@ -49,7 +53,7 @@ export default async function (req) {
         continue;
       }
       try {
-        const { items, day } = await chainCatalogItems(chain, scan);
+        const { items, day } = await chainCatalogItems(chain, scan, branches);
 
         // ברקוד שכבר בדקנו בעבר (גם אם לא נמצאה לו תמונה) לא נבדק שוב — כך כל הרצה
         // ממשיכה הלאה ומתקדמת למוצרים חדשים. בדיקה בקבוצות גדולות של 400 מוצרים,
@@ -95,7 +99,42 @@ export default async function (req) {
           const created = await base44.asServiceRole.entities.CatalogProduct.bulkCreate(rows.slice(i, i + 500));
           stored += Array.isArray(created) ? created.length : 0;
         }
-        report.push({ chain: chain.id, chain_name: chain.name, day, scanned: items.length, candidates: candidates.length, branded: unknown.filter((item) => item.brand).length, checked: checked.length, withPhoto: rows.length, stored });
+
+        // מוצרים בקוד פנימי של הרשת (ירקות, מעדנייה, מאפייה, בשר בתפזורת) — אלה מוצרים
+        // אמיתיים עם שם ומחיר, אבל בלי ברקוד לאומי. מיובאים רק אם אין כבר מוצר באותו שם,
+        // כדי שלא ייווצרו כפילויות בין הרשתות.
+        let produceStored = 0;
+        if (includeInternal) {
+          const internal = unknown.filter((item) => !images.has(item.code) && !isRealBarcode(item.code));
+          if (internal.length) {
+            const names = new Map<string, string>();
+            for (const item of internal) names.set(displayName(item).slice(0, 64), item.code);
+            const existing = new Set<string>();
+            const wanted = [...names.keys()];
+            for (let i = 0; i < wanted.length; i += 200) {
+              const found = await base44.asServiceRole.entities.CatalogProduct.filter({ name: { $in: wanted.slice(i, i + 200) } }, "-created_date", 200);
+              for (const row of found || []) existing.add(row.name);
+            }
+            const fresh = internal.filter((item) => !existing.has(displayName(item).slice(0, 64)));
+            const produceRows = fresh.map((item) => ({
+              barcode: `${chain.id}-${item.code}`.slice(0, 32),
+              name: displayName(item).slice(0, 64),
+              brand: item.brand.slice(0, 48),
+              category: categoryFromName(item.name),
+              price: item.price,
+              chain: chain.id,
+              chain_name: chain.name,
+              image_url: "",
+              weighted: item.weighted,
+              day
+            }));
+            for (let i = 0; i < produceRows.length; i += 500) {
+              const created = await base44.asServiceRole.entities.CatalogProduct.bulkCreate(produceRows.slice(i, i + 500));
+              produceStored += Array.isArray(created) ? created.length : 0;
+            }
+          }
+        }
+        report.push({ chain: chain.id, chain_name: chain.name, day, scanned: items.length, candidates: candidates.length, branded: unknown.filter((item) => item.brand).length, checked: checked.length, withPhoto: rows.length, stored, produceStored });
       } catch (error) {
         report.push({ chain: chain.id, error: error instanceof Error ? error.message : String(error) });
       }
@@ -137,7 +176,7 @@ export default async function (req) {
       }
 
       // 2. מוצרים חדשים עם תמונה אמיתית מהמאגרים הפתוחים — רק כאלה שעוד אין לנו.
-      const want = Math.min(Math.max(Number(body?.importLimit) || 400, 0), 3500);
+      const want = Math.min(Math.max(Number(body?.importLimit) || 400, 0), 6000);
       if (want) {
         // כל הרצה ממשיכה מהדף שאליו הגענו במאגר (נשמר ב-OpenCatalogSync) — ולכן
         // הקטלוג ממשיך לגדול בכל הרצה יומית ולא חוזר על אותם מוצרים.
@@ -145,7 +184,7 @@ export default async function (req) {
         const syncBySource = new Map<string, any>((syncRows || []).map((row: any) => [row.source, row]));
         const pageBySource: Record<string, number> = {};
         for (const source of OPEN_SOURCES) pageBySource[source] = Math.max(1, Number(syncBySource.get(source)?.next_page) || 1);
-        const candidates = await openCountryProducts({ pages: 6, pageSize: 300, pageBySource });
+        const candidates = await openCountryProducts({ pages: 14, pageSize: 500, pageBySource });
         const fresh: typeof candidates = [];
         for (let i = 0; i < candidates.length; i += 400) {
           const slice = candidates.slice(i, i + 400);

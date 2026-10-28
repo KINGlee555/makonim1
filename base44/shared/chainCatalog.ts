@@ -5,18 +5,13 @@
 // תמונה אמיתית של אותו ברקוד. כך נבנה קטלוג של אלפי מוצרים — ובזמן חיפוש באפליקציה
 // אין שום קריאה החוצה, הכל כבר שמור.
 
-import { CHAINS, chainDataFile, type Chain } from "./priceTransparency.ts";
+import { CHAINS, cerberusBranchFiles, chainDataFile, type Chain } from "./priceTransparency.ts";
 import { photosFromOpenDatabases } from "./openCatalog.ts";
 
 // כל הרשתות הגדולות בישראל. הראשונות מפרסמות גם קבצי מבצעים; הנוספות מפרסמות
 // קובץ מחירים בפורטל השקיפות, ומהן אנחנו לוקחים מוצרים לקטלוג.
 export const CATALOG_CHAINS: Chain[] = [
-  ...CHAINS,
-  { id: "machsanei_hashuk", name: "מחסני השוק", source: "cerberus", user: "MachsaneiHashuk" },
-  { id: "victory", name: "ויקטורי", source: "cerberus", user: "Victory" },
-  { id: "hazi_hinam", name: "חצי חינם", source: "cerberus", user: "HaziHinam" },
-  { id: "super_yuda", name: "סופר יודה", source: "cerberus", user: "SuperYuda" },
-  { id: "yeinot_bitan", name: "יינות ביתן", source: "cerberus", user: "YeinotBitan" }
+  ...CHAINS
 ];
 
 export function catalogChainById(id: string) {
@@ -63,13 +58,15 @@ function isRealProduct(name: string) {
 
 // קריאה בזרימה של קובץ המחירים היומי: כל עוד לא מצאנו מספיק מוצרים אנחנו ממשיכים
 // לקרוא, וברגע שיש מספיק — מפסיקים. הקובץ עצמו (עשרות MB) אף פעם לא נשמר בזיכרון.
-export async function chainCatalogItems(chain: Chain, limit: number) {
-  const file = await chainDataFile(chain, "price");
+async function readPriceFile(
+  chain: Chain,
+  file: { url: string; headers: Record<string, string> },
+  items: CatalogItem[],
+  seen: Set<string>,
+  limit: number
+) {
   const response = await fetch(file.url, { headers: file.headers, signal: AbortSignal.timeout(120000) });
   if (!response.ok || !response.body) throw new Error(`${chain.id}: price file ${response.status}`);
-
-  const items: CatalogItem[] = [];
-  const seen = new Set<string>();
 
   const collect = (block: string) => {
     const start = block.lastIndexOf("<Item>");
@@ -109,7 +106,26 @@ export async function chainCatalogItems(chain: Chain, limit: number) {
     }
   }
   reader.cancel().catch(() => {});
-  return { items, day: file.day };
+}
+
+// איחוד קובצי המחירים של כמה סניפים באותה רשת: לכל סניף מבחר אחר, וכך נכנסים
+// לקטלוג מוצרים אמיתיים שלא מופיעים בסניף הבודד שקראנו עד היום — בלי לפגוע במוצרים קיימים.
+export async function chainCatalogItems(chain: Chain, limit: number, branches = 1) {
+  const files = branches > 1 && chain.source === "cerberus"
+    ? await cerberusBranchFiles(chain, "price", branches)
+    : [await chainDataFile(chain, "price")];
+
+  const items: CatalogItem[] = [];
+  const seen = new Set<string>();
+  for (const file of files) {
+    if (items.length >= limit) break;
+    try {
+      await readPriceFile(chain, file, items, seen, limit);
+    } catch (error) {
+      if (!items.length) throw error;
+    }
+  }
+  return { items, day: files[0]?.day || new Date().toISOString().slice(0, 10) };
 }
 
 // תמונה אמיתית לכל ברקוד. קודם שואלים את הקטלוג בקבוצות של 40 מוצרים (מהיר), ואם

@@ -34,7 +34,7 @@
               "open": true,
               "openOnly": true,
               "backfill": 400,
-              "importLimit": 3500
+              "importLimit": 4000
             }
           },
           "then": "catalog_king_store",
