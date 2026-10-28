@@ -12,7 +12,7 @@ export function Toaster() {
   const { toasts } = useToast();
 
   return (
-    <ToastProvider>
+    <ToastProvider role="status" aria-live="polite" aria-atomic="false" aria-relevant="additions">
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
@@ -30,4 +30,4 @@ export function Toaster() {
       <ToastViewport />
     </ToastProvider>
   );
-} 
+}
