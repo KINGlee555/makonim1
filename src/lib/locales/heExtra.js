@@ -44,6 +44,13 @@ const heExtra = {
   "share.phoneSend": "שלח בוואטסאפ",
   "share.phoneInvalid": "מספר טלפון לא תקין",
   "share.phoneSaved": "המספר נוסף לרשימה",
+
+  // נגישות ומסמכים משפטיים
+  "a11y.skip": "דלג לתוכן הראשי",
+  "footer.terms": "תקנון",
+  "footer.privacy": "פרטיות",
+  "footer.accessibility": "נגישות",
+  "legal.updated": "עודכן לאחרונה",
 };
 
 export default heExtra;

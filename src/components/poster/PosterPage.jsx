@@ -1,6 +1,7 @@
 import Link from "@/components/poster/PosterLink";
 import { ArrowRight } from "lucide-react";
 import AppFooter from "@/components/AppFooter";
+import SkipLink from "@/components/SkipLink";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import SkinToggle from "@/components/SkinToggle";
 import { useT } from "@/lib/i18n";
@@ -13,6 +14,7 @@ export default function PosterPage({ title, subtitle, icon: Icon, back = "/", ba
   const t = useT();
   return (
     <div dir="rtl" className="pst-page pst-inner">
+      <SkipLink />
       <header className="pst-top">
         <div className="pst-topline">
           <span className="pst-brand">
@@ -36,7 +38,7 @@ export default function PosterPage({ title, subtitle, icon: Icon, back = "/", ba
         {subtitle && <p>{subtitle}</p>}
       </header>
 
-      <main className="pst-main">
+      <main id="main-content" className="pst-main">
         {children}
         <AppFooter />
       </main>

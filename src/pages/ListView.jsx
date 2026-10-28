@@ -8,6 +8,7 @@ import DealsShelf from "@/components/deals/DealsShelf";
 import ListItemsSection from "@/components/list/ListItemsSection";
 import ListTotals from "@/components/minimal/ListTotals";
 import PriceNotice from "@/components/minimal/PriceNotice";
+import SkipLink from "@/components/SkipLink";
 import CategoryBar from "@/components/shelf/CategoryBar";
 import ListDialogs from "@/components/list/ListDialogs";
 import { useShoppingList } from "@/hooks/useShoppingList";
@@ -131,6 +132,7 @@ export default function ListView() {
 
   return (
     <div className="pst-page min-h-screen">
+      <SkipLink />
       <ListHeader
         list={list}
         userName={user?.full_name}
@@ -158,7 +160,7 @@ export default function ListView() {
 
       <CategoryBar categories={groupedCategories.map(([category]) => category)} />
 
-      <main>
+      <main id="main-content">
         <ListItemsSection
           groupedCategories={groupedCategories}
           pendingItems={shoppingItems}

@@ -26,6 +26,11 @@ export default function AppFooter() {
         <Link to="/about" className="pst-btn pst-btn-sm">אודות</Link>
         <Link to="/contact" className="pst-btn pst-btn-sm">יצירת קשר</Link>
       </nav>
+      <nav aria-label={t("header.nav")} className="flex flex-wrap items-center gap-2">
+        <Link to="/terms">{t("footer.terms")}</Link>
+        <Link to="/privacy">{t("footer.privacy")}</Link>
+        <Link to="/accessibility">{t("footer.accessibility")}</Link>
+      </nav>
       {isAdmin && (
         <nav className="flex flex-wrap items-center gap-2">
           <Link to="/photo-suggestions">{t("footer.suggestions")}</Link>

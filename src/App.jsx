@@ -26,9 +26,12 @@ import ResetPassword from './pages/ResetPassword';
 import DemoList from './pages/DemoList';
 import PremiumMembers from './pages/PremiumMembers';
 import Unsubscribe from './pages/Unsubscribe';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import Accessibility from './pages/Accessibility';
 
 // Public pages: reachable without login (auth pages + trust pages)
-const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact", "/demo", "/unsubscribe"];
+const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/about", "/contact", "/demo", "/unsubscribe", "/terms", "/privacy", "/accessibility"];
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
@@ -77,6 +80,9 @@ const AuthenticatedApp = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/demo" element={<DemoList />} />
       <Route path="/unsubscribe" element={<Unsubscribe />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/accessibility" element={<Accessibility />} />
       <Route path="/" element={<Home />} />
       <Route path="/list/:listId" element={<ListView />} />
       <Route path="/join/:shareCode" element={<JoinList />} />
