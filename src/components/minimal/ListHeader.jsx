@@ -5,28 +5,16 @@ import { useT } from "@/lib/i18n";
 
 const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
 
-// פתיח הכרזה: מיתוג, שם הרשימה, שני המספרים הגדולים ומתחת שורת הפעולות — הכול על צהוב שטוח.
-export default function ListHeader({ list, userName, itemCount, total, onOpenProfile, onOpenSettings, onOpenShare, onOpenQr }) {
+// פתיח הכרזה: לוגו גדול במרכז ומיד מתחתיו שורת הפעולות.
+// שני המספרים (סה״כ וכמה נשאר לקנות) עברו לתחתית הרשימה.
+export default function ListHeader({ userName, onOpenProfile, onOpenSettings, onOpenShare, onOpenQr }) {
   const t = useT();
 
   return (
     <div className="pst-hero">
       <div className="pst-brand">
-        <span>MaKonim</span>
         <img src={LOGO} alt="MaKonim" />
-      </div>
-
-      <div className="pst-row">
-        <div className="pst-nums">
-          <span className="pst-num">
-            {t("list.total")}
-            <b>₪{total.toFixed(2)}</b>
-          </span>
-          <span className="pst-num pst-num-t">
-            {t("list.toBuy")}
-            <b>{itemCount}</b>
-          </span>
-        </div>
+        <span>MaKonim</span>
       </div>
 
       <div className="pst-acts">
@@ -35,7 +23,10 @@ export default function ListHeader({ list, userName, itemCount, total, onOpenPro
             {t("header.greeting", { name: userName })}
           </button>
         )}
-        <EasyModeToggle pill className="pst-btn pst-btn-s" />
+        <span className="pst-easy">
+          <EasyModeToggle pill className="pst-btn pst-btn-s" />
+          <span className="pst-easy-hint">{t("header.easyModeHint")}</span>
+        </span>
         <button type="button" onClick={onOpenShare} className="pst-btn">{t("header.share")}</button>
         <button type="button" onClick={onOpenQr} className="pst-btn">{t("share.qrButton")}</button>
         <HeaderMenu className="pst-btn" onOpenProfile={onOpenProfile} onOpenSettings={onOpenSettings} />

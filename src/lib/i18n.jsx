@@ -597,6 +597,7 @@ const translations = {
     // Easy mode
     "header.easyMode": "מצב גדול ונוח",
     "header.normalMode": "חזור לגודל רגיל",
+    "header.easyModeHint": "מגדיל את כל הטקסט, הכפתורים והמספרים — בלי להאמץ את העיניים",
     "simpleMode.on": "מצב פשוט",
     "simpleMode.off": "חזרה למצב מלא",
     "simpleMode.onToast": "מצב פשוט הופעל — נשארו הפעולות החשובות",
@@ -1439,6 +1440,7 @@ const translations = {
     // Easy mode
     "header.easyMode": "Large & comfortable",
     "header.normalMode": "Back to normal size",
+    "header.easyModeHint": "Makes all the text, buttons and numbers bigger — no squinting",
     "simpleMode.on": "Simple mode",
     "simpleMode.off": "Back to full view",
     "simpleMode.onToast": "Simple mode on — only the essentials remain",
@@ -2195,6 +2197,7 @@ const translations = {
     // Easy mode
     "header.easyMode": "Крупный и удобный",
     "header.normalMode": "Обычный размер",
+    "header.easyModeHint": "Увеличивает весь текст, кнопки и цифры — без напряжения глаз",
     "simpleMode.on": "Простой режим",
     "simpleMode.off": "Полный вид",
     "simpleMode.onToast": "Простой режим включён — остались главные действия",

@@ -1773,3 +1773,109 @@ html:not(.skin-poster) .pst-live-invite { border: 1px dashed hsl(var(--skin-line
 .dark .pst-live { background: #0b1f27; color: #f5f1eb; }
 .dark .pst-live-btn { border-color: #FFD400; }
 .dark .pst-live-chip { background: rgba(255, 255, 255, .12); }
+
+/* ===== לוגו גדול וממורכז בפתיח הרשימה ===== */
+.pst-hero .pst-brand {
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+  letter-spacing: .22em;
+}
+
+.pst-hero .pst-brand img {
+  width: 62px;
+  height: 62px;
+  border-width: 3px;
+  border-radius: 16px;
+  background: #fff;
+  object-fit: cover;
+}
+
+@media (min-width: 640px) {
+  .pst-hero .pst-brand { gap: 10px; font-size: 16px; }
+  .pst-hero .pst-brand img { width: 76px; height: 76px; border-radius: 20px; }
+}
+
+@media (min-width: 1024px) {
+  .pst-hero .pst-brand { font-size: 18px; }
+  .pst-hero .pst-brand img { width: 88px; height: 88px; border-radius: 24px; }
+}
+
+/* ===== רקע נעים לכל האפליקציה — הילה רכה למעלה וגוון עדין לגוף ===== */
+.pst-page {
+  background:
+    radial-gradient(130% 55% at 50% 0%, hsl(44 100% 95%) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(180deg, #fffdf6 0%, #ffffff 520px);
+}
+
+html:not(.skin-poster) .pst-page {
+  background:
+    radial-gradient(130% 55% at 50% 0%, hsl(var(--skin-band)) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(180deg, hsl(var(--skin-band)) 0%, hsl(var(--skin-canvas)) 460px);
+}
+
+.dark .pst-page {
+  background:
+    radial-gradient(130% 55% at 50% 0%, #14313d 0%, rgba(11, 31, 39, 0) 62%),
+    linear-gradient(180deg, #0e2731 0%, #0b1f27 520px);
+}
+
+/* ===== סה״כ העלויות וכמה נשאר לקנות — מתחת לרשימת הקניות ===== */
+.pst-totals-slot {
+  max-width: 1200px;
+  margin: 12px auto 0;
+  padding: 0 12px;
+}
+
+.pst-totals-slot .pst-nums { display: flex; gap: 8px; }
+.pst-totals-slot .pst-num { flex: 1; min-width: 0; }
+
+@media (min-width: 640px) {
+  .pst-totals-slot { margin-top: 16px; padding: 0 28px; }
+  .pst-totals-slot .pst-nums { gap: 10px; }
+}
+
+@media (min-width: 1024px) {
+  .pst-totals-slot { padding: 0 40px; }
+}
+
+/* ===== הסבר קצר ליד "מצב גדול ונוח" ===== */
+.pst-easy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(11, 58, 77, .07);
+}
+
+.pst-easy-hint {
+  max-width: 190px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: rgba(11, 58, 77, .78);
+  white-space: normal;
+}
+
+html:not(.skin-poster) .pst-easy { background: hsl(var(--skin-surface-2)); }
+html:not(.skin-poster) .pst-easy-hint { color: hsl(var(--skin-ink-soft)); }
+.dark .pst-easy { background: rgba(255, 255, 255, .1); }
+.dark .pst-easy-hint { color: rgba(245, 241, 235, .82); }
+
+@media (min-width: 640px) {
+  .pst-easy-hint { max-width: 250px; font-size: 12px; }
+}
+
+/* ===== מצב גדול ונוח: גם המספרים וגם שורות המוצרים גדלים ===== */
+html.easy-mode .pst-totals-slot .pst-num {
+  padding: 12px 20px 10px;
+  font-size: 16px;
+}
+
+html.easy-mode .pst-totals-slot .pst-num b { font-size: clamp(34px, 7vw, 56px); }
+
+html.easy-mode .pst-tile.pst-line { padding: 9px 12px; }
+html.easy-mode .pst-tile.pst-line .pst-ph { width: 62px; height: 62px; max-width: 62px; }
+html.easy-mode .pst-tile.pst-line .pst-nm { font-size: 20px; }
+html.easy-mode .pst-easy-hint { font-size: 13px; max-width: 220px; }

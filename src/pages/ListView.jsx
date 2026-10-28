@@ -6,6 +6,7 @@ import AppFooter from "../components/AppFooter";
 import MoreTools from "../components/list/MoreTools";
 import DealsShelf from "@/components/deals/DealsShelf";
 import ListItemsSection from "@/components/list/ListItemsSection";
+import ListTotals from "@/components/minimal/ListTotals";
 import CategoryBar from "@/components/shelf/CategoryBar";
 import ListDialogs from "@/components/list/ListDialogs";
 import { useShoppingList } from "@/hooks/useShoppingList";
@@ -132,10 +133,7 @@ export default function ListView() {
   return (
     <div className="pst-page min-h-screen">
       <ListHeader
-        list={list}
         userName={user?.full_name}
-        itemCount={pendingItems.length}
-        total={totalPrice}
         onOpenProfile={() => show("profile")}
         onOpenSettings={() => show("settings")}
         onOpenShare={() => show("share")}
@@ -190,6 +188,8 @@ export default function ListView() {
           listId={listId}
           onOpenAllDeals={() => show("deals")}
         />
+
+        <ListTotals itemCount={pendingItems.length} total={totalPrice} />
 
         {!simple && (shoppingItems.length > 0 || unavailableItems.length > 0) && (
           <DealsShelf
