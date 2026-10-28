@@ -45,6 +45,14 @@ const heExtra = {
   "share.phoneInvalid": "מספר טלפון לא תקין",
   "share.phoneSaved": "המספר נוסף לרשימה",
 
+  // חיפוש חכם: השלמה אוטומטית, מיון והתאמה קרובה
+  "search.sortLabel": "סדר תוצאות",
+  "search.sortMatch": "התאמה",
+  "search.sortPrice": "הכי זול",
+  "search.sortClosest": "הכי קרוב",
+  "search.similar": "אולי התכוונת ל:",
+  "search.closestHint": "לא נמצאה התאמה מדויקת — אלה המוצרים הקרובים ביותר לחיפוש שלך",
+
   // נגישות ומסמכים משפטיים
   "a11y.skip": "דלג לתוכן הראשי",
   "footer.terms": "תקנון",

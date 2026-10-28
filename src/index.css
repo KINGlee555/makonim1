@@ -1971,3 +1971,42 @@ html.easy-mode .pst-tile.pst-line { padding: 9px 12px; }
 html.easy-mode .pst-tile.pst-line .pst-ph { width: 62px; height: 62px; max-width: 62px; }
 html.easy-mode .pst-tile.pst-line .pst-nm { font-size: 20px; }
 html.easy-mode .pst-easy-hint { font-size: 13px; max-width: 220px; }
+
+/* ===== קישור שנראה כמו כפתור — הטקסט בצבע הכפתור ולא בצבע הקישור ===== */
+a.pst-btn,
+.pst-ft a.pst-btn,
+html:not(.skin-poster) a.pst-btn,
+html:not(.skin-poster) .pst-ft a.pst-btn,
+.dark a.pst-btn,
+.dark .pst-ft a.pst-btn {
+  color: #FFD400;
+  text-decoration: none;
+}
+
+/* ===== מצב כהה בערכה הרגועה: הפס העליון כהה, ולכן הטקסט עליו בהיר וקריא ===== */
+html.dark:not(.skin-poster) .pst-hero,
+html.dark:not(.skin-poster) .pst-hero .pst-ttl,
+html.dark:not(.skin-poster) .pst-brand,
+html.dark:not(.skin-poster) .pst-listname,
+html.dark:not(.skin-poster) .pst-top,
+html.dark:not(.skin-poster) .pst-top h1,
+html.dark:not(.skin-poster) .pst-top p,
+html.dark:not(.skin-poster) .pst-h2,
+html.dark:not(.skin-poster) .pst-sh {
+  color: hsl(var(--skin-ink));
+}
+
+/* ===== חלון החיפוש: תופס כמעט את כל המסך כדי לראות תוצאות בלי לגלול ===== */
+.pst-search-dialog {
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+}
+
+@media (min-width: 640px) {
+  .pst-search-dialog {
+    height: 92dvh;
+    max-height: 92dvh;
+    border-radius: 22px;
+  }
+}

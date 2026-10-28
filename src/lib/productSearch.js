@@ -25,6 +25,57 @@ export function prepareProduct(product) {
   };
 }
 
+// "הכי קרוב": גם כשהמלל לא מופיע במדויק בשם המוצר (מילה חסרה, מידה, שגיאת כתיב קטנה)
+// מחזיר את המוצרים הקרובים ביותר לחיפוש — כך תמיד יש לאן לכוון את הקונה.
+export function closestCatalog(products, query, category, limit = 48) {
+  const normalized = normalizeProductText(query);
+  if (!normalized) return [];
+  const terms = normalized.split(" ").filter(Boolean);
+  const mainTerm = terms[0] || normalized;
+  const scored = [];
+  for (const product of products) {
+    if (category && category !== "all" && product.category !== category) continue;
+    const words = product._name.split(" ");
+    // רק מוצרים שקשורים למילה הראשונה — שלא יוצגו מוצרים לא קשורים רק בגלל המותג
+    const mainHit = product._search.includes(mainTerm) || (mainTerm.length >= 3 && words.some(word => word.startsWith(mainTerm.slice(0, 3))));
+    if (!mainHit) continue;
+    let score = 0;
+    for (const term of terms) {
+      if (product._search.includes(term)) score += 2;
+      else if (term.length >= 3 && words.some(word => word.startsWith(term.slice(0, 3)))) score += 1;
+    }
+    if (score < 2) continue;
+    scored.push({ product, score, length: product._name.length });
+  }
+  scored.sort((a, b) => b.score - a.score || a.length - b.length || (a.product.price || Number.MAX_VALUE) - (b.product.price || Number.MAX_VALUE));
+  return scored.slice(0, limit).map(entry => entry.product);
+}
+
+// מיון התוצאות לפי מה שביקש הקונה: התאמה למלל, המחיר הזול ביותר, או ההתאמה הקרובה ביותר
+export function sortCatalogResults(items, query, mode) {
+  if (mode === "price") {
+    return [...items].sort((a, b) => (a.price || Number.MAX_VALUE) - (b.price || Number.MAX_VALUE) || a.name.localeCompare(b.name, "he"));
+  }
+  if (mode === "closest") {
+    const normalized = normalizeProductText(query);
+    const terms = normalized.split(" ").filter(Boolean);
+    // ניקוד לפי כמה ממילות החיפוש נמצאות בשם המוצר — כך "פסטה אסם" מקדים את "במבה אסם"
+    const relevance = (product) => {
+      const name = product._name || normalizeProductText(product.name || "");
+      if (!normalized) return 0;
+      const words = name.split(" ");
+      let score = name === normalized ? 30 : name.startsWith(normalized) ? 12 : name.includes(normalized) ? 8 : 0;
+      for (const term of terms) {
+        if (name.includes(term)) score += 4;
+        else if (term.length >= 3 && words.some(word => word.startsWith(term.slice(0, 3)))) score += 2;
+      }
+      return score;
+    };
+    return [...items].sort((a, b) => relevance(b) - relevance(a) || a.name.localeCompare(b.name, "he"));
+  }
+  return items;
+}
+
 export function searchCatalog(products, query, category, byPrice) {
   const normalized = normalizeProductText(query);
   if (!normalized) return [];

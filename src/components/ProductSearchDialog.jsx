@@ -10,7 +10,7 @@ import VoiceSearchButton from "./VoiceSearchButton";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
-import { searchCatalog, normalizeProductText } from "@/lib/productSearch";
+import { searchCatalog, closestCatalog, sortCatalogResults, normalizeProductText } from "@/lib/productSearch";
 import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { searchStoredCatalog } from "@/lib/catalogProducts";
 import { staplesForCategory } from "@/lib/categoryStaples";
@@ -51,6 +51,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [byWeight, setByWeight] = useState(false);
   const [addedIds, setAddedIds] = useState(new Set());
   const [filterMode, setFilterMode] = useState("price");
+  const [sortMode, setSortMode] = useState("match");
   const [chainFilter, setChainFilter] = useState("all");
   const [userLocation, setUserLocation] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -88,9 +89,20 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
       .filter(category => CATEGORY_LABELS[category])
       .map(category => ({ id: category, label: CATEGORY_LABELS[category] })),
   ], [aisleOrder]);
+  // האם החיפוש המדויק מצא משהו — כדי להסביר כשמוצגות התאמות קרובות בלבד
+  const hasExactMatch = useMemo(
+    () => !normalizeProductText(deferredQuery) || searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").some(usableProduct),
+    [searchableProducts, deferredQuery, filterMode]
+  );
   const allResults = useMemo(() => {
     if (normalizeProductText(deferredQuery)) {
-      return searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").filter(usableProduct);
+      const strict = searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").filter(usableProduct);
+      // תמיד מחזירים תוצאות: כשההתאמה המדויקת דלה, מוסיפים את המוצרים הקרובים ביותר לחיפוש
+      if (strict.length >= 8) return strict;
+      const known = new Set(strict.map(product => normalizeProductText(product.name)));
+      const close = closestCatalog(searchableProducts, deferredQuery, "all")
+        .filter(product => usableProduct(product) && !known.has(normalizeProductText(product.name)));
+      return [...strict, ...close].slice(0, 60);
     }
     if (selectedCategory === "חטיפים ומתוקים") {
       return remoteCategoryProducts.filter(usableProduct);
@@ -100,11 +112,34 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     }
     return [];
   }, [searchableProducts, remoteCategoryProducts, deferredQuery, selectedCategory, filterMode]);
-  const results = useMemo(() => normalizeProductText(deferredQuery) ? allResults : allResults.slice(0, visibleLimit), [allResults, deferredQuery, visibleLimit]);
+  const results = useMemo(() => {
+    const base = normalizeProductText(deferredQuery) ? allResults : allResults.slice(0, visibleLimit);
+    return sortCatalogResults(base, deferredQuery, sortMode);
+  }, [allResults, deferredQuery, visibleLimit, sortMode]);
+  // השלמה אוטומטית: שמות מוצרים שמכילים את מה שהוקלד — הקלקה משלימה את החיפוש
+  const completions = useMemo(() => {
+    const normalizedQuery = normalizeProductText(deferredQuery);
+    if (normalizedQuery.length < 2) return [];
+    // משלימים לפי סוג המוצר שהוקלד (המילה הראשונה), כדי שגם "פסטה 8 אסם" יקבל הצעות
+    const token = normalizedQuery.split(" ")[0] || normalizedQuery;
+    const out = [];
+    const seen = new Set();
+    for (const product of searchableProducts) {
+      const name = normalizeProductText(product.name || "");
+      if (name === normalizedQuery || !name.includes(token) || !name.includes(normalizedQuery.slice(0, 3))) continue;
+      const key = name.slice(0, 28);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(product.name);
+      if (out.length >= 5) break;
+    }
+    return out;
+  }, [searchableProducts, deferredQuery]);
   // בחיפוש התוצאות מתחלקות לפי מחלקות — בסדר שבו עוברים עליהן בסופר
+  // קיבוץ לפי מחלקות רק בהצגת "התאמה" — כשממיינים לפי מחיר או התאמה קרובה מוצגים ברשימה אחת ממוינת
   const departmentGroups = useMemo(
-    () => (normalizeProductText(deferredQuery) ? groupByCategoryOrder(results, aisleOrder) : []),
-    [results, deferredQuery, aisleOrder]
+    () => (normalizeProductText(deferredQuery) && sortMode === "match" ? groupByCategoryOrder(results, aisleOrder) : []),
+    [results, deferredQuery, aisleOrder, sortMode]
   );
   // מה שקונים בדרך כלל בישראל במחלקה הזו — מוצג מיד עם בחירת המחלקה, לפני הקטלוג
   const staples = useMemo(
@@ -231,7 +266,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); setSortMode("match"); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -249,7 +284,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           isAdded ? "border-primary shadow-lg shadow-primary/20" : "border-border/60 shadow-sm hover:border-primary/40 hover:shadow-md"
         }`}
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
-        <div className="relative h-36 bg-white p-2 flex items-center justify-center">
+        <div className="relative h-28 bg-white p-2 flex items-center justify-center">
           <ProductPhoto name={product.name} brand={product.brand} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" lookup={false} />
           <button onClick={(event) => { event.stopPropagation(); onToggleFavorite(product); }} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${product.name}`} className="absolute start-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
             <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />
@@ -279,7 +314,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="pst-tall-dialog w-[calc(100%-1rem)] max-w-md sm:max-w-2xl flex flex-col p-0 overflow-hidden rounded-3xl !flex animate-scale-in">
+      <DialogContent className="pst-search-dialog w-full max-w-md sm:max-w-2xl flex flex-col p-0 overflow-hidden !flex animate-scale-in">
         <DialogHeader className="px-5 pt-5 pb-3 flex-row items-center space-y-0">
           <DialogTitle className="text-xl font-bold">{t("search.title")}</DialogTitle>
         </DialogHeader>
@@ -296,6 +331,17 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </button>
             <VoiceSearchButton onResult={handleVoiceResult} />
           </div>
+          {completions.length > 0 && (
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+              <span className="flex-shrink-0 text-xs font-bold text-muted-foreground">{t("search.similar")}</span>
+              {completions.map((name) => (
+                <button key={name} type="button" onClick={() => setQuery(name)}
+                  className="flex-shrink-0 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-bold text-primary">
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
           {byWeight && <p className="text-xs font-semibold text-primary">{t("search.weightHint")}</p>}
 
           {/* שורת מחלקות אחת שנגללת sideways — התוצאות מקבלות את שאר המסך */}
@@ -330,6 +376,19 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </button>
           </div>
 
+          {/* סדר התוצאות: התאמה למלל, הכי זול, או ההתאמה הקרובה ביותר */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide" role="group" aria-label={t("search.sortLabel")}>
+            <span className="flex-shrink-0 text-xs font-bold text-muted-foreground">{t("search.sortLabel")}:</span>
+            {[["match", t("search.sortMatch")], ["price", t("search.sortPrice")], ["closest", t("search.sortClosest")]].map(([id, label]) => (
+              <button key={id} type="button" aria-pressed={sortMode === id} onClick={() => setSortMode(id)}
+                className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-bold transition-all active:scale-95 ${
+                  sortMode === id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                }`}>
+                {label}
+              </button>
+            ))}
+          </div>
+
           {filterMode === "location" && (
             <div className="flex flex-wrap items-center gap-1.5">
               {[["all", t("search.allChains")], ["openNow", t("search.openNow")], ["shabbat", t("search.shabbatOpen")]].map(([id, label]) => (
@@ -347,7 +406,10 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           {locationError && <p className="text-sm text-destructive text-center">{locationError}</p>}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 pb-5 mt-3 min-h-0">
+        <div className="flex-1 overflow-y-auto px-4 pb-4 mt-2 min-h-0">
+          {query && results.length > 0 && !hasExactMatch && (
+            <p className="mb-2 rounded-xl bg-muted px-3 py-2 text-xs font-bold text-muted-foreground">{t("search.closestHint")}</p>
+          )}
           {/* Loading skeleton grid */}
           {(loadingProducts || categoryLoading) && !query && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -404,6 +466,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
                   </div>
                 </section>
               ))}
+            </div>
+          )}
+
+          {/* מיון לפי מחיר או התאמה קרובה — רשימה אחת ממוינת, בלי קיבוץ מחלקות */}
+          {normalizeProductText(deferredQuery) && sortMode !== "match" && results.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 animate-fade-in">
+              {results.map((product, idx) => renderProductCard(product, idx))}
             </div>
           )}
 
