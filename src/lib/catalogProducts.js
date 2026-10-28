@@ -22,7 +22,7 @@ function toProduct(row) {
     price: row.price || 0,
     image_url: row.image_url || "",
     image_verified: true,
-    catalog_source: "open_food_facts",
+    catalog_source: "catalog",
     chain_name: row.chain_name || "",
     weighted: Boolean(row.weighted)
   });

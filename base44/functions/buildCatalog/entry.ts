@@ -1,6 +1,6 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { CATALOG_CHAINS, catalogChainById, chainCatalogItems, isRealBarcode, photosForCodes, prioritizeForPhotos } from "../../shared/chainCatalog.ts";
-import { OPEN_SOURCES, openCountryProducts, photosFromOpenDatabases } from "../../shared/openCatalog.ts";
+import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
 import { categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
 
 // ברירת מחדל: שלוש רשתות בכל קריאה, כדי לעמוד במגבלות הזמן של השרת.
@@ -140,8 +140,8 @@ export default async function (req) {
       }
     }
 
-    // ---- המאגרים הפתוחים: תמונות אמיתיות למוצרים שלנו ומוצרים חדשים עם תמונה ----
-    const open = { photosChecked: 0, photosFilled: 0, imported: 0, sources: {} as Record<string, number>, perSource: {} as Record<string, number> };
+    // ---- תמונות אמיתיות למוצרים שלנו, לפי הברקוד שלהם ----
+    const open = { photosChecked: 0, photosFilled: 0 };
     if (body?.open === true && Date.now() - startedAt < TIME_BUDGET_MS) {
       // 1. מוצרים קיימים בלי תמונה מקבלים תמונה אמיתית לפי הברקוד שלהם. מתחילים
       // מהמוצרים החדשים ביותר, ומדלגים על ברקודים שכבר נבדקו (גם אם לא נמצאה תמונה) —
@@ -175,52 +175,8 @@ export default async function (req) {
         }
       }
 
-      // 2. מוצרים חדשים עם תמונה אמיתית מהמאגרים הפתוחים — רק כאלה שעוד אין לנו.
-      const want = Math.min(Math.max(Number(body?.importLimit) || 400, 0), 6000);
-      if (want) {
-        // כל הרצה ממשיכה מהדף שאליו הגענו במאגר (נשמר ב-OpenCatalogSync) — ולכן
-        // הקטלוג ממשיך לגדול בכל הרצה יומית ולא חוזר על אותם מוצרים.
-        const syncRows = await base44.asServiceRole.entities.OpenCatalogSync.filter({ source: { $in: OPEN_SOURCES } }, "-created_date", OPEN_SOURCES.length);
-        const syncBySource = new Map<string, any>((syncRows || []).map((row: any) => [row.source, row]));
-        const pageBySource: Record<string, number> = {};
-        for (const source of OPEN_SOURCES) pageBySource[source] = Math.max(1, Number(syncBySource.get(source)?.next_page) || 1);
-        const candidates = await openCountryProducts({ pages: 14, pageSize: 500, pageBySource });
-        const fresh: typeof candidates = [];
-        for (let i = 0; i < candidates.length; i += 400) {
-          const slice = candidates.slice(i, i + 400);
-          const stored = await base44.asServiceRole.entities.CatalogProduct.filter({ barcode: { $in: slice.map((item) => item.code) } }, "-created_date", 400);
-          const known = new Set((stored || []).map((row) => row.barcode));
-          for (const item of slice) if (!known.has(item.code)) fresh.push(item);
-        }
-        const rows = fresh.slice(0, want).map((item) => ({
-          barcode: item.code, name: item.name.slice(0, 64), brand: item.brand.slice(0, 48),
-          category: categoryFromName(item.name), price: 0, chain: item.source,
-          chain_name: item.source_name, image_url: item.image, weighted: false, day: new Date().toISOString().slice(0, 10)
-        }));
-        for (let i = 0; i < rows.length; i += 500) {
-          const created = await base44.asServiceRole.entities.CatalogProduct.bulkCreate(rows.slice(i, i + 500));
-          const stored = Array.isArray(created) ? created : [];
-          open.imported += stored.length;
-          for (const row of stored) {
-            open.sources[row.chain_name] = (open.sources[row.chain_name] || 0) + 1;
-            open.perSource[row.chain] = (open.perSource[row.chain] || 0) + 1;
-          }
-        }
-
-        // כל מאגר מתקדם בשני דפים ליום, ולכן ההרצה הבאה מביאה מוצרים חדשים.
-        for (const source of OPEN_SOURCES) {
-          const row = syncBySource.get(source);
-          const data = {
-            next_page: (pageBySource[source] || 1) + 6,
-            imported: (Number(row?.imported) || 0) + (open.perSource[source] || 0),
-            last_run: new Date().toISOString()
-          };
-          if (row) await base44.asServiceRole.entities.OpenCatalogSync.update(row.id, data);
-          else await base44.asServiceRole.entities.OpenCatalogSync.create({ source, ...data });
-        }
-      }
     }
-    report.push({ open_catalog: open });
+    report.push({ photo_backfill: open });
     console.log("catalog build", JSON.stringify(report));
     return Response.json({ ok: true, chains: CATALOG_CHAINS.length, seconds: Math.round((Date.now() - startedAt) / 1000), report });
   } catch (error) {
