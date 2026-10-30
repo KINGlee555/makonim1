@@ -1,16 +1,9 @@
+import { petPhotoFor } from "@/lib/petPhotos";
+
 const pexels = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=600`;
 
 // Specific product photos — matched by keyword on the product name
 const exactPhotos = [
-  // חיות מחמד — נבדק ראשון כדי שמוצרי חיות לא יקבלו תמונת מזון
-  [/כלב|גור/, pexels(1591939)],
-  [/חתול/, pexels(1560424)],
-  [/תוכי|כנרי|ציפור|כלוב/, pexels(3699261)],
-  [/אקווריום|דג זהב|דגי אקווריום/, pexels(3616076)],
-  [/אוגר|ארנב|שרקן|מכרסם|חציר|שבבי עץ/, pexels(4001296)],
-  [/צב|זוחל/, pexels(3801457)],
-  [/חיות מחמד/, pexels(6568943)],
-
   // פירות וירקות
   [/עגבני/, pexels(1391489)],
   [/מלפפון/, pexels(2329440)],
@@ -121,6 +114,7 @@ function findSpecificPhoto(name = "") {
 }
 
 // Real photo of the product itself — never a generic category shot
+// ציוד חיות נבדק ראשון: לכל מוצר יש תמונה של המוצר עצמו, לא של בעל חיים
 export function getSpecificProductImage(name = "") {
-  return findSpecificPhoto(name);
+  return petPhotoFor(name) || findSpecificPhoto(name);
 }
