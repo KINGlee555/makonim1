@@ -1,6 +1,7 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
 import { probeChainPhoto, photoByName, cleanProductName } from "../../shared/productImageSearch.ts";
+import { isRealBarcode } from "../../shared/chainCatalog.ts";
 
 // מערכת הרקע שמשלימה תמונה לכל מוצר בקטלוג. כל מוצר נבדק פעם אחת מול מקורות התמונה
 // לפי הסדר: תמונת הרשת לפי הברקוד (התמונה של המוצר עצמו), המאגרים הפתוחים, ואם אין —
@@ -24,8 +25,8 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const body = await req.json().catch(() => ({}));
-    const limit = clamp(body?.limit ?? 600, 10, 1200);
-    const nameBudget = clamp(body?.nameBudget ?? 20, 0, 60);
+    const limit = clamp(body?.limit ?? 2000, 10, 4000);
+    const nameBudget = clamp(body?.nameBudget ?? 60, 0, 200);
     const itemsLimit = clamp(body?.items ?? 40, 0, 200);
     const startedAt = Date.now();
 
@@ -33,10 +34,14 @@ export default async function (req: Request): Promise<Response> {
     const pool = rowsOf(await base44.asServiceRole.entities.CatalogProduct.filter(
       { image_url: "", image_checked: { $ne: true }, barcode: { $regex: NUMERIC } },
       "-created_date",
-      Math.min(limit * 2, 1600)
+      Math.min(limit * 3, 4000)
     ));
+    // ברקוד אמיתי (EAN עם ספרת ביקורת) כמעט תמיד קיים במאגר התמונות — בודקים אותו קודם,
+    // כך כל בדיקה מניבה יותר תמונות אמיתיות
+    const ranked = pool.slice().sort((a: any, b: any) =>
+      Number(isRealBarcode(String(b.barcode))) - Number(isRealBarcode(String(a.barcode))));
     const byBarcode = new Map<string, any>();
-    for (const row of pool) if (row.barcode && !byBarcode.has(String(row.barcode))) byBarcode.set(String(row.barcode), row);
+    for (const row of ranked) if (row.barcode && !byBarcode.has(String(row.barcode))) byBarcode.set(String(row.barcode), row);
     const codes = [...byBarcode.keys()].slice(0, limit);
 
     // ---- 2. מה כבר נבדק בעבר לפי הברקוד ----
@@ -51,8 +56,8 @@ export default async function (req: Request): Promise<Response> {
     const images = new Map<string, string>();
 
     // ---- 3. תמונת הרשת לפי הברקוד ----
-    for (let i = 0; i < chainTargets.length; i += 12) {
-      const wave = chainTargets.slice(i, i + 12);
+    for (let i = 0; i < chainTargets.length; i += 30) {
+      const wave = chainTargets.slice(i, i + 30);
       const found = await Promise.all(wave.map((code) => probeChainPhoto(code)));
       wave.forEach((code, index) => { if (found[index]) images.set(code, found[index]); });
     }

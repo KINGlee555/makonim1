@@ -1,5 +1,3 @@
-import { petPhotoFor } from "@/lib/petPhotos";
-
 // Pet supplies catalog — dogs, cats, birds, fish, rodents & reptiles
 const CATEGORY = "חיות מחמד";
 
@@ -74,7 +72,6 @@ const items = [
   ["ויטמינים לחיות מחמד", "", 44.9],
 ];
 
-// לכל מוצר התמונה של המוצר עצמו — לא תמונה כללית של בעל חיים
 export const petProducts = items.map(([name, brand, price]) => ({
-  name, brand, price, category: CATEGORY, image_url: petPhotoFor(name)
+  name, brand, price, category: CATEGORY, image_url: ""
 }));

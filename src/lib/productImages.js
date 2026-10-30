@@ -1,5 +1,3 @@
-import { petPhotoFor } from "@/lib/petPhotos";
-
 const pexels = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=600`;
 
 // Specific product photos — matched by keyword on the product name
@@ -114,7 +112,6 @@ function findSpecificPhoto(name = "") {
 }
 
 // Real photo of the product itself — never a generic category shot
-// ציוד חיות נבדק ראשון: לכל מוצר יש תמונה של המוצר עצמו, לא של בעל חיים
 export function getSpecificProductImage(name = "") {
-  return petPhotoFor(name) || findSpecificPhoto(name);
+  return findSpecificPhoto(name);
 }
