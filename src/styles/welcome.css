@@ -222,3 +222,61 @@
 /* מצב כהה — הצבעים מגיעים מהטוקנים, וזה מה שמתאים לקנבס הכהה */
 .dark .welcome-logo img { background: hsl(var(--skin-surface-2)); }
 .dark .welcome-eyebrow { border-color: hsl(var(--skin-line)); }
+
+/* ===== בחירת שפה במסך הכניסה — שורה שקטה אחת, בלי חלון קופץ ===== */
+.welcome-lang {
+  display: flex;
+  justify-content: center;
+  padding: 14px 16px 0;
+}
+
+.lang-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid hsl(var(--skin-line));
+  border-radius: 999px;
+  background: hsl(var(--skin-surface) / .92);
+  box-shadow: var(--skin-shadow);
+}
+
+.lang-choice-icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  margin-inline: 8px 4px;
+  color: hsl(var(--skin-ink-soft));
+}
+
+.lang-choice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: hsl(var(--skin-ink-soft));
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  transition: background-color .18s ease, color .18s ease;
+}
+
+.lang-choice-btn:hover {
+  background: hsl(var(--skin-surface-2));
+  color: hsl(var(--skin-ink));
+}
+
+.lang-choice-btn:focus-visible {
+  outline: 2px solid hsl(var(--skin-ink));
+  outline-offset: 2px;
+}
+
+.lang-choice-on,
+.lang-choice-on:hover {
+  background: hsl(var(--skin-ink));
+  color: hsl(var(--skin-canvas));
+}

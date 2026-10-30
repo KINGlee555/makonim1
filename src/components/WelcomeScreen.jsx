@@ -6,6 +6,7 @@ import welcomeCopy from "@/lib/locales/welcomeCopy";
 import SkipLink from "@/components/SkipLink";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import SkinToggle from "@/components/SkinToggle";
+import LanguageChoice from "@/components/LanguageChoice";
 import AppFooter from "@/components/AppFooter";
 import CatalogTrust from "@/components/CatalogTrust";
 import "@/styles/welcome.css";
@@ -39,6 +40,10 @@ export default function WelcomeScreen({ onNameSubmit }) {
           <DarkModeToggle className="pst-back" />
         </div>
       </header>
+
+      <div className="welcome-lang">
+        <LanguageChoice />
+      </div>
 
       <main id="main-content" className="welcome-main">
         <p className="welcome-eyebrow fun-rise">

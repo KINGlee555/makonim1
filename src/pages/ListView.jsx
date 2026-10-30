@@ -23,7 +23,6 @@ import NotificationPrompt from "@/components/NotificationPrompt";
 import LiveMembersBar from "@/components/live/LiveMembersBar";
 import SyncStatus from "@/components/minimal/SyncStatus";
 import AgeGateDialog from "@/components/AgeGateDialog";
-import LanguageNotice from "@/components/LanguageNotice";
 import IdentitySyncPrompt from "@/components/IdentitySyncPrompt";
 import useIdentitySync from "@/hooks/useIdentitySync";
 import { useSimpleMode } from "@/lib/simpleMode";
@@ -163,8 +162,6 @@ export default function ListView() {
       <SyncStatus />
 
       <ListTotals itemCount={pendingItems.length} total={totalPrice} />
-
-      <LanguageNotice />
 
       {identity.conflict && (
         <IdentitySyncPrompt
