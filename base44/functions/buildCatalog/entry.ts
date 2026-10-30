@@ -2,6 +2,7 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { CATALOG_CHAINS, catalogChainById, chainCatalogItems, isRealBarcode, photosForCodes, prioritizeForPhotos } from "../../shared/chainCatalog.ts";
 import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
 import { categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
+import { typePhoto } from "../../shared/typePhotos.ts";
 
 // ברירת מחדל: שלוש רשתות בכל קריאה, כדי לעמוד במגבלות הזמן של השרת.
 const DEFAULT_CHAINS = ["shufersal", "rami_levy", "yohananof"];
@@ -79,9 +80,8 @@ export default async function (req) {
           await base44.asServiceRole.entities.CatalogImage.bulkCreate(checked.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
         }
 
-        // נשמר כל מוצר שיש לו תמונה אמיתית, וגם כל מוצר עם ברקוד אמיתי — כך הקטלוג גדל
-        // גם במוצרים שאין להם תמונה בקטלוג העולמי (מותג פרטי, טרי, מעדנייה).
-        const rows = unknown.filter((item) => images.has(item.code) || isRealBarcode(item.code)).map((item) => ({
+        // נשמר רק מוצר שיש לו תמונה אמיתית של עצמו — מוצר בלי תמונה לא נכנס לקטלוג בכלל.
+        const rows = unknown.filter((item) => images.has(item.code)).map((item) => ({
           barcode: item.code,
           name: displayName(item).slice(0, 64),
           brand: item.brand.slice(0, 48),
@@ -115,8 +115,13 @@ export default async function (req) {
               const found = await base44.asServiceRole.entities.CatalogProduct.filter({ name: { $in: wanted.slice(i, i + 200) } }, "-created_date", 200);
               for (const row of found || []) existing.add(row.name);
             }
-            const fresh = internal.filter((item) => !existing.has(displayName(item).slice(0, 64)));
-            const produceRows = fresh.map((item) => ({
+            // גם למוצר בתפזורת יש תמונה אמיתית — התמונה של אותו מוצר (עגבנייה, חזה עוף,
+            // גבינה). מוצר בלי תמונה פשוט לא נכנס לקטלוג.
+            const fresh = internal
+              .filter((item) => !existing.has(displayName(item).slice(0, 64)))
+              .map((item) => ({ item, image: typePhoto(item.name) }))
+              .filter((entry) => entry.image);
+            const produceRows = fresh.map(({ item, image }) => ({
               barcode: `${chain.id}-${item.code}`.slice(0, 32),
               name: displayName(item).slice(0, 64),
               brand: item.brand.slice(0, 48),
@@ -124,7 +129,7 @@ export default async function (req) {
               price: item.price,
               chain: chain.id,
               chain_name: chain.name,
-              image_url: "",
+              image_url: image,
               weighted: item.weighted,
               day
             }));
