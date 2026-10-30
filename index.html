@@ -8,12 +8,45 @@
     <meta name="theme-color" content="#FFD400" />
     <meta name="robots" content="index, follow" />
 
-    <!-- התקנה על מסך הבית והרצה כאפליקציה במובייל -->
+    <!-- התקנה על מסך הבית והרצה כאפליקציה במובייל — תמיד במסך מלא -->
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="MaKonim" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="format-detection" content="telephone=no" />
+    <script>
+      // מסך מלא במובייל: אפליקציה שהותקנה על מסך הבית נפתחת כך מהמניפסט,
+      // ובטאב דפדפן מבקשים מסך מלא בלחיצה הראשונה של המשתמש (הדפדפן מחייב מחווה).
+      (function () {
+        try {
+          var el = document.documentElement;
+          var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+          var alreadyFull =
+            window.matchMedia("(display-mode: fullscreen)").matches ||
+            Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+          // דפדפן שאין לו בכלל מסך מלא (למשל ספארי באייפון) פשוט נשאר כמו שהוא
+          if (!isMobile || alreadyFull || window.self !== window.top) return;
+          if (!(el.requestFullscreen || el.webkitRequestFullscreen)) return;
+
+          var asked = false;
+          function toFullscreen() {
+            if (asked) return;
+            asked = true;
+            document.removeEventListener("touchend", toFullscreen, true);
+            document.removeEventListener("click", toFullscreen, true);
+            var request = el.requestFullscreen || el.webkitRequestFullscreen;
+            if (!request) return;
+            try {
+              var result = request.call(el, { navigationUI: "hide" });
+              if (result && result.catch) result.catch(function () {});
+            } catch (error) {}
+          }
+          document.addEventListener("touchend", toFullscreen, true);
+          document.addEventListener("click", toFullscreen, true);
+        } catch (error) {}
+      })();
+    </script>
 
     <!-- שיתוף ברשתות -->
     <meta property="og:type" content="website" />
