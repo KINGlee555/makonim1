@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { LanguageProvider } from '@/lib/i18n';
 import { applyUserSkin } from '@/lib/skin';
+import '@/styles/fun.css';
 // Add page imports here
 import Home from './pages/Home';
 import ListView from './pages/ListView';

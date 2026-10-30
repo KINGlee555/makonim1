@@ -12,8 +12,9 @@ export default function ListHeader({ list, userName, onOpenProfile, onOpenSettin
 
   return (
     <div className="pst-hero">
+      <span className="fun-shine" aria-hidden="true" />
       <div className="pst-brand">
-        <img src={LOGO} alt="MaKonim" />
+        <img src={LOGO} alt="MaKonim" className="fun-logo" />
         <span>MaKonim</span>
       </div>
 
@@ -21,7 +22,7 @@ export default function ListHeader({ list, userName, onOpenProfile, onOpenSettin
 
       <div className="pst-acts">
         {userName && (
-          <button type="button" onClick={onOpenProfile} className="pst-greet">
+          <button type="button" onClick={onOpenProfile} className="pst-greet fun-wiggle">
             {t("header.greeting", { name: userName })}
           </button>
         )}

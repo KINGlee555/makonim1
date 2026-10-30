@@ -13,7 +13,7 @@ export default function QuickAddBar({ onOpenSearch, onOpenScanner, onOpenShoppin
       <button type="button" onClick={onOpenShoppingMode} aria-label={t("shoppingMode.title")} className="pst-fin">
         {t("big.finish")}
       </button>
-      <button type="button" onClick={onOpenScanner} aria-label={t("barcode.title")} className="pst-scan">
+      <button type="button" onClick={onOpenScanner} aria-label={t("barcode.title")} className="pst-scan fun-glow">
         <ScanLine strokeWidth={2.2} />
       </button>
     </div>

@@ -5,6 +5,7 @@ import WeightQuantity from "@/components/minimal/WeightQuantity";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useLanguage, useT } from "@/lib/i18n";
 import { addedText } from "@/lib/itemAdded";
+import { celebrate } from "@/lib/celebrate";
 import { isGram, isWeight, maxQuantity, quantityStep } from "@/lib/units";
 import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -41,7 +42,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
 
   return (
     <article
-      className={`pst-tile pst-line ${className || ""}`}
+      className={`pst-tile pst-line fun-tile ${className || ""}`}
       style={className ? undefined : { animationDelay: `${Math.min(index, 8) * 0.1}s` }}
     >
       <div className="pst-ph">
@@ -85,7 +86,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
                 onClick={() => { if (quantity <= step) { onRemove && onRemove(item); } else { onUpdateQuantity(item, quantity - step); } }}>
                 −
               </button>
-              <span>{quantity}</span>
+              <span key={quantity} className="fun-bump">{quantity}</span>
               <button type="button" aria-label="הוספה" disabled={quantity >= max}
                 onClick={() => onUpdateQuantity(item, quantity + step)}>
                 +
@@ -93,7 +94,9 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
             </div>
           )}
 
-          <button type="button" onClick={() => onToggleBought(item)} className="pst-buy">
+          <button type="button"
+            onClick={(event) => { celebrate(event.currentTarget); onToggleBought(item); }}
+            className="pst-buy">
             {t("productItem.bought")}
           </button>
 

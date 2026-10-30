@@ -22,7 +22,7 @@ export default function ListItemsSection({
         const pink = sectionIndex % 2 === 1;
 
         return (
-          <section key={category} className="pst-sec">
+          <section key={category} className="pst-sec fun-section">
             <h2 className={`pst-sh ${pink ? "pst-sh-b" : "pst-sh-a"}`}>
               <span className="pst-sh-in">
                 <SectionRunner tone={pink ? "yellow" : "ink"} />
@@ -81,7 +81,7 @@ export default function ListItemsSection({
       {pendingItems.length === 0 && unavailableItems.length === 0 && (
         <section className="pst-sec">
           <div className="pst-panel-slot">
-            <div className="pst-panel">
+            <div className="pst-panel fun-pop-in">
               <p className="pst-empty-title">{t("list.empty")}</p>
               <p className="pst-empty-desc">{t("list.emptyDesc")}</p>
               <div className="pst-empty-acts">

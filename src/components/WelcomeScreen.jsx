@@ -41,19 +41,19 @@ export default function WelcomeScreen({ onNameSubmit }) {
       </header>
 
       <main id="main-content" className="welcome-main">
-        <p className="welcome-eyebrow">
+        <p className="welcome-eyebrow fun-rise">
           <Sparkles className="h-3.5 w-3.5" />
           {copy.eyebrow}
         </p>
 
-        <h1 className="welcome-title">
+        <h1 className="welcome-title fun-rise fun-d1">
           {copy.title1}
           <br />
           <em>{copy.title2}</em>
         </h1>
         <p className="welcome-sub">{copy.sub}</p>
 
-        <form className="welcome-card" onSubmit={handleSubmit}>
+        <form className="welcome-card fun-pop-in fun-d2" onSubmit={handleSubmit}>
           <input
             className="welcome-input"
             value={name}
@@ -69,7 +69,7 @@ export default function WelcomeScreen({ onNameSubmit }) {
           </button>
         </form>
 
-        <div className="welcome-chips">
+        <div className="welcome-chips fun-stagger">
           {copy.chips.map((chip) => (
             <span key={chip} className="welcome-chip">{chip}</span>
           ))}
