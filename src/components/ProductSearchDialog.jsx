@@ -4,9 +4,8 @@ import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
 import { storeStatus } from "@/lib/storeHours";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Search, Plus, ShoppingBasket, MapPin, Tag, Loader2, CheckCircle, Sparkles, Star, Scale } from "lucide-react";
-import VoiceSearchButton from "./VoiceSearchButton";
+import { Plus, ShoppingBasket, MapPin, Loader2, CheckCircle, Sparkles, Star } from "lucide-react";
+import SearchFilterBar from "@/components/search/SearchFilterBar";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
@@ -315,98 +314,34 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="pst-search-dialog w-full max-w-md sm:max-w-2xl flex flex-col p-0 overflow-hidden !flex animate-scale-in">
-        <DialogHeader className="px-5 pt-5 pb-3 flex-row items-center space-y-0">
-          <DialogTitle className="text-xl font-bold">{t("search.title")}</DialogTitle>
+        <DialogHeader className="sr-only">
+          <DialogTitle>{t("search.title")}</DialogTitle>
         </DialogHeader>
+        <SearchFilterBar
+          t={t}
+          query={query}
+          onQuery={setQuery}
+          byWeight={byWeight}
+          onToggleWeight={() => setByWeight(value => !value)}
+          onVoiceResult={handleVoiceResult}
+          completions={completions}
+          onPickCompletion={setQuery}
+          categoryPills={categoryPills}
+          selectedCategory={selectedCategory}
+          onCategory={handleCategoryChange}
+          filterMode={filterMode}
+          onFilterMode={handleFilterChange}
+          locationLoading={locationLoading}
+          userLocation={userLocation}
+          locationError={locationError}
+          sortMode={sortMode}
+          onSortMode={setSortMode}
+          chainFilter={chainFilter}
+          onChainFilter={setChainFilter}
+          openChainsCount={storesForFilter.length}
+        />
 
-        <div className="px-5 space-y-2">
-          <div className="flex gap-2">
-            <Input placeholder={t("search.placeholder")} value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="h-12 rounded-2xl text-base border-2 border-primary/20 focus-visible:border-primary" autoFocus />
-            <button type="button" onClick={() => setByWeight(v => !v)} aria-pressed={byWeight} title={t("search.byWeight")}
-              className={`flex h-12 flex-shrink-0 items-center gap-1.5 rounded-2xl border-2 px-3 text-sm font-semibold transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
-              <Scale className="h-4 w-4" />
-              {t("search.weightShort")}
-            </button>
-            <VoiceSearchButton onResult={handleVoiceResult} />
-          </div>
-          {completions.length > 0 && (
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <span className="flex-shrink-0 text-xs font-bold text-muted-foreground">{t("search.similar")}</span>
-              {completions.map((name) => (
-                <button key={name} type="button" onClick={() => setQuery(name)}
-                  className="flex-shrink-0 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-bold text-primary">
-                  {name}
-                </button>
-              ))}
-            </div>
-          )}
-          {byWeight && <p className="text-xs font-semibold text-primary">{t("search.weightHint")}</p>}
-
-          {/* שורת מחלקות אחת שנגללת sideways — התוצאות מקבלות את שאר המסך */}
-          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
-            {categoryPills.map((cat) => (
-              <button
-                key={cat.id}
-                aria-pressed={selectedCategory === cat.id}
-                onClick={() => handleCategoryChange(cat.id)}
-                className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all active:scale-95 ${
-                  selectedCategory === cat.id
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-muted/70"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Filter mode toggle */}
-          <div className="flex gap-2 bg-muted rounded-2xl p-1">
-            <button onClick={() => handleFilterChange("price")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all ${filterMode === "price" ? "bg-card text-primary shadow-sm font-bold" : "text-muted-foreground"}`}>
-              <Tag className="w-4 h-4" />{t("search.byPrice")}
-            </button>
-            <button onClick={() => handleFilterChange("location")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all ${filterMode === "location" ? "bg-card text-primary shadow-sm font-bold" : "text-muted-foreground"}`}>
-              {locationLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
-              {t("search.byLocation")}
-              {userLocation && <span className="w-2 h-2 rounded-full bg-primary inline-block" />}
-            </button>
-          </div>
-
-          {/* סדר התוצאות: התאמה למלל, הכי זול, או ההתאמה הקרובה ביותר */}
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide" role="group" aria-label={t("search.sortLabel")}>
-            <span className="flex-shrink-0 text-xs font-bold text-muted-foreground">{t("search.sortLabel")}:</span>
-            {[["match", t("search.sortMatch")], ["price", t("search.sortPrice")], ["closest", t("search.sortClosest")]].map(([id, label]) => (
-              <button key={id} type="button" aria-pressed={sortMode === id} onClick={() => setSortMode(id)}
-                className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-bold transition-all active:scale-95 ${
-                  sortMode === id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {filterMode === "location" && (
-            <div className="flex flex-wrap items-center gap-1.5">
-              {[["all", t("search.allChains")], ["openNow", t("search.openNow")], ["shabbat", t("search.shabbatOpen")]].map(([id, label]) => (
-                <button key={id} type="button" aria-pressed={chainFilter === id} onClick={() => setChainFilter(id)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all active:scale-95 ${
-                    chainFilter === id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  }`}>
-                  {label}
-                </button>
-              ))}
-              {storesForFilter.length === 0 && <span className="text-xs text-destructive">{t("search.noOpenChains")}</span>}
-            </div>
-          )}
-
-          {locationError && <p className="text-sm text-destructive text-center">{locationError}</p>}
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-4 pb-4 mt-2 min-h-0">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-2">
           {query && results.length > 0 && !hasExactMatch && (
             <p className="mb-2 rounded-xl bg-muted px-3 py-2 text-xs font-bold text-muted-foreground">{t("search.closestHint")}</p>
           )}

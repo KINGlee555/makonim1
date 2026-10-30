@@ -2,6 +2,14 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { MapPin, Scale, SlidersHorizontal, Tag, Loader2, X } from "lucide-react";
 import VoiceSearchButton from "@/components/VoiceSearchButton";
+import { useLanguage } from "@/lib/i18n";
+
+// שם הכפתור בשפת הממשק
+const LABELS = {
+  he: { filters: "סינון", close: "סגור" },
+  en: { filters: "Filters", close: "Close" },
+  ru: { filters: "Фильтры", close: "Закрыть" },
+};
 
 // פס החיפוש: שורת חיפוש קצרה ושורת מחלקות — התוצאות מקבלות כמעט את כל המסך.
 // הסינון המפורט (מחיר/מיקום, סדר תוצאות, רשתות) נפתח בלחיצה מעל התוצאות,
@@ -15,38 +23,40 @@ export default function SearchFilterBar({
   sortMode, onSortMode, chainFilter, onChainFilter, openChainsCount,
 }) {
   const [open, setOpen] = useState(false);
+  const { lang } = useLanguage();
+  const labels = LABELS[lang] || LABELS.he;
   const detailed = filterMode === "location" || sortMode !== "match";
 
   return (
     <div className="relative shrink-0 border-b-2 border-border/60 bg-card">
-      <div className="px-4 pb-2 pt-3">
-        <div className="flex gap-2">
+      <div className="px-3 pb-1.5 pe-12 pt-2">
+        <div className="flex gap-1.5">
           <Input
             placeholder={t("search.placeholder")}
             value={query}
             onChange={(event) => onQuery(event.target.value)}
-            className="h-11 rounded-2xl border-2 border-primary/20 text-base focus-visible:border-primary"
+            className="h-10 rounded-xl border-2 border-primary/20 text-base focus-visible:border-primary"
             autoFocus
           />
           <button type="button" onClick={onToggleWeight} aria-pressed={byWeight} title={t("search.byWeight")}
-            className={`flex h-11 flex-shrink-0 items-center gap-1.5 rounded-2xl border-2 px-3 text-sm font-semibold transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
+            className={`flex h-10 flex-shrink-0 items-center gap-1 rounded-xl border-2 px-2.5 text-[13px] font-semibold transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
             <Scale className="h-4 w-4" />
             {t("search.weightShort")}
           </button>
           <VoiceSearchButton onResult={onVoiceResult} />
         </div>
 
-        <div className="mt-2 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+        <div className="mt-1.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
           <button
             type="button"
             onClick={() => setOpen(value => !value)}
             aria-expanded={open}
-            className={`relative flex flex-shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-bold transition-all active:scale-95 ${
+            className={`relative flex flex-shrink-0 items-center gap-1 rounded-full px-3 py-1 text-[13px] font-bold transition-all active:scale-95 ${
               open || detailed ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}
           >
             <SlidersHorizontal className="h-4 w-4" />
-            {t("search.filters")}
+            {labels.filters}
             {detailed && !open && <span className="h-1.5 w-1.5 rounded-full bg-current" />}
           </button>
           {categoryPills.map((cat) => (
@@ -54,7 +64,7 @@ export default function SearchFilterBar({
               key={cat.id}
               aria-pressed={selectedCategory === cat.id}
               onClick={() => onCategory(cat.id)}
-              className={`flex-shrink-0 rounded-full px-3.5 py-1.5 text-sm font-bold transition-all active:scale-95 ${
+              className={`flex-shrink-0 rounded-full px-3 py-1 text-[13px] font-bold transition-all active:scale-95 ${
                 selectedCategory === cat.id
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-muted text-muted-foreground"
@@ -69,8 +79,8 @@ export default function SearchFilterBar({
       {open && (
         <div className="absolute inset-x-0 top-full z-30 max-h-[46dvh] space-y-3 overflow-y-auto border-b-2 border-border bg-card p-4 shadow-2xl animate-fade-in">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-extrabold text-foreground">{t("search.filters")}</p>
-            <button type="button" onClick={() => setOpen(false)} aria-label={t("search.close")}
+            <p className="text-sm font-extrabold text-foreground">{labels.filters}</p>
+            <button type="button" onClick={() => setOpen(false)} aria-label={labels.close}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground">
               <X className="h-4 w-4" />
             </button>
