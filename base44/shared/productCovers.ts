@@ -54,18 +54,45 @@ const CATEGORY_PHOTOS: Record<string, string> = {
   "לחם ומאפים": pexels(1775043),
   "קפואים": pexels(158388),
   "פירות וירקות": pexels(1656664),
-  "חד פעמי וניקיון": pexels(4239146),
+  "ניקיון": pexels(4239146),
+  "היגיינה": pexels(3737594),
+  "תבלינים": pexels(1340116),
+  "חיות מחמד": pexels(1170986),
   "שימורים": pexels(4198020),
   "אחר": pexels(264636)
 };
 
+export function categoryPhoto(category: string) {
+  return CATEGORY_PHOTOS[category] || CATEGORY_PHOTOS["אחר"];
+}
+
+// התמונות הכלליות של המחלקות — מזהים אותן כדי לדעת אילו מוצרים עוד מחכים
+// לתמונה מדויקת יותר
+export function isGenericPhoto(url: string) {
+  return Object.values(CATEGORY_PHOTOS).includes(String(url || ""));
+}
+
 export type CoverMaps = {
   family: Map<string, string>;
   brand: Map<string, string>;
+  word: Map<string, string>;
 };
 
 export function emptyCovers(): CoverMaps {
-  return { family: new Map(), brand: new Map() };
+  return { family: new Map(), brand: new Map(), word: new Map() };
+}
+
+// מילים שמתארות את סוג המוצר ("קוטג", "במבה", "טונה") — לא שם מותג ולא מידה.
+// הן נותנות תמונה אמיתית של אותו סוג מוצר, ולא תמונת מדף כללית.
+const IGNORE_WORDS = new Set([
+  "של", "עם", "בלי", "טרי", "טרייה", "קפוא", "קפואה", "ארוז", "ארוזה", "מבצע", "חדש",
+  "גדול", "גדולה", "קטן", "קטנה", "משפחה", "אחוז", "שומן", "משקל", "ארץ", "תוצרת"
+]);
+
+function wordKeys(name: string) {
+  return keyWords(name)
+    .filter((word) => word.length >= 4 && !IGNORE_WORDS.has(word))
+    .slice(0, 5);
 }
 
 // המפה נבנית ממוצרים שכבר יש להם תמונה אמיתית בקטלוג — וכך מוצר חדש מקבל את
@@ -76,6 +103,10 @@ export function addCover(maps: CoverMaps, { name, brand, category, image }: { na
   if (family && !maps.family.has(family)) maps.family.set(family, image);
   const brandId = brandKey(brand || "", category || "");
   if (brandId && !maps.brand.has(brandId)) maps.brand.set(brandId, image);
+  // האריח של המוצר עצמו — אומר איך נראה "קוטג" או "במבה" בכלל
+  for (const word of wordKeys(name)) {
+    if (!maps.word.has(word)) maps.word.set(word, image);
+  }
 }
 
 // טוען את המפות מהקטלוג הקיים (בעמודים)
@@ -84,10 +115,9 @@ export async function loadCoverMaps(client: any, rows = 20000) {
   const pageSize = 500;
   let cursor: string | undefined;
   for (let i = 0; i < Math.ceil(rows / pageSize); i++) {
-    const page = await client.asServiceRole.entities.CatalogProduct.filter(
-      { image_url: { $ne: "" } },
-      { sort: "-created_date", limit: pageSize, cursor }
-    );
+    const options: any = { sort: "-created_date", limit: pageSize };
+    if (cursor) options.cursor = cursor;
+    const page = await client.asServiceRole.entities.CatalogProduct.filter({ image_url: { $ne: "" } }, options);
     const items = Array.isArray(page) ? page : page?.items || [];
     if (!items.length) break;
     for (const row of items) addCover(maps, row);
@@ -107,9 +137,14 @@ export function resolveCover(
     const image = maps.family.get(family);
     if (image) return image;
   }
+  // תמונה אמיתית של אותו סוג מוצר — "קוטג", "טונה", "במבה" — לפי המילה המזהה
+  for (const word of wordKeys(name)) {
+    const image = maps.word.get(word);
+    if (image) return image;
+  }
   const typed = typePhoto(name);
   if (typed) return typed;
   const byBrand = maps.brand.get(brandKey(brand, category));
   if (byBrand) return byBrand;
-  return CATEGORY_PHOTOS[category] || CATEGORY_PHOTOS["אחר"];
+  return categoryPhoto(category);
 }

@@ -32,6 +32,8 @@ export default async function (req) {
     const branches = Math.min(Math.max(Number(body?.branches) || 1, 1), 8);
     // גם מוצרי קוד פנימי (ירקות, מעדנייה, מאפייה) נכנסים לקטלוג — בלי כפילויות לפי שם.
     const includeInternal = body?.includeInternal !== false;
+    // כמה מוצרים בקוד פנימי (ירקות, מעדנייה, מאפייה) נכנסים בקריאה הזאת
+    const internals = Math.min(Math.max(Number(body?.internals) || 1500, 0), 5000);
     // כמה ברקודים בודקים לתמונה מדויקת בקריאה הזאת, ומה תקרת הזמן שלה
     const photos = Math.min(Math.max(Number(body?.photos) || 120, 0), 600);
     const TIME_BUDGET_MS = Math.min(Math.max(Number(body?.seconds) || 200, 15), 280) * 1000;
@@ -127,7 +129,12 @@ export default async function (req) {
         // כדי שלא ייווצרו כפילויות בין הרשתות.
         let produceStored = 0;
         if (includeInternal) {
-          const internal = unknown.filter((item) => !images.has(item.code) && !isRealBarcode(item.code));
+          // מוצרי קוד פנימי נלקחים מכל המועמדים, ולא רק מאלה שנכנסו תחת המכסה של
+          // הברקודים — כך הירקות והמעדנייה של הרשת לא נחתכים.
+          const internal = candidates
+            .filter((item) => !isRealBarcode(item.code) && !storedCodes.has(item.code))
+            .slice(0, internals);
+          for (const item of internal) storedCodes.add(item.code);
           if (internal.length) {
             const names = new Map<string, string>();
             for (const item of internal) names.set(displayName(item).slice(0, 64), item.code);
