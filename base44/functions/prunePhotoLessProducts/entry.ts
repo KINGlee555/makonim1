@@ -35,8 +35,8 @@ export default async function (req: Request): Promise<Response> {
       if (rows.length < batch) break;
     }
 
-    const remaining = await base44.asServiceRole.entities.CatalogProduct.count({ image_url: "" });
-    const total = await base44.asServiceRole.entities.CatalogProduct.count({});
+    const remaining = rowsOf(await base44.asServiceRole.entities.CatalogProduct.filter({ image_url: "" }, "created_date", 2000)).length;
+    const total = rowsOf(await base44.asServiceRole.entities.CatalogProduct.list("created_date", 2000)).length;
     console.log("prune catalog", { deleted, remaining, total, dryRun });
     return Response.json({ ok: true, deleted, remaining, total, dryRun, seconds: Math.round((Date.now() - startedAt) / 1000) });
   } catch (error: any) {
