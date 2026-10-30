@@ -76,10 +76,10 @@ export function sortCatalogResults(items, query, mode) {
   return items;
 }
 
-export function searchCatalog(products, query, category, byPrice) {
+export function searchCatalog(products, query, category, byPrice, limit = 48) {
   const normalized = normalizeProductText(query);
   if (!normalized) return [];
-  const cacheKey = `${normalized}|${category || "all"}|${byPrice ? "price" : "name"}`;
+  const cacheKey = `${normalized}|${category || "all"}|${byPrice ? "price" : "name"}|${limit}`;
   const cached = resultCaches.get(products)?.get(cacheKey);
   if (cached) return cached;
 
@@ -102,8 +102,8 @@ export function searchCatalog(products, query, category, byPrice) {
   const results = [];
   for (const bucket of buckets) {
     bucket.sort(compare);
-    results.push(...bucket.slice(0, 48 - results.length));
-    if (results.length === 48) break;
+    results.push(...bucket.slice(0, limit - results.length));
+    if (results.length >= limit) break;
   }
   return cacheResults(products, cacheKey, results);
 }

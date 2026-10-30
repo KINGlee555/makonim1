@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";
@@ -11,7 +11,7 @@ import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
 import { searchCatalog, closestCatalog, sortCatalogResults, normalizeProductText } from "@/lib/productSearch";
 import { browseRemoteCategory, searchRemoteCatalog } from "@/lib/remoteProductCatalog";
-import { searchStoredCatalog } from "@/lib/catalogProducts";
+import { searchStoredCatalog, prefetchStoredCatalog } from "@/lib/catalogProducts";
 import { staplesForCategory } from "@/lib/categoryStaples";
 import { groupByCategoryOrder, loadCategoryOrder } from "@/lib/categoryOrder";
 import { isWeightSold } from "@/lib/weightProducts";
@@ -65,6 +65,37 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [remoteLoading, setRemoteLoading] = useState(false);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [visibleLimit, setVisibleLimit] = useState(48);
+  // דף התוצאות הבא מהקטלוג השמור — טעינה מדורגת ומהירה של "טען עוד"
+  const [catalogCursor, setCatalogCursor] = useState("");
+  const [loadingMore, setLoadingMore] = useState(false);
+  const remainingPages = useRef([]);
+  const storePage = (items, nextCursor) => {
+    if (!items.length) return;
+    setStoredProducts(prev => {
+      const seen = new Set(prev.map(product => normalizeProductText(product.name)));
+      return [...prev, ...items.filter(product => !seen.has(normalizeProductText(product.name)))];
+    });
+    setCatalogCursor(nextCursor || "");
+  };
+  // הדף הבא נטען ברקע מיד עם הגעת התוצאות, כדי שהלחיצה על "טען עוד" תרגיש מיידית
+  const warmNextPage = (term, category, nextCursor) => {
+    const params = { query: term ? deferredQuery : "", category: term ? "" : category, limit: 60, cursor: nextCursor };
+    remainingPages.current = [params];
+    prefetchStoredCatalog(params);
+  };
+  const loadMoreResults = () => {
+    // קודם כל מציגים מיד את מה שכבר במכשיר, ורק אחר כך מושכים עוד מהשרת
+    setVisibleLimit(limit => limit + 48);
+    const next = remainingPages.current.shift();
+    if (!next?.cursor) return;
+    setLoadingMore(true);
+    searchStoredCatalog(next)
+      .then(page => {
+        storePage(page.items, page.nextCursor);
+        warmNextPage(Boolean(normalizeProductText(next.query)), next.category, page.nextCursor);
+      })
+      .finally(() => setLoadingMore(false));
+  };
   const deferredQuery = useDeferredValue(query);
   const searchableProducts = useMemo(() => {
     const unique = new Map();
@@ -90,18 +121,18 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   ], [aisleOrder]);
   // האם החיפוש המדויק מצא משהו — כדי להסביר כשמוצגות התאמות קרובות בלבד
   const hasExactMatch = useMemo(
-    () => !normalizeProductText(deferredQuery) || searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").some(usableProduct),
+    () => !normalizeProductText(deferredQuery) || searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price", 240).some(usableProduct),
     [searchableProducts, deferredQuery, filterMode]
   );
   const allResults = useMemo(() => {
     if (normalizeProductText(deferredQuery)) {
-      const strict = searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price").filter(usableProduct);
+      const strict = searchCatalog(searchableProducts, deferredQuery, "all", filterMode === "price", 240).filter(usableProduct);
       // תמיד מחזירים תוצאות: כשההתאמה המדויקת דלה, מוסיפים את המוצרים הקרובים ביותר לחיפוש
       if (strict.length >= 8) return strict;
       const known = new Set(strict.map(product => normalizeProductText(product.name)));
       const close = closestCatalog(searchableProducts, deferredQuery, "all")
         .filter(product => usableProduct(product) && !known.has(normalizeProductText(product.name)));
-      return [...strict, ...close].slice(0, 60);
+      return [...strict, ...close];
     }
     if (selectedCategory === "חטיפים ומתוקים") {
       return remoteCategoryProducts.filter(usableProduct);
@@ -112,7 +143,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     return [];
   }, [searchableProducts, remoteCategoryProducts, deferredQuery, selectedCategory, filterMode]);
   const results = useMemo(() => {
-    const base = normalizeProductText(deferredQuery) ? allResults : allResults.slice(0, visibleLimit);
+    const base = allResults.slice(0, visibleLimit);
     return sortCatalogResults(base, deferredQuery, sortMode);
   }, [allResults, deferredQuery, visibleLimit, sortMode]);
   // השלמה אוטומטית: שמות מוצרים שמכילים את מה שהוקלד — הקלקה משלימה את החיפוש
@@ -181,12 +212,20 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   useEffect(() => {
     if (!open) return;
     const term = normalizeProductText(deferredQuery);
-    if (!term && selectedCategory === "all") { setStoredProducts([]); return; }
+    if (!term && selectedCategory === "all") { setStoredProducts([]); setCatalogCursor(""); remainingPages.current = []; return; }
     let cancelled = false;
     const timer = window.setTimeout(() => {
-      // מאות הראשונה כבר נשלפת מהקטלוג השמור, וכל אות נוספת מצמצמת את ההצעות
-      searchStoredCatalog({ query: deferredQuery, category: term ? "" : selectedCategory, limit: 150 })
-        .then(products => { if (!cancelled) setStoredProducts(products); })
+      // הדף הראשון של התוצאות מהקטלוג השמור, והדף הבא נטען ברקע מיד אחריו
+      searchStoredCatalog({ query: deferredQuery, category: term ? "" : selectedCategory, limit: 60 })
+        .then(page => {
+          if (cancelled) return;
+          setStoredProducts(page.items);
+          setCatalogCursor(page.nextCursor || "");
+          remainingPages.current = page.nextCursor
+            ? [{ query: deferredQuery, category: term ? "" : selectedCategory, limit: 60, cursor: page.nextCursor }]
+            : [];
+          if (page.nextCursor) prefetchStoredCatalog(remainingPages.current[0]);
+        })
         .catch(() => {});
     }, 150);
     return () => { cancelled = true; window.clearTimeout(timer); };
@@ -265,7 +304,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); setSortMode("match"); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setCatalogCursor(""); remainingPages.current = []; setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); setSortMode("match"); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -320,7 +359,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
         <SearchFilterBar
           t={t}
           query={query}
-          onQuery={setQuery}
+          onQuery={(value) => { setQuery(value); setVisibleLimit(48); }}
           byWeight={byWeight}
           onToggleWeight={() => setByWeight(value => !value)}
           onVoiceResult={handleVoiceResult}
@@ -423,8 +462,9 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
             </section>
           )}
 
-          {!query && allResults.length > results.length && (
-            <button onClick={() => setVisibleLimit(limit => limit + 48)} className="mt-4 w-full rounded-2xl bg-secondary py-3 font-semibold text-secondary-foreground">
+          {(allResults.length > results.length || catalogCursor) && (
+            <button onClick={loadMoreResults} disabled={loadingMore} className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-secondary py-3 font-semibold text-secondary-foreground disabled:opacity-70">
+              {loadingMore && <Loader2 className="h-4 w-4 animate-spin" />}
               {t("search.loadMore")}
             </button>
           )}

@@ -1,15 +1,17 @@
 import { base44 } from "@/api/base44Client";
 import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
 
-const memoryCache = new Map();
+// דפי תוצאות מהקטלוג השמור. הדף הראשון נשמר כדי שפתיחה חוזרת של אותו חיפוש
+// תהיה מיידית, וכל דף נוסף נשמר לפי הסמן שלו — כך "טען עוד" לא ממתין לשרת.
+const pageCache = new Map();
 const pending = new Map();
-const MAX_CACHED = 60;
+const MAX_CACHED = 120;
 
-function remember(key, products) {
-  if (products.length === 0) return products;
-  if (memoryCache.size >= MAX_CACHED) memoryCache.delete(memoryCache.keys().next().value);
-  memoryCache.set(key, products);
-  return products;
+function cachePage(key, page) {
+  if (!page.items.length) return page;
+  if (pageCache.size >= MAX_CACHED) pageCache.delete(pageCache.keys().next().value);
+  pageCache.set(key, page);
+  return page;
 }
 
 function toProduct(row) {
@@ -28,29 +30,48 @@ function toProduct(row) {
   });
 }
 
-// החיפוש נעשה בשרת על קטלוג המוצרים השמור (אלפי מוצרים מכל הרשתות), ולכן הוא מהיר
-// ואינו תלוי באף אתר חיצוני. תמונות אמיתיות כבר שמורות לכל מוצר.
-export async function searchStoredCatalog({ query = "", category = "", limit = 150 } = {}) {
-  const term = normalizeProductText(query);
-  const key = `${term}|${category}|${limit}`;
-  if (memoryCache.has(key)) return memoryCache.get(key);
-  if (pending.has(key)) return pending.get(key);
-
+function buildFilter(query, category) {
   const filter = {};
   if (category) filter.category = category;
-  if (term.length >= 1) {
+  if (query) {
     // מילת החיפוש הראשונה מסוננת בשרת; שאר המילים מסוננות מיד אחר כך במסך.
     const first = query.trim().replace(/[%.,()/\\-]/g, " ").replace(/\s+/g, " ").trim().split(" ")[0] || "";
-    if (!first) return [];
-    // מאות ראשונה ההצעות מופיעות מיד — לפי המוצרים שמתחילים באות הזו
-    filter.name = { $regex: first.length === 1 ? `^${first}` : first };
+    if (!first) return null;
+    // חיפוש לפי תחילת השם — מהיר במיוחד על קטלוג גדול, ומחזיר בדיוק את מה שמחפשים:
+    // מי שמקליד "חלב" מקבל את מוצרי החלב, וההשלמה החכמה נשארת במסך.
+    const safe = first.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    filter.name = { $regex: `^${safe}` };
   }
-  if (!Object.keys(filter).length) return [];
+  return Object.keys(filter).length ? filter : null;
+}
 
-  const load = base44.entities.CatalogProduct.filter(filter, { sort: "name", limit })
-    .then(rows => (Array.isArray(rows) ? rows : rows?.items || []).map(toProduct))
-    .catch(() => [])
+// החיפוש נעשה בשרת על קטלוג המוצרים השמור (עשרות אלפי מוצרים מכל הרשתות בישראל).
+// כל קריאה מחזירה דף אחד מהיר, והדף הבא נטען לפי הסמן — בלי לשלוף שוב את מה שכבר הוצג.
+export async function searchStoredCatalog({ query = "", category = "", limit = 60, cursor = "" } = {}) {
+  const term = normalizeProductText(query);
+  const filter = buildFilter(term ? query : "", category);
+  if (!filter) return { items: [], nextCursor: "" };
+
+  const key = `${term}|${category}|${limit}|${cursor}`;
+  if (pageCache.has(key)) return pageCache.get(key);
+  if (pending.has(key)) return pending.get(key);
+
+  const load = base44.entities.CatalogProduct.filter(filter, { sort: "name", limit, cursor: cursor || undefined })
+    .then(page => {
+      const rows = Array.isArray(page) ? page : page?.items || [];
+      return {
+        items: rows.map(toProduct),
+        nextCursor: Array.isArray(page) ? "" : page?.next_cursor || ""
+      };
+    })
+    .catch(() => ({ items: [], nextCursor: "" }))
     .finally(() => pending.delete(key));
   pending.set(key, load);
-  return remember(key, await load);
+  return cachePage(key, await load);
+}
+
+// טעינה מראש של הדף הבא — כך הלחיצה על "טען עוד" מציגה מיד, בלי המתנה.
+export function prefetchStoredCatalog(params) {
+  if (!params?.cursor) return;
+  searchStoredCatalog(params).catch(() => {});
 }

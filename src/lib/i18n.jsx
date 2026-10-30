@@ -72,7 +72,7 @@ const translations = {
     "search.suggestions": "המלצות בשבילך",
     "search.voiceSearch": "חיפוש קולי",
     "search.km": "ק״מ",
-    "search.loadMore": "הצג עוד חטיפים",
+    "search.loadMore": "טען עוד תוצאות",
 
     // ShareDialog
     "share.title": "שתף את הרשימה",
@@ -915,7 +915,7 @@ const translations = {
     "search.suggestions": "Recommendations for you",
     "search.voiceSearch": "Voice search",
     "search.km": "km",
-    "search.loadMore": "Show more snacks",
+    "search.loadMore": "Load more results",
 
     // ShareDialog
     "share.title": "Share the List",
@@ -1758,7 +1758,7 @@ const translations = {
     "search.suggestions": "Рекомендации для вас",
     "search.voiceSearch": "Голосовой поиск",
     "search.km": "км",
-    "search.loadMore": "Показать ещё снеки",
+    "search.loadMore": "Загрузить ещё",
 
     // ShareDialog
     "share.title": "Поделиться списком",

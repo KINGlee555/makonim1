@@ -264,9 +264,161 @@
               "perChain": 12000
             }
           },
-          "then": "end",
+          "then": "catalog_keshet",
           "x-base44": {
             "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d9\u05dc\u05d5"
+          }
+        }
+      },
+      {
+        "catalog_keshet": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "keshet"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_politzer",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e7\u05e9\u05ea \u05d8\u05e2\u05de\u05d9\u05dd"
+          }
+        }
+      },
+      {
+        "catalog_politzer": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "politzer"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_rami_levy",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e4\u05d5\u05dc\u05d9\u05e6\u05e8"
+          }
+        }
+      },
+      {
+        "catalog_rami_levy": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "rami_levy"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_shufersal",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e8\u05de\u05d9 \u05dc\u05d5\u05d9"
+          }
+        }
+      },
+      {
+        "catalog_shufersal": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "shufersal"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_osher_ad",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e9\u05d5\u05e4\u05e8\u05e1\u05dc"
+          }
+        }
+      },
+      {
+        "catalog_osher_ad": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "osher_ad"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_salach_dabach",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d0\u05d5\u05e9\u05e8 \u05e2\u05d3"
+          }
+        }
+      },
+      {
+        "catalog_salach_dabach": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "salach_dabach"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_stop_market",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d0\u05dc\u05d7 \u05d3\u05d1\u05d0\u05d7"
+          }
+        }
+      },
+      {
+        "catalog_stop_market": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "stop_market"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "catalog_yohananof",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05e1\u05d8\u05d5\u05e4 \u05de\u05e8\u05e7\u05d8"
+          }
+        }
+      },
+      {
+        "catalog_yohananof": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "buildCatalog",
+            "args": {
+              "chains": [
+                "yohananof"
+              ],
+              "scan": 60000,
+              "perChain": 12000
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d9\u05d5\u05d7\u05e0\u05e0\u05d5\u05e3"
           }
         }
       }
