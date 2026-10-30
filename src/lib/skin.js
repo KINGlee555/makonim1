@@ -2,39 +2,48 @@ import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 
 // ערכת העיצוב של המשתמש — מקום אחד שמחזיק את הבחירה, כדי שכל המסכים והכפתורים
-// יתנהגו אותו דבר. ברירת המחדל היא הערכה הרגועה והסולידית.
+// יתנהגו אותו דבר. ברירת המחדל היא "פתק על המקרר": הרשימה נראית כמו דף כתוב ביד
+// שתלוי בדלת המקרר. אפשר לבחור גם ערכה רגועה או כרזת שוק.
 const KEY = "app_skin";
+export const FRIDGE = "fridge";
 export const QUIET = "quiet";
 export const POSTER = "poster";
+const SKINS = [FRIDGE, QUIET, POSTER];
 
-export function isPosterSkin() {
+export function getStoredSkin() {
   try {
-    return localStorage.getItem(KEY) === POSTER;
+    const stored = localStorage.getItem(KEY);
+    return SKINS.includes(stored) ? stored : FRIDGE;
   } catch {
-    return false;
+    return FRIDGE;
   }
 }
 
+export function isPosterSkin() {
+  return getStoredSkin() === POSTER;
+}
+
 export function applySkin(skin) {
-  const poster = skin === POSTER;
-  document.documentElement.classList.toggle("skin-poster", poster);
-  try { localStorage.setItem(KEY, poster ? POSTER : QUIET); } catch {}
+  const chosen = SKINS.includes(skin) ? skin : FRIDGE;
+  const root = document.documentElement;
+  root.classList.toggle("skin-poster", chosen === POSTER);
+  root.classList.toggle("skin-fridge", chosen === FRIDGE);
+  try { localStorage.setItem(KEY, chosen); } catch {}
 }
 
 // הבחירה של המשתמש עצמו גוברת על מה שנשמר במכשיר — כך העיצוב עובר איתו בין מכשירים
 export function applyUserSkin(user) {
-  if (!user?.skin) return;
-  applySkin(user.skin === POSTER ? POSTER : QUIET);
+  applySkin(user?.skin && SKINS.includes(user.skin) ? user.skin : getStoredSkin());
 }
 
 export function useSkin() {
-  const [poster, setPoster] = useState(isPosterSkin);
+  const [skin, setSkin] = useState(getStoredSkin);
 
-  const choose = (skin) => {
-    setPoster(skin === POSTER);
-    applySkin(skin);
-    base44.auth.updateMe({ skin: skin === POSTER ? POSTER : QUIET }).catch(() => {});
+  const choose = (next) => {
+    setSkin(next);
+    applySkin(next);
+    base44.auth.updateMe({ skin: next }).catch(() => {});
   };
 
-  return { poster, choose };
+  return { skin, poster: skin === POSTER, choose };
 }

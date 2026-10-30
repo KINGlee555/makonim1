@@ -7,7 +7,8 @@ import {
 import { useLanguage, useT } from "@/lib/i18n";
 import { LANGUAGES } from "@/lib/languages";
 import { applyDarkTheme, isDarkTheme } from "@/lib/theme";
-import { POSTER, QUIET, useSkin } from "@/lib/skin";
+import { FRIDGE, POSTER, QUIET, useSkin } from "@/lib/skin";
+import { skinLabel } from "@/lib/skinLabels";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { toast } from "@/components/ui/use-toast";
 import { uiPill } from "@/lib/minimalUi";
@@ -20,12 +21,11 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = 
   const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(isDarkTheme);
   const [simple, setSimpleMode] = useSimpleMode();
-  const { poster, choose } = useSkin();
+  const { skin: currentSkin, choose } = useSkin();
 
-  const skinOptions = [
-    { skin: QUIET, text: t("design.quiet"), on: !poster },
-    { skin: POSTER, text: t("design.poster"), on: poster },
-  ];
+  const skinOptions = [FRIDGE, QUIET, POSTER].map(skin => ({
+    skin, text: skinLabel(lang, skin), on: currentSkin === skin,
+  }));
 
   const toggleDark = () => {
     const next = !dark;

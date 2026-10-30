@@ -1,0 +1,822 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Scribble&display=swap');
+
+/* ===================================================================
+   פתק על המקרר — ערכת העיצוב הראשית.
+   הרעיון: המסך הוא דלת מקרר. הרשימה היא דף נייר שתלוי עליה עם מגנט,
+   כתוב בכתב יד, עם קווים מקווקווים, מספרים בעיפרון ומבצעים מסומנים במרקר.
+   כל הכללים כאן חלים רק כשה-class skin-fridge נמצא על html.
+   =================================================================== */
+
+html.skin-fridge {
+  --fridge-hand: "Rubik Scribble", "Rubik", system-ui, sans-serif;
+  --fridge-paper: #fffdf5;
+  --fridge-paper-2: #f7f1e0;
+  --fridge-line: #e3d9c0;
+  --fridge-rule: #ded3b7;
+  --fridge-ink: #2b3a3f;
+  --fridge-ink-soft: #7b7361;
+  --fridge-pencil: #b23b3b;
+  --fridge-marker: #ffe27a;
+  --fridge-note-shadow: 0 1px 2px rgba(60, 50, 35, .12), 0 16px 30px -18px rgba(35, 50, 60, .45);
+}
+
+html.skin-fridge body {
+  background: #e9eff2;
+}
+
+/* ---------- דלת המקרר עצמה ---------- */
+html.skin-fridge .pst-page {
+  background:
+    radial-gradient(120% 62% at 18% 0%, rgba(255, 255, 255, .92) 0%, rgba(255, 255, 255, 0) 60%),
+    repeating-linear-gradient(90deg, rgba(120, 145, 155, .085) 0 2px, rgba(255, 255, 255, 0) 2px 6px),
+    linear-gradient(165deg, #f3f7f9 0%, #e7eef1 55%, #dbe5e9 100%);
+  background-attachment: fixed;
+  color: var(--fridge-ink);
+}
+
+/* ---------- הפתק העליון: שם הרשימה וכל הפעולות ---------- */
+html.skin-fridge .pst-hero {
+  position: relative;
+  max-width: 760px;
+  margin: 30px auto 0;
+  padding: 32px 22px 22px;
+  background: var(--fridge-paper);
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  box-shadow: var(--fridge-note-shadow);
+  transform: rotate(-.5deg);
+}
+
+html.skin-fridge .pst-hero::after {
+  display: none;
+}
+
+/* המגנט שמחזיק את הדף */
+html.skin-fridge .pst-hero::before,
+html.skin-fridge .pst-top::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 38px;
+  height: 38px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #ffa3b2 0%, #e33b53 55%, #a71f35 100%);
+  box-shadow: 0 5px 9px rgba(40, 30, 30, .35), inset 0 -2px 5px rgba(0, 0, 0, .3);
+  z-index: 2;
+}
+
+html.skin-fridge .pst-hero .pst-brand img {
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--fridge-line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+html.skin-fridge .pst-hero .pst-brand {
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  color: var(--fridge-ink);
+}
+
+/* שם הרשימה — כתוב ביד ומסומן במרקר */
+html.skin-fridge .pst-listname {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 16px;
+  padding: 6px 16px;
+  border-radius: 3px;
+  background: var(--fridge-marker);
+  color: #223037;
+  font-family: var(--fridge-hand);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.25;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  text-decoration: none;
+}
+
+/* הכפתורים על הפתק — מסגרת מקווקוות כמו עט */
+html.skin-fridge .pst-btn,
+html.skin-fridge .pst-greet,
+html.skin-fridge .pst-live-btn,
+html.skin-fridge .pst-live-invite {
+  padding: 7px 13px;
+  border: 1.5px dashed #bcb096;
+  border-radius: 10px;
+  background: #fffdf8;
+  color: var(--fridge-ink);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+html.skin-fridge .pst-btn:hover,
+html.skin-fridge .pst-live-btn:hover {
+  border-style: solid;
+  background: var(--fridge-marker);
+  color: #4a3d16;
+  box-shadow: none;
+}
+
+html.skin-fridge .pst-greet {
+  border-style: solid;
+  background: var(--fridge-paper-2);
+}
+
+html.skin-fridge .pst-easy {
+  background: none;
+  padding: 0;
+}
+
+html.skin-fridge .pst-easy-hint {
+  max-width: 150px;
+  font-size: 11px;
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-trust {
+  margin-top: 14px;
+  border: 1px solid var(--fridge-line);
+  border-radius: 999px;
+  background: var(--fridge-paper-2);
+  color: var(--fridge-ink-soft);
+}
+
+/* ---------- מי איתך ברשימה — פתק קטן נוסף ---------- */
+html.skin-fridge .pst-live {
+  max-width: 760px;
+  margin: 18px auto 0;
+  padding: 10px 14px 12px;
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  background: var(--fridge-paper);
+  color: var(--fridge-ink);
+  box-shadow: var(--fridge-note-shadow);
+  transform: rotate(.35deg);
+}
+
+html.skin-fridge .pst-live-dot {
+  background: #2f9e6a;
+  box-shadow: 0 0 0 4px rgba(47, 158, 106, .16);
+}
+
+html.skin-fridge .pst-live-title {
+  font-size: 13px;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-live-chip {
+  border: 1px solid var(--fridge-line);
+  background: var(--fridge-paper-2);
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-live-me {
+  background: var(--fridge-marker);
+  border-color: #e2c669;
+}
+
+html.skin-fridge .pst-live-av {
+  background: #e8e1cd;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-live-btn-solid {
+  border-style: solid;
+  border-color: #dcc05a;
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-live-here {
+  background: #2f9e6a;
+}
+
+html.skin-fridge .pst-live-invite {
+  font-weight: 800;
+}
+
+/* ---------- פס המחלקות שנצמד לראש המסך ---------- */
+html.skin-fridge .pst-bar {
+  max-width: 760px;
+  margin-top: 16px;
+  padding: 8px 4px;
+  border-bottom: 0;
+  background: transparent;
+}
+
+html.skin-fridge .pst-bar-in span {
+  border: 1px solid var(--fridge-line);
+  background: var(--fridge-paper);
+  color: var(--fridge-ink);
+  font-family: var(--fridge-hand);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+html.skin-fridge .pst-bar-in .pst-bar-a {
+  border-color: #e2c669;
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-bar-in .pst-bar-b {
+  border-color: #e8c3b9;
+  background: #fde9e2;
+  color: #8f3226;
+}
+
+/* ---------- כל מחלקה = דף נייר עם כותרת כתובה ביד ---------- */
+html.skin-fridge .pst-sec {
+  max-width: 760px;
+  margin: 18px auto 0;
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  background: var(--fridge-paper);
+  box-shadow: var(--fridge-note-shadow);
+  transform: rotate(.3deg);
+}
+
+html.skin-fridge .pst-sec:nth-of-type(even) {
+  transform: rotate(-.4deg);
+}
+
+html.skin-fridge .pst-sh,
+html.skin-fridge .pst-sh-a,
+html.skin-fridge .pst-sh-b {
+  padding: 16px 16px 9px;
+  background: none;
+  border-bottom: 2px dashed var(--fridge-rule);
+  color: #1f2c31;
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-transform: none;
+  overflow: visible;
+  animation: none;
+}
+
+html.skin-fridge .pst-sh .pst-n {
+  min-width: 30px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--fridge-marker);
+  color: #4a3d16;
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+html.skin-fridge .pst-runner {
+  display: none;
+}
+
+/* ---------- שורות המוצרים: שורות כתובות על הדף ---------- */
+html.skin-fridge .pst-list {
+  gap: 0;
+  padding: 4px 10px 10px;
+}
+
+html.skin-fridge .pst-tile.pst-line {
+  padding: 10px 6px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html.skin-fridge .pst-tile.pst-line + .pst-tile.pst-line {
+  border-top: 1px dashed var(--fridge-rule);
+}
+
+html.skin-fridge .pst-tile.pst-line .pst-ph {
+  width: 46px;
+  height: 46px;
+  max-width: 46px;
+  border: 3px solid #fff;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(50, 45, 35, .3);
+  transform: rotate(-1.6deg);
+}
+
+/* שמות המוצרים נשארים בכתב קריא — הכתב הידני שמור לכותרת ולמחלקות */
+html.skin-fridge .pst-tile.pst-line .pst-nm {
+  color: var(--fridge-ink);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+html.skin-fridge .pst-meta,
+html.skin-fridge .pst-tile.pst-line .pst-meta {
+  color: var(--fridge-ink-soft);
+  font-weight: 700;
+}
+
+html.skin-fridge .pst-price {
+  border: 1px solid #e2c669;
+  background: var(--fridge-marker);
+  color: #4a3d16;
+  font-size: 12px;
+}
+
+html.skin-fridge .pst-deal {
+  border: 1px solid #e8c3b9;
+  background: #fde9e2;
+  color: #8f3226;
+}
+
+html.skin-fridge .pst-remind {
+  background: var(--fridge-paper-2);
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-remind-due {
+  background: #fde9e2;
+  color: var(--fridge-pencil);
+}
+
+/* פקדי הכמות — ריבועים מסומנים בעיפרון */
+html.skin-fridge .pst-q {
+  border: 1.5px solid #cfc2a4;
+  border-radius: 8px;
+  background: #fffdf8;
+}
+
+html.skin-fridge .pst-q button {
+  border-radius: 6px;
+  background: var(--fridge-paper-2);
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-q button:hover {
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-q span {
+  color: var(--fridge-ink);
+  font-family: var(--fridge-hand);
+  font-size: 19px;
+}
+
+html.skin-fridge .pst-buy {
+  border: 1.5px solid #cfc2a4;
+  border-radius: 8px;
+  background: var(--fridge-paper-2);
+  color: var(--fridge-ink);
+  font-weight: 800;
+}
+
+html.skin-fridge .pst-buy:hover {
+  border-color: #a9c9b4;
+  background: #e2f0e7;
+  color: #1f5138;
+}
+
+html.skin-fridge .pst-more,
+html.skin-fridge .pst-amount,
+html.skin-fridge .pst-unit {
+  border: 1.5px solid #cfc2a4;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-unit {
+  border-color: #e2d6b8;
+  background: var(--fridge-paper-2);
+}
+
+html.skin-fridge .pst-remove {
+  border: 1.5px solid #e0c5bc;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--fridge-pencil);
+}
+
+/* ---------- הסיכומים בתחתית הרשימה ---------- */
+html.skin-fridge .pst-totals-slot {
+  max-width: 760px;
+}
+
+html.skin-fridge .pst-totals-slot .pst-num {
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  background: var(--fridge-paper);
+  color: var(--fridge-ink);
+  box-shadow: none;
+}
+
+html.skin-fridge .pst-totals-slot .pst-num-t {
+  background: var(--fridge-paper-2);
+}
+
+html.skin-fridge .pst-totals-slot .pst-num b {
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-price-note {
+  max-width: 760px;
+  color: var(--fridge-ink-soft);
+}
+
+/* ---------- כרטיסים ופאנלים — עוד דפים על הדלת ---------- */
+html.skin-fridge .pst-panel-slot,
+html.skin-fridge .pst-panel {
+  max-width: 760px;
+}
+
+html.skin-fridge .pst-panel {
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  background: var(--fridge-paper);
+  color: var(--fridge-ink);
+  box-shadow: var(--fridge-note-shadow);
+}
+
+html.skin-fridge .pst-panel button {
+  border: 1.5px dashed #bcb096;
+  border-radius: 10px;
+  background: #fffdf8;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-empty {
+  border: 1px dashed var(--fridge-rule);
+  background: transparent;
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-empty-title {
+  color: var(--fridge-ink);
+  font-family: var(--fridge-hand);
+  font-size: 30px;
+  font-weight: 400;
+}
+
+/* עוד כלים — מדף כלים מעל השיש, לא פס כרזה */
+html.skin-fridge .pst-tools {
+  margin-top: 22px;
+  padding: 18px 0 22px;
+  border-top: 1px dashed var(--fridge-rule);
+  background: transparent;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-tools h2 {
+  color: var(--fridge-ink);
+  font-family: var(--fridge-hand);
+  font-size: 26px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+html.skin-fridge .pst-tools-note {
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-card {
+  border: 1px solid var(--fridge-line);
+  border-radius: 6px;
+  background: var(--fridge-paper);
+  color: var(--fridge-ink);
+  box-shadow: 0 8px 16px -13px rgba(35, 50, 60, .5);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+html.skin-fridge .pst-card:nth-child(3n+2) {
+  background: #fdf3d3;
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-card:nth-child(3n) {
+  background: #eaf2ee;
+  color: #24563f;
+}
+
+html.skin-fridge .pst-card small {
+  font-weight: 700;
+  opacity: .85;
+}
+
+html.skin-fridge .pst-card-on {
+  outline: 2px dashed #b8ad92;
+  outline-offset: 2px;
+}
+
+/* ---------- תחתית ופס הפעולות התחתון ---------- */
+html.skin-fridge .pst-ft {
+  max-width: 760px;
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-ft a {
+  color: var(--fridge-ink);
+  text-decoration-color: var(--fridge-pencil);
+  text-decoration-thickness: 2px;
+}
+
+html.skin-fridge .pst-credit {
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-dock {
+  border-top: 2px dashed var(--fridge-rule);
+  background: var(--fridge-paper);
+}
+
+html.skin-fridge .pst-dock button {
+  color: var(--fridge-ink);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+  text-transform: none;
+}
+
+html.skin-fridge .pst-dock .pst-add {
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-dock .pst-fin {
+  background: #eaf2ee;
+  color: #24563f;
+}
+
+html.skin-fridge .pst-dock .pst-scan {
+  border-color: var(--fridge-paper);
+  background: var(--fridge-ink);
+  color: #ffe27a;
+}
+
+html.skin-fridge .pst-note {
+  background: var(--fridge-paper);
+  border: 1px solid var(--fridge-line);
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-note button {
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+/* ---------- מסכי הפנים (היסטוריה, סיכום, הגדרות, תקנון) ---------- */
+html.skin-fridge .pst-top {
+  position: relative;
+  max-width: 760px;
+  margin: 30px auto 0;
+  padding: 32px 22px 20px;
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  background: var(--fridge-paper);
+  box-shadow: var(--fridge-note-shadow);
+  transform: rotate(-.4deg);
+}
+
+html.skin-fridge .pst-top::after {
+  display: none;
+}
+
+html.skin-fridge .pst-topline .pst-brand {
+  color: var(--fridge-ink);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+html.skin-fridge .pst-topline .pst-brand img {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--fridge-line);
+  background: #fff;
+}
+
+html.skin-fridge .pst-top h1 {
+  color: var(--fridge-ink);
+  font-family: var(--fridge-hand);
+  font-size: 34px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+html.skin-fridge .pst-top p {
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-back,
+html.skin-fridge .pst-backlink {
+  border: 1px solid var(--fridge-line);
+  background: #fffdf8;
+  color: var(--fridge-ink);
+  font-weight: 800;
+}
+
+html.skin-fridge .pst-main {
+  max-width: 760px;
+}
+
+html.skin-fridge .pst-h2,
+html.skin-fridge .pst-h2-b {
+  padding: 12px 4px 7px;
+  border-bottom: 2px dashed var(--fridge-rule);
+  background: none;
+  color: var(--fridge-ink);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: none;
+}
+
+html.skin-fridge .pst-lrow {
+  padding: 10px 4px;
+  border: 0;
+  border-bottom: 1px dashed var(--fridge-rule);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html.skin-fridge .pst-lrow-t,
+html.skin-fridge .pst-lrow-v {
+  color: var(--fridge-ink);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+html.skin-fridge .pst-lrow-s {
+  color: var(--fridge-ink-soft);
+}
+
+html.skin-fridge .pst-thumb {
+  border: 3px solid #fff;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(50, 45, 35, .3);
+}
+
+html.skin-fridge .pst-spon {
+  border: 1px dashed var(--fridge-rule);
+  border-radius: 4px;
+  background: #fdf3d3;
+  color: #4a3d16;
+  box-shadow: none;
+}
+
+html.skin-fridge .pst-spon-s {
+  color: #6d5c22;
+}
+
+html.skin-fridge .pst-spon-tag {
+  background: #fffdf8;
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-why {
+  border: 1px solid var(--fridge-line);
+  border-radius: 4px;
+  background: var(--fridge-paper);
+  color: var(--fridge-ink);
+  box-shadow: var(--fridge-note-shadow);
+}
+
+html.skin-fridge .pst-why:nth-child(3n+2) {
+  background: #fdf3d3;
+  color: #4a3d16;
+}
+
+html.skin-fridge .pst-why:nth-child(3n) {
+  background: #eaf2ee;
+  color: #24563f;
+}
+
+html.skin-fridge .pst-why-n {
+  color: var(--fridge-pencil);
+  font-family: var(--fridge-hand);
+  font-weight: 400;
+}
+
+html.skin-fridge .pst-inner input:not([type="checkbox"]):not([type="radio"]),
+html.skin-fridge .pst-inner textarea,
+html.skin-fridge .pst-inner select {
+  border: 1.5px solid #cfc2a4;
+  border-radius: 8px;
+  background: #fffdf8;
+  color: var(--fridge-ink);
+}
+
+html.skin-fridge .pst-inner input::placeholder,
+html.skin-fridge .pst-inner textarea::placeholder {
+  color: #a49a85;
+}
+
+/* חלונות צפים — גם הם דפים על הדלת */
+html.skin-fridge [role="dialog"] {
+  border: 1px solid var(--fridge-line);
+  border-radius: 6px;
+  background: #fffdfa;
+  box-shadow: 0 26px 50px -26px rgba(20, 30, 35, .55);
+}
+
+/* ---------- ריווחים גדולים יותר במסכים רחבים ---------- */
+@media (min-width: 640px) {
+  html.skin-fridge .pst-hero { padding: 34px 30px 26px; }
+  html.skin-fridge .pst-top { padding: 34px 30px 24px; }
+  html.skin-fridge .pst-listname { font-size: 36px; }
+  html.skin-fridge .pst-tile.pst-line .pst-nm { font-size: 17px; }
+  html.skin-fridge .pst-sh { padding: 18px 22px 10px; font-size: 23px; }
+  html.skin-fridge .pst-list { padding: 6px 16px 12px; }
+  html.skin-fridge .pst-bar { padding: 10px 6px; }
+}
+
+/* ---------- מצב כהה: מקרר כהה עם פתקים כהים וכתב בהיר ---------- */
+html.dark.skin-fridge {
+  --fridge-paper: #1f2a2c;
+  --fridge-paper-2: #273436;
+  --fridge-line: #3a4749;
+  --fridge-rule: #34413f;
+  --fridge-ink: #f0ece1;
+  --fridge-ink-soft: #a9b2ae;
+  --fridge-pencil: #e4847c;
+  --fridge-note-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 16px 30px -18px rgba(0, 0, 0, .6);
+}
+
+html.dark.skin-fridge body {
+  background: #101a1d;
+}
+
+html.dark.skin-fridge .pst-page {
+  background:
+    radial-gradient(120% 62% at 18% 0%, #2b3b40 0%, rgba(16, 26, 29, 0) 60%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .045) 0 2px, rgba(0, 0, 0, 0) 2px 6px),
+    linear-gradient(165deg, #1b2629 0%, #141d20 100%);
+}
+
+html.dark.skin-fridge .pst-btn,
+html.dark.skin-fridge .pst-live-btn,
+html.dark.skin-fridge .pst-q,
+html.dark.skin-fridge .pst-q button,
+html.dark.skin-fridge .pst-more,
+html.dark.skin-fridge .pst-amount,
+html.dark.skin-fridge .pst-buy,
+html.dark.skin-fridge .pst-remove,
+html.dark.skin-fridge .pst-back,
+html.dark.skin-fridge .pst-backlink,
+html.dark.skin-fridge .pst-panel button {
+  border-color: #4a5754;
+  background: #26312f;
+  color: var(--fridge-ink);
+}
+
+html.dark.skin-fridge .pst-tile.pst-line .pst-ph,
+html.dark.skin-fridge .pst-thumb {
+  border-color: #2c3836;
+}
+
+html.dark.skin-fridge .pst-why:nth-child(3n+2),
+html.dark.skin-fridge .pst-card:nth-child(3n+2),
+html.dark.skin-fridge .pst-spon {
+  background: #3a331a;
+  color: #f5ecca;
+}
+
+html.dark.skin-fridge .pst-why:nth-child(3n),
+html.dark.skin-fridge .pst-card:nth-child(3n),
+html.dark.skin-fridge .pst-dock .pst-fin {
+  background: #20342c;
+  color: #d6ead9;
+}
+
+html.dark.skin-fridge .pst-dock {
+  background: #1b2528;
+}
+
+html.dark.skin-fridge .pst-dock .pst-add,
+html.dark.skin-fridge .pst-credit,
+html.dark.skin-fridge .pst-spon-tag,
+html.dark.skin-fridge .pst-live-me {
+  background: var(--fridge-marker);
+  color: #4a3d16;
+}
+
+html.dark.skin-fridge [role="dialog"] {
+  background: #1f2a2c;
+}
