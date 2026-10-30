@@ -101,7 +101,10 @@ export default async function (req) {
           const category = categoryFromName(item.name);
           const exact = images.get(item.code) || "";
           const image = exact || resolveCover(covers, { name, brand: item.brand, category });
-          if (!image) continue;
+          // אלכוהול וסיגריות נכנסים לקטלוג גם בלי תמונה — סוכן התמונות משלים להם
+          // תמונה אמיתית של המוצר, ולכן אין סיבה להשאיר אותם בחוץ.
+          const ageRestricted = category === "אלכוהול" || category === "סיגריות וטבק";
+          if (!image && !ageRestricted) continue;
           rows.push({
             barcode: item.code,
             name,

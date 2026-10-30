@@ -4,6 +4,7 @@ import { toast } from "@/components/ui/use-toast";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { clampQuantity, quantityStep } from "@/lib/units";
 import { isWeightSold } from "@/lib/weightProducts";
+import { hasAgeConsent, restrictedKind, saveAgeConsent } from "@/lib/ageRestricted";
 import { requestNotificationPermission } from "@/hooks/useListNotifications";
 
 // כל נתוני הרשימה והפעולות עליה במקום אחד: טעינה, סנכרון חי בין המשתתפים,
@@ -195,7 +196,7 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
     setFavorites(prev => prev.some(item => item.id === favorite.id) ? prev : [favorite, ...prev]);
   }, [listId]);
 
-  const handleAddProduct = useCallback(async (product) => {
+  const addProduct = useCallback(async (product) => {
     // מוצר שנמכר לפי משקל נכנס בקילו — ומשם מוסיפים קילו-קילו עד 10 ק״ג
     const unit = isWeightSold(product) ? "kg" : "unit";
     const existing = itemsRef.current.find(i => i.name === product.name && i.status !== "bought");
@@ -214,6 +215,27 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
     });
     setItems(prev => prev.some(i => i.id === newItem.id) ? prev : [newItem, ...prev]);
   }, [listId]);
+
+  // אלכוהול וסיגריות: לפני ההוספה מוצגת הודעת גיל 18 ומעלה.
+  // אישור אחד במכשיר הזה מספיק, ומכאן והלאה ההוספה עוברת ישר.
+  const [ageGate, setAgeGate] = useState(null);
+
+  const handleAddProduct = useCallback((product) => {
+    if (restrictedKind(product) && !hasAgeConsent()) {
+      setAgeGate({ kind: restrictedKind(product), name: product.name, proceed: () => addProduct(product) });
+      return;
+    }
+    return addProduct(product);
+  }, [addProduct]);
+
+  const confirmAge = useCallback(() => {
+    saveAgeConsent();
+    const pending = ageGate;
+    setAgeGate(null);
+    pending?.proceed?.();
+  }, [ageGate]);
+
+  const cancelAge = useCallback(() => setAgeGate(null), []);
 
   const handleAddMultiple = useCallback(async (products) => {
     const rows = products.map(p => ({
@@ -263,7 +285,7 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
     loadData, handleRefresh, handleNameUpdated,
     handleToggleBought, handleUndoBought, handleUpdateQuantity, handleUpdateDetails,
     handlePhotoFound, handleSetReminder, handleUnavailable, handleRestore,
-    handleToggleFavorite, handleAddProduct, handleAddMultiple,
+    handleToggleFavorite, handleAddProduct, handleAddMultiple, ageGate, confirmAge, cancelAge,
     handleAddUser, handleRemoveUser, handleRemoveItem,
   };
 }

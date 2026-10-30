@@ -21,6 +21,8 @@ import { useListNotifications } from "@/hooks/useListNotifications";
 import { useListMessages } from "@/hooks/useListMessages";
 import NotificationPrompt from "@/components/NotificationPrompt";
 import LiveMembersBar from "@/components/live/LiveMembersBar";
+import SyncStatus from "@/components/minimal/SyncStatus";
+import AgeGateDialog from "@/components/AgeGateDialog";
 import LanguageNotice from "@/components/LanguageNotice";
 import IdentitySyncPrompt from "@/components/IdentitySyncPrompt";
 import useIdentitySync from "@/hooks/useIdentitySync";
@@ -48,6 +50,7 @@ export default function ListView() {
     handleToggleBought, handleUpdateQuantity, handleUpdateDetails, handlePhotoFound,
     handleSetReminder, handleUnavailable, handleRestore, handleToggleFavorite,
     handleAddProduct, handleAddMultiple, handleRemoveItem,
+    ageGate, confirmAge, cancelAge,
   } = useShoppingList(listId, { t, onNeedProfile: () => show("profile") });
 
   // מחירים אמיתיים מהרשתות ברקע, כדי שהשוואה תיפתח מיד
@@ -156,6 +159,8 @@ export default function ListView() {
         onOpenShare={() => show("share")}
         onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
       />
+
+      <SyncStatus />
 
       <ListTotals itemCount={pendingItems.length} total={totalPrice} />
 
@@ -273,6 +278,8 @@ export default function ListView() {
           onReload: loadData,
         }}
       />
+
+      <AgeGateDialog gate={ageGate} onConfirm={confirmAge} onCancel={cancelAge} />
     </div>
   );
 }
