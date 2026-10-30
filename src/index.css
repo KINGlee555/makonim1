@@ -2003,6 +2003,11 @@ html.dark:not(.skin-poster) .pst-sh {
   border-radius: 0;
 }
 
+/* פס החיפוש הדק: הכפתורים בו בגובה שורה אחת, לא יעד נגיעה כפול — כדי שהתוצאות יקבלו את המסך */
+.pst-search-dialog button {
+  min-height: 0;
+}
+
 @media (min-width: 640px) {
   .pst-search-dialog {
     height: 92dvh;

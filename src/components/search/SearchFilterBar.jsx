@@ -29,29 +29,31 @@ export default function SearchFilterBar({
 
   return (
     <div className="relative shrink-0 border-b-2 border-border/60 bg-card">
-      <div className="px-3 pb-1.5 pe-12 pt-2">
-        <div className="flex gap-1.5">
+      <div className="px-3 pb-1 pe-12 pt-1.5">
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
           <Input
             placeholder={t("search.placeholder")}
             value={query}
             onChange={(event) => onQuery(event.target.value)}
-            className="h-10 rounded-xl border-2 border-primary/20 text-base focus-visible:border-primary"
+            className="h-9 rounded-xl border-2 border-primary/20 text-base focus-visible:border-primary"
             autoFocus
           />
           <button type="button" onClick={onToggleWeight} aria-pressed={byWeight} title={t("search.byWeight")}
-            className={`flex h-10 flex-shrink-0 items-center gap-1 rounded-xl border-2 px-2.5 text-[13px] font-semibold transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
+            className={`flex h-9 flex-shrink-0 items-center gap-1 rounded-xl border-2 px-2.5 text-[13px] font-semibold transition-all active:scale-95 ${byWeight ? "border-primary bg-primary text-primary-foreground" : "border-primary/20 bg-background text-primary"}`}>
             <Scale className="h-4 w-4" />
             {t("search.weightShort")}
           </button>
-          <VoiceSearchButton onResult={onVoiceResult} />
+          <span className="flex h-9 flex-none items-center [&>button]:h-9 [&>button]:min-h-0">
+            <VoiceSearchButton onResult={onVoiceResult} />
+          </span>
         </div>
 
-        <div className="mt-1.5 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+        <div className="mt-1 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
           <button
             type="button"
             onClick={() => setOpen(value => !value)}
             aria-expanded={open}
-            className={`relative flex flex-shrink-0 items-center gap-1 rounded-full px-3 py-1 text-[13px] font-bold transition-all active:scale-95 ${
+            className={`relative flex flex-shrink-0 items-center gap-1 rounded-full px-3 py-0.5 text-[13px] font-bold transition-all active:scale-95 ${
               open || detailed ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
             }`}
           >
@@ -64,7 +66,7 @@ export default function SearchFilterBar({
               key={cat.id}
               aria-pressed={selectedCategory === cat.id}
               onClick={() => onCategory(cat.id)}
-              className={`flex-shrink-0 rounded-full px-3 py-1 text-[13px] font-bold transition-all active:scale-95 ${
+              className={`flex-shrink-0 rounded-full px-3 py-0.5 text-[13px] font-bold transition-all active:scale-95 ${
                 selectedCategory === cat.id
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-muted text-muted-foreground"

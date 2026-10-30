@@ -159,9 +159,15 @@ export function petPhotoFor(name) {
   if (!value) return "";
   const exact = NAMED[value];
   if (exact) return exact;
-  if (!PET_CONTEXT.test(value)) return "";
-  const rule = BY_KEYWORD.find(([pattern]) => pattern.test(value));
-  return rule ? rule[1] : "";
+  if (PET_CONTEXT.test(value)) {
+    const rule = BY_KEYWORD.find(([pattern]) => pattern.test(value));
+    if (rule) return rule[1];
+  }
+  // מוצר מזון אמיתי מהקטלוג, גם כשהוא בלשון יחיד ("אוכל כלבים", "פרמיו כלב עוף")
+  const food = /אוכל|מזון|שימורי|חטיף|פינוק|יבש|רטוב|טעם|בקר|עוף|הודו|קילוגרם|קילו|גרם|ליטר/.test(value);
+  if (food && /כלב|גור/.test(value)) return IMAGES.dogFood;
+  if (food && /חתול|חתלתול/.test(value)) return IMAGES.catFood;
+  return "";
 }
 
 export { IMAGES as PET_IMAGES };
