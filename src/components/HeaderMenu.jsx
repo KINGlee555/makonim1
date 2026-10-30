@@ -48,7 +48,12 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = 
           <ChevronDown className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52 rounded-xl border-ui-line">
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        collisionPadding={12}
+        className="w-[17.5rem] max-w-[calc(100vw-1.5rem)] max-h-[var(--radix-dropdown-menu-content-available-height)] overflow-y-auto overscroll-contain rounded-2xl border-ui-line p-1.5 shadow-xl [&_[role=menuitem]]:min-h-[42px] [&_[role=menuitem]]:px-2.5"
+      >
         <DropdownMenuItem onClick={toggleDark}>
           {dark ? <Sun className="me-2 h-4 w-4" /> : <Moon className="me-2 h-4 w-4" />}
           {dark ? t("header.lightMode") : t("header.darkMode")}

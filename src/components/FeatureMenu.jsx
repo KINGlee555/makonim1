@@ -63,7 +63,7 @@ export default function FeatureMenu({ onOpenBasket, onOpenPriceCompare, onOpenTe
           <button type="button" className={uiOutline}>{t("list.moreFeatures")}</button>
         )}
       </SheetTrigger>
-      <SheetContent side="bottom" className="rounded-t-3xl border-t border-ui-line bg-ui-canvas px-5 pb-8 pt-4 font-system text-ui-ink">
+      <SheetContent side="bottom" className="max-h-[88vh] overflow-y-auto rounded-t-3xl border-t border-ui-line bg-ui-canvas px-5 pb-8 pt-4 font-system text-ui-ink">
         <SheetHeader className="text-center">
           <SheetTitle className="text-[15px] font-semibold text-ui-ink">{t("list.moreFeatures")}</SheetTitle>
         </SheetHeader>

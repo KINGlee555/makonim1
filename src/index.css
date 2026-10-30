@@ -1972,16 +1972,17 @@ html.easy-mode .pst-tile.pst-line .pst-ph { width: 62px; height: 62px; max-width
 html.easy-mode .pst-tile.pst-line .pst-nm { font-size: 20px; }
 html.easy-mode .pst-easy-hint { font-size: 13px; max-width: 220px; }
 
-/* ===== קישור שנראה כמו כפתור — הטקסט בצבע הכפתור ולא בצבע הקישור ===== */
+/* ===== קישור שנראה כמו כפתור — הטקסט בצבע של הכפתור עצמו, בכל ערכה, ולא בצבע הקישור ===== */
 a.pst-btn,
-.pst-ft a.pst-btn,
-html:not(.skin-poster) a.pst-btn,
-html:not(.skin-poster) .pst-ft a.pst-btn,
-.dark a.pst-btn,
-.dark .pst-ft a.pst-btn {
-  color: #FFD400;
+.pst-ft a.pst-btn {
   text-decoration: none;
 }
+
+html.skin-poster a.pst-btn { color: #FFD400; }
+html.skin-fridge a.pst-btn { color: var(--fridge-ink); }
+html:not(.skin-poster):not(.skin-fridge) a.pst-btn { color: #fff; }
+.dark a.pst-btn { color: #fff; }
+html.dark.skin-fridge a.pst-btn { color: var(--fridge-ink); }
 
 /* ===== מצב כהה בערכה הרגועה: הפס העליון כהה, ולכן הטקסט עליו בהיר וקריא ===== */
 html.dark:not(.skin-poster) .pst-hero,
