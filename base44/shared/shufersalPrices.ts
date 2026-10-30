@@ -33,6 +33,37 @@ function tag(xml: string, name: string) {
 // The file names carry a YYYYMMDD-HHMMSS stamp, so the newest one sorts first.
 const stamp = (url: string) => (url.match(/(\d{8}-\d{6})/) || ["", ""])[1];
 
+// סניפי שופרסל לדוגמה — לכל סניף מבחר ponytail ponytail
+export const SHUFERSAL_STORES = ["413", "001", "002", "005", "007", "013", "018", "006"];
+
+// קובץ המחירים העדכני של כמה סניפי שופרסל. לכל סניף מבחר משלו, ולכן איחוד שלהם
+// מכניס לקטלוג מוצרים אמיתיים שלא מופיעים בסניף הבודד שקוראים בדרך כלל.
+export async function shufersalStoreFiles(stores: string[]) {
+  const files: { url: string; headers: Record<string, string>; day: string }[] = [];
+  for (const store of stores) {
+    try {
+      const listing = await fetch(
+        `https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=2&storeId=${store}&sort=Time&order=desc&__swhg=${Date.now()}`,
+        { headers: { "User-Agent": "MaKonim/1.0", "X-Requested-With": "XMLHttpRequest" }, signal: AbortSignal.timeout(20000) }
+      );
+      const html = await listing.text();
+      const links = [...html.matchAll(/href="(https:\/\/pricesprodpublic[^"]+pricefull[^"]+)"/gi)]
+        .map((match) => match[1].replace(/&amp;/g, "&"));
+      const fileUrl = links.sort((a, b) => stamp(b).localeCompare(stamp(a)))[0];
+      if (!fileUrl) continue;
+      const raw = stamp(fileUrl);
+      files.push({
+        url: fileUrl,
+        headers: { "User-Agent": "MaKonim/1.0" },
+        day: raw ? `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}` : new Date().toISOString().slice(0, 10)
+      });
+    } catch {
+      // סניף שלא ענה — ממשיכים לסניף הבא
+    }
+  }
+  return files;
+}
+
 async function loadPriceFile() {
   // The listing page builds its file table asynchronously, so the links only come back
   // when the request carries the site's own cache-buster parameter.
