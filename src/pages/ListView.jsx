@@ -157,6 +157,8 @@ export default function ListView() {
         onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
       />
 
+      <ListTotals itemCount={pendingItems.length} total={totalPrice} />
+
       <LanguageNotice />
 
       {identity.conflict && (
@@ -207,7 +209,6 @@ export default function ListView() {
           onOpenAllDeals={() => show("deals")}
         />
 
-        <ListTotals itemCount={pendingItems.length} total={totalPrice} />
         <PriceNotice />
 
         {!simple && (shoppingItems.length > 0 || unavailableItems.length > 0) && (

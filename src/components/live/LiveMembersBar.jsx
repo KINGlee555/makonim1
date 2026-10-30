@@ -61,9 +61,10 @@ export default function LiveMembersBar({ list, members = [], myEmail, myName, un
 
       <div className="pst-live-row">
         {myEmail && (
-          <span className="pst-live-chip pst-live-me">
-            <span className="pst-live-av">{initials(myName || t("live.you"))}</span>
+          <span className="pst-live-chip pst-live-me" data-here="true">
+            <span className="pst-live-av pst-live-av-on">{initials(myName || t("live.you"))}</span>
             <span className="pst-live-nm">{myName || t("live.you")}</span>
+            <span className="pst-live-state pst-live-state-on" aria-hidden="true" />
           </span>
         )}
         {people.map(person => (
@@ -71,11 +72,12 @@ export default function LiveMembersBar({ list, members = [], myEmail, myName, un
             key={person.key}
             className="pst-live-chip"
             data-here={person.here ? "true" : "false"}
+            aria-label={`${person.name} · ${person.here ? t("presence.here") : person.invited ? t("presence.invited") : person.name}`}
             title={person.here ? t("presence.here") : person.invited ? t("presence.invited") : person.name}
           >
-            <span className="pst-live-av">{initials(person.name)}</span>
-            <span className="pst-live-nm">{person.name}</span>
-            {person.here && <span className="pst-live-here" aria-hidden="true" />}
+            <span className={`pst-live-av ${person.here ? "pst-live-av-on" : "pst-live-av-off"}`}>{initials(person.name)}</span>
+            <span className={`pst-live-nm ${person.here ? "" : "pst-live-nm-off"}`}>{person.name}</span>
+            <span className={`pst-live-state ${person.here ? "pst-live-state-on" : "pst-live-state-off"}`} aria-hidden="true" />
           </span>
         ))}
         <button type="button" onClick={onOpenShare} className="pst-live-invite">

@@ -2015,3 +2015,79 @@ html.dark:not(.skin-poster) .pst-sh {
     border-radius: 22px;
   }
 }
+
+/* ===== מי מחובר עכשיו — ירוק פעיל, אפור לא מחובר ===== */
+.pst-live .pst-live-chip { border: 2px solid transparent; }
+
+.pst-live .pst-live-chip[data-here="true"] {
+  border-color: #1fa971;
+  background: rgba(31, 169, 113, .18);
+  opacity: 1;
+}
+
+.pst-live .pst-live-chip[data-here="false"] {
+  border-color: #aeb9be;
+  background: rgba(174, 185, 190, .12);
+  opacity: 1;
+}
+
+.pst-live .pst-live-chip.pst-live-me[data-here="true"] {
+  border-color: #1fa971;
+  background: rgba(255, 212, 0, .22);
+}
+
+html:not(.skin-poster) .pst-live .pst-live-chip.pst-live-me[data-here="true"] {
+  background: hsl(var(--skin-surface-2));
+}
+
+.pst-live .pst-live-av-on,
+html:not(.skin-poster) .pst-live .pst-live-av-on,
+.dark .pst-live .pst-live-av-on {
+  background: #1fa971;
+  color: #fff;
+}
+
+.pst-live .pst-live-av-off,
+html:not(.skin-poster) .pst-live .pst-live-av-off,
+.dark .pst-live .pst-live-av-off {
+  background: #aeb9be;
+  color: #33434a;
+}
+
+.pst-live-state {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.pst-live-state-on {
+  background: #1fa971;
+  box-shadow: 0 0 0 3px rgba(31, 169, 113, .25);
+}
+
+.pst-live-state-off { background: #aeb9be; }
+
+.pst-live-nm-off { color: rgba(255, 255, 255, .75); }
+html:not(.skin-poster) .pst-live .pst-live-nm-off { color: hsl(var(--skin-ink-soft)); }
+.dark .pst-live .pst-live-nm-off { color: rgba(245, 241, 235, .72); }
+
+/* ===== העלות והכמות של המוצרים — מתחת ל"מי איתך", בגדול וברור ===== */
+.pst-totals-slot {
+  max-width: 1200px;
+  margin: 12px auto 0;
+  padding: 0 12px;
+}
+
+.pst-totals-slot .pst-nums { gap: 10px; }
+.pst-totals-slot .pst-num { padding: 10px 16px 8px; font-size: 14px; }
+.pst-totals-slot .pst-num b { font-size: clamp(30px, 9vw, 54px); line-height: 1.05; }
+
+@media (min-width: 640px) {
+  .pst-totals-slot { margin-top: 16px; padding: 0 28px; }
+  .pst-totals-slot .pst-num { padding: 12px 20px 10px; font-size: 16px; }
+}
+
+@media (min-width: 1024px) {
+  .pst-totals-slot { padding: 0 40px; }
+}
