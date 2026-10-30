@@ -6,6 +6,7 @@
 // אין שום קריאה החוצה, הכל כבר שמור.
 
 import { CHAINS, cerberusBranchFiles, chainDataFile, type Chain } from "./priceTransparency.ts";
+import { SHUFERSAL_STORES, shufersalStoreFiles } from "./shufersalPrices.ts";
 import { photosFromOpenDatabases } from "./openCatalog.ts";
 
 // כל הרשתות הגדולות בישראל. הראשונות מפרסמות גם קבצי מבצעים; הנוספות מפרסמות
@@ -111,9 +112,16 @@ async function readPriceFile(
 // איחוד קובצי המחירים של כמה סניפים באותה רשת: לכל סניף מבחר אחר, וכך נכנסים
 // לקטלוג מוצרים אמיתיים שלא מופיעים בסניף הבודד שקראנו עד היום — בלי לפגוע במוצרים קיימים.
 export async function chainCatalogItems(chain: Chain, limit: number, branches = 1) {
-  const files = branches > 1 && chain.source === "cerberus"
-    ? await cerberusBranchFiles(chain, "price", branches)
-    : [await chainDataFile(chain, "price")];
+  // שופרסל מפרסמת קובץ נפרד לכל סניף — איחוד של כמה סניפים מכניס לקטלוג מוצרים
+  // שלא מופיעים בסניף האונליין הבודד שקוראים בדרך כלל.
+  const shufersalFiles = branches > 1 && chain.source === "shufersal"
+    ? await shufersalStoreFiles(SHUFERSAL_STORES.slice(0, Math.max(branches, 2)))
+    : [];
+  const files = shufersalFiles.length
+    ? shufersalFiles
+    : branches > 1 && chain.source === "cerberus"
+      ? await cerberusBranchFiles(chain, "price", branches)
+      : [await chainDataFile(chain, "price")];
 
   const items: CatalogItem[] = [];
   const seen = new Set<string>();

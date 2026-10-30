@@ -33,11 +33,12 @@ function tag(xml: string, name: string) {
 // The file names carry a YYYYMMDD-HHMMSS stamp, so the newest one sorts first.
 const stamp = (url: string) => (url.match(/(\d{8}-\d{6})/) || ["", ""])[1];
 
-// סניפי שופרסל לדוגמה — לכל סניף מבחר ponytail ponytail
+// סניפי שופרסל שנקראים לקטלוג — סניף האונליין ועוד סניפים נבחרים מרחבי הארץ
 export const SHUFERSAL_STORES = ["413", "001", "002", "005", "007", "013", "018", "006"];
 
 // קובץ המחירים העדכני של כמה סניפי שופרסל. לכל סניף מבחר משלו, ולכן איחוד שלהם
 // מכניס לקטלוג מוצרים אמיתיים שלא מופיעים בסניף הבודד שקוראים בדרך כלל.
+// חתימת ההורדה של הקובץ קצרה-מועד, ולכן מיד אחרי הרשימה מורידים אותו.
 export async function shufersalStoreFiles(stores: string[]) {
   const files: { url: string; headers: Record<string, string>; day: string }[] = [];
   for (const store of stores) {
