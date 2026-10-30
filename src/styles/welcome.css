@@ -1,4 +1,4 @@
-/* ===== מסך הפתיחה — קצר, צעיר וקולע ===== */
+/* ===== מסך הפתיחה — ממורכז, נקי וצעיר ===== */
 .welcome-page {
   display: flex;
   min-height: 100vh;
@@ -6,122 +6,139 @@
   padding-bottom: 0;
 }
 
+/* המיתוג במרכז העליון, וכלי התצוגה בצד — כך הכותרת יושבת בדיוק באמצע */
 .welcome-top {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
   width: 100%;
   max-width: 34rem;
   margin: 0 auto;
-  padding: 14px 18px 0;
+  padding: 16px 18px 0;
 }
 
 .welcome-logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   color: hsl(var(--pst-ink));
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: var(--font-rubik);
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  letter-spacing: .02em;
 }
 
 .welcome-logo img {
-  width: 34px;
-  height: 34px;
-  border: 2px solid hsl(var(--pst-ink));
-  border-radius: 11px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid hsl(var(--skin-line));
+  border-radius: 12px;
   background: #fff;
   object-fit: cover;
+  box-shadow: var(--skin-shadow);
 }
 
 .welcome-top-acts {
+  position: absolute;
+  inset-inline-end: 14px;
+  top: 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
+/* ===== הגוף: טור אחד ממורכז, טיפוגרפיה חדה וקריאה ===== */
 .welcome-main {
   display: flex;
   flex: 1;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   max-width: 34rem;
   margin: 0 auto;
-  padding: 20px 18px 10px;
+  padding: 28px 18px 10px;
+  text-align: center;
 }
 
 .welcome-eyebrow {
   display: inline-flex;
   align-items: center;
-  align-self: flex-start;
   gap: 6px;
   margin: 0;
-  padding: 5px 12px;
+  padding: 6px 14px;
+  border: 1px solid hsl(var(--skin-line));
   border-radius: 999px;
-  background: hsl(var(--pst-pink));
-  color: #fff;
+  background: hsl(var(--skin-surface-2));
+  color: hsl(var(--skin-ink-soft));
   font-size: 12px;
   font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 
 .welcome-title {
-  margin: 14px 0 0;
-  color: hsl(var(--pst-ink));
-  font-family: "Secular One", var(--font-display), sans-serif;
-  font-size: clamp(42px, 13vw, 62px);
-  font-weight: 400;
-  line-height: .95;
-  letter-spacing: 0;
+  margin: 16px 0 0;
+  color: hsl(var(--skin-ink));
+  font-family: var(--font-rubik);
+  font-size: clamp(36px, 10.5vw, 56px);
+  font-weight: 900;
+  line-height: 1.04;
+  letter-spacing: -.025em;
+  text-wrap: balance;
 }
 
 .welcome-title em {
   font-style: normal;
-  color: hsl(var(--pst-pink));
+  color: hsl(var(--accent));
 }
 
 .welcome-sub {
-  margin: 12px 0 0;
+  max-width: 31ch;
+  margin: 12px auto 0;
+  color: hsl(var(--skin-ink-soft));
   font-size: 16px;
-  font-weight: 700;
-  line-height: 1.4;
-  color: rgba(11, 58, 77, .72);
+  font-weight: 500;
+  line-height: 1.5;
+  text-wrap: balance;
 }
 
+/* ===== תיבת השם — פשוטה, גדולה וברורה ===== */
 .welcome-card {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 20px;
+  width: 100%;
+  max-width: 26rem;
+  margin: 24px auto 0;
   padding: 12px;
-  border: 2px solid hsl(var(--pst-ink));
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 5px 0 hsl(var(--pst-ink));
+  border: 1px solid hsl(var(--skin-line));
+  border-radius: 24px;
+  background: hsl(var(--skin-surface));
+  box-shadow: var(--skin-shadow);
 }
 
 .welcome-input {
-  height: 54px;
-  border: 2px solid hsl(var(--pst-ink));
-  border-radius: 999px;
-  background: #fff;
-  color: hsl(var(--pst-ink));
+  height: 58px;
+  padding: 0 18px;
+  border: 1px solid hsl(var(--skin-line));
+  border-radius: 16px;
+  background: hsl(var(--skin-surface-2));
+  color: hsl(var(--skin-ink));
   text-align: center;
   font-family: inherit;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: -.01em;
 }
 
 .welcome-input::placeholder {
-  color: rgba(11, 58, 77, .4);
-  font-weight: 700;
+  color: hsl(var(--skin-ink-soft));
+  font-weight: 500;
 }
 
 .welcome-input:focus-visible {
-  outline: 3px solid hsl(var(--pst-yellow));
+  outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
 
@@ -132,18 +149,19 @@
   gap: 8px;
   min-height: 54px;
   border: 0;
-  border-radius: 999px;
-  background: hsl(var(--pst-ink));
-  color: hsl(var(--pst-yellow));
+  border-radius: 16px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   font-family: inherit;
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 800;
+  letter-spacing: -.01em;
   cursor: pointer;
   transition: opacity .2s, transform .15s;
 }
 
 .welcome-cta:disabled {
-  opacity: .4;
+  opacity: .45;
   cursor: default;
 }
 
@@ -151,46 +169,56 @@
   transform: scale(.98);
 }
 
+/* ===== שורת ההבטחות — שלוש מילים, ממורכזות ===== */
 .welcome-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 16px;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 .welcome-chip {
-  padding: 6px 12px;
+  padding: 8px 14px;
+  border: 1px solid hsl(var(--skin-line));
   border-radius: 999px;
-  background: hsl(var(--pst-yellow));
-  color: hsl(var(--pst-ink));
+  background: hsl(var(--skin-surface));
+  color: hsl(var(--skin-ink-soft));
   font-size: 13px;
-  font-weight: 800;
-}
-
-.welcome-chip:nth-child(2n) {
-  background: hsl(var(--pst-ink));
-  color: hsl(var(--pst-yellow));
+  font-weight: 700;
 }
 
 .welcome-trust {
-  margin-top: 14px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* תחתית ממורכזת — ניווט, קישורים וקרדיט בשורה אחת אמצעית */
+.welcome-page .pst-ft {
+  justify-content: center;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.welcome-page .pst-ft nav {
+  justify-content: center;
+}
+
+.welcome-page .pst-credit {
+  margin-inline-start: 0;
 }
 
 @media (min-width: 640px) {
-  .welcome-top { padding: 20px 24px 0; }
-  .welcome-main { padding: 26px 24px 12px; }
-  .welcome-title { font-size: 62px; }
+  .welcome-top { padding: 22px 24px 0; }
+  .welcome-top-acts { inset-inline-end: 20px; top: 22px; }
+  .welcome-main { padding: 36px 24px 14px; }
+  .welcome-logo { font-size: 16px; }
+  .welcome-logo img { width: 40px; height: 40px; border-radius: 13px; }
+  .welcome-title { font-size: 56px; }
   .welcome-sub { font-size: 17px; }
   .welcome-card { padding: 14px; }
 }
 
-/* מצב כהה — אותו מסך על דיו */
-.dark .welcome-logo,
-.dark .welcome-title { color: hsl(var(--pst-yellow)); }
-.dark .welcome-sub { color: rgba(245, 241, 235, .76); }
-.dark .welcome-card { border-color: hsl(var(--pst-yellow)); background: #12303b; box-shadow: 0 5px 0 hsl(var(--pst-yellow)); }
-.dark .welcome-input { border-color: hsl(var(--pst-yellow)); background: #0f2833; color: #f7f3ea; }
-.dark .welcome-input::placeholder { color: rgba(245, 241, 235, .45); }
-.dark .welcome-cta { background: hsl(var(--pst-yellow)); color: #0b3a4d; }
-.dark .welcome-chip { background: hsl(var(--pst-yellow)); color: #0b3a4d; }
-.dark .welcome-chip:nth-child(2n) { background: #12303b; color: #f7f3ea; }
+/* מצב כהה — הצבעים מגיעים מהטוקנים, וזה מה שמתאים לקנבס הכהה */
+.dark .welcome-logo img { background: hsl(var(--skin-surface-2)); }
+.dark .welcome-eyebrow { border-color: hsl(var(--skin-line)); }
