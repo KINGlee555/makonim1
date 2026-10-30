@@ -116,14 +116,17 @@ export default async function (req: Request): Promise<Response> {
       if (await imageLoads(url)) verified.set(code, url);
     }
 
-    // כל מוצר שנבדק מסומן ככזה, גם אם לא נמצאה לו תמונה — כך ההרצה הבאה מתקדמת
-    // למוצרים חדשים, ואין לולאה על אותם מוצרים בכל בוקר.
-    const rows = products.map((product: any) => {
-      const image = verified.get(String(product.barcode));
-      return image
-        ? { id: product.id, image_url: image, image_checked: true }
-        : { id: product.id, image_checked: true };
-    });
+    // מוצר שנמצאה לו תמונה נשמר עם התמונה. מוצר שכבר יש לו תמונה (גם גנרית) מסומן
+    // כנבדק כדי שההרצה הבאה תתקדם. מוצר בלי תמונה בכלל נשאר פתוח וייבדק שוב —
+    // כדי שאלכוהול וסיגריות שזה עתה נכנסו לקטלוג ימשיכו לקבל תמונה אמיתית.
+    const rows = products
+      .map((product: any) => {
+        const image = verified.get(String(product.barcode));
+        if (image) return { id: product.id, image_url: image, image_checked: true };
+        if (product.image_url) return { id: product.id, image_checked: true };
+        return null;
+      })
+      .filter(Boolean);
 
     let updated = 0;
     for (let i = 0; i < rows.length; i += 100) {
