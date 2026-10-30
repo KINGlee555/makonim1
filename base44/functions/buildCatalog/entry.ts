@@ -2,14 +2,12 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { CATALOG_CHAINS, catalogChainById, chainCatalogItems, isRealBarcode, photosForCodes, prioritizeForPhotos } from "../../shared/chainCatalog.ts";
 import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
 import { categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
-import { typePhoto } from "../../shared/typePhotos.ts";
+import { addCover, loadCoverMaps, resolveCover } from "../../shared/productCovers.ts";
 
 // ברירת מחדל: שלוש רשתות בכל קריאה, כדי לעמוד במגבלות הזמן של השרת.
 const DEFAULT_CHAINS = ["shufersal", "rami_levy", "yohananof"];
-// אחרי הזמן הזה מפסיקים לפתוח רשתות חדשות בקריאה הזאת, וממשיכים בקריאה הבאה.
-const TIME_BUDGET_MS = 200000;
 // כמה מוצרים מתחילת קובץ המחירים נבדוק מול מה שכבר יש לנו.
-const MAX_CHUNKS = 50;
+const MAX_CHUNKS = 160;
 
 export default async function (req) {
   try {
@@ -29,13 +27,22 @@ export default async function (req) {
     const requested = Array.isArray(body?.chains) && body.chains.length ? body.chains : DEFAULT_CHAINS;
     // כמה מוצרים לסרוק מקובץ המחירים, וכמה מהם לבדוק מול קטלוג התמונות בקריאה הזאת.
     const scan = Math.min(Math.max(Number(body?.scan) || 6000, 200), 60000);
-    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 12000);
+    const perChain = Math.min(Math.max(Number(body?.perChain) || 800, 20), 20000);
     // כמה סניפים לכל רשת קוראים בקריאה הזאת — האיחוד מכניס מוצרים שלא קיימים בסניף אחד.
     const branches = Math.min(Math.max(Number(body?.branches) || 1, 1), 8);
     // גם מוצרי קוד פנימי (ירקות, מעדנייה, מאפייה) נכנסים לקטלוג — בלי כפילויות לפי שם.
     const includeInternal = body?.includeInternal !== false;
+    // כמה ברקודים בודקים לתמונה מדויקת בקריאה הזאת, ומה תקרת הזמן שלה
+    const photos = Math.min(Math.max(Number(body?.photos) || 120, 0), 600);
+    const TIME_BUDGET_MS = Math.min(Math.max(Number(body?.seconds) || 200, 15), 280) * 1000;
     const startedAt = Date.now();
     const report = [];
+
+    // תמונות לשימוש חוזר: אותו מוצר בגודל אחר, אותו מותג ואותה מחלקה — כדי שלכל
+    // מוצר תהיה תמונה אמיתית, גם כשאין תמונה לברקוד שלו עצמו.
+    const covers = await loadCoverMaps(base44, 20000);
+    // ברקודים שנשמרו כבר בקריאה הזאת — כדי שאותו מוצר לא ייכנס פעמיים מרשתות שונות
+    const storedCodes = new Set<string>();
 
     // כדי שכל הרשתות ייכנסו בתור ולא תמיד אותן רשתות ראשונות, כל יום מתחילים מרשת אחרת.
     const rotation = Math.floor(Date.now() / 86400000) % requested.length;
@@ -69,9 +76,13 @@ export default async function (req) {
           for (const item of slice) if (!known.has(item.code)) candidates.push(item);
         }
 
-        const unknown = prioritizeForPhotos(candidates, perChain);
-        // בדיקת התמונות האישית מוגבלת, כדי שכל קריאה תסתיים בזמן ותוכל לכסות עוד רשתות.
-        const result = await photosForCodes(unknown.map((item) => item.code), 110);
+        const unknown = prioritizeForPhotos(candidates, perChain).filter((item) => {
+          if (storedCodes.has(item.code)) return false;
+          storedCodes.add(item.code);
+          return true;
+        });
+        // בדיקת התמונה המדויקת (לפי ברקוד) מוגבלת, כדי שכל קריאה תסתיים בזמן ותכסה עוד רשתות.
+        const result = await photosForCodes(unknown.map((item) => item.code), photos);
         const images = result.images;
         const checked = result.checked;
 
@@ -80,19 +91,30 @@ export default async function (req) {
           await base44.asServiceRole.entities.CatalogImage.bulkCreate(checked.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
         }
 
-        // נשמר רק מוצר שיש לו תמונה אמיתית של עצמו — מוצר בלי תמונה לא נכנס לקטלוג בכלל.
-        const rows = unknown.filter((item) => images.has(item.code)).map((item) => ({
-          barcode: item.code,
-          name: displayName(item).slice(0, 64),
-          brand: item.brand.slice(0, 48),
-          category: categoryFromName(item.name),
-          price: item.price,
-          chain: chain.id,
-          chain_name: chain.name,
-          image_url: images.get(item.code) || "",
-          weighted: item.weighted,
-          day
-        }));
+        // כל מוצר נכנס לקטלוג עם תמונה: של הברקוד שלו עצמו, ואם אין — של אותו מוצר
+        // בגודל אחר, של אותו מותג או של אותה מחלקה. אין מוצר בלי תמונה.
+        const rows = [];
+        for (const item of unknown) {
+          const name = displayName(item).slice(0, 64);
+          const category = categoryFromName(item.name);
+          const exact = images.get(item.code) || "";
+          const image = exact || resolveCover(covers, { name, brand: item.brand, category });
+          if (!image) continue;
+          rows.push({
+            barcode: item.code,
+            name,
+            brand: item.brand.slice(0, 48),
+            category,
+            price: item.price,
+            chain: chain.id,
+            chain_name: chain.name,
+            image_url: image,
+            weighted: item.weighted,
+            day,
+            image_checked: !!exact
+          });
+          addCover(covers, { name, brand: item.brand, category, image });
+        }
 
         let stored = 0;
         for (let i = 0; i < rows.length; i += 500) {
@@ -119,7 +141,10 @@ export default async function (req) {
             // גבינה). מוצר בלי תמונה פשוט לא נכנס לקטלוג.
             const fresh = internal
               .filter((item) => !existing.has(displayName(item).slice(0, 64)))
-              .map((item) => ({ item, image: typePhoto(item.name) }))
+              .map((item) => ({
+                item,
+                image: resolveCover(covers, { name: displayName(item), brand: item.brand, category: categoryFromName(item.name) })
+              }))
               .filter((entry) => entry.image);
             const produceRows = fresh.map(({ item, image }) => ({
               barcode: `${chain.id}-${item.code}`.slice(0, 32),
@@ -139,7 +164,7 @@ export default async function (req) {
             }
           }
         }
-        report.push({ chain: chain.id, chain_name: chain.name, day, scanned: items.length, candidates: candidates.length, branded: unknown.filter((item) => item.brand).length, checked: checked.length, withPhoto: rows.length, stored, produceStored });
+        report.push({ chain: chain.id, chain_name: chain.name, day, scanned: items.length, candidates: candidates.length, checked: checked.length, exact: rows.filter((row) => row.image_checked).length, stored, produceStored });
       } catch (error) {
         report.push({ chain: chain.id, error: error instanceof Error ? error.message : String(error) });
       }

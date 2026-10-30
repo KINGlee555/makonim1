@@ -41,8 +41,10 @@ export default async function (req: Request): Promise<Response> {
     const budgetLeft = () => Date.now() - startedAt < seconds * 1000;
 
     // מוצרים שכבר סומנו כנבדקים לא נבדקים שוב — כל הרצה ממשיכה למוצרים חדשים
+    // כל מוצר מקבל תמונה כבר בבנייה; כאן מדייקים אותה לתמונה של הברקוד עצמו,
+    // ולכן נבדקים כל המוצרים שעוד לא נבדקו מול הברקוד — גם אם יש להם תמונה חלופית.
     const pool = rowsOf(await base44.asServiceRole.entities.CatalogProduct.filter(
-      { image_url: "", image_checked: { $ne: true } },
+      { image_checked: { $ne: true } },
       "-created_date",
       limit
     ));
