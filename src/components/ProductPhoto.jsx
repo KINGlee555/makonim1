@@ -6,6 +6,7 @@ import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { getCachedPhoto, cachePhoto, isPhotoMiss, cachePhotoMiss, isBrokenPhoto, markPhotoBroken } from "@/lib/photoCache";
 import { photoByBarcode } from "@/lib/barcodePhotos";
 import { chainPhotoUrl } from "@/lib/chainPhotos";
+import { petPhotoFor } from "@/lib/petPhotos";
 import { ShoppingBasket } from "lucide-react";
 
 // כמה חיפושי תמונה רצים במקביל — רשימה ארוכה מתמלאת מהר, בלי להציף את הקטלוג
@@ -90,7 +91,9 @@ async function findRealPhoto(name, brand, barcode, avoid = "") {
 // ואם אין תמונה אמיתית בכלל — מוצג האייקון של המוצר, אף פעם לא מלבן ריק.
 export default function ProductPhoto({ name, category, imageUrl, brand: brandProp, barcode, className = "", onFound, lookup = true }) {
   const brand = brandProp || detectBrand(name);
-  const keywordPhoto = brand ? "" : getSpecificProductImage(name);
+  // ציוד חיות: התמונה של המוצר עצמו גוברת על כל ניחוש אחר
+  const petPhoto = petPhotoFor(name);
+  const keywordPhoto = petPhoto || (brand ? "" : getSpecificProductImage(name));
   // אין תמונה מדויקת? תמונה אמיתית של סוג המוצר (המחלקה שלו) — עדיף מציור אפור
   const categoryPhoto = getSpecificProductImage(category || "");
   const typePhoto = keywordPhoto || categoryPhoto;
@@ -100,13 +103,18 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
   // תמונת הרשת של המוצר לפי הברקוד — נטענת מיד, בלי לחכות לחיפוש
   const chainPhoto = barcode ? chainPhotoUrl(barcode) : "";
   const usableChain = usable(chainPhoto, "");
-  const [src, setSrc] = useState(usable(imageUrl, "") ? imageUrl : known.current || (usableChain ? chainPhoto : "") || typePhoto);
+  const [src, setSrc] = useState(usable(imageUrl, "") ? imageUrl : petPhoto || known.current || (usableChain ? chainPhoto : "") || typePhoto);
 
   useEffect(() => {
     let cancelled = false;
 
     if (usable(imageUrl, "")) {
       setSrc(imageUrl);
+      return () => { cancelled = true; };
+    }
+
+    if (petPhoto) {
+      setSrc(petPhoto);
       return () => { cancelled = true; };
     }
 
