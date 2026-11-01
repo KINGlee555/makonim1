@@ -6,6 +6,7 @@ import { searchRemoteCatalog } from "@/lib/remoteProductCatalog";
 import { getCachedPhoto, cachePhoto, isPhotoMiss, cachePhotoMiss, isBrokenPhoto, markPhotoBroken } from "@/lib/photoCache";
 import { photoByBarcode } from "@/lib/barcodePhotos";
 import { chainPhotoUrl } from "@/lib/chainPhotos";
+import { fastImageUrl } from "@/lib/imageUrl";
 import { ShoppingBasket } from "lucide-react";
 
 // כמה חיפושי תמונה רצים במקביל — רשימה ארוכה מתמלאת מהר, בלי להציף את הקטלוג
@@ -156,13 +157,15 @@ export default function ProductPhoto({ name, category, imageUrl, brand: brandPro
     );
   }
 
+  // אותה תמונה בגרסה קלה — התמונה מוצגת בעיגול קטן, ואין סיבה למשוך תמונה של 600 פיקסל
   return (
     <img
-      src={src}
+      src={fastImageUrl(src, 240)}
       alt={name}
       className={`object-cover ${className}`}
       loading="lazy"
       decoding="async"
+      referrerPolicy="no-referrer"
       onLoad={(event) => {
         if (event.currentTarget.naturalWidth < 60 || event.currentTarget.naturalHeight < 60) recover(src);
       }}
