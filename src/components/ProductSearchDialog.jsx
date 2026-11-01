@@ -322,7 +322,7 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           isAdded ? "border-primary shadow-lg shadow-primary/20" : "border-border/60 shadow-sm hover:border-primary/40 hover:shadow-md"
         }`}
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
-        <div className="relative h-28 bg-white p-2 flex items-center justify-center">
+        <div className="relative h-28 bg-card p-2 flex items-center justify-center">
           <ProductPhoto name={product.name} brand={product.brand} barcode={product.barcode} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" />
           <button onClick={(event) => { event.stopPropagation(); onToggleFavorite(product); }} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${product.name}`} className="absolute start-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
             <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />

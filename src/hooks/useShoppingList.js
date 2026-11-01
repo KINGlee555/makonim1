@@ -81,7 +81,7 @@ export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category
   useEffect(() => {
     const unsubscribe = base44.entities.ListItem.subscribe((event) => {
       if (event.data?.list_id !== listId && event.type !== "delete") return;
-      if (sortMode === "cheap") { loadData(); return; }
+      if (sortMode === "cheap" && (event.type === "create" || event.type === "update")) { loadData(); return; }
       if (event.type === "create") {
         setItems(prev => prev.some(i => i.id === event.data.id) ? prev : [event.data, ...prev]);
       } else if (event.type === "update") {
