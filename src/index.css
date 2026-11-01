@@ -681,7 +681,7 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-tile.animate-slide-out { animation: slideOut .3s ease-out forwards; }
 .pst-ph { position: relative; width: 100%; max-width: 200px; aspect-ratio: 1 / 1; margin: 0 auto; flex: none; border: 3px solid #0B3A4D; border-radius: 50%; overflow: hidden; }
 .pst-ph > button { all: unset; display: block; width: 100%; height: 100%; cursor: pointer; }
-.pst-ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pst-ph img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .pst-tag { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border: 2px solid #0B3A4D; border-radius: 8px; background: #FF3B5D; color: #fff; font-size: 15px; font-weight: 900; letter-spacing: -.02em; }
 .pst-body { display: flex; flex: 1; flex-direction: column; gap: 8px; }
 .pst-nm { font-size: 15px; font-weight: 900; line-height: 1.15; }

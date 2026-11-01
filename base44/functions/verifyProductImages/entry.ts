@@ -1,11 +1,11 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.54";
+import { exactProductPhoto } from "../../shared/productPhotoIdentity.ts";
 
 // סוכן התמונות של הקטלוג — רץ כל בוקר.
 // בכל הרצה הוא לוקח חבורת מוצרים שעדיין לא נבדקו, מבקש תמונה אמיתית של המוצר עצמו
 // (בקבוק ג׳ין מקבל בקבוק ג׳ין), מוודא שהתמונה באמת נטענת, ומעדכן אותה על המוצר.
 // מוצר שנבדק מסומן image_checked, כדי שהרצה הבאה תמשיך הלאה ולא תחזור לאותו מוצר.
 
-const MODEL = "gemini_3_flash";
 const BATCH = 4;
 const TIME_BUDGET_MS = 200000;
 
@@ -95,7 +95,7 @@ export default async function (req: Request): Promise<Response> {
       const slice = products.slice(i, i + BATCH);
       try {
         const answer = await base44.asServiceRole.integrations.Core.InvokeLLM({
-          model: MODEL,
+          model: "automatic",
           add_context_from_internet: true,
           prompt: buildPrompt(slice),
           response_json_schema: SCHEMA
@@ -103,7 +103,7 @@ export default async function (req: Request): Promise<Response> {
         for (const row of answer?.items || []) {
           const code = String(row?.barcode || "").trim();
           const url = String(row?.image_url || "").trim();
-          if (code && /^https:\/\//i.test(url)) found.set(code, url);
+          if (slice.some(product => product.barcode === code) && exactProductPhoto(url, code, false)) found.set(code, url);
         }
       } catch (error: any) {
         console.error("image lookup failed", error?.message);
@@ -123,7 +123,7 @@ export default async function (req: Request): Promise<Response> {
       .map((product: any) => {
         const image = verified.get(String(product.barcode));
         if (image) return { id: product.id, image_url: image, image_checked: true };
-        if (product.image_url) return { id: product.id, image_checked: true };
+        if (product.image_url) return { id: product.id, image_url: exactProductPhoto(product.image_url, product.barcode) ? product.image_url : "", image_checked: true };
         return null;
       })
       .filter(Boolean);

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.54";
+import { exactProductPhoto } from "../../shared/productPhotoIdentity.ts";
 
 export default async function(req) {
   try {
@@ -13,7 +14,7 @@ export default async function(req) {
     const terms = query.split(/\s+/).filter(Boolean).map(term => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
     const filter = category ? { category } : { $and: terms.map(term => ({ name: { $regex: term, $options: "i" } })) };
     const page = await base44.asServiceRole.entities.CatalogProduct.filter(filter, { sort: "name", limit, cursor: body.cursor || undefined });
-    return Response.json({ products: page.items.map(row => ({ ...row, image_verified: Boolean(row.image_url), catalog_source: "catalog" })), next_cursor: page.next_cursor, has_more: page.has_more });
+    return Response.json({ products: page.items.map(row => ({ ...row, image_verified: exactProductPhoto(row.image_url, row.barcode), catalog_source: "catalog" })), next_cursor: page.next_cursor, has_more: page.has_more });
   } catch (error) {
     console.error("searchProductCatalog", error);
     return Response.json({ error: error.message || "Catalog search failed" }, { status: 500 });

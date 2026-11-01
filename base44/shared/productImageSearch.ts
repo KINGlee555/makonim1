@@ -10,8 +10,8 @@ const HEADERS = {
 // כתובת התמונה של הרשת לפי הברקוד — הדפדפן יכול לטעון אותה ישירות,
 // והשרת בודק שהיא באמת קיימת לפני שהיא נשמרת בקטלוג.
 export const chainPhotoUrl = (barcode: string) => {
-  const code = String(barcode || "").replace(/\D/g, "");
-  return code.length >= 8 ? `https://img.rami-levy.co.il/product/${code}/large.jpg` : "";
+  const code = String(barcode || "").trim();
+  return /^\d{8,14}$/.test(code) ? `https://img.rami-levy.co.il/product/${code}/small.jpg` : "";
 };
 
 // בדיקה בפועל: רק תמונה אמיתית (jpeg/png/webp) נחשבת. אין תמונה = כלום, בלי לזרוק שגיאה.

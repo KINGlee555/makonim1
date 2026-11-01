@@ -1,6 +1,6 @@
-// תמונת המוצר של הרשת לפי הברקוד — נטענת ישירות בדפדפן, בלי המתנה לשרת.
-// אם אין תמונה לברקוד הזה התמונה לא נטענת, והרכיב עובר לתמונה של סוג המוצר.
+// Never strip a chain prefix into an unrelated national product code.
 export const chainPhotoUrl = (barcode) => {
-  const code = String(barcode || "").replace(/\D/g, "");
-  return code.length >= 8 ? `https://img.rami-levy.co.il/product/${code}/large.jpg` : "";
+  const code = String(barcode || "").trim();
+  if (!/^\d{8,14}$/.test(code)) return "";
+  return `https://img.rami-levy.co.il/product/${code}/small.jpg`;
 };

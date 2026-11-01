@@ -2,7 +2,7 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
 import { CATALOG_CHAINS, catalogChainById, chainCatalogItems, isRealBarcode, photosForCodes, prioritizeForPhotos } from "../../shared/chainCatalog.ts";
 import { photosFromOpenDatabases } from "../../shared/openCatalog.ts";
 import { categoryFromName, displayName } from "../../shared/shufersalPrices.ts";
-import { addCover, loadCoverMaps, resolveCover } from "../../shared/productCovers.ts";
+import { exactProductPhoto } from "../../shared/productPhotoIdentity.ts";
 
 // ברירת מחדל: שלוש רשתות בכל קריאה, כדי לעמוד במגבלות הזמן של השרת.
 const DEFAULT_CHAINS = ["shufersal", "rami_levy", "yohananof"];
@@ -13,15 +13,9 @@ export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // קריאה מתוך המשימה היומית מגיעה בלי משתמש; קריאה ישירה דורשת מנהל.
-    try {
-      const user = await base44.auth.me();
-      if (user && user.role !== "admin") {
-        return Response.json({ error: "Admin access required" }, { status: 403 });
-      }
-    } catch {
-      // אין משתמש — המשימה היומית
-    }
+    const user = await base44.auth.me().catch(error => error?.status === 401 ? null : Promise.reject(error));
+    if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (user.role !== "admin") return Response.json({ error: "Admin access required" }, { status: 403 });
 
     const body = await req.json().catch(() => ({}));
     const requested = Array.isArray(body?.chains) && body.chains.length ? body.chains : DEFAULT_CHAINS;
@@ -40,9 +34,7 @@ export default async function (req) {
     const startedAt = Date.now();
     const report = [];
 
-    // תמונות לשימוש חוזר: אותו מוצר בגודל אחר, אותו מותג ואותה מחלקה — כדי שלכל
-    // מוצר תהיה תמונה אמיתית, גם כשאין תמונה לברקוד שלו עצמו.
-    const covers = await loadCoverMaps(base44, 20000);
+    // Never inherit another product's photo. Missing photos do not remove products.
     // ברקודים שנשמרו כבר בקריאה הזאת — כדי שאותו מוצר לא ייכנס פעמיים מרשתות שונות
     const storedCodes = new Set<string>();
 
@@ -93,18 +85,14 @@ export default async function (req) {
           await base44.asServiceRole.entities.CatalogImage.bulkCreate(checked.map((code) => ({ barcode: code, image_url: images.get(code) || "" })));
         }
 
-        // כל מוצר נכנס לקטלוג עם תמונה: של הברקוד שלו עצמו, ואם אין — של אותו מוצר
-        // בגודל אחר, של אותו מותג או של אותה מחלקה. אין מוצר בלי תמונה.
+        // Keep every product, but only attach an image carrying this exact barcode.
         const rows = [];
         for (const item of unknown) {
           const name = displayName(item).slice(0, 64);
           const category = categoryFromName(item.name);
-          const exact = images.get(item.code) || "";
-          const image = exact || resolveCover(covers, { name, brand: item.brand, category });
-          // אלכוהול וסיגריות נכנסים לקטלוג גם בלי תמונה — סוכן התמונות משלים להם
-          // תמונה אמיתית של המוצר, ולכן אין סיבה להשאיר אותם בחוץ.
-          const ageRestricted = category === "אלכוהול" || category === "סיגריות וטבק";
-          if (!image && !ageRestricted) continue;
+          const candidate = images.get(item.code) || "";
+          const exact = exactProductPhoto(candidate, item.code, false) ? candidate : "";
+          const image = exact;
           rows.push({
             barcode: item.code,
             name,
@@ -118,7 +106,7 @@ export default async function (req) {
             day,
             image_checked: !!exact
           });
-          addCover(covers, { name, brand: item.brand, category, image });
+
         }
 
         let stored = 0;
@@ -147,15 +135,13 @@ export default async function (req) {
               const found = await base44.asServiceRole.entities.CatalogProduct.filter({ name: { $in: wanted.slice(i, i + 200) } }, "-created_date", 200);
               for (const row of found || []) existing.add(row.name);
             }
-            // גם למוצר בתפזורת יש תמונה אמיתית — התמונה של אותו מוצר (עגבנייה, חזה עוף,
-            // גבינה). מוצר בלי תמונה פשוט לא נכנס לקטלוג.
+            // Internal store codes stay in the catalog without borrowing another product's image.
             const fresh = internal
               .filter((item) => !existing.has(displayName(item).slice(0, 64)))
               .map((item) => ({
                 item,
-                image: resolveCover(covers, { name: displayName(item), brand: item.brand, category: categoryFromName(item.name) })
-              }))
-              .filter((entry) => entry.image);
+                image: ""
+              }));
             const produceRows = fresh.map(({ item, image }) => ({
               barcode: `${chain.id}-${item.code}`.slice(0, 32),
               name: displayName(item).slice(0, 64),

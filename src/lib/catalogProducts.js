@@ -1,5 +1,6 @@
 import { base44 } from "@/api/base44Client";
 import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
+import { exactProductPhoto } from "@/lib/productPhotoIdentity";
 
 // דפי תוצאות מהקטלוג השמור. הדף הראשון נשמר כדי שפתיחה חוזרת של אותו חיפוש
 // תהיה מיידית, וכל דף נוסף נשמר לפי הסמן שלו — כך "טען עוד" לא ממתין לשרת.
@@ -23,7 +24,7 @@ function toProduct(row) {
     category: row.category || "אחר",
     price: row.price || 0,
     image_url: row.image_url || "",
-    image_verified: true,
+    image_verified: exactProductPhoto(row.image_url, row.barcode),
     catalog_source: "catalog",
     chain_name: row.chain_name || "",
     weighted: Boolean(row.weighted)
