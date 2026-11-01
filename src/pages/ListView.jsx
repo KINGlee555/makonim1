@@ -6,6 +6,7 @@ import AppFooter from "../components/AppFooter";
 import MoreTools from "../components/list/MoreTools";
 import DealsShelf from "@/components/deals/DealsShelf";
 import ListItemsSection from "@/components/list/ListItemsSection";
+import ListSortBar from "@/components/list/ListSortBar";
 import ListTotals from "@/components/minimal/ListTotals";
 import PriceNotice from "@/components/minimal/PriceNotice";
 import SkipLink from "@/components/SkipLink";
@@ -41,6 +42,7 @@ export default function ListView() {
   const { show } = dialogs;
 
   const [categoryOrder, setCategoryOrder] = useState(loadCategoryOrder);
+  const [sortMode, setSortMode] = useState("category");
   const [allProducts, setAllProducts] = useState([]);
 
   const {
@@ -50,7 +52,7 @@ export default function ListView() {
     handleSetReminder, handleUnavailable, handleRestore, handleToggleFavorite,
     handleAddProduct, handleAddMultiple, handleRemoveItem,
     ageGate, confirmAge, cancelAge,
-  } = useShoppingList(listId, { t, onNeedProfile: () => show("profile") });
+  } = useShoppingList(listId, { t, sortMode, onNeedProfile: () => show("profile") });
 
   // מחירים אמיתיים מהרשתות ברקע, כדי שהשוואה תיפתח מיד
   useWarmChainPrices(items);
@@ -120,12 +122,13 @@ export default function ListView() {
 
   const pendingItems = items.filter(i => !i.status || i.status === "pending");
   // הרשימה מוצגת לפי סדר המחלקות בסופר — כמו שמהלכים בחנות
-  const shoppingItems = sortItemsByCategory(pendingItems, categoryOrder);
+  const priceOrderedItems = [...pendingItems.filter(item => item.price > 0), ...pendingItems.filter(item => !(item.price > 0))];
+  const shoppingItems = sortMode === "cheap" ? priceOrderedItems : sortItemsByCategory(pendingItems, categoryOrder);
   const unavailableItems = items.filter(i => i.status === "unavailable");
   const boughtCount = items.filter(i => i.status === "bought").length;
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
   const otherShoppers = (list.active_shoppers || []).filter(s => s !== userNameRef.current);
-  const groupedCategories = Object.entries(
+  const groupedCategories = sortMode === "cheap" ? (pendingItems.length ? [["הכי זול", priceOrderedItems]] : []) : Object.entries(
     pendingItems.reduce((groups, item) => {
       const cat = item.category || t("summary.other");
       if (!groups[cat]) groups[cat] = [];
@@ -159,7 +162,11 @@ export default function ListView() {
         onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
       />
 
-      <SyncStatus items={pendingItems} />
+      <SyncStatus items={pendingItems} onSynced={updates => {
+        const prices = new Map(updates.map(update => [update.id, update.price]));
+        setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
+        loadData();
+      }} />
 
       <ListTotals itemCount={pendingItems.length} total={totalPrice} />
 
@@ -178,7 +185,8 @@ export default function ListView() {
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
 
-      <CategoryBar categories={groupedCategories.map(([category]) => category)} />
+      {sortMode !== "cheap" && <CategoryBar categories={groupedCategories.map(([category]) => category)} />}
+      <ListSortBar mode={sortMode} onMode={setSortMode} onCompare={() => show("basket")} disabled={!pendingItems.length} />
 
       <main id="main-content">
         <ListItemsSection

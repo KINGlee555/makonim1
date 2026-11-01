@@ -35,10 +35,12 @@ export const OTHER_CHAINS = CHAINS.map(chain => chain.id).filter(id => !FAST_CHA
 
 // Real shelf prices for a basket: items with a barcode are matched exactly,
 // the rest are matched by name against the chains' price files.
-export async function fetchChainPrices(items, chains) {
-  const response = await base44.functions.invoke("chainPrices", {
-    items: items.map(item => ({ name: item.name, barcode: item.barcode || "" })),
-    chains
-  });
-  return response.data || {};
+const pendingPrices = new Map();
+export async function fetchChainPrices(items, chains, options = {}) {
+  const payload = { items: items.map(item => ({ name: item.name, barcode: item.barcode || "" })), chains, ...options };
+  const key = JSON.stringify(payload);
+  if (!pendingPrices.has(key)) {
+    pendingPrices.set(key, base44.functions.invoke("chainPrices", payload).then(response => response.data || {}).finally(() => pendingPrices.delete(key)));
+  }
+  return pendingPrices.get(key);
 }

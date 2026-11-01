@@ -10,6 +10,7 @@ import { normalizeText } from "./shufersalPrices.ts";
 
 const UA = { "User-Agent": "MaKonim/1.0 (price transparency)" };
 const CERBERUS = "https://url.publishedprices.co.il";
+const feedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(12000) });
 
 export type Chain = {
   id: string; name: string;
@@ -56,17 +57,17 @@ async function cerberusSession(user: string, password = "") {
   const key = `${user}:${password}`;
   const cached = sessions.get(key);
   if (cached && Date.now() - cached.at < 5 * 60 * 1000) return cached;
-  const loginPage = await fetch(`${CERBERUS}/login`, { headers: UA });
+  const loginPage = await feedFetch(`${CERBERUS}/login`, { headers: UA });
   const html = await loginPage.text();
   let cookie = (loginPage.headers.get("set-cookie") || "").split(";")[0];
-  const login = await fetch(`${CERBERUS}/login/user`, {
+  const login = await feedFetch(`${CERBERUS}/login/user`, {
     method: "POST", redirect: "manual",
     headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: cookie },
     body: new URLSearchParams({ username: user, password, csrftoken: csrfToken(html) })
   });
   const set = login.headers.get("set-cookie");
   if (set) cookie = set.split(";")[0];
-  const home = await fetch(`${CERBERUS}/file`, { headers: { ...UA, Cookie: cookie } });
+  const home = await feedFetch(`${CERBERUS}/file`, { headers: { ...UA, Cookie: cookie } });
   const session = { cookie, csrf: csrfToken(await home.text()), at: Date.now() };
   sessions.set(key, session);
   return session;
@@ -83,7 +84,7 @@ const SHUFERSAL_CAT: Record<FileKind, number> = { price: 2, promo: 4 };
 // Newest full file of one branch: filename carries the date (…-YYYYMMDD-HHMMSS.gz).
 async function cerberusFile(chain: Chain, kind: FileKind) {
   const session = await cerberusSession(chain.user as string, chain.password || "");
-  const dir = await fetch(`${CERBERUS}/file/json/dir`, {
+  const dir = await feedFetch(`${CERBERUS}/file/json/dir`, {
     method: "POST",
     headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: session.cookie },
     body: new URLSearchParams({ csrftoken: session.csrf, sEcho: "1", iDisplayLength: "200", sSearch: FILE_KIND[kind].search })
@@ -95,7 +96,7 @@ async function cerberusFile(chain: Chain, kind: FileKind) {
   }
   const names: string[] = (JSON.parse(text).aaData || []).map((row: any) => row.fname).filter(Boolean);
   const dated = names.map((name) => ({ name, day: (name.match(/-(\d{8})-\d{4,6}\.gz$/) || [])[1] || "" }))
-    .filter((entry) => entry.day).sort((a, b) => (a.day < b.day ? 1 : -1));
+    .filter((entry) => entry.day).sort((a, b) => (b.name.match(/\d{8}-\d{4,6}\.gz$/)?.[0] || "").localeCompare(a.name.match(/\d{8}-\d{4,6}\.gz$/)?.[0] || "") || a.name.localeCompare(b.name));
   if (!dated.length) throw new Error(`${chain.id}: no price file found`);
   const newest = dated[0];
   return {
@@ -109,7 +110,7 @@ async function cerberusFile(chain: Chain, kind: FileKind) {
 // שלהם מכניס לקטלוג מוצרים שלא מופיעים בסניף היחיד שקראנו עד היום.
 export async function cerberusBranchFiles(chain: Chain, kind: FileKind, branches: number) {
   const session = await cerberusSession(chain.user as string, chain.password || "");
-  const dir = await fetch(`${CERBERUS}/file/json/dir`, {
+  const dir = await feedFetch(`${CERBERUS}/file/json/dir`, {
     method: "POST",
     headers: { ...UA, "Content-Type": "application/x-www-form-urlencoded", Cookie: session.cookie },
     body: new URLSearchParams({ csrftoken: session.csrf, sEcho: "1", iDisplayLength: "500", sSearch: FILE_KIND[kind].search })
@@ -121,13 +122,13 @@ export async function cerberusBranchFiles(chain: Chain, kind: FileKind, branches
   }
   const names: string[] = (JSON.parse(text).aaData || []).map((row: any) => row.fname).filter(Boolean);
   const dated = names.map((name) => ({ name, day: (name.match(/-(\d{8})-\d{4,6}\.gz$/) || [])[1] || "" }))
-    .filter((entry) => entry.day).sort((a, b) => (a.day < b.day ? 1 : -1));
+    .filter((entry) => entry.day).sort((a, b) => (b.name.match(/\d{8}-\d{4,6}\.gz$/)?.[0] || "").localeCompare(a.name.match(/\d{8}-\d{4,6}\.gz$/)?.[0] || "") || a.name.localeCompare(b.name));
   if (!dated.length) throw new Error(`${chain.id}: no price file found`);
 
   // החדש ביותר מכל סניף (הקובץ נושא את מספר הסניף) — עד מספר הסניפים שהתבקש.
   const perStore = new Map<string, { name: string; day: string }>();
   for (const entry of dated) {
-    const store = entry.name.split("-")[1] || entry.name;
+    const store = entry.name.split("-").slice(1, -2).join("-") || entry.name;
     if (!perStore.has(store)) perStore.set(store, entry);
   }
   return [...perStore.values()].slice(0, Math.max(1, branches)).map((entry) => ({
@@ -138,12 +139,12 @@ export async function cerberusBranchFiles(chain: Chain, kind: FileKind, branches
 }
 
 async function shufersalFile(chain: Chain, kind: FileKind) {
-  const listing = await fetch(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=${SHUFERSAL_CAT[kind]}&storeId=${chain.store}`, { headers: UA });
+  const listing = await feedFetch(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=${SHUFERSAL_CAT[kind]}&storeId=${chain.store}&sort=Time&order=desc&__swhg=${Date.now()}`, { headers: { ...UA, "X-Requested-With": "XMLHttpRequest" } });
   const html = await listing.text();
   const link = html.match(new RegExp(`href="(https:\\/\\/pricesprodpublic[^"]+${FILE_KIND[kind].name}[^"]+)"`, "i"));
   if (!link) throw new Error(`shufersal: ${kind} file link not found`);
   const url = link[1].replace(/&amp;/g, "&");
-  const day = (url.match(/(\d{8})\d{4}\.gz/) || [])[1] || "";
+  const day = (url.match(/(\d{8})-?\d{4,6}\.gz/i) || [])[1] || "";
   return {
     url, headers: UA,
     day: day ? `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}` : new Date().toISOString().slice(0, 10)
@@ -160,7 +161,7 @@ const VENDOR_HEADERS = {
 
 async function binaprojectsFile(chain: Chain, kind: FileKind) {
   const host = chain.host as string;
-  const listing = await fetch(`${host}/MainIO_Hok.aspx`, {
+  const listing = await feedFetch(`${host}/MainIO_Hok.aspx`, {
     method: "POST",
     headers: { ...VENDOR_HEADERS, "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
     body: "Store=0&Type=0&From=&To="
@@ -176,7 +177,7 @@ async function binaprojectsFile(chain: Chain, kind: FileKind) {
   if (!dated.length) throw new Error(`${chain.id}: no ${kind} file found`);
   const day = dated[0].stamp.slice(0, 8);
   // The download endpoint answers with the file's real location, which is what we fetch.
-  const link = await fetch(`${host}/Download.aspx?FileNm=${encodeURIComponent(dated[0].name)}`, {
+  const link = await feedFetch(`${host}/Download.aspx?FileNm=${encodeURIComponent(dated[0].name)}`, {
     method: "POST", headers: VENDOR_HEADERS
   });
   const location: any[] = link.ok ? await link.json() : [];
@@ -238,7 +239,7 @@ function nameQuery(key: string): NameQuery {
 // matched inside the same pass, so no second copy of any catalog is loaded.
 export async function pricesForItems(chain: Chain, barcodes: Set<string>, names: string[]) {
   const file = await chainPriceFile(chain);
-  const response = await fetch(file.url, { headers: file.headers });
+  const response = await feedFetch(file.url, { headers: file.headers });
   if (!response.ok || !response.body) throw new Error(`${chain.id}: price file ${response.status}`);
 
   const found = new Map<string, { price: number; code: string }>();
@@ -257,15 +258,16 @@ export async function pricesForItems(chain: Chain, barcodes: Set<string>, names:
     if (!queries.length) return;
     const product = tag(block, "ItemName");
     if (!product) return;
-    const brand = tag(block, "ManufacturerName");
-    const lower = `${product} ${brand}`.toLowerCase();
+    const brand = tag(block, "ManufacturerName") || tag(block, "ManufactureName");
+    const lower = normalizeText(`${product} ${brand}`);
     for (const query of queries) {
       if (query.match && query.score >= 3) continue;
       if (!lower.includes(query.longest)) continue;
       const normalized = normalizeText(`${product} ${brand}`);
       if (!query.terms.every((term) => normalized.includes(term))) continue;
       const quantity = Number(tag(block, "Quantity"));
-      const score = query.number ? (quantity === Number(query.number) ? 3 : 2) : 1;
+      if (query.number && quantity !== Number(query.number) && !normalized.split(" ").includes(query.number)) continue;
+      const score = query.number ? 3 : 1;
       if (score > query.score || (score === query.score && normalized.length < query.length)) {
         query.score = score;
         query.length = normalized.length;

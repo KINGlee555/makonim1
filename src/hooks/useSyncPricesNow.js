@@ -1,35 +1,34 @@
 import { useState } from "react";
+import { base44 } from "@/api/base44Client";
 import { FAST_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
 
-// סנכרון מחירים לפי דרישת המשתמש: קורא עכשיו את קבצי השקיפות הרשמיים של הרשתות
-// עבור המוצרים שברשימה, ומחזיר מתי הפעולה הסתיימה — כדי שהמסך יראה שעה אמיתית.
-const basketOf = (items = []) =>
-  items
-    .filter(item => !item.status || item.status === "pending")
-    .slice(0, 12)
-    .map(item => ({ name: item.name, barcode: item.barcode || "" }))
-    .filter(item => item.name || item.barcode);
-
-export default function useSyncPricesNow(items) {
-  const [syncing, setSyncing] = useState(false);
-  const [syncedAt, setSyncedAt] = useState("");
-  const [failed, setFailed] = useState(false);
-
+export default function useSyncPricesNow(items, onSynced) {
+  const [state, setState] = useState({ syncing: false, syncedAt: "", failed: false, message: "המחירים ברשימה זו טרם נבדקו", partial: false });
+  const basket = items.filter(item => !item.status || item.status === "pending");
   const syncNow = async () => {
-    const basket = basketOf(items);
-    if (!basket.length || syncing) return;
-    setSyncing(true);
-    setFailed(false);
+    if (!basket.length || state.syncing) return;
+    setState(previous => ({ ...previous, syncing: true, failed: false }));
     try {
-      // הרשתות הגדולות בלבד — סנכרון שמסתיים תוך שניות, לא דקה
-      await fetchChainPrices(basket, FAST_CHAINS);
-      setSyncedAt(new Date().toISOString());
+      const result = await fetchChainPrices(basket, FAST_CHAINS, { refresh: true });
+      if (!(result.liveMatched > 0)) {
+        setState(previous => ({ ...previous, syncing: false, failed: true, message: result.matched ? "הרשתות לא החזירו עדכון; המחירים האחרונים נשמרו" : "לא התקבלו מחירים מהרשתות למוצרי הרשימה. לא שונו מחירים" }));
+        return;
+      }
+      const fresh = new Map(result.statuses.filter(status => status.status === "fresh").map(status => [status.id, new Set(status.keys || [])]));
+      const updates = basket.flatMap(item => {
+        const key = item.barcode || item.name;
+        const prices = result.chains.filter(chain => fresh.get(chain.id)?.has(key)).map(chain => chain.prices[key]).filter(price => price > 0);
+        return item.id && prices.length ? [{ id: item.id, price: Math.min(...prices) }] : [];
+      });
+      if (updates.length) await base44.entities.ListItem.bulkUpdate(updates);
+      onSynced?.(updates);
+      window.dispatchEvent(new CustomEvent("makonim:prices-updated"));
+      const partial = result.statuses.some(status => status.status === "unavailable") || updates.length < basket.length;
+      setState({ syncing: false, failed: false, syncedAt: result.checkedAt, partial,
+        message: `עודכנו מחירים ל־${updates.length} מתוך ${basket.length} מוצרים${partial ? " · עדכון חלקי" : ""}. המחיר הנמוך שנמצא ברשתות שנבדקו; עשוי להשתנות בסניף` });
     } catch {
-      setFailed(true);
-    } finally {
-      setSyncing(false);
+      setState(previous => ({ ...previous, syncing: false, failed: true, message: "עדכון המחירים נכשל; המחירים הקיימים לא הוחלפו" }));
     }
   };
-
-  return { syncing, syncedAt, failed, syncNow, ready: basketOf(items).length > 0 };
+  return { ...state, syncNow, ready: basket.length > 0 };
 }

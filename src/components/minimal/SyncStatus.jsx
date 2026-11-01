@@ -1,37 +1,16 @@
-import { Check, RefreshCw } from "lucide-react";
-import usePricesUpdatedAt from "@/hooks/usePricesUpdatedAt";
+import { RefreshCw } from "lucide-react";
 import useSyncPricesNow from "@/hooks/useSyncPricesNow";
 
-// פס סטטוס: המחירים מגיעים מקבצי השקיפות הרשמיים של הרשתות, ולכן אפשר להראות
-// מתי הם עודכנו לאחרונה — וגם לסנכרן עכשיו, בלי לחכות לעדכון היומי.
-export default function SyncStatus({ items = [] }) {
-  const updatedAt = usePricesUpdatedAt();
-  const { syncing, syncedAt, failed, syncNow, ready } = useSyncPricesNow(items);
-  const stamp = syncedAt || updatedAt;
-  const time = stamp
-    ? new Date(stamp).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })
-    : "";
-
+export default function SyncStatus({ items = [], onSynced }) {
+  const { syncing, syncedAt, failed, partial, message, syncNow, ready } = useSyncPricesNow(items, onSynced);
+  const status = failed ? "failed" : syncing ? "loading" : syncedAt ? (partial ? "partial" : "fresh") : "unknown";
   return (
-    <div className="pst-sync" role="status" aria-live="polite">
+    <div className="pst-sync" data-state={status} role="status" aria-live="polite">
       <span className="pst-sync-dot" aria-hidden="true" />
-      <span className="pst-sync-text">
-        {failed ? "הסנכרון לא הצליח — ננסה שוב" : "המחירים מסונכרנים עם קבצי השקיפות הרשמיים"}
-      </span>
-      {time && (
-        <span className="pst-sync-time">
-          <RefreshCw className="h-3 w-3" aria-hidden="true" />
-          {syncedAt ? "עודכן עכשיו" : `עודכן ${time}`}
-        </span>
-      )}
-      <button
-        type="button"
-        className="pst-sync-btn"
-        onClick={syncNow}
-        disabled={syncing || !ready}
-        aria-label="סנכרן מחירים עכשיו"
-      >
-        {syncing ? <RefreshCw className="h-3.5 w-3.5 animate-refresh" aria-hidden="true" /> : <Check className="h-3.5 w-3.5" aria-hidden="true" />}
+      <span className="pst-sync-text">{syncing ? `בודק מחירים לכל ${items.length} המוצרים…` : ready ? message : "הוסיפו מוצרים כדי לבדוק מחירים"}</span>
+      {syncedAt && <span className="pst-sync-time">{new Date(syncedAt).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}</span>}
+      <button type="button" className="pst-sync-btn" onClick={syncNow} disabled={syncing || !ready} aria-label="סנכרן מחירים עכשיו">
+        <RefreshCw className={`h-3.5 w-3.5 ${syncing ? "animate-refresh" : ""}`} aria-hidden="true" />
         {syncing ? "מסנכרן…" : "סנכרן עכשיו"}
       </button>
     </div>

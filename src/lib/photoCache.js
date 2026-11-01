@@ -23,13 +23,14 @@ export function getCachedPhoto(name) {
 }
 
 // כתובות תמונה שלא נטענו — לא מציגים אותן שוב, ומחפשים תמונה אחרת לאותו מוצר
-const BROKEN_KEY = "makonim_broken_photos";
+const BROKEN_KEY = "makonim_broken_photos_v2";
 const BROKEN_LIMIT = 200;
 
 export function isBrokenPhoto(url) {
   if (!url) return false;
   try {
-    return Boolean(JSON.parse(localStorage.getItem(BROKEN_KEY) || "{}")[url]);
+    const at = Number(JSON.parse(localStorage.getItem(BROKEN_KEY) || "{}")[url]) || 0;
+    return at > 0 && Date.now() - at < 10 * 60 * 1000;
   } catch {
     return false;
   }

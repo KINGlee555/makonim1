@@ -9,6 +9,11 @@ export function fastImageUrl(url, width = THUMB_WIDTH) {
     const parsed = new URL(url);
     const host = parsed.hostname;
 
+    if (host === "img.rami-levy.co.il") {
+      parsed.pathname = parsed.pathname.replace(/\/(large|medium)\.jpg$/, "/small.jpg");
+      return parsed.toString();
+    }
+
     if (host.endsWith("images.pexels.com")) {
       parsed.searchParams.set("auto", "compress");
       parsed.searchParams.set("cs", "tinysrgb");

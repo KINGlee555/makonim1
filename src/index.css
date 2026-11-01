@@ -2093,7 +2093,12 @@ html:not(.skin-poster) .pst-live .pst-live-nm-off { color: hsl(var(--skin-ink-so
   .pst-totals-slot { padding: 0 40px; }
 }
 
-/* ===== אור ירוק: המחירים מסונכרנים עם מערכות הרשתות ===== */
+/* ===== סטטוס מחירי הרשימה: חיווי הצלחה רק לאחר שנמצאו מחירים ===== */
+.pst-sync { flex-wrap: wrap; }
+.pst-sync[data-state="unknown"] .pst-sync-dot,
+.pst-sync[data-state="loading"] .pst-sync-dot,
+.pst-sync[data-state="partial"] .pst-sync-dot { background: hsl(var(--muted-foreground)); box-shadow: none; animation: none; }
+.pst-sync[data-state="failed"] .pst-sync-dot { background: hsl(var(--destructive)); box-shadow: none; animation: none; }
 .pst-sync {
   display: flex;
   align-items: center;

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { FAST_CHAINS, OTHER_CHAINS, MORE_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
+import { fetchChainPrices } from "@/lib/chainPrices";
 
 // Warms the price cache in the background while the shopping list is open, so the
 // comparison screens are ready the moment they're tapped. Runs at most once per
@@ -18,15 +18,7 @@ export function useWarmChainPrices(items) {
     if (last && Date.now() - last < TTL_MS) return;
     done.current = signature;
     warmed.set(signature, Date.now());
-    const basket = pending.slice(0, 24).map(item => ({ name: item.name, barcode: item.barcode || "" }));
-    (async () => {
-      try {
-        await fetchChainPrices(basket, FAST_CHAINS);
-        await fetchChainPrices(basket, OTHER_CHAINS);
-        await fetchChainPrices(basket, MORE_CHAINS);
-      } catch {
-        // Offline or a chain feed is down — the comparison will retry when opened.
-      }
-    })();
+    const basket = pending.map(item => ({ name: item.name, barcode: item.barcode || "" }));
+    fetchChainPrices(basket, undefined, { cacheOnly: true }).catch(() => {});
   }, [signature, pending.length]);
 }

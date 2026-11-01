@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { CHAINS, FAST_CHAINS, OTHER_CHAINS, MORE_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
 import { isWeight, weightInKg } from "@/lib/units";
 
@@ -19,9 +18,7 @@ const barcodesOf = (data) => {
 const merge = (first, second) => ({
   loading: false, error: false,
   day: second.day || first.day || "",
-  chains: [...(first.chains || []), ...(second.chains || [])].filter(
-    (chain, index, all) => all.findIndex(other => other.id === chain.id) === index
-  ),
+  chains: [...new Map([...(first.chains || []), ...(second.chains || [])].map(chain => [chain.id, chain])).values()],
   barcodes: { ...barcodesOf(first), ...barcodesOf(second) }
 });
 
@@ -37,7 +34,12 @@ export function useChainPrices(items, enabled) {
   );
   const [state, setState] = useState(empty);
   const [refreshing, setRefreshing] = useState(false);
-  const saved = useRef(false);
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    const invalidate = () => { cache.clear(); setRevision(value => value + 1); };
+    window.addEventListener("makonim:prices-updated", invalidate);
+    return () => window.removeEventListener("makonim:prices-updated", invalidate);
+  }, []);
 
   useEffect(() => {
     if (!enabled || !itemsRef.current.length) return;
@@ -52,39 +54,31 @@ export function useChainPrices(items, enabled) {
     setState({ ...empty, loading: true });
     setRefreshing(false);
     (async () => {
+      let accumulated = { chains: [], items: [], day: "" };
       try {
-        const first = await fetchChainPrices(basket, FAST_CHAINS);
+        const cached = await fetchChainPrices(basket, undefined, { cacheOnly: true });
+        accumulated = cached;
         if (cancelled) return;
-        setState({ loading: false, error: false, day: first.day || "", chains: first.chains || [], barcodes: barcodesOf(first) });
+        if (cached.chains?.length) setState({ loading: false, error: false, day: cached.day || "", chains: cached.chains, barcodes: barcodesOf(cached) });
         setRefreshing(true);
-        const rest = await fetchChainPrices(basket, OTHER_CHAINS);
-        if (cancelled) return;
-        setState(merge(first, rest));
-        // The smaller chains are read last, so they never delay the big ones.
-        const small = await fetchChainPrices(basket, MORE_CHAINS);
-        if (cancelled) return;
-        const merged = merge(merge(first, rest), small);
-        setState(merged);
-        setRefreshing(false);
-        cache.set(signature, { at: Date.now(), data: merged });
+        for (const chains of [FAST_CHAINS, OTHER_CHAINS, MORE_CHAINS]) {
+          const result = await fetchChainPrices(basket, chains);
+          if (cancelled) return;
+          const joined = merge(accumulated, result);
+          accumulated = { ...joined, items: [...(accumulated.items || []), ...(result.items || [])] };
+          setState({ ...joined, error: !joined.chains.length });
+        }
+        cache.set(signature, { at: Date.now(), data: { ...accumulated, loading: false, error: !accumulated.chains.length, barcodes: barcodesOf(accumulated) } });
       } catch {
-        if (cancelled) return;
-        setState({ ...empty, error: true });
-        setRefreshing(false);
+        if (!cancelled) setState(previous => ({ ...previous, loading: false, error: !previous.chains.length }));
+      } finally {
+        if (!cancelled) setRefreshing(false);
       }
     })();
     return () => { cancelled = true; };
-  }, [signature, enabled]);
+  }, [signature, enabled, revision]);
 
-  // Learn the barcode of items that only had a name — the next visit is a direct lookup.
-  useEffect(() => {
-    if (saved.current || !Object.keys(state.barcodes).length) return;
-    saved.current = true;
-    const updates = itemsRef.current
-      .filter(item => item.id && !item.barcode && state.barcodes[item.name])
-      .map(item => ({ id: item.id, barcode: state.barcodes[item.name] }));
-    if (updates.length) base44.entities.ListItem.bulkUpdate(updates).catch(() => {});
-  }, [state.barcodes]);
+
 
   const comparison = useMemo(() => {
     const rows = items.map(item => {
@@ -113,7 +107,7 @@ export function useChainPrices(items, enabled) {
         covered += 1;
       }
       return { id: chain.id, name: chain.name, total, covered };
-    }).filter(chain => chain.covered > 0).sort((a, b) => a.total - b.total);
+    }).filter(chain => chain.covered > 0).sort((a, b) => b.covered - a.covered || a.total - b.total);
 
     return { rows, totals, matched: rows.length, coverage: totals.length ? Math.max(...totals.map(chain => chain.covered)) : 0 };
   }, [items, state.chains]);

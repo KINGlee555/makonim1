@@ -9,7 +9,7 @@ import { requestNotificationPermission } from "@/hooks/useListNotifications";
 
 // כל נתוני הרשימה והפעולות עליה במקום אחד: טעינה, סנכרון חי בין המשתתפים,
 // והוספה/עדכון/סימון של פריטים. המסך עצמו נשאר תצוגה בלבד.
-export function useShoppingList(listId, { t, onNeedProfile } = {}) {
+export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category" } = {}) {
   const [list, setList] = useState(null);
   const [items, setItems] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -28,14 +28,14 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
   const loadData = useCallback(async () => {
     const [allLists, allItems, allFavorites] = await Promise.all([
       base44.entities.ShoppingList.filter({ id: listId }),
-      base44.entities.ListItem.filter({ list_id: listId }, "-created_date", 200),
+      base44.entities.ListItem.filter({ list_id: listId }, sortMode === "cheap" ? "price" : "-created_date", 200),
       base44.entities.FavoriteProduct.filter({ list_id: listId }, "-created_date", 100)
     ]);
     if (allLists.length > 0) setList(allLists[0]);
     setItems(allItems);
     setFavorites(allFavorites);
     setLoading(false);
-  }, [listId]);
+  }, [listId, sortMode]);
 
   // רענון שקט כל 5 שניות — כל המשתתפים רואים את אותה רשימה
   useEffect(() => {
@@ -81,6 +81,7 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
   useEffect(() => {
     const unsubscribe = base44.entities.ListItem.subscribe((event) => {
       if (event.data?.list_id !== listId && event.type !== "delete") return;
+      if (sortMode === "cheap") { loadData(); return; }
       if (event.type === "create") {
         setItems(prev => prev.some(i => i.id === event.data.id) ? prev : [event.data, ...prev]);
       } else if (event.type === "update") {
@@ -90,7 +91,7 @@ export function useShoppingList(listId, { t, onNeedProfile } = {}) {
       }
     });
     return unsubscribe;
-  }, [listId, t]);
+  }, [listId, t, sortMode, loadData]);
 
   useEffect(() => {
     const unsubscribe = base44.entities.FavoriteProduct.subscribe((event) => {
