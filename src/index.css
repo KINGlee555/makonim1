@@ -1997,37 +1997,7 @@ html.dark:not(.skin-poster) .pst-sh {
   color: hsl(var(--skin-ink));
 }
 
-/* ===== חלון החיפוש: תופס כמעט את כל המסך כדי לראות תוצאות בלי לגלול ===== */
-.pst-search-dialog {
-  width: 100dvw;
-  max-width: 100dvw;
-  height: 100dvh;
-  max-height: 100dvh;
-  left: 0;
-  right: 0;
-  top: 0;
-  transform: none;
-  border-radius: 0;
-}
 
-/* פס החיפוש הדק: הכפתורים בו בגובה שורה אחת, לא יעד נגיעה כפול — כדי שהתוצאות יקבלו את המסך */
-.pst-search-dialog button {
-  min-height: 0;
-}
-
-@media (min-width: 640px) {
-  .pst-search-dialog {
-    width: calc(100vw - 1.5rem);
-    max-width: 42rem;
-    height: 92dvh;
-    max-height: 92dvh;
-    left: 50%;
-    right: auto;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 22px;
-  }
-}
 
 /* ===== מי מחובר עכשיו — ירוק פעיל, אפור לא מחובר ===== */
 .pst-live .pst-live-chip { border: 2px solid transparent; }

@@ -1,4 +1,5 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import "@/styles/product-search.css";
 import { base44 } from "@/api/base44Client";
 import ProductPhoto from "@/components/ProductPhoto";
 import { SUPERMARKETS } from "@/lib/supermarkets";

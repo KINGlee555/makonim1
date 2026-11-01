@@ -1,0 +1,33 @@
+/* Product results use the whole phone viewport, including while scroll is locked. */
+[role="dialog"].pst-search-dialog {
+  width: 100dvw;
+  max-width: 100dvw;
+  height: 100dvh;
+  max-height: 100dvh;
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: none;
+  border-radius: 0;
+}
+[role="dialog"].pst-search-dialog button { min-height: 0; }
+@media (max-width: 639px) {
+  body[data-scroll-locked]:has(.pst-search-dialog) {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    --removed-body-scroll-bar-size: 0px;
+  }
+}
+@media (min-width: 640px) {
+  [role="dialog"].pst-search-dialog {
+    width: calc(100vw - 1.5rem);
+    max-width: 42rem;
+    height: 92dvh;
+    max-height: 92dvh;
+    left: 50%;
+    right: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 22px;
+  }
+}
