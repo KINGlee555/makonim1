@@ -159,7 +159,7 @@ export default function ListView() {
         onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
       />
 
-      <SyncStatus />
+      <SyncStatus items={pendingItems} />
 
       <ListTotals itemCount={pendingItems.length} total={totalPrice} />
 
