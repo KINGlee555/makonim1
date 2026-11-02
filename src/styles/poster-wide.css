@@ -3,8 +3,14 @@
    כל הכללים כאן חיים רק בתוך ‎.pw-page, כדי לא לגעת במסכים אחרים.
    =================================================================== */
 
+/* רקע הכרזה — נייר קרם עם פסים אלכסוניים והילה צהובה ורודה, כך שאין דף לבן ריק */
 .pw-page {
-  background: #fff;
+  background-color: #FDF8E8;
+  background-image:
+    radial-gradient(70rem 26rem at 50% -8rem, rgba(255, 212, 0, .34) 0%, rgba(255, 212, 0, 0) 62%),
+    radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
+    radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
+    repeating-linear-gradient(45deg, #FFFDF4 0 22px, #F7EFD6 22px 44px);
   color: #0B3A4D;
   padding-bottom: 118px;
 }
@@ -970,7 +976,15 @@
 }
 
 /* מצב כהה לא משנה את הכרזה — היא נשארת בהירה וקריאה */
-.dark .pw-page { background: #fff; color: #0B3A4D; }
+.dark .pw-page {
+  background-color: #FDF8E8;
+  background-image:
+    radial-gradient(70rem 26rem at 50% -8rem, rgba(255, 212, 0, .34) 0%, rgba(255, 212, 0, 0) 62%),
+    radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
+    radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
+    repeating-linear-gradient(45deg, #FFFDF4 0 22px, #F7EFD6 22px 44px);
+  color: #0B3A4D;
+}
 
 /* מוצר שנמחק מהרשימה — יוצא הצידה כמו בכרזה */
 .pw-card.animate-slide-out { animation: slideOut .3s ease-out forwards; }
