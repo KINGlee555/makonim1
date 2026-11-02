@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Bell, Pencil, CircleSlash2, Star, Camera, Send, Flag, Clock } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import WeightQuantity from "@/components/minimal/WeightQuantity";
+import WeightSlider from "@/components/minimal/WeightSlider";
 import { dealPriceText } from "@/lib/chainDeals";
 import { useLanguage, useT } from "@/lib/i18n";
 import { addedText } from "@/lib/itemAdded";
@@ -140,6 +141,8 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        {byWeight && <WeightSlider item={item} onUpdateQuantity={onUpdateQuantity} />}
       </div>
     </article>
   );
