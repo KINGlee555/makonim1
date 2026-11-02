@@ -1,0 +1,979 @@
+/* ===================================================================
+   כרזת סופר רחבה — שפת העיצוב של מסך הרשימה במחשב
+   כל הכללים כאן חיים רק בתוך ‎.pw-page, כדי לא לגעת במסכים אחרים.
+   =================================================================== */
+
+.pw-page {
+  background: #fff;
+  color: #0B3A4D;
+  padding-bottom: 118px;
+}
+
+.pw-page * { box-sizing: border-box; }
+
+.pw-page button {
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color .2s, color .2s, box-shadow .2s, opacity .2s;
+}
+
+.pw-page button:hover { box-shadow: 0 5px 0 rgba(11, 58, 77, .35); }
+.pw-page button:active { opacity: .8; }
+.pw-page button:focus-visible,
+.pw-page a:focus-visible { outline: 3px solid #0B3A4D; outline-offset: 2px; }
+
+@keyframes pwInR {
+  from { opacity: 0; transform: translateX(160px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pwInL {
+  from { opacity: 0; transform: translateX(-160px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pwRise {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pwRun {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-10px); }
+}
+
+/* ===== הפתיח הצהוב ===== */
+.pw-hero {
+  position: relative;
+  background: #FFD400;
+  padding: 18px 16px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: pwInR .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.pw-hero::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -14px;
+  height: 14px;
+  background: #FFD400;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%);
+  pointer-events: none;
+}
+
+.pw-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.pw-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 3px solid #0B3A4D;
+  background: #fff;
+}
+
+.pw-lname {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-align: center;
+}
+
+.pw-code {
+  font-size: 13px;
+  font-weight: 700;
+  background: #0B3A4D;
+  color: #FFD400;
+  padding: 6px 14px;
+  border-radius: 4px;
+  letter-spacing: .08em;
+  border: 0;
+}
+
+.pw-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.pw-btn {
+  background: #fff;
+  color: #0B3A4D;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 3px 0 #0B3A4D;
+}
+
+.pw-btn-s { background: #FF3B5D; color: #fff; }
+
+.pw-hint {
+  font-size: 11px;
+  font-weight: 600;
+  max-width: 200px;
+  text-align: center;
+}
+
+.pw-hero .pst-trust {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff;
+  border: 2px solid #0B3A4D;
+  padding: 6px 16px;
+  border-radius: 999px;
+}
+
+/* שני המספרים — סה״כ וכמה נשאר לקנות */
+.pw-nums {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 760px;
+  margin-top: 4px;
+}
+
+.pw-num {
+  flex: 1;
+  background: #fff;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 #0B3A4D;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.pw-num b {
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.pw-num-t { background: #FF3B5D; color: #fff; }
+
+/* ===== פס הדיו: מי ברשימה ומצב המחירים ===== */
+.pw-strip {
+  margin-top: 24px;
+  background: #0B3A4D;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: pwRise .6s .2s both;
+}
+
+.pw-strip .pst-live {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  color: #fff;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  animation: none;
+}
+
+.pw-strip .pst-live-top { gap: 8px; flex-wrap: wrap; }
+.pw-strip .pst-live-title { font-size: 14px; font-weight: 600; }
+.pw-strip .pst-live-dot { background: #FFD400; box-shadow: none; animation: none; }
+
+.pw-strip .pst-live-btn {
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  border-radius: 4px;
+  height: auto;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pw-strip .pst-live-btn-solid { background: #FF3B5D; border-color: #FF3B5D; }
+.pw-strip .pst-live-badge { background: #FFD400; color: #0B3A4D; }
+
+.pw-strip .pst-live-row { gap: 8px; }
+.pw-strip .pst-live-chip { background: rgba(255, 255, 255, .14); font-size: 13px; }
+.pw-strip .pst-live-av { background: #FFD400; color: #0B3A4D; }
+.pw-strip .pst-live-invite { border: 2px dashed #FFD400; color: #FFD400; background: transparent; border-radius: 4px; height: auto; padding: 6px 12px; }
+
+.pw-strip .pst-sync {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font-size: 14px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pw-strip .pst-sync-dot { background: #FFD400; box-shadow: none; animation: none; }
+
+.pw-strip .pst-sync-btn {
+  background: #FFD400;
+  color: #0B3A4D;
+  border: 0;
+  border-radius: 4px;
+  height: auto;
+  padding: 7px 16px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pw-strip .pst-sync-btn:hover:not(:disabled) { background: #fff; }
+.pw-strip .pst-sync-time { background: rgba(255, 212, 0, .2); color: #FFD400; }
+
+.pw-strip-sep {
+  display: none;
+  flex: none;
+  width: 3px;
+  height: 22px;
+  background: #FFD400;
+}
+
+/* ===== בקשת הפעלת התראות ===== */
+.pw-page .pst-note {
+  width: auto;
+  max-width: none;
+  margin: 20px 16px 0;
+  background: #FFE680;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 #0B3A4D;
+  color: #0B3A4D;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  animation: pwRise .6s .3s both;
+}
+
+.pw-page .pst-note button {
+  background: #FFD400;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 10px 18px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0B3A4D;
+}
+
+/* ===== תמונת השוק ===== */
+.pw-market {
+  margin: 20px 16px 0;
+  height: 160px;
+  border: 3px solid #0B3A4D;
+  box-shadow: 6px 6px 0 #0B3A4D;
+  border-radius: 4px;
+  overflow: hidden;
+  animation: pwRise .7s .35s both;
+}
+
+.pw-market img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== פס המחלקות שנצמד לראש ===== */
+.pw-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fff;
+  border-block: 3px solid #0B3A4D;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pw-bar::-webkit-scrollbar { display: none; }
+
+.pw-bar span {
+  flex: none;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 2px solid #0B3A4D;
+  font-weight: 800;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.pw-bar .pw-bar-a { background: #FFD400; }
+
+/* ===== שורת המיון ===== */
+.pw-sort {
+  margin: 16px 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 10px 14px;
+  background: #fff;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.pw-sort select {
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0B3A4D;
+  background: #fff;
+  min-height: 40px;
+}
+
+.pw-sort .pw-cmp {
+  margin-inline-start: auto;
+  background: #0B3A4D;
+  color: #FFD400;
+  border: 0;
+  border-radius: 4px;
+  padding: 10px 18px;
+  font-weight: 800;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pw-sort .pw-cmp:disabled { opacity: .5; }
+
+.pw-sort-note {
+  width: 100%;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ===== מקטע מחלקה ===== */
+.pw-sec { margin-top: 28px; }
+
+.pw-sh {
+  position: relative;
+  margin: 0;
+  background: #FFD400;
+  color: #0B3A4D;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  animation: pwInL .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.pw-sh::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -14px;
+  height: 14px;
+  background: #FFD400;
+  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 0);
+}
+
+.pw-sh .pst-runner {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  animation: pwRun 2.4s ease-in-out infinite;
+}
+
+.pw-sh-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pw-sh .pw-n {
+  margin-inline-start: auto;
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 900;
+  color: #FF3B5D;
+  -webkit-text-stroke: 2px #0B3A4D;
+  letter-spacing: 0;
+}
+
+.pw-pic {
+  height: 120px;
+  border-bottom: 3px solid #0B3A4D;
+  overflow: hidden;
+}
+
+.pw-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.pw-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 20px 16px 10px;
+}
+
+/* ===== כרטיס מוצר ===== */
+.pw-card {
+  background: #fff;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 5px 5px 0 #0B3A4D;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: pwRise .6s .5s both;
+}
+
+.pw-ph {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 3px solid #0B3A4D;
+  overflow: hidden;
+  background: #FFE680;
+}
+
+.pw-ph > button { all: unset; display: block; width: 100%; height: 100%; cursor: pointer; }
+.pw-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.pw-price {
+  display: inline-block;
+  background: #FF3B5D;
+  color: #fff;
+  font-weight: 900;
+  font-size: 19px;
+  padding: 3px 12px;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  margin-top: -22px;
+  position: relative;
+  z-index: 2;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pw-nm {
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.3;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.pw-meta {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: rgba(11, 58, 77, .78);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.pw-deal {
+  background: #FFD400;
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 2px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.pw-remind {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #0B3A4D;
+  color: #FFD400;
+  border-radius: 4px;
+  padding: 2px 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pw-remind-due { background: #FF3B5D; color: #fff; }
+
+.pw-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.pw-qty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-weight: 800;
+  font-size: 15px;
+  background: #fff;
+  color: #0B3A4D;
+}
+
+.pw-qty button {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 4px;
+  background: #FFE680;
+  color: #0B3A4D;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 0;
+}
+
+.pw-qty button:disabled { opacity: .4; cursor: default; }
+
+.pw-buy {
+  flex: 1;
+  background: #FFD400;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  padding: 9px;
+  font-weight: 900;
+  font-size: 16px;
+  color: #0B3A4D;
+}
+
+.pw-kb {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  background: #fff;
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  font-size: 20px;
+  font-weight: 900;
+  color: #0B3A4D;
+  padding: 0;
+}
+
+/* פקדי המשקל שבתוך הכרטיס — אותה מסגרת דיו */
+.pw-card .pst-amount,
+.pw-card .pst-unit,
+.pw-card .pst-remove {
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  background: #fff;
+  color: #0B3A4D;
+  height: 40px;
+}
+
+.pw-card .pst-unit { background: #FFE680; font-weight: 900; font-size: 13px; padding: 0 10px; }
+.pw-card .pst-amount { width: 58px; text-align: center; font-weight: 900; }
+.pw-card .pst-remove { width: 40px; color: #FF3B5D; }
+.pw-card .pst-group { display: flex; gap: 6px; align-items: center; }
+
+/* ===== מצב ריק ושלושת הכפתורים הגדולים ===== */
+.pw-empty {
+  margin: 28px 16px 0;
+  padding: 22px;
+  background: #FFE680;
+  border: 3px dashed #0B3A4D;
+  border-radius: 4px;
+  text-align: center;
+  animation: pwRise .6s .5s both;
+}
+
+.pw-empty b {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  display: block;
+}
+
+.pw-empty span { font-size: 15px; font-weight: 600; }
+
+.pw-three {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 20px 16px 0;
+}
+
+.pw-big {
+  background: #fff;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 5px 5px 0 #0B3A4D;
+  padding: 20px 14px;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  color: #0B3A4D;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.pw-big svg { width: 40px; height: 40px; }
+.pw-big-y { background: #FFD400; }
+.pw-big-k { background: #FF3B5D; color: #fff; }
+
+/* ===== מבצעים וכלים — אותם מקטעים, בשפת הכרזה ===== */
+.pw-deals {
+  margin: 28px 0 0;
+  background: #FF3B5D;
+  padding: 20px 16px 24px;
+  color: #fff;
+}
+
+.pw-deals-h {
+  margin: 0 0 14px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pw-deals-h small { margin-inline-start: auto; font-size: 13px; font-weight: 700; opacity: .9; letter-spacing: 0; }
+
+.pw-deals-panel {
+  background: #fff;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 #0B3A4D;
+  padding: 14px;
+  color: #0B3A4D;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pw-deals-panel .pst-lrow { border: 2px solid #0B3A4D; border-radius: 4px; box-shadow: none; }
+.pw-deals-panel .pst-lrow + .pst-lrow { margin-top: 0; }
+.pw-deals-panel .pst-empty { border: 3px dashed #0B3A4D; border-radius: 4px; }
+.pw-deals-panel .pst-acts { margin: 4px 0 0; }
+
+.pw-deals-panel .pst-btn {
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  background: #FFD400;
+  color: #0B3A4D;
+  font-weight: 900;
+}
+
+.pw-deals-panel .pst-btn-s { background: #FF3B5D; color: #fff; }
+
+/* עוד כלים — רצועת דיו עם כפתורים צהובים */
+.pw-page .pst-tools {
+  max-width: none;
+  margin: 28px 0 0;
+  padding: 20px 16px 26px;
+  background: #0B3A4D;
+}
+
+.pw-page .pst-tools h2 {
+  margin: 0 0 14px;
+  color: #FFD400;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.pw-page .pst-tools-note { margin: 0 0 10px; font-size: 13px; font-weight: 700; }
+.pw-page .pst-strip { gap: 12px; padding: 0; }
+
+.pw-page .pst-tools .pst-card {
+  border: 3px solid #fff;
+  border-radius: 4px;
+  background: #FFD400;
+  color: #0B3A4D;
+  width: 150px;
+  height: auto;
+  min-height: 84px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: none;
+}
+
+.pw-page .pst-tools .pst-card:nth-child(3n+2) { background: #FF3B5D; color: #fff; }
+.pw-page .pst-tools .pst-card:nth-child(3n) { background: #fff; color: #0B3A4D; }
+.pw-page .pst-tools .pst-card-on { outline: 3px solid #FFD400; outline-offset: 2px; }
+.pw-page .pst-tools .pst-card small { font-size: 12px; font-weight: 700; }
+
+.pw-page .pst-tools .pst-panel {
+  margin: 14px 0 0;
+  border: 3px solid #fff;
+  border-radius: 4px;
+  background: #fff;
+  color: #0B3A4D;
+  box-shadow: none;
+}
+
+/* ===== תחתית ===== */
+.pw-page .pst-ft { padding: 24px 16px 0; font-size: 14px; gap: 10px; }
+.pw-page .pst-credit { font-size: 13px; font-weight: 600; background: #FFE680; }
+
+/* ===== פס הפעולות התחתון ===== */
+.pw-dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  height: calc(86px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: #0B3A4D;
+  border-top: 4px solid #FFD400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-inline: 16px;
+}
+
+.pw-add,
+.pw-fin {
+  flex: 1;
+  max-width: 380px;
+  border: 3px solid #fff;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.pw-add { background: #FFD400; color: #0B3A4D; }
+.pw-fin { background: #FF3B5D; color: #fff; }
+
+.pw-scan {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  margin-left: -30px;
+  width: 60px;
+  height: 60px;
+  flex: none;
+  border-radius: 50%;
+  background: #FF3B5D;
+  border: 4px solid #0B3A4D;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 0 #FFD400;
+}
+
+.pw-scan svg { width: 28px; height: 28px; }
+
+/* ===== טלפון רחב ===== */
+@media (min-width: 640px) {
+  .pw-hero { padding: 24px 28px 38px; gap: 14px; }
+  .pw-brand { font-size: 34px; gap: 12px; }
+  .pw-logo { width: 56px; height: 56px; border-radius: 14px; }
+  .pw-lname { font-size: 22px; }
+  .pw-code { font-size: 14px; }
+  .pw-btn { padding: 9px 18px; font-size: 15px; box-shadow: 0 4px 0 #0B3A4D; }
+  .pw-hint { font-size: 12px; max-width: 240px; }
+  .pw-hero .pst-trust { font-size: 14px; }
+  .pw-num { padding: 12px 20px; font-size: 15px; box-shadow: 6px 6px 0 #0B3A4D; }
+  .pw-num b { font-size: 48px; }
+
+  .pw-strip { padding: 12px 28px; gap: 14px; }
+  .pw-page .pst-note { margin: 24px 28px 0; padding: 16px 22px; }
+  .pw-market { margin: 22px 28px 0; height: 200px; }
+
+  .pw-bar { padding: 12px 28px; gap: 10px; }
+  .pw-bar span { font-size: 15px; padding: 6px 18px; }
+
+  .pw-sort { margin: 22px 28px 0; gap: 12px; font-size: 15px; }
+  .pw-sort select { font-size: 15px; }
+  .pw-sort .pw-cmp { font-size: 15px; padding: 10px 20px; }
+
+  .pw-sec { margin-top: 34px; }
+  .pw-sh { padding: 18px 28px; gap: 16px; font-size: 30px; }
+  .pw-sh::before { top: -18px; height: 18px; }
+  .pw-sh .pst-runner { width: 34px; height: 34px; }
+  .pw-sh .pw-n { font-size: 64px; -webkit-text-stroke: 3px #0B3A4D; }
+  .pw-pic { height: 160px; }
+
+  .pw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: 28px 28px 10px; }
+  .pw-card { padding: 18px; gap: 12px; box-shadow: 6px 6px 0 #0B3A4D; }
+  .pw-ph { width: 130px; height: 130px; }
+  .pw-price { font-size: 22px; margin-top: -24px; }
+  .pw-nm { font-size: 18px; }
+  .pw-buy { font-size: 17px; padding: 10px; }
+
+  .pw-empty { margin: 34px 28px 0; padding: 28px; }
+  .pw-empty b { font-size: 30px; }
+  .pw-empty span { font-size: 17px; }
+  .pw-three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding: 26px 28px 0; }
+  .pw-big { padding: 24px 16px; font-size: 22px; box-shadow: 6px 6px 0 #0B3A4D; }
+  .pw-big svg { width: 48px; height: 48px; }
+
+  .pw-deals { margin-top: 34px; padding: 24px 28px 30px; }
+  .pw-deals-h { font-size: 28px; }
+  .pw-deals-panel { padding: 18px; }
+
+  .pw-page .pst-tools { margin-top: 34px; padding: 24px 28px 30px; }
+  .pw-page .pst-tools h2 { font-size: 26px; }
+  .pw-page .pst-tools .pst-card { width: 180px; padding: 14px; font-size: 17px; }
+
+  .pw-page .pst-ft { padding: 28px 28px 0; font-size: 15px; }
+  .pw-page { padding-bottom: 130px; }
+}
+
+/* ===== מחשב — הכרזה נפרשת על כל הרוחב ===== */
+@media (min-width: 1024px) {
+  .pw-hero { padding: 30px 48px 56px; gap: 18px; }
+  .pw-hero::after { bottom: -26px; height: 26px; }
+  .pw-brand { font-size: 44px; gap: 14px; }
+  .pw-logo { width: 68px; height: 68px; border-radius: 16px; }
+  .pw-lname { font-size: 26px; }
+  .pw-code { font-size: 15px; padding: 6px 16px; }
+  .pw-acts { gap: 12px; }
+  .pw-btn { padding: 10px 20px; font-size: 16px; }
+  .pw-hint { font-size: 12px; max-width: 240px; }
+  .pw-nums { gap: 24px; max-width: 760px; margin-top: 6px; }
+  .pw-num { padding: 14px 22px; font-size: 17px; letter-spacing: .1em; box-shadow: 6px 6px 0 #0B3A4D; }
+  .pw-num b { font-size: 64px; }
+
+  .pw-strip {
+    margin-top: 40px;
+    padding: 12px 48px;
+    font-size: 15px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+  }
+  .pw-strip .pst-live { flex: 1; min-width: 0; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 18px; }
+  .pw-strip .pst-live-top { flex: 1; min-width: 0; }
+  .pw-strip .pst-live-row { flex: 1 0 100%; }
+  .pw-strip .pst-live-title { font-size: 15px; }
+  .pw-strip .pst-sync { flex: none; }
+  .pw-strip-sep { display: block; }
+
+  .pw-page .pst-note { margin: 30px 48px 0; padding: 18px 26px; }
+  .pw-page .pst-note b { font-size: 20px; font-weight: 900; display: block; }
+  .pw-page .pst-note span { font-size: 15px; font-weight: 600; }
+  .pw-market { margin: 26px 48px 0; height: 230px; box-shadow: 8px 8px 0 #0B3A4D; }
+
+  .pw-bar { margin-top: 34px; padding: 12px 48px; gap: 10px; }
+  .pw-bar span { font-size: 15px; padding: 6px 18px; }
+
+  .pw-sort { margin: 26px 48px 0; padding: 10px 18px; gap: 14px; font-size: 15px; }
+
+  .pw-sec { margin-top: 40px; }
+  .pw-sh { padding: 22px 48px; gap: 20px; font-size: 40px; }
+  .pw-sh::before { top: -22px; height: 22px; }
+  .pw-sh .pst-runner { width: 44px; height: 44px; }
+  .pw-sh .pw-n { font-size: 96px; -webkit-text-stroke: 3px #0B3A4D; }
+  .pw-pic { height: 200px; }
+
+  .pw-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding: 36px 48px 10px; }
+  .pw-card { padding: 20px; gap: 12px; box-shadow: 7px 7px 0 #0B3A4D; }
+  .pw-ph { width: 150px; height: 150px; }
+  .pw-price { font-size: 26px; padding: 4px 14px; margin-top: -26px; }
+  .pw-nm { font-size: 20px; }
+  .pw-row { gap: 10px; margin-top: 6px; }
+  .pw-qty { padding: 6px 12px; font-size: 15px; }
+  .pw-qty button { width: 34px; height: 34px; font-size: 20px; }
+  .pw-buy { padding: 10px; font-size: 17px; }
+  .pw-kb { width: 42px; height: 42px; font-size: 22px; }
+
+  .pw-empty { margin: 40px 48px 0; padding: 34px; }
+  .pw-empty b { font-size: 34px; }
+  .pw-empty span { font-size: 18px; }
+  .pw-three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding: 30px 48px 0; }
+  .pw-big { padding: 28px 18px; font-size: 26px; box-shadow: 7px 7px 0 #0B3A4D; }
+  .pw-big svg { width: 52px; height: 52px; }
+
+  .pw-deals { margin-top: 40px; padding: 26px 48px 34px; }
+  .pw-deals-h { font-size: 32px; margin-bottom: 18px; }
+  .pw-deals-panel { padding: 18px; box-shadow: 7px 7px 0 #0B3A4D; }
+
+  .pw-page .pst-tools { margin-top: 40px; padding: 26px 48px 30px; }
+  .pw-page .pst-tools h2 { font-size: 30px; margin-bottom: 16px; }
+  .pw-page .pst-tools .pst-card { width: 210px; padding: 16px; font-size: 19px; min-height: 92px; }
+
+  .pw-page .pst-ft { padding: 30px 48px 0; font-size: 15px; }
+
+  .pw-dock { height: 110px; padding-inline: 48px; gap: 24px; }
+  .pw-add, .pw-fin { padding: 18px; font-size: 24px; }
+  .pw-scan { top: -34px; margin-left: -40px; width: 80px; height: 80px; border-width: 4px; }
+  .pw-scan svg { width: 38px; height: 38px; }
+  .pw-page { padding-bottom: 138px; }
+}
+
+/* כרטיס לבן כללי — למקטעים שאינם רשימת מוצרים */
+.pw-panel {
+  margin: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 3px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 #0B3A4D;
+}
+
+@media (min-width: 640px) {
+  .pw-page .pw-panel { margin: 22px 28px; padding: 18px; }
+}
+
+@media (min-width: 1024px) {
+  .pw-page .pw-panel { margin: 26px 48px; padding: 20px; box-shadow: 7px 7px 0 #0B3A4D; }
+}
+
+/* מצב כהה לא משנה את הכרזה — היא נשארת בהירה וקריאה */
+.dark .pw-page { background: #fff; color: #0B3A4D; }
+
+/* מוצר שנמחק מהרשימה — יוצא הצידה כמו בכרזה */
+.pw-card.animate-slide-out { animation: slideOut .3s ease-out forwards; }
+
+/* הכרטיס שבתוך פאנל המבצעים במצב ריק — בלי מסגרת כפולה */
+.pw-panel .pst-panel { margin: 0; border: 0; box-shadow: none; padding: 0; }

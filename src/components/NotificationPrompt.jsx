@@ -4,7 +4,7 @@ import { requestNotificationPermission, notificationsSupported } from "@/hooks/u
 import { useT } from "@/lib/i18n";
 import { toast } from "@/components/ui/use-toast";
 
-// שורת הפעלה קטנה מעל הרשימה: נגיעה אחת ומקבלים התראה במכשיר
+// שורת הפעלה בכרזה: נגיעה אחת ומקבלים התראה במכשיר
 // כשמישהו מהמשפחה מוסיף מוצר או מסמן מוצר כנקנה.
 export default function NotificationPrompt({ list, onEnabled }) {
   const t = useT();
@@ -35,7 +35,10 @@ export default function NotificationPrompt({ list, onEnabled }) {
 
   return (
     <div className="pst-note">
-      <span className="min-w-0">{t("notify.enableHint")}</span>
+      <div className="min-w-0">
+        <b>{t("notify.enable")}</b>
+        <span>{t("notify.enableHint")}</span>
+      </div>
       <button type="button" onClick={enable} disabled={busy} className="shrink-0">
         {t("notify.enable")}
       </button>

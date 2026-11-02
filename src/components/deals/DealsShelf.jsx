@@ -94,14 +94,14 @@ export default function DealsShelf({ onAddProduct, onOpenAllDeals, bare = false 
   const shown = matches.slice(0, filter === "all" ? SHOWN : SHOWN * 3);
 
   return (
-    <section className={bare ? undefined : "pst-panel-slot"}>
-      <h2 className="pst-h2">
+    <section className={bare ? undefined : "pw-deals"}>
+      <h2 className={bare ? undefined : "pw-deals-h"}>
         <Tag className="h-5 w-5 flex-none" />
         {t("shelf.title")}
         <small>{t("deals.updated")}</small>
       </h2>
 
-      <div className={bare ? undefined : "pst-panel"}>
+      <div className={bare ? undefined : "pw-deals-panel"}>
         <SponsoredShelfCard />
 
         {deals.length > 0 && <DealsFilterBar value={filter} onChange={setFilter} chains={chains} />}

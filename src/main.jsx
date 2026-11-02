@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
 import '@/styles/fridge.css'
+import '@/styles/poster-wide.css'
 import { applyDarkTheme, isDarkTheme } from '@/lib/theme'
 import { applySkin, getStoredSkin } from '@/lib/skin'
 

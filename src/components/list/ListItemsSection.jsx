@@ -1,12 +1,14 @@
+import { Search, ScanLine, ShoppingCart } from "lucide-react";
 import ListItemRow from "@/components/minimal/ListItemRow";
 import AreaDeals from "@/components/deals/AreaDeals";
 import UnavailableItem from "@/components/UnavailableItem";
 import SectionRunner from "@/components/poster/SectionRunner";
 import { dealForItem } from "@/lib/chainDeals";
+import { posterPhoto } from "@/lib/categoryPoster";
 import { useT } from "@/lib/i18n";
 
-// מקטע מחלקה: פס כרזה עם שם המחלקה, תמונת התוצרת שלה, טריז אלכסוני ואריחי המוצרים.
-// הפסים מתחלפים צהוב־ורוד, והטריז שלפני כל פס נכנס בהחלקה מהצד שממנו הפס מגיע.
+// מקטע מחלקה בכרזת הסופר: פס צהוב עם שם המחלקה והמספר שלה, תמונת התוצרת מתחתיו,
+// ושלושה כרטיסי מוצר בכל שורה במחשב.
 export default function ListItemsSection({
   groupedCategories, pendingItems, unavailableItems, favorites, chainDeals, removingIds, viewerName,
   onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder,
@@ -18,79 +20,81 @@ export default function ListItemsSection({
 
   return (
     <>
-      {groupedCategories.map(([category, categoryItems], sectionIndex) => {
-        const pink = sectionIndex % 2 === 1;
+      {groupedCategories.map(([category, categoryItems]) => (
+        <section key={category} className="pw-sec">
+          <h2 className="pw-sh">
+            <SectionRunner tone="ink" />
+            <span className="pw-sh-title">{category}</span>
+            <span className="pw-n">{categoryItems.length}</span>
+          </h2>
 
-        return (
-          <section key={category} className="pst-sec fun-section">
-            <h2 className={`pst-sh ${pink ? "pst-sh-b" : "pst-sh-a"}`}>
-              <span className="pst-sh-in">
-                <SectionRunner tone={pink ? "yellow" : "ink"} />
-                <span className="min-w-0 truncate">{category}</span>
-                <span className="pst-n">{categoryItems.length}</span>
-              </span>
-            </h2>
+          <div className="pw-pic">
+            <img src={posterPhoto(category)} alt="" loading="lazy" />
+          </div>
 
-            <div className="pst-list">
-              {categoryItems.map((item, index) => (
-                <ListItemRow
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  onToggleBought={onToggleBought}
-                  onUpdateQuantity={onUpdateQuantity}
-                  onNavigate={onNavigate}
-                  onRemove={onRemove}
-                  onEdit={onEdit}
-                  onSetReminder={onSetReminder}
-                  onUnavailable={onUnavailable}
-                  onToggleFavorite={onToggleFavorite}
-                  onChangePhoto={onChangePhoto}
-                  onUpdateDetails={onUpdateDetails}
-                  onSuggestPhoto={onSuggestPhoto}
-                  onReportPrice={onReportPrice}
-                  deal={dealForItem(chainDeals, item)}
-                  onPhotoFound={onPhotoFound}
-                  isFavorite={favorites.some(favorite => favorite.name === item.name)}
-                  viewerName={viewerName}
-                  className={removingIds.has(item.id) ? "animate-slide-out" : ""}
-                />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+          <div className="pw-grid">
+            {categoryItems.map((item, index) => (
+              <ListItemRow
+                key={item.id}
+                item={item}
+                index={index}
+                onToggleBought={onToggleBought}
+                onUpdateQuantity={onUpdateQuantity}
+                onNavigate={onNavigate}
+                onRemove={onRemove}
+                onEdit={onEdit}
+                onSetReminder={onSetReminder}
+                onUnavailable={onUnavailable}
+                onToggleFavorite={onToggleFavorite}
+                onChangePhoto={onChangePhoto}
+                onUpdateDetails={onUpdateDetails}
+                onSuggestPhoto={onSuggestPhoto}
+                onReportPrice={onReportPrice}
+                deal={dealForItem(chainDeals, item)}
+                onPhotoFound={onPhotoFound}
+                isFavorite={favorites.some(favorite => favorite.name === item.name)}
+                viewerName={viewerName}
+                className={removingIds.has(item.id) ? "animate-slide-out" : ""}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
 
       {unavailableItems.length > 0 && (
-        <section className="pst-sec">
-          <h2 className="pst-sh pst-sh-b">
-            <span className="pst-sh-in">
-              <SectionRunner tone="yellow" />
-              <span className="min-w-0 truncate">{t("list.unavailable")}</span>
-              <span className="pst-n">{unavailableItems.length}</span>
-            </span>
+        <section className="pw-sec">
+          <h2 className="pw-sh">
+            <SectionRunner tone="ink" />
+            <span className="pw-sh-title">{t("list.unavailable")}</span>
+            <span className="pw-n">{unavailableItems.length}</span>
           </h2>
-          <div className="pst-panel-slot">
-            <div className="pst-panel">
-              {unavailableItems.map(item => <UnavailableItem key={item.id} item={item} onRestore={onRestore} />)}
-            </div>
+          <div className="pw-panel">
+            {unavailableItems.map(item => <UnavailableItem key={item.id} item={item} onRestore={onRestore} />)}
           </div>
         </section>
       )}
 
       {pendingItems.length === 0 && unavailableItems.length === 0 && (
-        <section className="pst-sec">
-          <div className="pst-panel-slot">
-            <div className="pst-panel fun-pop-in">
-              <p className="pst-empty-title">{t("list.empty")}</p>
-              <p className="pst-empty-desc">{t("list.emptyDesc")}</p>
-              <div className="pst-empty-acts">
-                <button type="button" onClick={onOpenSearch} className="pst-btn">{t("quickAdd.search")}</button>
-                <button type="button" onClick={onOpenScanner} className="pst-btn">{t("barcode.title")}</button>
-                <button type="button" onClick={onOpenShoppingMode} className="pst-btn">{t("shoppingMode.title")}</button>
-              </div>
-              <AreaDeals listId={listId} items={pendingItems} onAddProduct={onAddProduct} onOpenAllDeals={onOpenAllDeals} />
-            </div>
+        <section className="pw-sec">
+          <div className="pw-empty">
+            <b>{t("list.empty")}</b>
+            <span>{t("list.emptyDesc")}</span>
+          </div>
+
+          <div className="pw-three">
+            <button type="button" onClick={onOpenSearch} className="pw-big pw-big-y">
+              <Search strokeWidth={2.4} />{t("quickAdd.search")}
+            </button>
+            <button type="button" onClick={onOpenScanner} className="pw-big">
+              <ScanLine strokeWidth={2.4} />{t("barcode.title")}
+            </button>
+            <button type="button" onClick={onOpenShoppingMode} className="pw-big pw-big-k">
+              <ShoppingCart strokeWidth={2.4} />{t("shoppingMode.title")}
+            </button>
+          </div>
+
+          <div className="pw-panel">
+            <AreaDeals listId={listId} items={pendingItems} onAddProduct={onAddProduct} onOpenAllDeals={onOpenAllDeals} />
           </div>
         </section>
       )}

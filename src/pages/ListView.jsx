@@ -34,6 +34,7 @@ import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/l
 import { lineCost } from "@/lib/units";
 
 // תמונת השוק הרחבה שמתחת להתראה — חלק משפת הכרזה של המסך
+const MARKET_PHOTO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/a2e7582dd_generated_16f6f1bd.jpg";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -141,7 +142,7 @@ export default function ListView() {
   });
 
   return (
-    <div className="pst-page min-h-screen">
+    <div className="pst-page pw-page min-h-screen">
       <SkipLink />
       <ListHeader
         list={list}
@@ -150,25 +151,27 @@ export default function ListView() {
         onOpenSettings={() => show("settings")}
         onOpenShare={() => show("share")}
         onOpenQr={() => show("qr")}
-      />
+      >
+        <ListTotals itemCount={pendingItems.length} total={totalPrice} />
+      </ListHeader>
 
-      <LiveMembersBar
-        list={list}
-        members={presence.members}
-        myEmail={user?.email}
-        myName={user?.full_name}
-        unread={unreadMessages}
-        onOpenShare={() => show("share")}
-        onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
-      />
-
-      <SyncStatus items={pendingItems} onSynced={updates => {
-        const prices = new Map(updates.map(update => [update.id, update.price]));
-        setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
-        loadData();
-      }} />
-
-      <ListTotals itemCount={pendingItems.length} total={totalPrice} />
+      <div className="pw-strip">
+        <LiveMembersBar
+          list={list}
+          members={presence.members}
+          myEmail={user?.email}
+          myName={user?.full_name}
+          unread={unreadMessages}
+          onOpenShare={() => show("share")}
+          onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
+        />
+        <span className="pw-strip-sep" aria-hidden="true" />
+        <SyncStatus items={pendingItems} onSynced={updates => {
+          const prices = new Map(updates.map(update => [update.id, update.price]));
+          setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
+          loadData();
+        }} />
+      </div>
 
       {identity.conflict && (
         <IdentitySyncPrompt
@@ -184,6 +187,10 @@ export default function ListView() {
       )}
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
+
+      <div className="pw-market">
+        <img src={MARKET_PHOTO} alt={list.title || "MaKonim"} loading="lazy" />
+      </div>
 
       {sortMode !== "cheap" && <CategoryBar categories={groupedCategories.map(([category]) => category)} />}
       <ListSortBar mode={sortMode} onMode={setSortMode} onCompare={() => show("basket")} disabled={!pendingItems.length} />
