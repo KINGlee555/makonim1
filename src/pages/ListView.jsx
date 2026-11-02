@@ -123,7 +123,6 @@ export default function ListView() {
   const unavailableItems = items.filter(i => i.status === "unavailable");
   const boughtCount = items.filter(i => i.status === "bought").length;
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
-  const otherShoppers = (list.active_shoppers || []).filter(s => s !== userNameRef.current);
   const groupedCategories = sortMode === "cheap" ? (pendingItems.length ? [["הכי זול", priceOrderedItems]] : []) : Object.entries(
     pendingItems.reduce((groups, item) => {
       const cat = item.category || t("summary.other");
@@ -175,10 +174,6 @@ export default function ListView() {
           onApprove={identity.approve}
           onDismiss={identity.dismiss}
         />
-      )}
-
-      {otherShoppers.length > 0 && (
-        <p className="pst-note">{t("active.nowShopping", { name: otherShoppers.join(", ") })}</p>
       )}
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />

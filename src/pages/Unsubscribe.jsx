@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { CheckCircle2, MailX, RefreshCw, XCircle } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import { useT } from "@/lib/i18n";
-
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/f650544c7_generated_image.png";
 
 // עמוד ההסרה מדיוור — ציבורי, נגיש גם בלי התחברות, ומחוץ לניווט של האפליקציה.
 export default function Unsubscribe() {
@@ -49,8 +48,7 @@ export default function Unsubscribe() {
       <header className="pst-top">
         <div className="pst-topline">
           <span className="pst-brand">
-            <span>MaKonim</span>
-            <img src={LOGO} alt="MaKonim" />
+            <BrandLogo size="sm" />
           </span>
         </div>
 

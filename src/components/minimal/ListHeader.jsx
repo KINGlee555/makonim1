@@ -1,20 +1,17 @@
 import EasyModeToggle from "@/components/EasyModeToggle";
 import HeaderMenu from "@/components/HeaderMenu";
-import CatalogTrust from "@/components/CatalogTrust";
+import BrandLogo from "@/components/BrandLogo";
 import { useT } from "@/lib/i18n";
 
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/f650544c7_generated_image.png";
-
-// הפתיח של הכרזה הרחבה: לוגו ומיתוג במרכז, שם הרשימה, קוד ההצטרפות,
-// שורת הפעולות, מספר הקטלוג — ומתחתיהם שני המספרים שמגיעים מהמסך עצמו.
+// הפתיח של הכרזה הרחבה: המיתוג במרכז, שם הרשימה, שורת הפעולות —
+// ומתחתיהם שני המספרים שמגיעים מהמסך עצמו.
 export default function ListHeader({ list, userName, onOpenProfile, onOpenSettings, onOpenShare, onOpenQr, children }) {
   const t = useT();
 
   return (
     <div className="pw-hero">
       <div className="pw-brand">
-        <img src={LOGO} alt="MaKonim" className="pw-logo" />
-        <span>MaKonim</span>
+        <BrandLogo size="md" />
       </div>
 
       {list?.title && <p className="pw-lname">{list.title}</p>}
@@ -23,7 +20,6 @@ export default function ListHeader({ list, userName, onOpenProfile, onOpenSettin
 
       <div className="pw-acts">
         <EasyModeToggle pill className="pw-btn pw-btn-s" />
-        <span className="pw-hint">{t("header.easyModeHint")}</span>
         {userName && (
           <button type="button" onClick={onOpenProfile} className="pw-btn">
             {t("header.greeting", { name: userName })}
@@ -32,8 +28,6 @@ export default function ListHeader({ list, userName, onOpenProfile, onOpenSettin
         <button type="button" onClick={onOpenShare} className="pw-btn">{t("header.share")}</button>
         <HeaderMenu className="pw-btn" onOpenProfile={onOpenProfile} onOpenSettings={onOpenSettings} />
       </div>
-
-      <CatalogTrust compact />
 
       {children}
     </div>

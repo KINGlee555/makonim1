@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import SharedWithStrip from "@/components/SharedWithStrip";
 import SmartTools from "@/components/SmartTools";
 import ListExtras from "@/components/ListExtras";
@@ -26,6 +27,8 @@ export default function MoreTools({
   const t = useT();
   const { isPremium } = usePremium();
   const [open, setOpen] = useState("");
+  // המסך הראשי נשאר נקי: הכלים נפתחים רק כשאישר מבקש אותם
+  const [expanded, setExpanded] = useState(false);
   // איסוף עצמי נפתח בחלון משלו — יש בו הרבה פרטים, לא רק פאנל
   const toggle = (id) => {
     if (id === "pickup") { show("pickup"); return; }
@@ -114,12 +117,20 @@ export default function MoreTools({
 
   return (
     <section className="pst-tools">
-      <h2>{t("list.moreFeatures")}</h2>
-      {boughtCount > 0 && <p className="pst-tools-note">{t("list.boughtSection")} · {boughtCount}</p>}
-      {rows.map((row, index) => (
+      <button
+        type="button"
+        className="pst-tools-toggle"
+        aria-expanded={expanded}
+        onClick={() => setExpanded(value => !value)}
+      >
+        <span>{t("list.moreFeatures")}</span>
+        {boughtCount > 0 && <span className="pst-tools-count">{boughtCount}</span>}
+        <ChevronDown className={`pst-tools-chev${expanded ? " pst-tools-chev-open" : ""}`} />
+      </button>
+      {expanded && rows.map((row, index) => (
         <ToolStrip key={index} tools={row} open={open} onToggle={toggle} className={index === 1 ? "pst-strip-2" : ""} />
       ))}
-      {open && <div className="pst-panel">{panels[open]}</div>}
+      {expanded && open && <div className="pst-panel">{panels[open]}</div>}
     </section>
   );
 }

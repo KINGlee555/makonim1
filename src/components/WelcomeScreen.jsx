@@ -7,11 +7,10 @@ import SkipLink from "@/components/SkipLink";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import SkinToggle from "@/components/SkinToggle";
 import LanguageChoice from "@/components/LanguageChoice";
+import BrandLogo from "@/components/BrandLogo";
 import AppFooter from "@/components/AppFooter";
 import CatalogTrust from "@/components/CatalogTrust";
 import "@/styles/welcome.css";
-
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/f650544c7_generated_image.png";
 
 // מסך הפתיחה: שורה אחת של כותרת, תיבת שם גדולה וכפתור אחד.
 // כל מה שלא הכרחי כדי להתחיל לקנות — לא נמצא כאן.
@@ -32,8 +31,7 @@ export default function WelcomeScreen({ onNameSubmit }) {
 
       <header className="welcome-top">
         <span className="welcome-logo">
-          <img src={LOGO} alt="MaKonim" />
-          <span>MaKonim</span>
+          <BrandLogo size="lg" />
         </span>
         <div className="welcome-top-acts">
           <SkinToggle className="pst-back" />

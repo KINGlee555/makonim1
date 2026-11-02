@@ -1,0 +1,56 @@
+/* ===== לוגו הבית — המילה MaKonim בסגנון צעיר ומודרני, ברוח וולט ===== */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1em;
+  direction: ltr;
+  line-height: 1;
+}
+
+.brand-logo-word {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: none;
+  color: #009de0;
+}
+
+/* נקודה צהובה בסוף המילה — הפרט הקטן שנותן למיתוג אופי */
+.brand-logo-dot {
+  width: 0.17em;
+  height: 0.17em;
+  flex: none;
+  border-radius: 50%;
+  background: #ffd400;
+  transform: translateY(0.06em);
+}
+
+.brand-logo-sm { font-size: 20px; }
+.brand-logo-md { font-size: 27px; }
+.brand-logo-lg { font-size: 38px; }
+
+.dark .brand-logo-word { color: #4fd3ff; }
+
+/* בתוך פסי המיתוג הקיימים — בלי ריווח אותיות גדול ובלי אותיות גדולות */
+.pst-brand,
+.pw-brand,
+.welcome-logo {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.pst-brand .brand-logo,
+.pw-brand .brand-logo,
+.welcome-logo .brand-logo {
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .brand-logo-md { font-size: 31px; }
+  .brand-logo-lg { font-size: 42px; }
+}
+
+@media (min-width: 1024px) {
+  .brand-logo-md { font-size: 36px; }
+  .brand-logo-lg { font-size: 46px; }
+}

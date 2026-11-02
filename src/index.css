@@ -714,6 +714,50 @@ html.easy-mode [role="dialog"] .text-xl {
 /* עוד כלים — פס דיו עם כרטיסי כרזה */
 .pst-tools { max-width: 1200px; margin: 32px auto 0; padding: 24px 0 28px; background: #0B3A4D; color: #fff; }
 .pst-tools h2 { margin: 0 16px 14px; font-size: 26px; font-weight: 900; text-transform: uppercase; color: #FFD400; }
+
+/* כפתור פתיחת "עוד כלים" — הכלים לא תופסים מקום עד שמבקשים אותם */
+.pst-tools-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: calc(100% - 24px);
+  margin: 0 auto;
+  padding: 12px 16px 12px 18px;
+  border: 2px solid #FFD400;
+  border-radius: 14px;
+  background: transparent;
+  color: #FFD400;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 900;
+  text-align: start;
+}
+
+.pst-tools-toggle > span:first-child { flex: 1; }
+
+.pst-tools-count {
+  flex: none;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: #FFD400;
+  color: #0B3A4D;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.pst-tools-chev { width: 20px; height: 20px; flex: none; transition: transform .2s ease; }
+.pst-tools-chev-open { transform: rotate(180deg); }
+
+html:not(.skin-poster) .pst-tools-toggle {
+  border: 1px solid hsl(var(--skin-line));
+  background: hsl(var(--skin-surface));
+  color: hsl(var(--skin-ink));
+}
+
+html:not(.skin-poster) .pst-tools-count {
+  background: hsl(var(--pst-yellow));
+  color: hsl(var(--pst-ink));
+}
 .pst-tools-note { margin: 0 16px 12px; font-size: 14px; font-weight: 700; }
 .pst-strip { display: flex; gap: 12px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
 .pst-strip::-webkit-scrollbar { display: none; }

@@ -4,9 +4,8 @@ import AppFooter from "@/components/AppFooter";
 import SkipLink from "@/components/SkipLink";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import SkinToggle from "@/components/SkinToggle";
+import BrandLogo from "@/components/BrandLogo";
 import { useT } from "@/lib/i18n";
-
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/f650544c7_generated_image.png";
 
 // מעטפת לכל מסכי הפנים בשפת כרזת השוק: פס צהוב עם המיתוג, כפתור חזרה,
 // כותרת המסך והתיאור — ומתחת גוף לבן עם התחתית של האפליקציה.
@@ -18,8 +17,7 @@ export default function PosterPage({ title, subtitle, icon: Icon, back = "/", ba
       <header className="pst-top">
         <div className="pst-topline">
           <span className="pst-brand">
-            <span>MaKonim</span>
-            <img src={LOGO} alt="MaKonim" />
+            <BrandLogo size="sm" />
           </span>
           <Link to={back} className="pst-backlink" aria-label={backLabel} title={backLabel}>
             <ArrowRight />
