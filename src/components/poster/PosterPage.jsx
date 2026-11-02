@@ -6,7 +6,7 @@ import DarkModeToggle from "@/components/DarkModeToggle";
 import SkinToggle from "@/components/SkinToggle";
 import { useT } from "@/lib/i18n";
 
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
+const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/50de9271e_generated_ac9ea9d1.png";
 
 // מעטפת לכל מסכי הפנים בשפת כרזת השוק: פס צהוב עם המיתוג, כפתור חזרה,
 // כותרת המסך והתיאור — ומתחת גוף לבן עם התחתית של האפליקציה.

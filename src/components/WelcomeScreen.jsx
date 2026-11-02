@@ -11,7 +11,7 @@ import AppFooter from "@/components/AppFooter";
 import CatalogTrust from "@/components/CatalogTrust";
 import "@/styles/welcome.css";
 
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
+const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/50de9271e_generated_ac9ea9d1.png";
 
 // מסך הפתיחה: שורה אחת של כותרת, תיבת שם גדולה וכפתור אחד.
 // כל מה שלא הכרחי כדי להתחיל לקנות — לא נמצא כאן.

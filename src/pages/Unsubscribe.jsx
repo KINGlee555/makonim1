@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { CheckCircle2, MailX, RefreshCw, XCircle } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/067697bc9_logo.png";
+const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/50de9271e_generated_ac9ea9d1.png";
 
 // עמוד ההסרה מדיוור — ציבורי, נגיש גם בלי התחברות, ומחוץ לניווט של האפליקציה.
 export default function Unsubscribe() {
