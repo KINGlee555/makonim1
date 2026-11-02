@@ -874,6 +874,24 @@
   .pw-page { padding-bottom: 130px; }
 }
 
+/* ===== הרקע של הכרזה בכל המסכים, לא רק ברשימה ===== */
+html:not(.dark):not(.skin-fridge) body {
+  background-color: #FDF8E8;
+  background-image:
+    radial-gradient(70rem 26rem at 50% -8rem, rgba(255, 212, 0, .34) 0%, rgba(255, 212, 0, 0) 62%),
+    radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
+    radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
+    repeating-linear-gradient(45deg, #FFFDF4 0 22px, #F7EFD6 22px 44px);
+  background-attachment: fixed;
+}
+
+/* המסכים עצמם שקופים כדי שהרקע ייראה מאחוריהם */
+html:not(.dark):not(.skin-fridge) .pst-page,
+html:not(.dark):not(.skin-fridge) .pw-page {
+  background-color: transparent;
+  background-image: none;
+}
+
 /* ===== מחשב — הכרזה נפרשת על כל הרוחב ===== */
 @media (min-width: 1024px) {
   .pw-hero { padding: 30px 48px 56px; gap: 18px; }

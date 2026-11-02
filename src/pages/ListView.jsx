@@ -4,13 +4,11 @@ import ListHeader from "../components/minimal/ListHeader";
 import QuickAddBar from "../components/QuickAddBar";
 import AppFooter from "../components/AppFooter";
 import MoreTools from "../components/list/MoreTools";
-import DealsShelf from "@/components/deals/DealsShelf";
 import ListItemsSection from "@/components/list/ListItemsSection";
 import ListSortBar from "@/components/list/ListSortBar";
 import ListTotals from "@/components/minimal/ListTotals";
 import PriceNotice from "@/components/minimal/PriceNotice";
 import SkipLink from "@/components/SkipLink";
-import CategoryBar from "@/components/shelf/CategoryBar";
 import ListDialogs from "@/components/list/ListDialogs";
 import { useShoppingList } from "@/hooks/useShoppingList";
 import { useListDialogs } from "@/hooks/useListDialogs";
@@ -32,9 +30,6 @@ import { loadAllProducts } from "@/lib/loadAllProducts";
 import { saveLastList } from "@/lib/lastList";
 import { loadCategoryOrder, sortByCategoryOrder, sortItemsByCategory } from "@/lib/categoryOrder";
 import { lineCost } from "@/lib/units";
-
-// תמונת השוק הרחבה שמתחת להתראה — חלק משפת הכרזה של המסך
-const MARKET_PHOTO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/a2e7582dd_generated_16f6f1bd.jpg";
 
 export default function ListView() {
   const { listId } = useParams();
@@ -188,11 +183,6 @@ export default function ListView() {
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
 
-      <div className="pw-market">
-        <img src={MARKET_PHOTO} alt={list.title || "MaKonim"} loading="lazy" />
-      </div>
-
-      {sortMode !== "cheap" && <CategoryBar categories={groupedCategories.map(([category]) => category)} />}
       <ListSortBar mode={sortMode} onMode={setSortMode} onCompare={() => show("basket")} disabled={!pendingItems.length} />
 
       <main id="main-content">
@@ -227,13 +217,6 @@ export default function ListView() {
         />
 
         <PriceNotice />
-
-        {!simple && (shoppingItems.length > 0 || unavailableItems.length > 0) && (
-          <DealsShelf
-            onAddProduct={handleAddProduct}
-            onOpenAllDeals={() => show("deals")}
-          />
-        )}
 
         <MoreTools
           list={list}
