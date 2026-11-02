@@ -3,7 +3,7 @@ import HeaderMenu from "@/components/HeaderMenu";
 import CatalogTrust from "@/components/CatalogTrust";
 import { useT } from "@/lib/i18n";
 
-const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/50de9271e_generated_ac9ea9d1.png";
+const LOGO = "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/f650544c7_generated_image.png";
 
 // הפתיח של הכרזה הרחבה: לוגו ומיתוג במרכז, שם הרשימה, קוד ההצטרפות,
 // שורת הפעולות, מספר הקטלוג — ומתחתיהם שני המספרים שמגיעים מהמסך עצמו.
