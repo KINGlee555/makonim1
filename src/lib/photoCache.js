@@ -1,7 +1,7 @@
 // Remembers the photo that was matched for a product name, so the same item always
 // shows the same accurate photo and no lookup has to run again on the next visit.
 // גרסה חדשה של המטמון — תמונות שנשמרו בעבר (כולל תמונות שלא של המוצר עצמו) נמחקות
-const KEY = "makonim_photo_cache_exact_v3";
+const KEY = "makonim_photo_cache_resolved_v4";
 const TTL_MS = 30 * 24 * 60 * 60 * 1000;
 // שם שלא נמצאה לו תמונה נשמר לזמן קצר, כדי לא לחפש אותו שוב בכל פתיחה
 const MISS_TTL_MS = 3 * 24 * 60 * 60 * 1000;

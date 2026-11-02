@@ -5,7 +5,7 @@ import { petProducts } from "@/lib/petProducts";
 import { getSpecificProductImage } from "@/lib/productImages";
 import { normalizeProductText, prepareProduct } from "@/lib/productSearch";
 
-const CACHE_KEY = "makonim-product-catalog-v8";
+const CACHE_KEY = "makonim-product-catalog-v9";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 const memoryCatalogs = new Map();
 const pendingLoads = new Map();
@@ -42,7 +42,7 @@ async function fetchCatalog(maxProducts) {
   const products = buildCatalog(remote);
   if (maxProducts >= 5000) {
     try {
-      const compact = products.map(({ name, category, brand, price, image_url, image_verified, curated }) => ({ name, category, brand, price, image_url, image_verified, curated }));
+      const compact = products.map(({ name, barcode, category, brand, price, image_url, image_verified, curated }) => ({ name, barcode, category, brand, price, image_url, image_verified, curated }));
       localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), products: compact }));
     } catch { /* storage limits must not block search */ }
   }
