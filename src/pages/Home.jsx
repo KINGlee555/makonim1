@@ -6,6 +6,7 @@ import WelcomeScreen from "../components/WelcomeScreen";
 import { loadLocalName, saveLocalName } from "@/lib/userName";
 import { findIdentity } from "@/lib/memberIdentity";
 import { lastListId } from "@/lib/lastList";
+import { readListCache } from "@/lib/listCache";
 import { useT } from "@/lib/i18n";
 
 export default function Home() {
@@ -16,6 +17,12 @@ export default function Home() {
   useEffect(() => { init(); }, []);
 
   const init = async () => {
+    // הרשימה האחרונה שנשמרה במכשיר נפתחת מיד — בלי להמתין לשרת
+    const saved = lastListId();
+    if (saved && readListCache(saved)) {
+      navigate(`/list/${saved}`, { replace: true });
+      return;
+    }
     try {
       const me = await base44.auth.me();
       if (!me.full_name) {

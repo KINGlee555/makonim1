@@ -6,14 +6,17 @@ import { clampQuantity, quantityStep } from "@/lib/units";
 import { isWeightSold } from "@/lib/weightProducts";
 import { hasAgeConsent, restrictedKind, saveAgeConsent } from "@/lib/ageRestricted";
 import { requestNotificationPermission } from "@/hooks/useListNotifications";
+import { readListCache, writeListCache } from "@/lib/listCache";
 
 // כל נתוני הרשימה והפעולות עליה במקום אחד: טעינה, סנכרון חי בין המשתתפים,
 // והוספה/עדכון/סימון של פריטים. המסך עצמו נשאר תצוגה בלבד.
 export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category" } = {}) {
-  const [list, setList] = useState(null);
-  const [items, setItems] = useState([]);
-  const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // מה שנשמר מהביקור הקודם במכשיר הזה מוצג מיד, והנתונים מהשרת מחליפים אותו ברקע
+  const cached = readListCache(listId);
+  const [list, setList] = useState(cached?.list || null);
+  const [items, setItems] = useState(cached?.items || []);
+  const [favorites, setFavorites] = useState(cached?.favorites || []);
+  const [loading, setLoading] = useState(!cached?.list);
   const [removingIds, setRemovingIds] = useState(new Set());
   const [refreshing, setRefreshing] = useState(false);
   const [user, setUser] = useState(null);
@@ -34,6 +37,7 @@ export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category
     if (allLists.length > 0) setList(allLists[0]);
     setItems(allItems);
     setFavorites(allFavorites);
+    writeListCache(listId, allLists[0], allItems, allFavorites);
     setLoading(false);
   }, [listId, sortMode]);
 

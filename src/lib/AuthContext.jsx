@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
 import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
 import { readCachedUser, writeCachedUser, clearCachedUser, readCachedSettings, writeCachedSettings } from '@/lib/userCache';
+import { clearListCache } from '@/lib/listCache';
 
 const AuthContext = createContext();
 
@@ -130,6 +131,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     clearCachedUser();
+    clearListCache();
     
     if (shouldRedirect) {
       // Use the SDK's logout method which handles token cleanup and redirect
