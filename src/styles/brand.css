@@ -12,16 +12,16 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   text-transform: none;
-  color: #009de0;
+  color: #0b3a4d;
 }
 
-/* נקודה צהובה בסוף המילה — הפרט הקטן שנותן למיתוג אופי */
+/* נקודה בגוון מרווה־ורד בסוף המילה — הפרט הקטן שנותן למיתוג אופי */
 .brand-logo-dot {
   width: 0.17em;
   height: 0.17em;
   flex: none;
   border-radius: 50%;
-  background: #ffd400;
+  background: #ac5f68;
   transform: translateY(0.06em);
 }
 
@@ -29,7 +29,7 @@
 .brand-logo-md { font-size: 27px; }
 .brand-logo-lg { font-size: 38px; }
 
-.dark .brand-logo-word { color: #4fd3ff; }
+.dark .brand-logo-word { color: #ede7d6; }
 
 /* בתוך פסי המיתוג הקיימים — בלי ריווח אותיות גדול ובלי אותיות גדולות */
 .pst-brand,

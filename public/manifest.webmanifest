@@ -1,6 +1,6 @@
 {
-  "name": "MaKonim - רשימת קניות משותפת",
-  "short_name": "MaKonim",
+  "name": "מה קונים? - רשימת קניות משותפת",
+  "short_name": "מה קונים?",
   "description": "רשימת קניות אחת לכל המשפחה, מתעדכנת בזמן אמת, עם מחירים ומבצעים מרשתות השיווק.",
   "lang": "he",
   "dir": "rtl",
@@ -9,23 +9,23 @@
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone", "minimal-ui"],
   "orientation": "any",
-  "background_color": "#ffffff",
-  "theme_color": "#FFD400",
+  "background_color": "#EDE7D6",
+  "theme_color": "#EDE7D6",
   "icons": [
     {
-      "src": "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/9f3ef704c_generated_image.png",
+      "src": "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/0020f3214_generated_image.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/9f3ef704c_generated_image.png",
+      "src": "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/0020f3214_generated_image.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/9f3ef704c_generated_image.png",
+      "src": "https://media.base44.com/images/public/69cfa62de4216044e8c1f14e/0020f3214_generated_image.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
