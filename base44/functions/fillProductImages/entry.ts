@@ -39,10 +39,18 @@ export default async function (req: Request): Promise<Response> {
     // מוצרים שכבר סומנו כנבדקים לא נבדקים שוב — כל הרצה ממשיכה למוצרים חדשים
     // כל מוצר מקבל תמונה כבר בבנייה; כאן מדייקים אותה לתמונה של הברקוד עצמו,
     // ולכן נבדקים כל המוצרים שעוד לא נבדקו מול הברקוד — גם אם יש להם תמונה חלופית.
-    const query = { image_checked: { $ne: true }, ...(Array.isArray(body.ids) ? { id: { $in: body.ids.slice(0, 500).map(String) } } : {}) };
+    // מוצר בלי תמונה נכנס שוב לתור גם אם כבר סומן כנבדק — אחרת תמונות חסרות לא יושלמו לעולם.
+    const query = {
+      $or: [
+        { image_url: { $exists: false } },
+        { image_url: "" },
+        { image_checked: { $ne: true } },
+      ],
+      ...(Array.isArray(body.ids) ? { id: { $in: body.ids.slice(0, 500).map(String) } } : {}),
+    };
     const pool = rowsOf(await base44.asServiceRole.entities.CatalogProduct.filter(
       query,
-      "-created_date",
+      "updated_date",
       limit
     ));
 

@@ -1,6 +1,6 @@
 {
   "name": "Catalog Image Agent",
-  "description": "\u05db\u05dc \u05d1\u05d5\u05e7\u05e8 \u05e2\u05d5\u05d1\u05e8 \u05e2\u05dc \u05de\u05d5\u05e6\u05e8\u05d9 \u05d4\u05e7\u05d8\u05dc\u05d5\u05d2 \u05d5\u05de\u05d5\u05d5\u05d3\u05d0 \u05e9\u05dc\u05db\u05dc \u05de\u05d5\u05e6\u05e8 \u05ea\u05de\u05d5\u05e0\u05d4 \u05d0\u05de\u05d9\u05ea\u05d9\u05ea \u05e9\u05dc\u05d5 \u2014 \u05d0\u05dc\u05db\u05d5\u05d4\u05d5\u05dc \u05d5\u05e1\u05d9\u05d2\u05e8\u05d9\u05d5\u05ea \u05e7\u05d5\u05d3\u05dd, \u05d5\u05d0\u05d7\u05e8 \u05db\u05da \u05e9\u05d0\u05e8 \u05d4\u05e7\u05d8\u05dc\u05d5\u05d2",
+  "description": "\u05de\u05e9\u05dc\u05d9\u05dd \u05ea\u05de\u05d5\u05e0\u05d4 \u05d0\u05de\u05d9\u05ea\u05d9\u05ea \u05dc\u05db\u05dc \u05de\u05d5\u05e6\u05e8 \u05d1\u05e7\u05d8\u05dc\u05d5\u05d2 \u2014 \u05d7\u05d9\u05e4\u05d5\u05e9 \u05d1\u05d2\u05d5\u05d2\u05dc \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05d5\u05d1\u05d0\u05ea\u05e8\u05d9 \u05d4\u05e8\u05e9\u05ea\u05d5\u05ea",
   "trigger": {
     "condition": null,
     "config": {
@@ -22,7 +22,7 @@
     "document": {
       "dsl": "1.0.0",
       "name": "catalog_image_agent",
-      "version": "1.0",
+      "version": "1.1",
       "namespace": "base44"
     },
     "do": [
@@ -36,29 +36,45 @@
                 "\u05d0\u05dc\u05db\u05d5\u05d4\u05d5\u05dc",
                 "\u05e1\u05d9\u05d2\u05e8\u05d9\u05d5\u05ea \u05d5\u05d8\u05d1\u05e7"
               ],
-              "limit": 24
+              "limit": 40
             }
           },
-          "then": "catalog_images",
+          "then": "catalog_images_a",
           "x-base44": {
             "title": "\u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05d0\u05dc\u05db\u05d5\u05d4\u05d5\u05dc \u05d5\u05e1\u05d9\u05d2\u05e8\u05d9\u05d5\u05ea",
-            "description": "\u05ea\u05de\u05d5\u05e0\u05d4 \u05d0\u05de\u05d9\u05ea\u05d9\u05ea \u05dc\u05db\u05dc \u05de\u05d5\u05e6\u05e8 \u05de\u05d2\u05d9\u05dc 18+"
+            "description": "\u05ea\u05de\u05d5\u05e0\u05d4 \u05d0\u05de\u05d9\u05ea\u05d9\u05ea \u05dc\u05db\u05dc \u05de\u05d5\u05e6\u05e8 18+"
           }
         }
       },
       {
-        "catalog_images": {
+        "catalog_images_a": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "verifyProductImages",
             "args": {
-              "limit": 24
+              "limit": 60
+            }
+          },
+          "then": "catalog_images_b",
+          "x-base44": {
+            "title": "\u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05dc\u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05d1\u05dc\u05d9 \u05ea\u05de\u05d5\u05e0\u05d4",
+            "description": "\u05e2\u05d3 60 \u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05d1\u05db\u05dc \u05d1\u05e7\u05e8"
+          }
+        }
+      },
+      {
+        "catalog_images_b": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "verifyProductImages",
+            "args": {
+              "limit": 60
             }
           },
           "then": "end",
           "x-base44": {
-            "title": "\u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05e9\u05d0\u05e8 \u05d4\u05e7\u05d8\u05dc\u05d5\u05d2",
-            "description": "\u05e2\u05d5\u05d3 24 \u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05d1\u05db\u05dc \u05d1\u05d5\u05e7\u05e8"
+            "title": "\u05e2\u05d5\u05d3 60 \u05de\u05d5\u05e6\u05e8\u05d9\u05dd",
+            "description": "\u05de\u05de\u05e9\u05d9\u05da \u05d1\u05e7\u05d8\u05dc\u05d5\u05d2 \u05de\u05d0\u05d5\u05ea\u05d4 \u05e0\u05e7\u05d5\u05d3\u05d4"
           }
         }
       }

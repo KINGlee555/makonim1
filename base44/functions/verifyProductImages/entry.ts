@@ -37,6 +37,7 @@ For EACH product below, find ONE real photo of THAT exact product:
 ${list}
 
 Rules:
+- Search the web and Google Images for the product by its name, brand and barcode, and take the photo from the result.
 - Return a direct https image file URL (ends with .jpg, .jpeg, .png or .webp) that loads on its own.
 - Prefer the Israeli retailer or the brand's own site (for example Shufersal, Rami Levy,Carrefour, the importer, the manufacturer).
 - The photo must show the actual product in its actual packaging. A bottle of gin must be a bottle of gin of that brand, not a bottle of vodka and not an illustration of a bottle.
@@ -78,10 +79,19 @@ export default async function (req: Request): Promise<Response> {
       : [];
     const startedAt = Date.now();
 
-    // מוצרים שעדיין לא נבדקו. כשמבקשים מחלקה מסוימת (אלכוהול, סיגריות) — רק היא.
-    const query: any = { image_checked: { $ne: true } };
+    // קודם כל מוצרים שאין להם תמונה בכלל — גם אם סומנו בעבר כנבדקו — ואחריהם
+    // מוצרים חדשים שעוד לא נבדקו. כך הסוכן באמת משלים תמונות חסרות בקטלוג.
+    // כשמבקשים מחלקה מסוימת (אלכוהול, סיגריות) — רק היא.
+    const query: any = {
+      $or: [
+        { image_url: { $exists: false } },
+        { image_url: "" },
+        { image_checked: { $ne: true } },
+      ],
+    };
     if (categories.length) query.category = { $in: categories };
-    const page = await base44.asServiceRole.entities.CatalogProduct.filter(query, "created_date", limit);
+    // לפי זמן העדכון — מי שלא נגעו בו הכי הרבה זמן נבדק קודם, כך כל בקר מתקדם למוצרים אחרים
+    const page = await base44.asServiceRole.entities.CatalogProduct.filter(query, "updated_date", limit);
     const products: any[] = (Array.isArray(page) ? page : page?.items || []).filter((row: any) => row?.barcode && row?.name);
 
     if (!products.length) {
@@ -95,7 +105,8 @@ export default async function (req: Request): Promise<Response> {
       const slice = products.slice(i, i + BATCH);
       try {
         const answer = await base44.asServiceRole.integrations.Core.InvokeLLM({
-          model: "automatic",
+          // חיפוש חי באינטרנט (גוגל תמונות ואתרי הרשתות) — המודל הזה תומך בחיפוש רשת
+          model: "gemini_3_flash",
           add_context_from_internet: true,
           prompt: buildPrompt(slice),
           response_json_schema: SCHEMA
@@ -116,17 +127,13 @@ export default async function (req: Request): Promise<Response> {
       if (await imageLoads(url)) verified.set(code, url);
     }
 
-    // מוצר שנמצאה לו תמונה נשמר עם התמונה. מוצר שכבר יש לו תמונה (גם גנרית) מסומן
-    // כנבדק כדי שההרצה הבאה תתקדם. מוצר בלי תמונה בכלל נשאר פתוח וייבדק שוב —
-    // כדי שאלכוהול וסיגריות שזה עתה נכנסו לקטלוג ימשיכו לקבל תמונה אמיתית.
-    const rows = products
-      .map((product: any) => {
-        const image = verified.get(String(product.barcode));
-        if (image) return { id: product.id, image_url: image, image_checked: true };
-        if (product.image_url) return { id: product.id, image_url: exactProductPhoto(product.image_url, product.barcode) ? product.image_url : "", image_checked: true };
-        return null;
-      })
-      .filter(Boolean);
+    // מוצר שנמצאה לו תמונה נשמר עם התמונה. מוצר שנבדק ולא נמצאה לו תמונה מסומן
+    // כנבדק כדי שההרצה הבאה תעבור למוצרים אחרים — ולא תיתקע על אותם מוצרים לנצח.
+    const rows = products.map((product: any) => {
+      const image = verified.get(String(product.barcode));
+      if (image) return { id: product.id, image_url: image, image_checked: true };
+      return { id: product.id, image_checked: true };
+    });
 
     let updated = 0;
     for (let i = 0; i < rows.length; i += 100) {
