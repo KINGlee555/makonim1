@@ -59,6 +59,9 @@ const heExtra = {
   "footer.privacy": "פרטיות",
   "footer.accessibility": "נגישות",
   "legal.updated": "עודכן לאחרונה",
+
+  // השוואת סל — ניסיון חוזר כשהמחירים לא נטענו
+  "basket.retry": "נסו שוב",
 };
 
 export default heExtra;

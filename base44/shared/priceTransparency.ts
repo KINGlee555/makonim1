@@ -10,7 +10,9 @@ import { normalizeText } from "./shufersalPrices.ts";
 
 const UA = { "User-Agent": "MaKonim/1.0 (price transparency)" };
 const CERBERUS = "https://url.publishedprices.co.il";
-const feedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(12000) });
+// קובץ המחירים של רשת גדולה נמשך ומְפוענח תוך כדי קריאה — 12 שניות לא הספיקו
+// לשופרסל, ולכן כל השוואת סל נפלה. 40 שניות נותנות לקובץ הגדול לסיים.
+const feedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(40000) });
 
 export type Chain = {
   id: string; name: string;

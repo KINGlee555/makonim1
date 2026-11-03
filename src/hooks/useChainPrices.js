@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { CHAINS, FAST_CHAINS, OTHER_CHAINS, MORE_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CHAINS, FAST_CHAINS, fetchChainPrices } from "@/lib/chainPrices";
 import { isWeight, weightInKg } from "@/lib/units";
 
 // Answers are kept in memory for a while: reopening the comparison inside the same
@@ -55,20 +55,34 @@ export function useChainPrices(items, enabled) {
     setRefreshing(false);
     (async () => {
       let accumulated = { chains: [], items: [], day: "" };
+      const absorb = (result) => {
+        const joined = merge(accumulated, result);
+        accumulated = { ...joined, items: [...(accumulated.items || []), ...(result.items || [])] };
+        return accumulated;
+      };
       try {
+        // 1. מה שכבר נשמר במסד — מופיע מיד, בלי להוריד קובץ אחד
         const cached = await fetchChainPrices(basket, undefined, { cacheOnly: true });
-        accumulated = cached;
         if (cancelled) return;
-        if (cached.chains?.length) setState({ loading: false, error: false, day: cached.day || "", chains: cached.chains, barcodes: barcodesOf(cached) });
+        absorb(cached);
+        if (accumulated.chains.length) setState({ loading: false, error: false, day: accumulated.day, chains: accumulated.chains, barcodes: barcodesOf(accumulated) });
         setRefreshing(true);
-        for (const chains of [FAST_CHAINS, OTHER_CHAINS, MORE_CHAINS]) {
-          const result = await fetchChainPrices(basket, chains);
+        // 2. הרשתות הגדולות — מחיר חי של היום. שאר הרשתות מגיעות מהמסד,
+        //    כי הורדה חיה של עוד 22 קבצים לא מספיקה לסיים בזמן והבקשה כולה נופלת.
+        let liveAnswered = false;
+        try {
+          const live = await fetchChainPrices(basket, FAST_CHAINS);
           if (cancelled) return;
-          const joined = merge(accumulated, result);
-          accumulated = { ...joined, items: [...(accumulated.items || []), ...(result.items || [])] };
-          setState({ ...joined, error: !joined.chains.length });
+          absorb(live);
+          liveAnswered = Boolean(live?.statuses?.length);
+        } catch {
+          liveAnswered = false;
         }
-        cache.set(signature, { at: Date.now(), data: { ...accumulated, loading: false, error: !accumulated.chains.length, barcodes: barcodesOf(accumulated) } });
+        if (cancelled) return;
+        // שגיאה אמיתית = הרשתות בכלל לא ענו. "אין מחיר למוצר" היא תשובה לגיטימית.
+        const data = { loading: false, error: !accumulated.chains.length && !liveAnswered, day: accumulated.day, chains: accumulated.chains, barcodes: barcodesOf(accumulated) };
+        setState(data);
+        cache.set(signature, { at: Date.now(), data });
       } catch {
         if (!cancelled) setState(previous => ({ ...previous, loading: false, error: !previous.chains.length }));
       } finally {
@@ -112,5 +126,11 @@ export function useChainPrices(items, enabled) {
     return { rows, totals, matched: rows.length, coverage: totals.length ? Math.max(...totals.map(chain => chain.covered)) : 0 };
   }, [items, state.chains]);
 
-  return { ...state, refreshing, ...comparison };
+  // "נסו שוב" — מנקה את הזיכרון המקומי ומבקש מהשרת שוב
+  const retry = useCallback(() => {
+    cache.clear();
+    setRevision(value => value + 1);
+  }, []);
+
+  return { ...state, refreshing, retry, ...comparison };
 }

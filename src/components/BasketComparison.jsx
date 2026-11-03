@@ -1,13 +1,13 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Store, TrendingDown, Loader2 } from "lucide-react";
+import { Crown, Store, TrendingDown, Loader2, RefreshCw } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useChainPrices } from "@/hooks/useChainPrices";
 import ChainLogo from "@/components/ChainLogo";
 
 export default function BasketComparison({ open, onOpenChange, items, onOpenSources }) {
   const t = useT();
-  const { loading, error, totals, matched, coverage, day, refreshing } = useChainPrices(items, open);
+  const { loading, error, totals, matched, coverage, day, refreshing, retry } = useChainPrices(items, open);
 
   const complete = totals.filter(chain => chain.covered === items.length);
   const cheapest = complete[0];
@@ -30,7 +30,16 @@ export default function BasketComparison({ open, onOpenChange, items, onOpenSour
               <p className="text-sm">{t("basket.loading")}</p>
             </div>
           ) : totals.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">{error ? t("basket.error") : t("basket.noMatch")}</p>
+            <div className="py-8 text-center">
+              <p className="text-muted-foreground">{error ? t("basket.error") : t("basket.noMatch")}</p>
+              <button
+                type="button"
+                onClick={retry}
+                className="mx-auto mt-4 flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2 text-sm font-bold text-foreground"
+              >
+                <RefreshCw className="w-4 h-4" />{t("basket.retry")}
+              </button>
+            </div>
           ) : (
             <>
               {!cheapest && <p className="mb-3 rounded-xl bg-muted p-3 text-sm font-bold text-muted-foreground">אין עדיין מחיר לכל הסל באותה רשת. מוצגים סכומים חלקיים בלבד, בלי לקבוע מי הכי זול.</p>}
