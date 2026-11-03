@@ -8,12 +8,12 @@ import { defineConfig } from 'vite'
 const arabicI18nLayer = {
   name: 'arabic-i18n-layer',
   enforce: 'pre',
-  resolveId(source) {
-    if (source === '@/lib/i18n') {
-      console.log('[arabic-i18n-layer] resolved', source)
-      return path.resolve(__dirname, 'src/lib/i18nAr.jsx')
-    }
-    return null
+  resolveId(source, importer) {
+    const isI18nModule = source === '@/lib/i18n' || /^\/src\/lib\/i18n(\.jsx)?$/.test(source)
+    if (!isI18nModule) return null
+    // העוטף עצמו מייבא את הקובץ המקורי — לא לעטוף אותו שוב
+    if (importer && importer.includes('/lib/i18nAr.jsx')) return null
+    return path.resolve(__dirname, 'src/lib/i18nAr.jsx')
   }
 }
 
