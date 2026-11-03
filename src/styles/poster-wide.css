@@ -993,16 +993,161 @@ html:not(.dark):not(.skin-fridge) .pw-page {
   .pw-page .pw-panel { margin: 26px 48px; padding: 20px; box-shadow: 7px 7px 0 #0B3A4D; }
 }
 
-/* מצב כהה לא משנה את הכרזה — היא נשארת בהירה וקריאה */
+/* ===== מצב כהה — אותו מבנה בדיוק, על דיו ===== */
 .dark .pw-page {
-  background-color: #F8F6F0;
-  background-image:
-    radial-gradient(70rem 26rem at 50% -8rem, rgba(237, 231, 214, .34) 0%, rgba(237, 231, 214, 0) 62%),
-    radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
-    radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
-    repeating-linear-gradient(45deg, #FBFAF6 0 22px, #F1EEE4 22px 44px);
-  color: #0B3A4D;
+  background-color: #0b1f27;
+  background-image: none;
+  color: #f5f1eb;
 }
+
+.dark .pw-page button:hover { box-shadow: 0 5px 0 rgba(237, 231, 214, .3); }
+
+.dark .pw-page button:focus-visible,
+.dark .pw-page a:focus-visible { outline-color: #EDE7D6; }
+
+/* הפתיח נשאר פס חול בהיר עם דיו — כמו כרזה תלויה על קיר כהה */
+.dark .pw-hero { background: #EDE7D6; color: #0B3A4D; }
+.dark .pw-hero::after { background: #EDE7D6; }
+.dark .pw-hero .pw-lname { color: #0B3A4D; }
+
+/* משטחים: כרטיסים, פסים, שורות ופאנלים */
+.dark .pw-card,
+.dark .pw-bar,
+.dark .pw-sort,
+.dark .pw-qty,
+.dark .pw-kb,
+.dark .pw-big,
+.dark .pw-empty,
+.dark .pw-deals-panel,
+.dark .pw-page .pst-note,
+.dark .pw-page .pst-tools .pst-card:nth-child(3n),
+.dark .pw-page .pst-tools .pst-panel {
+  background: #12303b;
+  color: #f5f1eb;
+  border-color: #EDE7D6;
+  box-shadow: none;
+}
+
+.dark .pw-strip { background: #12303b; }
+.dark .pw-page .pst-tools { background: #071e27; }
+.dark .pw-dock { background: #071e27; border-top-color: #EDE7D6; }
+
+/* טקסטים */
+.dark .pw-nm,
+.dark .pw-empty b { color: #f5f1eb; }
+.dark .pw-sub,
+.dark .pw-meta,
+.dark .pw-empty span,
+.dark .pw-page .pst-ft { color: rgba(245, 241, 235, .76); }
+.dark .pw-page .pst-ft a { color: #EDE7D6; }
+.dark .pw-page .pst-credit { background: #12303b; color: #f5f1eb; }
+
+/* פס המחלקות והמיון */
+.dark .pw-bar span { background: transparent; color: #f5f1eb; border-color: #EDE7D6; }
+.dark .pw-bar .pw-bar-a { background: #EDE7D6; color: #0B3A4D; }
+.dark .pw-sort select {
+  background: #0b1f27;
+  color: #f5f1eb;
+  border-color: #EDE7D6;
+  color-scheme: dark;
+}
+.dark .pw-sort .pw-cmp { background: #EDE7D6; color: #0B3A4D; }
+
+/* תוכן הכרטיס */
+.dark .pw-ph { background: #0b1f27; border-color: #EDE7D6; }
+.dark .pw-price { border-color: #EDE7D6; }
+.dark .pw-deal { background: #EDE7D6; color: #0B3A4D; border-color: #0B3A4D; }
+.dark .pw-remind { background: #EDE7D6; color: #0B3A4D; }
+.dark .pw-remind-due { background: #AC5F68; color: #fff; }
+.dark .pw-qty button { background: #EDE7D6; color: #0B3A4D; }
+.dark .pw-buy { background: #EDE7D6; color: #0B3A4D; border-color: #EDE7D6; }
+.dark .pw-card .pst-amount,
+.dark .pw-card .pst-remove { background: #0b1f27; color: #f5f1eb; border-color: #EDE7D6; }
+.dark .pw-card .pst-remove { color: #FF8FA3; }
+.dark .pw-card .pst-unit { background: #12303b; color: #f5f1eb; border-color: #EDE7D6; }
+
+/* מצב ריק, שלושת הכפתורים הגדולים והמבצעים */
+.dark .pw-empty { border-style: dashed; }
+.dark .pw-big-y { background: #EDE7D6; color: #0B3A4D; }
+.dark .pw-big-k { background: #AC5F68; color: #fff; border-color: #AC5F68; }
+.dark .pw-page .pst-note button { background: #EDE7D6; color: #0B3A4D; border-color: #0B3A4D; }
+.dark .pw-deals-panel .pst-btn { background: #EDE7D6; color: #0B3A4D; border-color: #0B3A4D; }
+.dark .pw-deals-panel .pst-btn-s { background: #AC5F68; color: #fff; border-color: #AC5F68; }
+
+/* רצועת "עוד כלים" */
+.dark .pw-page .pst-tools .pst-card { background: #EDE7D6; color: #0B3A4D; border-color: #EDE7D6; }
+.dark .pw-page .pst-tools .pst-card:nth-child(3n+2) { background: #AC5F68; color: #fff; }
+.dark .pw-page .pst-tools .pst-card:nth-child(3n) { background: #12303b; color: #f5f1eb; border-color: #EDE7D6; }
+.dark .pw-page .pst-tools .pst-card-on { outline-color: #EDE7D6; }
+.dark .pw-page .pst-tools h2 { color: #EDE7D6; }
+
+/* פס הפעולות התחתון */
+.dark .pw-add { background: #EDE7D6; color: #0B3A4D; }
+
+/* ===== "קונים חכם" — שתי הפעולות שקובעות איפה ואיך קונים ===== */
+.pw-smart {
+  margin: 14px 12px 0;
+  padding: 12px;
+  background: #fff;
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 #0B3A4D;
+  animation: pwRise .6s .25s both;
+}
+
+.pw-smart-h {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.pw-smart-acts { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+.pw-smart-btn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 10px 12px;
+  border: 2px solid #0B3A4D;
+  border-radius: 4px;
+  background: #EDE7D6;
+  color: #0B3A4D;
+  text-align: start;
+  box-shadow: none;
+}
+
+.pw-smart-btn:disabled { opacity: .5; cursor: default; }
+.pw-smart-z { background: #AC5F68; color: #fff; border-color: #AC5F68; }
+.pw-smart-ic { width: 20px; height: 20px; flex: none; }
+.pw-smart-t { font-size: 15px; font-weight: 900; }
+.pw-smart-s { margin-inline-start: auto; font-size: 12px; font-weight: 700; opacity: .85; }
+
+@media (min-width: 640px) {
+  .pw-smart { margin: 20px 28px 0; padding: 16px; }
+  .pw-smart-h { font-size: 17px; }
+  .pw-smart-acts { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pw-smart-btn { padding: 14px 16px; box-shadow: 3px 3px 0 #0B3A4D; }
+  .pw-smart-t { font-size: 17px; }
+  .pw-smart-s { font-size: 13px; }
+}
+
+@media (min-width: 1024px) {
+  .pw-smart { margin: 26px 48px 0; }
+}
+
+/* מצב כהה */
+.dark .pw-smart {
+  background: #12303b;
+  border-color: #EDE7D6;
+  box-shadow: none;
+  color: #f5f1eb;
+}
+
+.dark .pw-smart-btn { background: #EDE7D6; color: #0B3A4D; border-color: #EDE7D6; box-shadow: none; }
+.dark .pw-smart-z { background: #AC5F68; color: #fff; border-color: #AC5F68; }
 
 /* מוצר שנמחק מהרשימה — יוצא הצידה כמו בכרזה */
 .pw-card.animate-slide-out { animation: slideOut .3s ease-out forwards; }

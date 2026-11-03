@@ -6,6 +6,7 @@ import AppFooter from "../components/AppFooter";
 import MoreTools from "../components/list/MoreTools";
 import ListItemsSection from "@/components/list/ListItemsSection";
 import ListSortBar from "@/components/list/ListSortBar";
+import SmartShopBar from "@/components/list/SmartShopBar";
 import ListTotals from "@/components/minimal/ListTotals";
 import PriceNotice from "@/components/minimal/PriceNotice";
 import SkipLink from "@/components/SkipLink";
@@ -88,10 +89,10 @@ export default function ListView() {
     return (
       <div className="pst-page min-h-screen">
         <div className="mx-auto w-full max-w-[1200px] space-y-3 px-4 py-6 sm:px-10">
-          <div className="h-[220px] rounded-[18px] bg-[#f1f1f1]" />
+          <div className="h-[220px] rounded-[18px] bg-muted" />
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-[190px] rounded-[18px] bg-[#f1f1f1]" />
+              <div key={i} className="h-[190px] rounded-[18px] bg-muted" />
             ))}
           </div>
         </div>
@@ -181,6 +182,12 @@ export default function ListView() {
       )}
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
+
+      <SmartShopBar
+        onCompare={() => show("basket")}
+        onNearest={() => show("navigate")}
+        disabled={!pendingItems.length}
+      />
 
       <ListSortBar mode={sortMode} onMode={setSortMode} onCompare={() => show("basket")} disabled={!pendingItems.length} />
 
