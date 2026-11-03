@@ -39,6 +39,23 @@ export default async function(req) {
       }
       cursor = page.has_more ? page.next_cursor : undefined;
     } while (cursor);
+    // הקטלוג שנבנה מהרשתות עצמן מחזיק מחיר לפי ברקוד ולפי רשת — הוא מקור מחירים
+    // נוסף, וכך מוצר שקיים בקטלוג אבל עוד לא נשמר בטבלת המחירים עדיין מושווה.
+    if (codes.length) {
+      const catalog = await base44.asServiceRole.entities.CatalogProduct.filter(
+        { barcode: { $in: codes }, chain: { $in: pool.map(chain => chain.id) } },
+        { sort: "-day", limit: 500 }
+      );
+      for (const row of catalog.items) {
+        const map = known.get(row.chain);
+        if (!map || !items.has(row.barcode) || !(row.price > 0)) continue;
+        const current = map.get(row.barcode);
+        const day = String(row.day || "");
+        if (!current || day > String(current.day || "") || (day === current.day && row.updated_date > current.updated_date)) {
+          map.set(row.barcode, { chain: row.chain, barcode: row.barcode, name: items.get(row.barcode)?.name || row.name, price: row.price, day });
+        }
+      }
+    }
     const statuses = [];
     const creates = [];
     const patches = [];
