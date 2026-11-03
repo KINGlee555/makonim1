@@ -22,7 +22,7 @@ import usePremium from "@/hooks/usePremium";
 export default function MoreTools({
   list, listId, items, pendingItems, groupedCategories, boughtCount, members, myEmail,
   simple, favorites, refreshing, isOwner,
-  onAddProduct, onToggleFavorite, onRefresh, onReload, show,
+  onAddProduct, onToggleFavorite, onRefresh, onReload, syncSlot, show,
 }) {
   const t = useT();
   const { isPremium } = usePremium();
@@ -45,6 +45,7 @@ export default function MoreTools({
     ...(simple ? [] : [{ id: "basket", label: t("basket.title") }]),
     { id: "departments", label: t("big.departments"), note: groupedCategories.slice(0, 3).map(([category]) => category).join(" · ") },
     ...(simple ? [] : [{ id: "area", label: t("area.title") }]),
+    { id: "sync", label: "סנכרון מחירים" },
     { id: "drops", label: t("drops.title") },
     { id: "monthly", label: t("monthly.title") },
     { id: "delivery", label: t("courier.open") },
@@ -79,6 +80,7 @@ export default function MoreTools({
         <RecentlyBought listId={listId} delay={0.1} />
       </>
     ),
+    sync: syncSlot,
     drops: <PriceDropNotice listId={listId} items={pendingItems} />,
     monthly: <MonthlySummary listId={listId} />,
     delivery: <DeliveryNotice listId={listId} delay={0.05} />,

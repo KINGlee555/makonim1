@@ -123,6 +123,16 @@ export default function ListView() {
   const unavailableItems = items.filter(i => i.status === "unavailable");
   const boughtCount = items.filter(i => i.status === "bought").length;
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
+  // מישהו מהמשפחה כבר איתך ברשימה — רק אז שורת המשתתפים מוצגת
+  const hasCompany = presence.members.some(member => member.user_email && member.user_email !== user?.email);
+  // מצב סנכרון המחירים עבר לתוך "עוד כלים" — הוא לא צריך לתפוס שורה במסך
+  const syncSlot = (
+    <SyncStatus items={pendingItems} onSynced={updates => {
+      const prices = new Map(updates.map(update => [update.id, update.price]));
+      setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
+      loadData();
+    }} />
+  );
   const groupedCategories = sortMode === "cheap" ? (pendingItems.length ? [["הכי זול", priceOrderedItems]] : []) : Object.entries(
     pendingItems.reduce((groups, item) => {
       const cat = item.category || t("summary.other");
@@ -140,32 +150,26 @@ export default function ListView() {
       <SkipLink />
       <ListHeader
         list={list}
-        userName={user?.full_name}
-        onOpenProfile={() => show("profile")}
         onOpenSettings={() => show("settings")}
         onOpenShare={() => show("share")}
-        onOpenQr={() => show("qr")}
       >
         <ListTotals itemCount={pendingItems.length} total={totalPrice} />
       </ListHeader>
 
-      <div className="pw-strip">
-        <LiveMembersBar
-          list={list}
-          members={presence.members}
-          myEmail={user?.email}
-          myName={user?.full_name}
-          unread={unreadMessages}
-          onOpenShare={() => show("share")}
-          onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
-        />
-        <span className="pw-strip-sep" aria-hidden="true" />
-        <SyncStatus items={pendingItems} onSynced={updates => {
-          const prices = new Map(updates.map(update => [update.id, update.price]));
-          setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
-          loadData();
-        }} />
-      </div>
+      {/* הפס נפתח רק כשיש מישהו איתך ברשימה או הודעות — אחרת המסך נשאר נקי */}
+      {(hasCompany || unreadMessages > 0) && (
+        <div className="pw-strip">
+          <LiveMembersBar
+            list={list}
+            members={presence.members}
+            myEmail={user?.email}
+            myName={user?.full_name}
+            unread={unreadMessages}
+            onOpenShare={() => show("share")}
+            onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
+          />
+        </div>
+      )}
 
       {identity.conflict && (
         <IdentitySyncPrompt
@@ -230,6 +234,7 @@ export default function ListView() {
           onToggleFavorite={handleToggleFavorite}
           onRefresh={handleRefresh}
           onReload={loadData}
+          syncSlot={syncSlot}
           show={show}
         />
 
