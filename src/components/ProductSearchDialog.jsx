@@ -16,6 +16,9 @@ import { searchStoredCatalog, prefetchStoredCatalog } from "@/lib/catalogProduct
 import { staplesForCategory } from "@/lib/categoryStaples";
 import { groupByCategoryOrder, loadCategoryOrder } from "@/lib/categoryOrder";
 import { isWeightSold } from "@/lib/weightProducts";
+import { fastImageUrl } from "@/lib/imageUrl";
+import { chainPhotoUrl } from "@/lib/chainPhotos";
+import preloadImages from "@/lib/preloadImages";
 
 // שם קצר לכל מחלקה — הסדר עצמו הוא סדר המחלקות האמיתי במסלול הסופר
 const CATEGORY_LABELS = {
@@ -148,6 +151,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     return sortCatalogResults(base, deferredQuery, sortMode);
   }, [allResults, deferredQuery, visibleLimit, sortMode]);
   // השלמה אוטומטית: שמות מוצרים שמכילים את מה שהוקלד — הקלקה משלימה את החיפוש
+  // התמונות של התוצאות הראשונות נטענות מראש, בגודל שמוצג בכרטיס — כך הן מופיעות מיד
+  useEffect(() => {
+    if (!open || !results.length) return;
+    preloadImages(results.map(product =>
+      fastImageUrl(product.image_url || (product.barcode ? chainPhotoUrl(product.barcode) : ""), 240)), 18);
+  }, [open, results]);
+
   const completions = useMemo(() => {
     const normalizedQuery = normalizeProductText(deferredQuery);
     if (normalizedQuery.length < 2) return [];
@@ -318,13 +328,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
     const nearbyStores = filterMode === "location" && userLocation ? getSimulatedStores(product.name, storesForFilter) : null;
     const nearest = nearbyStores?.[0];
     return (
-      <div key={product.name + idx} onClick={() => !isAdded && handleAdd(product)}
+      <div key={product.barcode || product.name} onClick={() => !isAdded && handleAdd(product)}
         className={`flex flex-col rounded-3xl border-2 bg-card overflow-hidden cursor-pointer transition-all active:scale-95 animate-slide-up ${
           isAdded ? "border-primary shadow-lg shadow-primary/20" : "border-border/60 shadow-sm hover:border-primary/40 hover:shadow-md"
         }`}
         style={{ animationDelay: `${(idx % 6) * 0.05}s`, animationFillMode: "both" }}>
         <div className="relative h-28 bg-card p-2 flex items-center justify-center">
-          <ProductPhoto name={product.name} brand={product.brand} barcode={product.barcode} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" />
+          <ProductPhoto name={product.name} brand={product.brand} barcode={product.barcode} category={product.category} imageUrl={product.image_url} className="h-full w-full rounded-2xl" priority={idx < 6} />
           <button onClick={(event) => { event.stopPropagation(); onToggleFavorite(product); }} aria-label={`${isFavorite ? t("favorites.remove") : t("favorites.save")}: ${product.name}`} className="absolute start-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-card/95 text-primary shadow-sm">
             <Star className={`h-5 w-5 ${isFavorite ? "fill-primary" : ""}`} />
           </button>
