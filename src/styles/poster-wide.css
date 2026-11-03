@@ -1009,3 +1009,123 @@ html:not(.dark):not(.skin-fridge) .pw-page {
 
 /* הכרטיס שבתוך פאנל המבצעים במצב ריק — בלי מסגרת כפולה */
 .pw-panel .pst-panel { margin: 0; border: 0; box-shadow: none; padding: 0; }
+
+/* כפתור העיצוב בשורת הפעולות — אייקון ומילה באותה גלולה */
+.pw-acts .pw-btn { display: inline-flex; align-items: center; gap: 6px; }
+.pw-acts .pw-btn svg { width: 16px; height: 16px; flex: none; }
+
+/* ===== שורת מוצר קומפקטית — כל הרשימה קריאה בלי לגלול =====
+   התמונה, השם והמחיר בשורה אחת, והפעולות לצידם או מתחתם לפי הרוחב. */
+.pw-grid { gap: 6px; padding: 8px 12px 10px; }
+
+.pw-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 8px;
+  border-width: 2px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 #0B3A4D;
+}
+
+.pw-ph {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-width: 2px;
+  border-radius: 10px;
+}
+
+.pw-main {
+  display: flex;
+  flex: 1 1 108px;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.pw-nm {
+  font-size: 14px;
+  line-height: 1.25;
+  text-align: start;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pw-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(11, 58, 77, .72);
+  text-align: start;
+}
+
+.pw-sub > span { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pw-price { margin: 0; padding: 0 5px; border-width: 2px; border-radius: 6px; font-size: 11.5px; }
+.pw-deal { padding: 0 5px; border-width: 2px; border-radius: 6px; font-size: 10.5px; }
+.pw-remind { padding: 0 5px; border-radius: 6px; font-size: 10.5px; }
+
+.pw-row {
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0;
+  gap: 5px;
+  margin-inline-start: auto;
+}
+
+.pw-qty { padding: 0; gap: 0; border-width: 2px; border-radius: 8px; font-size: 13px; }
+.pw-qty button { width: 28px; height: 32px; border-radius: 6px; font-size: 16px; }
+.pw-qty span { min-width: 20px; text-align: center; }
+
+.pw-buy { flex: none; height: 32px; padding: 0 9px; border-width: 2px; border-radius: 8px; font-size: 12.5px; }
+.pw-kb { width: 30px; height: 32px; border-width: 2px; border-radius: 8px; font-size: 16px; }
+
+.pw-card .pst-amount,
+.pw-card .pst-unit,
+.pw-card .pst-remove { height: 32px; border-width: 2px; border-radius: 8px; }
+.pw-card .pst-amount { width: 46px; font-size: 13px; }
+.pw-card .pst-unit { font-size: 11.5px; padding: 0 6px; }
+.pw-card .pst-remove { width: 32px; }
+.pw-card .pst-weight { padding-top: 2px; }
+.pw-card .pst-weight-top { font-size: 11px; }
+.pw-card .pst-range { height: 18px; }
+
+/* כותרת מחלקה דקה — פחות מקום בין מוצרים */
+.pw-sec { margin-top: 14px; }
+.pw-sh { padding: 7px 12px; gap: 8px; font-size: 16px; }
+.pw-sh .pst-runner { width: 20px; height: 20px; }
+.pw-sh .pw-n { font-size: 24px; -webkit-text-stroke: 1px #0B3A4D; }
+.pw-pic { height: 64px; }
+
+@media (min-width: 640px) {
+  .pw-grid { gap: 8px; padding: 12px 28px 10px; }
+  .pw-card { padding: 8px 12px; gap: 6px 10px; }
+  .pw-ph { width: 56px; height: 56px; }
+  .pw-nm { font-size: 15px; }
+  .pw-qty button { width: 32px; height: 34px; }
+  .pw-buy { height: 34px; font-size: 13.5px; }
+  .pw-kb { width: 32px; height: 34px; }
+  .pw-sec { margin-top: 18px; }
+  .pw-sh { padding: 10px 28px; font-size: 20px; }
+  .pw-sh .pw-n { font-size: 34px; -webkit-text-stroke: 1px #0B3A4D; }
+  .pw-pic { height: 90px; }
+}
+
+@media (min-width: 1024px) {
+  .pw-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 16px 48px 10px; }
+  .pw-card { padding: 10px 14px; }
+  .pw-ph { width: 64px; height: 64px; }
+  .pw-nm { font-size: 16px; }
+  .pw-sec { margin-top: 22px; }
+  .pw-sh { padding: 12px 48px; font-size: 24px; }
+  .pw-sh .pw-n { font-size: 42px; }
+  .pw-pic { height: 110px; }
+}

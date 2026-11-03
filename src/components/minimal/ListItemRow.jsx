@@ -11,12 +11,12 @@ import { isGram, isWeight, maxQuantity, quantityStep } from "@/lib/units";
 import { isReminderDue, reminderText } from "@/lib/reminders";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-// כרטיס מוצר בכרזת הסופר: תמונה עגולה, תג מחיר ורוד שנשען עליה, שם במרכז,
-// ומתחת שורת פעולות — כמות, "קניתי" ותפריט.
+// שורת מוצר קומפקטית: תמונה קטנה, שם ומחיר — ומשם ישר לפעולות.
+// כל הרשימה נכנסת למסך אחד, בלי לגלול כדי לקרוא את המוצרים.
 function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder, onUnavailable, onToggleFavorite, onChangePhoto, onSuggestPhoto, onPhotoFound, onUpdateDetails, onReportPrice, deal, isFavorite, viewerName, className }) {
   const t = useT();
   const { lang } = useLanguage();
-  // מי הוסיף את המוצר ומתי — גלוי על כל כרטיס
+  // מי הוסיף את המוצר ומתי — גלוי על כל שורה
   const addedLine = addedText(item, lang);
   const unit = item.unit || "unit";
   const quantity = Number(item.quantity) || 1;
@@ -54,13 +54,21 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
         </button>
       </div>
 
-      {price > 0 && <span className="pw-price">{priceText}</span>}
-
-      <p className="pw-nm">{item.name}</p>
-
-      {(unitLabel || secondary || addedLine) && (
-        <span className="pw-meta">
+      <div className="pw-main">
+        <p className="pw-nm">{item.name}</p>
+        <span className="pw-sub">
+          {price > 0 && <span className="pw-price">{priceText}</span>}
           {unitLabel && <span>{unitLabel}</span>}
+          {deal && (
+            <span className="pw-deal">
+              {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}
+            </span>
+          )}
+          {item.remind_at && (
+            <span className={`pw-remind ${isReminderDue(item) ? "pw-remind-due" : ""}`}>
+              <Bell className="h-3 w-3 shrink-0" />{reminder}
+            </span>
+          )}
           {secondary && <span>{secondary}</span>}
           {addedLine && (
             <span className="inline-flex items-center gap-1">
@@ -68,19 +76,7 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
             </span>
           )}
         </span>
-      )}
-
-      {deal && (
-        <span className="pw-deal">
-          {t("deals.badge")} · {dealPriceText(deal)}{deal.discount > 0 ? ` -${deal.discount}%` : ""}{deal.chain_name ? ` · ${deal.chain_name}` : ""}
-        </span>
-      )}
-
-      {item.remind_at && (
-        <span className={`pw-remind ${isReminderDue(item) ? "pw-remind-due" : ""}`}>
-          <Bell className="h-3.5 w-3.5 shrink-0" />{reminder}
-        </span>
-      )}
+      </div>
 
       <div className="pw-row">
         {byWeight ? (

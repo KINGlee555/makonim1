@@ -1,5 +1,6 @@
 import EasyModeToggle from "@/components/EasyModeToggle";
 import HeaderMenu from "@/components/HeaderMenu";
+import SkinToggle from "@/components/SkinToggle";
 import BrandLogo from "@/components/BrandLogo";
 import { useT } from "@/lib/i18n";
 
@@ -17,6 +18,8 @@ export default function ListHeader({ list, onOpenSettings, onOpenShare, children
       {list?.title && <p className="pw-lname">{list.title}</p>}
 
       <div className="pw-acts">
+        {/* בחירת העיצוב תמיד נגישה כאן — כל ההגדרות לכל העיצובים */}
+        <SkinToggle className="pw-btn" label />
         <EasyModeToggle pill className="pw-btn pw-btn-s" />
         <button type="button" onClick={onOpenShare} className="pw-btn">{t("header.share")}</button>
         <HeaderMenu className="pw-btn" onOpenSettings={onOpenSettings} />
