@@ -7,7 +7,7 @@ import { isWeight, weightInKg } from "@/lib/units";
 const CACHE_TTL_MS = 15 * 60 * 1000;
 const cache = new Map();
 
-const empty = { loading: false, error: false, day: "", chains: [], barcodes: {} };
+const empty = { loading: false, loaded: false, error: false, day: "", chains: [], barcodes: {} };
 
 const barcodesOf = (data) => {
   const map = {};
@@ -25,9 +25,11 @@ const merge = (first, second) => ({
 // Real per-chain pricing for the current basket, in two quick rounds so the first
 // prices appear fast. Returns one row per item at least one chain has a price for,
 // plus what the basket would cost at each chain.
-export function useChainPrices(items, enabled) {
+export function useChainPrices(items, enabled, options = {}) {
   const itemsRef = useRef(items);
   itemsRef.current = items;
+  // live=false: רק מה שכבר שמור במסד — תשובה מהירה למסך, בלי הורדת קבצים כבדים
+  const live = options.live !== false;
   const signature = useMemo(
     () => items.map(item => `${item.barcode || item.name}:${item.quantity || 1}`).join("|"),
     [items]
@@ -65,24 +67,27 @@ export function useChainPrices(items, enabled) {
         const cached = await fetchChainPrices(basket, undefined, { cacheOnly: true });
         if (cancelled) return;
         absorb(cached);
-        if (accumulated.chains.length) setState({ loading: false, error: false, day: accumulated.day, chains: accumulated.chains, barcodes: barcodesOf(accumulated) });
-        setRefreshing(true);
+        if (accumulated.chains.length) setState({ loading: false, loaded: true, error: false, day: accumulated.day, chains: accumulated.chains, barcodes: barcodesOf(accumulated) });
+        setRefreshing(live);
         // 2. הרשתות הגדולות — מחיר חי של היום. שאר הרשתות מגיעות מהמסד,
         //    כי הורדה חיה של עוד 22 קבצים לא מספיקה לסיים בזמן והבקשה כולה נופלת.
         let liveAnswered = false;
-        try {
-          const live = await fetchChainPrices(basket, FAST_CHAINS);
+        if (live) {
+          try {
+            const fresh = await fetchChainPrices(basket, FAST_CHAINS);
+            if (cancelled) return;
+            absorb(fresh);
+            liveAnswered = Boolean(fresh?.statuses?.length);
+          } catch {
+            liveAnswered = false;
+          }
           if (cancelled) return;
-          absorb(live);
-          liveAnswered = Boolean(live?.statuses?.length);
-        } catch {
-          liveAnswered = false;
         }
-        if (cancelled) return;
         // שגיאה אמיתית = הרשתות בכלל לא ענו. "אין מחיר למוצר" היא תשובה לגיטימית.
-        const data = { loading: false, error: !accumulated.chains.length && !liveAnswered, day: accumulated.day, chains: accumulated.chains, barcodes: barcodesOf(accumulated) };
+        const data = { loading: false, loaded: true, error: live && !accumulated.chains.length && !liveAnswered, day: accumulated.day, chains: accumulated.chains, barcodes: barcodesOf(accumulated) };
         setState(data);
-        cache.set(signature, { at: Date.now(), data });
+        // רק תשובה מלאה נשמרת בזיכרון — אחרת פתיחת ההשוואה הייתה מקבלת תשובה חלקית
+        if (live) cache.set(signature, { at: Date.now(), data });
       } catch {
         if (!cancelled) setState(previous => ({ ...previous, loading: false, error: !previous.chains.length }));
       } finally {
@@ -90,7 +95,7 @@ export function useChainPrices(items, enabled) {
       }
     })();
     return () => { cancelled = true; };
-  }, [signature, enabled, revision]);
+  }, [signature, enabled, revision, live]);
 
 
 

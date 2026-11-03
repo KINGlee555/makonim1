@@ -5,6 +5,7 @@ import { storeStatus } from "@/lib/storeHours";
 import { dealPriceText } from "@/lib/chainDeals";
 import useNearestBranch from "@/hooks/useNearestBranch";
 import useNearestStoreDeals from "@/hooks/useNearestStoreDeals";
+import { useChainPrices } from "@/hooks/useChainPrices";
 
 // "קונים חכם" — כרטיס אחד ממורכז: החנות הקרובה אליך עם המרחק והשעות שלה,
 // מה מגיע ממנה לרשימה, וההמלצות שלה. שתי הפעולות שקובעות איפה קונים.
@@ -13,6 +14,9 @@ export default function SmartShopBar({ onCompare, onNearest, disabled, items = [
   const chain = SUPERMARKETS.find(entry => entry.name === storeName);
   const { branch, status: branchStatus } = useNearestBranch(storeName);
   const { mine, recommended, loading } = useNearestStoreDeals(chain?.chain || "shufersal", items);
+  // איפה הכי זול לקנות את הסל — מהמחירים שכבר שמורים, כדי שהתשובה תופיע מיד
+  const prices = useChainPrices(items, items.length > 0, { live: false });
+  const basketBest = items.length ? prices.totals[0] || null : null;
 
   const status = storeStatus(new Date(), chain?.shabbat);
   const statusText = status.label === "openUntil" ? `פתוח עד ${status.time}`
@@ -56,11 +60,26 @@ export default function SmartShopBar({ onCompare, onNearest, disabled, items = [
         {branchHours ? `שעות הסניף: ${branchHours}` : "שעות פתיחה משוערות של הרשת — כדאי לוודא מול הסניף"}
       </p>
 
+      {/* התשובה עצמה, על המסך: איפה הכי זול לקנות את מה שברשימה */}
+      {items.length > 0 && (
+        <p className="pw-smart-answer" aria-live="polite">
+          <Crown aria-hidden="true" />
+          <span>
+            {basketBest
+              ? <>הכי זול לסל: <b>{basketBest.name}</b> · ₪{basketBest.total.toFixed(2)}
+                {basketBest.covered < items.length ? ` (${basketBest.covered}/${items.length} מוצרים)` : ""}</>
+              : prices.loaded
+                ? "עוד אין מחיר מהרשתות למוצרים שברשימה"
+                : "מחשב איפה הכי זול לקנות את הסל…"}
+          </span>
+        </p>
+      )}
+
       <div className="pw-smart-acts">
         <button type="button" onClick={onCompare} disabled={disabled} className="pw-smart-btn pw-smart-z">
           <Crown className="pw-smart-ic" aria-hidden="true" />
           <span className="pw-smart-t">הסל הכי זול</span>
-          <span className="pw-smart-s">השוואה בין כל הרשתות</span>
+          <span className="pw-smart-s">{prices.totals.length ? `${prices.totals.length} רשתות עם מחיר` : "השוואה בין כל הרשתות"}</span>
         </button>
         <button type="button" onClick={onNearest} className="pw-smart-btn">
           <MapPin className="pw-smart-ic" aria-hidden="true" />
