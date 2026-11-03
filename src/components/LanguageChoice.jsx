@@ -8,7 +8,7 @@ export default function LanguageChoice({ className = "" }) {
   const { lang, setLang } = useLanguage();
 
   return (
-    <div className={`lang-choice ${className}`} role="group" aria-label="שפה · Language · Язык">
+    <div className={`lang-choice ${className}`} role="group" aria-label="שפה · العربية · Language · Язык">
       <Globe className="lang-choice-icon" aria-hidden="true" />
       {LANGUAGES.map((language) => (
         <button
