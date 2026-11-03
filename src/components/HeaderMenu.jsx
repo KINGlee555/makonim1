@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, ChevronDown, Globe, History, Info, Moon, Palette, SlidersHorizontal, Sun } from "lucide-react";
+import { Check, ChevronDown, Globe, History, Info, Moon, SlidersHorizontal, Sun } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
@@ -8,8 +8,6 @@ import { useLanguage, useT } from "@/lib/i18n";
 import { LANGUAGES } from "@/lib/languages";
 import languageHint from "@/lib/locales/languageHint";
 import { applyDarkTheme, isDarkTheme } from "@/lib/theme";
-import { FRIDGE, POSTER, QUIET, useSkin } from "@/lib/skin";
-import { skinLabel } from "@/lib/skinLabels";
 import { useSimpleMode } from "@/lib/simpleMode";
 import { toast } from "@/components/ui/use-toast";
 import { uiPill } from "@/lib/minimalUi";
@@ -22,13 +20,8 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = 
   const { lang, setLang } = useLanguage();
   const [dark, setDark] = useState(isDarkTheme);
   const [simple, setSimpleMode] = useSimpleMode();
-  const { skin: currentSkin, choose } = useSkin();
 
   const currentLanguage = LANGUAGES.find(language => language.code === lang) || LANGUAGES[0];
-
-  const skinOptions = [FRIDGE, QUIET, POSTER].map(skin => ({
-    skin, text: skinLabel(lang, skin), on: currentSkin === skin,
-  }));
 
   const toggleDark = () => {
     const next = !dark;
@@ -84,15 +77,6 @@ export default function HeaderMenu({ onOpenProfile, onOpenSettings, className = 
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onOpenProfile}>{t("header.changeName")}</DropdownMenuItem>
         <DropdownMenuItem onClick={onOpenSettings}>{t("header.settings")}</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-[12px] font-normal text-ui-muted">{t("design.title")}</DropdownMenuLabel>
-        {skinOptions.map(option => (
-          <DropdownMenuItem key={option.skin} onClick={() => choose(option.skin)}>
-            <Palette className="me-2 h-4 w-4" />
-            <span className="flex-1">{option.text}</span>
-            {option.on && <Check className="h-4 w-4 text-ui-accent" />}
-          </DropdownMenuItem>
-        ))}
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="text-[12px] font-normal text-ui-muted">{t("header.nav")}</DropdownMenuLabel>
         {lastListId() && (

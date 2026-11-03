@@ -10,17 +10,17 @@
     --font-display: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     /* ===== כרזת שוק — שפת העיצוב של כל האפליקציה ===== */
     --pst-ink: 197 75% 17%;
-    --pst-yellow: 43 100% 51%;
+    --pst-yellow: 40 24% 92%;
     --pst-pink: 349 100% 65%;
     /* הצבעים שהמסכים הקודמים השתמשו בהם — כולם מצביעים לאותה כרזה */
     --market-ink: 197 75% 17%;
     --market-pink: 349 100% 65%;
-    --market-yellow: 43 100% 51%;
-    --market-yellow-deep: 41 100% 45%;
+    --market-yellow: 40 24% 90%;
+    --market-yellow-deep: 200 18% 38%;
     --market-blue: 197 75% 17%;
     --market-surface: 0 0% 100%;
     --market-pink-soft: 349 100% 94%;
-    --market-yellow-soft: 44 100% 89%;
+    --market-yellow-soft: 40 30% 94%;
     --market-blue-soft: 197 60% 90%;
     --market-track: 197 40% 90%;
     --market-pink-tint: 349 100% 97%;
@@ -42,10 +42,10 @@
     --big-turquoise: 197 75% 17%;
     --big-pink: 349 100% 65%;
     --big-blue: 197 75% 17%;
-    --big-yellow: 43 100% 51%;
-    --big-attn: 43 100% 51%;
-    --big-attn-soft: 44 100% 89%;
-    --big-attn-ink: 197 75% 17%;
+    --big-yellow: 40 24% 90%;
+    --big-attn: 40 24% 90%;
+    --big-attn-soft: 40 30% 94%;
+    --big-attn-ink: 199 30% 20%;
     /* צבעי המערכת — לבן, דיו, צהוב וורוד */
     --background: 0 0% 100%;
     --foreground: 197 75% 17%;
@@ -54,9 +54,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 197 75% 17%;
     --primary: 197 75% 17%;
-    --primary-foreground: 43 100% 51%;
-    --secondary: 43 100% 51%;
-    --secondary-foreground: 197 75% 17%;
+    --primary-foreground: 40 24% 94%;
+    --secondary: 40 24% 92%;
+    --secondary-foreground: 199 30% 20%;
     --muted: 197 30% 94%;
     --muted-foreground: 197 25% 38%;
     --accent: 349 100% 65%;
@@ -66,8 +66,8 @@
     --border: 197 75% 17%;
     --input: 197 75% 17%;
     --ring: 197 75% 17%;
-    --chart-1: 43 100% 51%;
-    --chart-2: 349 100% 65%;
+    --chart-1: 199 30% 40%;
+    --chart-2: 349 45% 62%;
     --chart-3: 197 75% 17%;
     --chart-4: 174 60% 42%;
     --chart-5: 25 95% 55%;
@@ -75,9 +75,9 @@
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 197 75% 17%;
     --sidebar-primary: 197 75% 17%;
-    --sidebar-primary-foreground: 43 100% 51%;
-    --sidebar-accent: 43 100% 51%;
-    --sidebar-accent-foreground: 197 75% 17%;
+    --sidebar-primary-foreground: 40 24% 94%;
+    --sidebar-accent: 40 24% 92%;
+    --sidebar-accent-foreground: 199 30% 20%;
     --sidebar-border: 197 75% 17%;
     --sidebar-ring: 197 75% 17%;
   }
@@ -89,8 +89,8 @@
     --card-foreground: 0 0% 97%;
     --popover: 197 35% 11%;
     --popover-foreground: 0 0% 97%;
-    --primary: 43 100% 51%;
-    --primary-foreground: 197 75% 17%;
+    --primary: 40 22% 88%;
+    --primary-foreground: 199 30% 20%;
     --secondary: 197 40% 18%;
     --secondary-foreground: 0 0% 97%;
     --muted: 197 35% 16%;
@@ -101,20 +101,20 @@
     --destructive-foreground: 0 0% 100%;
     --border: 197 45% 32%;
     --input: 197 45% 32%;
-    --ring: 43 100% 51%;
-    --chart-1: 43 100% 51%;
+    --ring: 40 30% 78%;
+    --chart-1: 199 30% 44%;
     --chart-2: 349 100% 65%;
     --chart-3: 197 20% 82%;
     --chart-4: 174 60% 45%;
     --chart-5: 25 90% 58%;
     --sidebar-background: 197 35% 11%;
     --sidebar-foreground: 0 0% 97%;
-    --sidebar-primary: 43 100% 51%;
-    --sidebar-primary-foreground: 197 75% 17%;
+    --sidebar-primary: 40 22% 88%;
+    --sidebar-primary-foreground: 199 30% 20%;
     --sidebar-accent: 197 40% 18%;
     --sidebar-accent-foreground: 0 0% 97%;
     --sidebar-border: 197 45% 32%;
-    --sidebar-ring: 43 100% 51%;
+    --sidebar-ring: 40 30% 78%;
     /* מסכים פנימיים על קנבס כהה */
     --ui-canvas: 197 45% 7%;
     --ui-ink: 0 0% 97%;
@@ -122,21 +122,21 @@
     --ui-line: 197 45% 32%;
     --ui-line-soft: 197 40% 22%;
     --ui-surface: 197 40% 18%;
-    --ui-accent: 43 100% 51%;
+    --ui-accent: 40 22% 88%;
     --big-canvas: 197 45% 7%;
     --big-ink: 0 0% 97%;
     --big-muted: 197 20% 66%;
     --big-line: 197 45% 32%;
     --big-line-soft: 197 40% 22%;
     --big-surface: 197 40% 18%;
-    --big-accent: 43 100% 51%;
-    --big-turquoise: 43 100% 51%;
-    --big-pink: 349 100% 65%;
-    --big-blue: 43 100% 51%;
-    --big-yellow: 43 100% 51%;
-    --big-attn: 43 100% 51%;
+    --big-accent: 40 22% 88%;
+    --big-turquoise: 40 22% 88%;
+    --big-pink: 349 45% 62%;
+    --big-blue: 40 22% 88%;
+    --big-yellow: 40 24% 90%;
+    --big-attn: 40 22% 88%;
     --big-attn-soft: 197 40% 22%;
-    --big-attn-ink: 43 100% 51%;
+    --big-attn-ink: 199 30% 20%;
   }
 }
 
@@ -1316,8 +1316,8 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 
 .skin-poster {
   --pst-ink: 197 75% 17%;
-  --pst-yellow: 43 100% 51%;
-  --pst-pink: 349 100% 65%;
+  --pst-yellow: 40 24% 90%;
+  --pst-pink: 349 45% 62%;
 }
 
 /* צל הכרזה הקשיח — בערכה הרגועה הוא הופך לצל רך */
@@ -1438,7 +1438,7 @@ html:not(.skin-poster) [role="dialog"] { border: 1px solid hsl(var(--skin-line))
   padding: 10px 16px;
   border: 3px solid #0b3a4d;
   border-radius: 999px;
-  background: #ffd400;
+  background: #EDE7D6;
   color: #0b3a4d;
   font-size: 15px;
   font-weight: 900;
@@ -2180,9 +2180,9 @@ html:not(.skin-poster) .pst-live .pst-live-nm-off { color: hsl(var(--skin-ink-so
 }
 
 .pst-sync-btn:disabled { opacity: .55; cursor: default; }
-.pst-sync-btn:hover:not(:disabled) { background: #ffd400; }
+.pst-sync-btn:hover:not(:disabled) { background: #EDE7D6; }
 
-.dark .pst-sync-btn { border-color: #ffd400; background: #12303b; color: #ffd400; }
+.dark .pst-sync-btn { border-color: #EDE7D6; background: #12303b; color: #EDE7D6; }
 html:not(.skin-poster) .pst-sync-btn { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface)); color: hsl(var(--skin-ink)); }
 
 html:not(.skin-poster) .pst-sync { color: hsl(var(--skin-ink)); }

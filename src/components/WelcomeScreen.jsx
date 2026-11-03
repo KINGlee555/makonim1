@@ -5,7 +5,6 @@ import { useLanguage } from "@/lib/i18n";
 import welcomeCopy from "@/lib/locales/welcomeCopy";
 import SkipLink from "@/components/SkipLink";
 import DarkModeToggle from "@/components/DarkModeToggle";
-import SkinToggle from "@/components/SkinToggle";
 import LanguageChoice from "@/components/LanguageChoice";
 import BrandLogo from "@/components/BrandLogo";
 import AppFooter from "@/components/AppFooter";
@@ -34,7 +33,6 @@ export default function WelcomeScreen({ onNameSubmit }) {
           <BrandLogo size="lg" />
         </span>
         <div className="welcome-top-acts">
-          <SkinToggle className="pst-back" />
           <DarkModeToggle className="pst-back" />
         </div>
       </header>

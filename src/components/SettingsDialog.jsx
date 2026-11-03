@@ -79,7 +79,7 @@ export default function SettingsDialog({ open, onOpenChange, list }) {
           <div className="flex items-center justify-between bg-muted/50 rounded-2xl p-4 animate-slide-up stagger-1">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Star className={`w-5 h-5 ${isFavorite ? "text-yellow-500 fill-yellow-500" : "text-primary"}`} />
+                <Star className={`w-5 h-5 ${isFavorite ? "text-pst-pink fill-pst-pink" : "text-primary"}`} />
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-foreground truncate">{t("settings.favorite")}</p>

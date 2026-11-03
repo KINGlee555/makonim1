@@ -32,7 +32,7 @@ export default function BudgetTracker({ listId }) {
   const remaining = budget - spent;
   const isOver = budget > 0 && spent > budget;
   const isWarning = budget > 0 && pct >= 80 && !isOver;
-  const barColor = isOver ? "bg-red-500" : isWarning ? "bg-yellow-500" : "bg-primary";
+  const barColor = isOver ? "bg-red-500" : isWarning ? "bg-pst-pink" : "bg-primary";
 
   return (
     <div className="bg-muted/50 rounded-2xl p-4">
@@ -60,7 +60,7 @@ export default function BudgetTracker({ listId }) {
                 <AlertTriangle className="w-4 h-4 flex-shrink-0" /> <span className="truncate">{t("budget.over")} ₪{Math.abs(remaining).toFixed(2)}</span>
               </span>
             ) : isWarning ? (
-              <span className="text-sm text-yellow-600 font-medium flex items-center gap-1 min-w-0">
+              <span className="text-sm text-pst-pink font-medium flex items-center gap-1 min-w-0">
                 <TrendingUp className="w-4 h-4 flex-shrink-0" /> <span className="truncate">{t("budget.warning")}</span>
               </span>
             ) : (

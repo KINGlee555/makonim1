@@ -28,9 +28,11 @@ export default function ListItemsSection({
             <span className="pw-n">{categoryItems.length}</span>
           </h2>
 
-          <div className="pw-pic">
-            <img src={posterPhoto(category)} alt="" loading="lazy" />
-          </div>
+          {posterPhoto(category) && (
+            <div className="pw-pic">
+              <img src={posterPhoto(category)} alt="" loading="lazy" />
+            </div>
+          )}
 
           <div className="pw-grid">
             {categoryItems.map((item, index) => (

@@ -20,7 +20,7 @@ export async function celebrate(element) {
       scalar: 0.8,
       ticks: 110,
       origin: { x, y },
-      colors: ["#FFD400", "#FF3B5D", "#0B3A4D", "#ffffff"]
+      colors: ["#EDE7D6", "#AC5F68", "#0B3A4D", "#ffffff"]
     });
   } catch {
     // אין קונפטי — הסימון עצמו כבר קרה

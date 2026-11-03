@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import AppFooter from "@/components/AppFooter";
 import SkipLink from "@/components/SkipLink";
 import DarkModeToggle from "@/components/DarkModeToggle";
-import SkinToggle from "@/components/SkinToggle";
 import BrandLogo from "@/components/BrandLogo";
 import { useT } from "@/lib/i18n";
 
@@ -24,7 +23,6 @@ export default function PosterPage({ title, subtitle, icon: Icon, back = "/", ba
             <span>{t("header.back")}</span>
           </Link>
           <div className="pst-topacts">
-            <SkinToggle className="pst-back" />
             <DarkModeToggle className="pst-back" />
           </div>
         </div>
