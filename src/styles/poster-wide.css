@@ -207,6 +207,11 @@
   animation: none;
 }
 
+/* שורת לייב אחת: הכיתוב, המשתתפים ומצבם וכפתור סנכרון המחירים באותה שורה */
+.pw-strip .pst-live { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.pw-strip .pst-live .pst-live-row { flex: 1 1 150px; min-width: 0; }
+.pw-strip .pst-live .pst-live-actions { margin-inline-start: auto; flex-wrap: wrap; }
+
 .pw-strip .pst-live-top { gap: 8px; flex-wrap: wrap; }
 .pw-strip .pst-live-title { font-size: 14px; font-weight: 600; }
 .pw-strip .pst-live-dot { background: #EDE7D6; box-shadow: none; animation: none; }

@@ -1823,6 +1823,56 @@ html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
   white-space: nowrap;
 }
 
+/* ===== שורת הלייב — שורה אחת בראש הרשימה: הכיתוב, המשתתפים וסנכרון המחירים ===== */
+.pst-live-line {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.pst-live-line .pst-live-top { flex: none; }
+.pst-live-line .pst-live-row { flex: 1 1 150px; min-width: 0; }
+.pst-live-line .pst-live-actions { margin-inline-start: auto; flex-wrap: wrap; }
+
+/* מספר המחוברים ברגע זה */
+.pst-live-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(31, 169, 113, .9);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* תווית המצב בכל שורה: אונליין / אופליין / הוזמן */
+.pst-live-flag {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.pst-live-flag-online { background: #1fa971; color: #fff; }
+.pst-live-flag-offline { background: rgba(174, 185, 190, .3); color: #33434a; }
+.pst-live-flag-invited { background: rgba(255, 255, 255, .16); color: inherit; }
+
+html:not(.skin-poster) .pst-live-flag-offline { background: rgba(0, 0, 0, .08); color: hsl(var(--skin-ink-soft)); }
+html:not(.skin-poster) .pst-live-flag-invited { background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink-soft)); }
+.dark .pst-live-flag-offline { background: rgba(255, 255, 255, .18); color: #dfe7ea; }
+.dark .pst-live-flag-invited { background: rgba(255, 255, 255, .12); color: #f5f1eb; }
+
+/* כפתור סנכרון המחירים — ירוק כשהמחירים מסונכרנים */
+.pst-live-sync { white-space: nowrap; }
+.pst-live-sync-on { border-color: #1fa971; background: #1fa971; color: #fff; }
+
 @keyframes livePulse {
   0%, 100% { box-shadow: 0 0 0 4px rgba(61, 220, 132, .22); }
   50% { box-shadow: 0 0 0 7px rgba(61, 220, 132, .08); }

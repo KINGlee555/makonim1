@@ -27,6 +27,15 @@ const heExtra = {
   "live.invite": "הזמן",
   "live.message": "הודעה",
   "live.you": "את/ה",
+  "live.live": "הרשימה בלייב",
+  "live.online": "אונליין",
+  "live.offline": "אופליין",
+  "live.invitedShort": "הוזמן",
+  "live.sync": "סנכרון מחירים",
+  "live.syncing": "מסנכרן…",
+  "live.synced": "מסונכרן",
+  "live.retrySync": "נסה שוב",
+  "live.syncHint": "משווה מחירים מחדש מול כל הרשתות",
 
   // הודעות למשתתפים
   "messages.title": "הודעות למשתתפים",

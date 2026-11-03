@@ -124,16 +124,14 @@ export default function ListView() {
   const unavailableItems = items.filter(i => i.status === "unavailable");
   const boughtCount = items.filter(i => i.status === "bought").length;
   const totalPrice = pendingItems.reduce((sum, i) => sum + lineCost(i), 0);
-  // מישהו מהמשפחה כבר איתך ברשימה — רק אז שורת המשתתפים מוצגת
-  const hasCompany = presence.members.some(member => member.user_email && member.user_email !== user?.email);
+  // אחרי סנכרון מחירים המחירים ברשימה מתעדכנים מיד, בלי לרענן את המסך
+  const applySyncedPrices = (updates = []) => {
+    const prices = new Map(updates.map(update => [update.id, update.price]));
+    setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
+    loadData();
+  };
   // מצב סנכרון המחירים עבר לתוך "עוד כלים" — הוא לא צריך לתפוס שורה במסך
-  const syncSlot = (
-    <SyncStatus items={pendingItems} onSynced={updates => {
-      const prices = new Map(updates.map(update => [update.id, update.price]));
-      setItems(previous => previous.map(item => prices.has(item.id) ? { ...item, price: prices.get(item.id) } : item));
-      loadData();
-    }} />
-  );
+  const syncSlot = <SyncStatus items={pendingItems} onSynced={applySyncedPrices} />;
   const groupedCategories = sortMode === "cheap" ? (pendingItems.length ? [["הכי זול", priceOrderedItems]] : []) : Object.entries(
     pendingItems.reduce((groups, item) => {
       const cat = item.category || t("summary.other");
@@ -157,20 +155,20 @@ export default function ListView() {
         <ListTotals itemCount={pendingItems.length} total={totalPrice} />
       </ListHeader>
 
-      {/* הפס נפתח רק כשיש מישהו איתך ברשימה או הודעות — אחרת המסך נשאר נקי */}
-      {(hasCompany || unreadMessages > 0) && (
-        <div className="pw-strip">
-          <LiveMembersBar
-            list={list}
-            members={presence.members}
-            myEmail={user?.email}
-            myName={user?.full_name}
-            unread={unreadMessages}
-            onOpenShare={() => show("share")}
-            onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
-          />
-        </div>
-      )}
+      {/* שורת הלייב נשארת תמיד למעלה: מי נמצא ברשימה עכשיו, מי נכנס בעבר וסנכרון מחירים */}
+      <div className="pw-strip">
+        <LiveMembersBar
+          list={list}
+          members={presence.members}
+          myEmail={user?.email}
+          myName={user?.full_name}
+          unread={unreadMessages}
+          items={pendingItems}
+          onSynced={applySyncedPrices}
+          onOpenShare={() => show("share")}
+          onOpenMessages={() => { markMessagesSeen(); show("messages"); }}
+        />
+      </div>
 
       {identity.conflict && (
         <IdentitySyncPrompt
