@@ -4,11 +4,9 @@ import AreaDeals from "@/components/deals/AreaDeals";
 import UnavailableItem from "@/components/UnavailableItem";
 import SectionRunner from "@/components/poster/SectionRunner";
 import { dealForItem } from "@/lib/chainDeals";
-import { posterPhoto } from "@/lib/categoryPoster";
 import { useT } from "@/lib/i18n";
 
-// מקטע מחלקה בכרזת הסופר: פס צהוב עם שם המחלקה והמספר שלה, תמונת התוצרת מתחתיו,
-// ושלושה כרטיסי מוצר בכל שורה במחשב.
+// מקטע מחלקה ברשימה: פס עם שם המחלקה והמספר שלה, ומתחתיו שורות המוצרים — בלי תמונות מחלקה.
 export default function ListItemsSection({
   groupedCategories, pendingItems, unavailableItems, favorites, chainDeals, removingIds, viewerName,
   onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder,
@@ -27,12 +25,6 @@ export default function ListItemsSection({
             <span className="pw-sh-title">{category}</span>
             <span className="pw-n">{categoryItems.length}</span>
           </h2>
-
-          {posterPhoto(category) && (
-            <div className="pw-pic">
-              <img src={posterPhoto(category)} alt="" loading="lazy" />
-            </div>
-          )}
 
           <div className="pw-grid">
             {categoryItems.map((item, index) => (

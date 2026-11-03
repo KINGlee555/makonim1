@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { Users, Sparkles, ArrowLeft, ShoppingCart } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import PosterPage from "@/components/poster/PosterPage";
-import { posterPhoto } from "@/lib/categoryPoster";
 import { demoItems, demoMembers, demoBasketTotal, demoSavings, lineCost } from "@/lib/demoList";
 
 const groupByCategory = (items) =>
@@ -59,9 +58,6 @@ export default function DemoList() {
             <span>{category}</span>
             <small>{items.length}</small>
           </h2>
-          <div className="pst-sech">
-            <img src={posterPhoto(category)} alt="" loading="lazy" />
-          </div>
           <div className="mt-4">
             {items.map(item => (
               <div key={item.name} className="pst-lrow">
