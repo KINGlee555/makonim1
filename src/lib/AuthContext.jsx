@@ -2,16 +2,22 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
 import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
+import { readCachedUser, writeCachedUser, clearCachedUser, readCachedSettings, writeCachedSettings } from '@/lib/userCache';
 
 const AuthContext = createContext();
 
+// זיהוי מיידי מהמכשיר — המשתמש וההגדרות שנשמרו מקומית מאפשרים למסך הראשון
+// לעלות בלי להמתין לשרת; הבדיקה מול השרת ממשיכה ברקע ומעדכנת.
+const cachedUser = appParams.token ? readCachedUser() : null;
+const cachedSettings = readCachedSettings();
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
+  const [user, setUser] = useState(cachedUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(cachedUser));
+  const [isLoadingAuth, setIsLoadingAuth] = useState(!cachedUser);
+  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(!cachedSettings);
   const [authError, setAuthError] = useState(null);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const [appPublicSettings, setAppPublicSettings] = useState(cachedSettings); // Contains only { id, public_settings }
 
   useEffect(() => {
     checkAppState();
@@ -19,7 +25,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAppState = async () => {
     try {
-      setIsLoadingPublicSettings(true);
+      // כשכבר יש הגדרות שמורות במכשיר, המסך לא חוזר למצב טעינה — הבדיקה רצה ברקע
+      if (!cachedSettings) setIsLoadingPublicSettings(true);
       setAuthError(null);
       
       // First, check app public settings (with token if available)
@@ -36,6 +43,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
         setAppPublicSettings(publicSettings);
+        writeCachedSettings(publicSettings);
         
         // If we got the app public settings successfully, check if user is authenticated
         if (appParams.token) {
@@ -73,6 +81,10 @@ export const AuthProvider = ({ children }) => {
             message: appError.message || 'Failed to load app'
           });
         }
+        // ההגדרות השמורות כבר לא תקפות — מפסיקים לזהות מהמכשיר
+        clearCachedUser();
+        setUser(null);
+        setIsAuthenticated(false);
         setIsLoadingPublicSettings(false);
         setIsLoadingAuth(false);
       }
@@ -89,10 +101,12 @@ export const AuthProvider = ({ children }) => {
 
   const checkUserAuth = async () => {
     try {
-      // Now check if the user is authenticated
-      setIsLoadingAuth(true);
+      // Now check if the user is authenticated — אם כבר זיהינו אותו מהמכשיר,
+      // המסך לא חוזר למצב טעינה והבדיקה מתבצעת בשקט
+      if (!cachedUser) setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
       setUser(currentUser);
+      writeCachedUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
     } catch (error) {
@@ -102,6 +116,8 @@ export const AuthProvider = ({ children }) => {
       
       // If user auth fails, it might be an expired token
       if (error.status === 401 || error.status === 403) {
+        clearCachedUser();
+        setUser(null);
         setAuthError({
           type: 'auth_required',
           message: 'Authentication required'
@@ -113,6 +129,7 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
+    clearCachedUser();
     
     if (shouldRedirect) {
       // Use the SDK's logout method which handles token cleanup and redirect

@@ -4,14 +4,11 @@ import App from '@/App.jsx'
 import '@/index.css'
 import '@/styles/fridge.css'
 import '@/styles/poster-wide.css'
-import { applyDarkTheme, isDarkTheme } from '@/lib/theme'
-import { applySkin, getStoredSkin } from '@/lib/skin'
+import { applyStoredPreferences } from '@/lib/preferences'
 
-// מצב כהה נשמר במכשיר ומוחל מיד עם העלייה, כדי שהמסך לא ייטען בהיר ואז יקפוץ לכהה
-applyDarkTheme(isDarkTheme())
-
-// גם העיצוב שנבחר נשמר במכשיר ומוחל מיד — ואחר כך מתעדכן לפי הבחירה של המשתמש עצמו
-applySkin(getStoredSkin())
+// ההעדפות שנשמרו במכשיר — מצב כהה/בהיר, מצב גדול ונוח, שפה וכיוון —
+// מוחלות מיד עם העלייה, כדי שהמסך לא ייטען בהיר ואז יקפוץ לכהה
+applyStoredPreferences()
 
 // רישום קובץ השירות — בזכותו האתר מותקן כאפליקציה על מסך הבית בכל הפלטפורמות
 if ("serviceWorker" in navigator) {
