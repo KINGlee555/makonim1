@@ -187,6 +187,8 @@ export default function ListView() {
         onCompare={() => show("basket")}
         onNearest={() => show("navigate")}
         disabled={!pendingItems.length}
+        items={pendingItems}
+        onAddProduct={handleAddProduct}
       />
 
       <ListSortBar mode={sortMode} onMode={setSortMode} onCompare={() => show("basket")} disabled={!pendingItems.length} />
