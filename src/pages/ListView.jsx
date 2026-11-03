@@ -20,6 +20,7 @@ import { useChainDeals } from "@/hooks/useChainDeals";
 import { useListNotifications } from "@/hooks/useListNotifications";
 import { useListMessages } from "@/hooks/useListMessages";
 import NotificationPrompt from "@/components/NotificationPrompt";
+import InstallAppCard from "@/components/InstallAppCard";
 import LiveMembersBar from "@/components/live/LiveMembersBar";
 import SyncStatus from "@/components/minimal/SyncStatus";
 import AgeGateDialog from "@/components/AgeGateDialog";
@@ -180,6 +181,8 @@ export default function ListView() {
       )}
 
       <NotificationPrompt list={list} onEnabled={() => setList(prev => ({ ...prev, push_enabled: true }))} />
+
+      <InstallAppCard />
 
       <SmartShopBar
         onCompare={() => show("basket")}

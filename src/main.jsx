@@ -13,6 +13,13 @@ applyDarkTheme(isDarkTheme())
 // גם העיצוב שנבחר נשמר במכשיר ומוחל מיד — ואחר כך מתעדכן לפי הבחירה של המשתמש עצמו
 applySkin(getStoredSkin())
 
+// רישום קובץ השירות — בזכותו האתר מותקן כאפליקציה על מסך הבית בכל הפלטפורמות
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <App />
 )
