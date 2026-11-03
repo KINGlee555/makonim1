@@ -7,6 +7,7 @@ import { storeStatus } from "@/lib/storeHours";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, ShoppingBasket, MapPin, Loader2, CheckCircle, Sparkles, Star } from "lucide-react";
 import SearchFilterBar from "@/components/search/SearchFilterBar";
+import WhereToBuyCard from "@/components/search/WhereToBuyCard";
 import { useT } from "@/lib/i18n";
 import { essentialProductNames } from "@/lib/essentialProducts";
 import { loadAllProducts } from "@/lib/loadAllProducts";
@@ -53,6 +54,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const [query, setQuery] = useState("");
   const [byWeight, setByWeight] = useState(false);
   const [addedIds, setAddedIds] = useState(new Set());
+  // המוצר האחרון שהוסף — מיד אחריו מחפשים איפה הוא נמכר עכשיו ובאיזה מחיר
+  const [lastAdded, setLastAdded] = useState(null);
   const [filterMode, setFilterMode] = useState("price");
   const [sortMode, setSortMode] = useState("match");
   const [chainFilter, setChainFilter] = useState("all");
@@ -311,11 +314,13 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
   const handleAdd = (product) => {
     onAddProduct(byWeight || isWeightSold(product) ? { ...product, weighted: true } : product);
     setAddedIds(prev => new Set([...prev, product.name]));
+    // מיד אחרי ההוספה: איפה המוצר הזה נמכר עכשיו, ואיפה הכי זול מבין הפתוחות
+    setLastAdded(product);
   };
 
   const handleClose = (val) => {
     onOpenChange(val);
-    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setCatalogCursor(""); remainingPages.current = []; setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); setSortMode("match"); }
+    if (!val) { setQuery(""); setRemoteProducts([]); setRemoteCategoryProducts([]); setStoredProducts([]); setCatalogCursor(""); remainingPages.current = []; setAddedIds(new Set()); setLocationError(""); setSelectedCategory("all"); setVisibleLimit(48); setChainFilter("all"); setSortMode("match"); setLastAdded(null); }
   };
 
   const filteredSuggestions = selectedCategory === "all"
@@ -390,6 +395,8 @@ export default function ProductSearchDialog({ open, onOpenChange, onAddProduct, 
           onChainFilter={setChainFilter}
           openChainsCount={storesForFilter.length}
         />
+
+        {lastAdded && <WhereToBuyCard product={lastAdded} onClose={() => setLastAdded(null)} />}
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-2">
           {query && results.length > 0 && !hasExactMatch && (

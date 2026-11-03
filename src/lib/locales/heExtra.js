@@ -73,6 +73,15 @@ const heExtra = {
 
   // השוואת סל — ניסיון חוזר כשהמחירים לא נטענו
   "basket.retry": "נסו שוב",
+
+  // אחרי הוספת מוצר לרשימה: איפה קונים אותו עכשיו ובאיזה מחיר
+  "where.title": "איפה קונים את {name}",
+  "where.searching": "בודק איפה פתוח עכשיו ובאיזה מחיר…",
+  "where.cheapestTag": "הכי זול",
+  "where.openUntil": "פתוח עד {time}",
+  "where.noneOpen": "עכשיו אין חנות פתוחה שמוכרת את המוצר הזה — חנויות סגורות לא מוצעות",
+  "where.noPrice": "פתוחים עכשיו, אבל אין מחיר ידוע למוצר הזה",
+  "where.close": "סגור",
 };
 
 export default heExtra;

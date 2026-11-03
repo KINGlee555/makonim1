@@ -31,3 +31,112 @@
     border-radius: 22px;
   }
 }
+
+/* ===== אחרי הוספת מוצר: איפה קונים אותו עכשיו, ובאיזה מחיר ===== */
+.pst-where {
+  margin: 8px 16px 0;
+  padding: 10px 12px;
+  border: 2px solid hsl(var(--primary));
+  border-radius: 16px;
+  background: hsl(var(--primary) / 0.06);
+}
+
+.pst-where-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pst-where-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 900;
+  color: hsl(var(--primary));
+}
+
+.pst-where-label svg { width: 15px; height: 15px; flex: none; }
+.pst-where-label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pst-where-x {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: hsl(var(--primary));
+}
+
+.pst-where-x svg { width: 16px; height: 16px; }
+
+.pst-where-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: hsl(var(--muted-foreground));
+}
+
+.pst-where-note svg { width: 14px; height: 14px; flex: none; }
+
+.pst-where-rows { display: grid; gap: 6px; margin-top: 8px; }
+
+.pst-where-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 10px;
+  border: 2px solid hsl(var(--border) / 0.6);
+  border-radius: 12px;
+  background: hsl(var(--card));
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pst-where-nm { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pst-where-best {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #1fa971;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pst-where-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+}
+
+.pst-where-time svg { width: 12px; height: 12px; }
+
+.pst-where-price {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary));
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}

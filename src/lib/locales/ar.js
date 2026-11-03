@@ -376,6 +376,14 @@ const ar = {
   "barcode.startCamera": "فتح الكاميرا",
   "barcode.manualPlaceholder": "اكتب رقم الباركود...",
   "barcode.manualDesc": "أو اكتب رقم الباركود يدويًا",
+
+  "where.title": "أين أشتري {name}",
+  "where.searching": "نتحقق ما المفتوح الآن وبأي سعر…",
+  "where.cheapestTag": "الأرخص",
+  "where.openUntil": "مفتوح حتى {time}",
+  "where.noneOpen": "لا يوجد الآن متجر مفتوح يبيع هذا المنتج — لا نقترح متجرًا مغلقًا",
+  "where.noPrice": "مفتوح الآن، لكن لا يوجد سعر معروف لهذا المنتج",
+  "where.close": "إغلاق",
 };
 
 export default ar;
