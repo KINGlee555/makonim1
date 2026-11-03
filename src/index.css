@@ -608,7 +608,7 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-page button:active { opacity: .8; }
 .pst-page button:focus-visible,
 .pst-page a:focus-visible { outline: 3px solid #0B3A4D; outline-offset: 2px; }
-.pst-tools button:focus-visible { outline-color: #FFD400; }
+.pst-tools button:focus-visible { outline-color: #EDE7D6; }
 
 @keyframes pstInR { from { opacity: 0; transform: translateX(120px); } to { opacity: 1; transform: none; } }
 @keyframes pstInL { from { opacity: 0; transform: translateX(-120px); } to { opacity: 1; transform: none; } }
@@ -616,17 +616,17 @@ html.easy-mode [role="dialog"] .text-xl {
 @keyframes pstRun { 0% { transform: translateX(0); } 50% { transform: translateX(-26px); } 100% { transform: translateX(0); } }
 
 /* פתיח צהוב שטוח — מיתוג, שם הרשימה, שני המספרים ושורת הפעולות */
-.pst-hero { position: relative; max-width: 1200px; margin: 0 auto; padding: 24px 16px 22px; background: #FFD400; animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both; }
-.pst-hero::after { content: ""; position: absolute; inset-inline: 0; bottom: -22px; height: 22px; background: #FFD400; clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%); z-index: 2; pointer-events: none; }
+.pst-hero { position: relative; max-width: 1200px; margin: 0 auto; padding: 24px 16px 22px; background: #EDE7D6; animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both; }
+.pst-hero::after { content: ""; position: absolute; inset-inline: 0; bottom: -22px; height: 22px; background: #EDE7D6; clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%); z-index: 2; pointer-events: none; }
 .pst-brand { display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .pst-brand img { width: 40px; height: 40px; border: 3px solid #0B3A4D; border-radius: 10px; object-fit: cover; }
-.pst-greet { padding: 6px 14px; border: 0; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 14px; font-weight: 800; letter-spacing: 0; }
+.pst-greet { padding: 6px 14px; border: 0; border-radius: 999px; background: #0B3A4D; color: #EDE7D6; font-size: 14px; font-weight: 800; letter-spacing: 0; }
 .pst-row { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
 .pst-ttl { margin: 0; max-width: 560px; font-family: var(--font-display); font-size: 44px; font-weight: 700; line-height: 1.06; letter-spacing: -.01em; text-transform: uppercase; }
 .pst-ttl button { display: flex; align-items: flex-end; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; }
 .pst-ttl svg { width: 24px; height: 24px; flex: none; margin-bottom: 4px; }
 .pst-nums { display: flex; gap: 12px; }
-.pst-num { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 8px 16px 4px; border: 3px solid #0B3A4D; border-radius: 16px; background: #FF3B5D; color: #fff; font-size: 14px; font-weight: 800; box-shadow: 5px 5px 0 #0B3A4D; }
+.pst-num { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 8px 16px 4px; border: 3px solid #0B3A4D; border-radius: 16px; background: #AC5F68; color: #fff; font-size: 14px; font-weight: 800; box-shadow: 5px 5px 0 #0B3A4D; }
 .pst-num b { margin-top: 2px; font-family: var(--font-display); font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: -.02em; }
 .pst-num-t { background: #fff; color: #0B3A4D; }
 .pst-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
@@ -635,20 +635,20 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
 .pst-chips::-webkit-scrollbar { display: none; }
 .pst-chip { flex: none; padding: 8px 16px; border: 3px solid #0B3A4D; border-radius: 999px; background: #fff; color: #0B3A4D; font-size: 14px; font-weight: 800; }
-.pst-chip-on { background: #FFD400; }
-.dark .pst-chip { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
-.dark .pst-chip-on { background: #FFD400; color: #0B3A4D; }
+.pst-chip-on { background: #EDE7D6; }
+.dark .pst-chip { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
+.dark .pst-chip-on { background: #EDE7D6; color: #0B3A4D; }
 
 /* כמה מוצרים יש באפליקציה — מספר אמיתי מהמסד, גלוי כבר בפתיח */
 .pst-trust { display: inline-block; margin-top: 16px; padding: 8px 18px; border: 3px solid #0B3A4D; border-radius: 999px; background: #fff; color: #0B3A4D; font-size: 14px; font-weight: 800; }
-.pst-btn { padding: 10px 20px; border: 3px solid #0B3A4D; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 16px; font-weight: 800; }
+.pst-btn { padding: 10px 20px; border: 3px solid #0B3A4D; border-radius: 999px; background: #0B3A4D; color: #EDE7D6; font-size: 16px; font-weight: 800; }
 .pst-btn:hover { background: #fff; color: #0B3A4D; }
-.pst-btn-s { background: #FF3B5D; color: #fff; }
+.pst-btn-s { background: #AC5F68; color: #fff; }
 .pst-btn-sm { padding: 8px 16px; font-size: 14px; }
 
 /* שורת ההתראה למשפחה */
 .pst-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; width: calc(100% - 32px); margin: 44px auto 0; padding: 16px 20px; border-radius: 18px; background: #0B3A4D; color: #fff; font-size: 15px; font-weight: 700; animation: pstRise .6s .3s both; }
-.pst-note button { padding: 10px 22px; border: 0; border-radius: 999px; background: #FFD400; color: #0B3A4D; font-size: 15px; font-weight: 900; }
+.pst-note button { padding: 10px 22px; border: 0; border-radius: 999px; background: #EDE7D6; color: #0B3A4D; font-size: 15px; font-weight: 900; }
 .pst-note button:disabled { opacity: .6; }
 
 /* תמונת השוק שמתחת להתראה */
@@ -658,21 +658,21 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-bar-in { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
 .pst-bar-in::-webkit-scrollbar { display: none; }
 .pst-bar-in span { flex: none; padding: 8px 16px; border: 3px solid #0B3A4D; border-radius: 999px; background: #fff; font-size: 15px; font-weight: 800; }
-.pst-bar-in .pst-bar-a { background: #FFD400; }
-.pst-bar-in .pst-bar-b { background: #FF3B5D; color: #fff; }
+.pst-bar-in .pst-bar-a { background: #EDE7D6; }
+.pst-bar-in .pst-bar-b { background: #AC5F68; color: #fff; }
 
 /* מקטע מחלקה — פס כרזה, תמונת המחלקה, טריז אלכסוני ואריחי המוצרים */
 .pst-sec { max-width: 1200px; margin: 28px auto 0; }
 .pst-sh { margin: 0; padding: 12px 16px; font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; text-transform: uppercase; position: relative; overflow: hidden; }
 .pst-sh-in { display: flex; align-items: center; gap: 12px; }
-.pst-sh-a { background: #FFD400; animation: pstInR .7s both; }
-.pst-sh-b { background: #FF3B5D; color: #fff; animation: pstInL .7s both; }
+.pst-sh-a { background: #EDE7D6; animation: pstInR .7s both; }
+.pst-sh-b { background: #AC5F68; color: #fff; animation: pstInL .7s both; }
 .pst-sh .pst-n { margin-inline-start: auto; min-width: 40px; padding: 3px 10px; border-radius: 10px; background: #0B3A4D; color: #fff; font-size: 22px; text-align: center; }
 .pst-runner { width: 32px; height: 32px; flex: none; animation: pstRun 2.4s ease-in-out infinite; }
 .pst-sech { height: 140px; overflow: hidden; }
 .pst-sech img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.pst-wedge { height: 24px; background: #FF3B5D; clip-path: polygon(0 0, 100% 0, 100% 30%, 0 100%); }
-.pst-wedge-b { background: #FFD400; }
+.pst-wedge { height: 24px; background: #AC5F68; clip-path: polygon(0 0, 100% 0, 100% 30%, 0 100%); }
+.pst-wedge-b { background: #EDE7D6; }
 .pst-wedge-up { transform: scaleY(-1); }
 .pst-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px 16px 0; }
 
@@ -682,30 +682,30 @@ html.easy-mode [role="dialog"] .text-xl {
 .pst-ph { position: relative; width: 100%; max-width: 200px; aspect-ratio: 1 / 1; margin: 0 auto; flex: none; border: 3px solid #0B3A4D; border-radius: 50%; overflow: hidden; }
 .pst-ph > button { all: unset; display: block; width: 100%; height: 100%; cursor: pointer; }
 .pst-ph img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.pst-tag { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border: 2px solid #0B3A4D; border-radius: 8px; background: #FF3B5D; color: #fff; font-size: 15px; font-weight: 900; letter-spacing: -.02em; }
+.pst-tag { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border: 2px solid #0B3A4D; border-radius: 8px; background: #AC5F68; color: #fff; font-size: 15px; font-weight: 900; letter-spacing: -.02em; }
 .pst-body { display: flex; flex: 1; flex-direction: column; gap: 8px; }
 .pst-nm { font-size: 15px; font-weight: 900; line-height: 1.15; }
 .pst-meta { font-size: 13px; font-weight: 700; color: rgba(11, 58, 77, .7); }
-.pst-deal { align-self: flex-start; padding: 2px 9px; border: 2px solid #0B3A4D; border-radius: 999px; background: #FFD400; font-size: 11px; font-weight: 800; }
-.pst-remind { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; padding: 2px 9px; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 11px; font-weight: 800; }
-.pst-remind-due { background: #FF3B5D; color: #fff; }
+.pst-deal { align-self: flex-start; padding: 2px 9px; border: 2px solid #0B3A4D; border-radius: 999px; background: #EDE7D6; font-size: 11px; font-weight: 800; }
+.pst-remind { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; padding: 2px 9px; border-radius: 999px; background: #0B3A4D; color: #EDE7D6; font-size: 11px; font-weight: 800; }
+.pst-remind-due { background: #AC5F68; color: #fff; }
 .pst-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: auto; padding-top: 10px; }
 .pst-group { display: flex; align-items: center; gap: 6px; }
 .pst-q { display: flex; align-items: center; overflow: hidden; border: 2px solid #0B3A4D; border-radius: 999px; background: #fff; }
-.pst-q button { width: 30px; height: 32px; padding: 0; border: 0; background: #FFD400; color: #0B3A4D; font-size: 18px; font-weight: 900; line-height: 1; }
+.pst-q button { width: 30px; height: 32px; padding: 0; border: 0; background: #EDE7D6; color: #0B3A4D; font-size: 18px; font-weight: 900; line-height: 1; }
 .pst-q button:disabled { opacity: .4; cursor: default; }
 .pst-q span { min-width: 26px; font-size: 16px; font-weight: 900; text-align: center; }
-.pst-buy { flex: 1; min-width: 70px; height: 38px; border: 0; border-radius: 999px; background: #0B3A4D; color: #FFD400; font-size: 14px; font-weight: 900; }
-.pst-buy:hover { background: #FF3B5D; color: #fff; }
+.pst-buy { flex: 1; min-width: 70px; height: 38px; border: 0; border-radius: 999px; background: #0B3A4D; color: #EDE7D6; font-size: 14px; font-weight: 900; }
+.pst-buy:hover { background: #AC5F68; color: #fff; }
 .pst-more { width: 38px; height: 38px; flex: none; padding: 0; border: 2px solid #0B3A4D; border-radius: 50%; background: #fff; color: #0B3A4D; font-size: 18px; font-weight: 900; }
 .pst-amount { width: 56px; height: 38px; padding: 0 6px; border: 2px solid #0B3A4D; border-radius: 999px; background: #fff; color: #0B3A4D; font-size: 15px; font-weight: 900; text-align: center; }
-.pst-unit { height: 38px; padding: 0 10px; border: 2px solid #0B3A4D; border-radius: 999px; background: #FFD400; color: #0B3A4D; font-size: 12px; font-weight: 900; }
-.pst-remove { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: none; border: 2px solid #0B3A4D; border-radius: 50%; background: #fff; color: #FF3B5D; }
+.pst-unit { height: 38px; padding: 0 10px; border: 2px solid #0B3A4D; border-radius: 999px; background: #EDE7D6; color: #0B3A4D; font-size: 12px; font-weight: 900; }
+.pst-remove { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: none; border: 2px solid #0B3A4D; border-radius: 50%; background: #fff; color: #AC5F68; }
 
 /* תפריט הפעולות של המוצר */
 .pst-menu { padding: 8px; border: 3px solid #0B3A4D; border-radius: 18px; background: #fff; box-shadow: 6px 6px 0 #0B3A4D; }
 .pst-mi { border-radius: 999px; font-size: 15px; font-weight: 800; color: #0B3A4D; }
-.pst-mi:hover, .pst-mi[data-highlighted] { background: #FFD400; color: #0B3A4D; }
+.pst-mi:hover, .pst-mi[data-highlighted] { background: #EDE7D6; color: #0B3A4D; }
 
 /* כרטיס לבן לכלים ולמצבים שאינם ברשימה עצמה */
 .pst-panel { padding: 20px; border: 3px solid #0B3A4D; border-radius: 22px; background: #fff; box-shadow: 6px 6px 0 #0B3A4D; }
@@ -713,7 +713,7 @@ html.easy-mode [role="dialog"] .text-xl {
 
 /* עוד כלים — פס דיו עם כרטיסי כרזה */
 .pst-tools { max-width: 1200px; margin: 32px auto 0; padding: 24px 0 28px; background: #0B3A4D; color: #fff; }
-.pst-tools h2 { margin: 0 16px 14px; font-size: 26px; font-weight: 900; text-transform: uppercase; color: #FFD400; }
+.pst-tools h2 { margin: 0 16px 14px; font-size: 26px; font-weight: 900; text-transform: uppercase; color: #EDE7D6; }
 
 /* כפתור פתיחת "עוד כלים" — הכלים לא תופסים מקום עד שמבקשים אותם */
 .pst-tools-toggle {
@@ -723,10 +723,10 @@ html.easy-mode [role="dialog"] .text-xl {
   width: calc(100% - 24px);
   margin: 0 auto;
   padding: 12px 16px 12px 18px;
-  border: 2px solid #FFD400;
+  border: 2px solid #EDE7D6;
   border-radius: 14px;
   background: transparent;
-  color: #FFD400;
+  color: #EDE7D6;
   font-family: var(--font-display);
   font-size: 17px;
   font-weight: 900;
@@ -739,7 +739,7 @@ html.easy-mode [role="dialog"] .text-xl {
   flex: none;
   padding: 1px 10px;
   border-radius: 999px;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   font-size: 13px;
   font-weight: 900;
@@ -762,24 +762,24 @@ html:not(.skin-poster) .pst-tools-count {
 .pst-strip { display: flex; gap: 12px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
 .pst-strip::-webkit-scrollbar { display: none; }
 .pst-strip-2 { margin-top: 14px; }
-.pst-card { display: flex; flex-direction: column; justify-content: space-between; flex: none; width: 150px; height: 110px; padding: 12px; border: 3px solid #fff; border-radius: 16px; background: #FFD400; color: #0B3A4D; font-size: 15px; font-weight: 900; line-height: 1.1; text-align: start; }
-.pst-card:nth-child(3n+2) { background: #FF3B5D; color: #fff; }
+.pst-card { display: flex; flex-direction: column; justify-content: space-between; flex: none; width: 150px; height: 110px; padding: 12px; border: 3px solid #fff; border-radius: 16px; background: #EDE7D6; color: #0B3A4D; font-size: 15px; font-weight: 900; line-height: 1.1; text-align: start; }
+.pst-card:nth-child(3n+2) { background: #AC5F68; color: #fff; }
 .pst-card:nth-child(3n) { background: #fff; color: #0B3A4D; }
 .pst-card small { font-size: 12px; font-weight: 700; opacity: 1; }
-.pst-card-on { outline: 4px solid #FFD400; outline-offset: 3px; }
+.pst-card-on { outline: 4px solid #EDE7D6; outline-offset: 3px; }
 .pst-tools .pst-panel { margin: 16px 16px 0; }
 
 /* תחתית העמוד */
 .pst-ft { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; max-width: 1200px; margin: 0 auto; padding: 26px 16px 0; font-size: 14px; font-weight: 800; }
-.pst-ft a { color: #0B3A4D; text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: #FF3B5D; }
-.pst-credit { margin-inline-start: auto; padding: 5px 14px; border-radius: 999px; background: #FFD400; }
+.pst-ft a { color: #0B3A4D; text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: #AC5F68; }
+.pst-credit { margin-inline-start: auto; padding: 5px 14px; border-radius: 999px; background: #EDE7D6; }
 
 /* פס הפעולות התחתון */
 .pst-dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 40; display: flex; max-width: 1200px; height: calc(74px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); margin: 0 auto; border-top: 3px solid #0B3A4D; background: #fff; }
 .pst-dock button { flex: 1; padding: 0; border: 0; color: #0B3A4D; font-family: var(--font-display); font-size: 17px; font-weight: 700; text-transform: uppercase; }
-.pst-dock .pst-add { background: #FFD400; }
-.pst-dock .pst-fin { background: #FF3B5D; color: #fff; }
-.pst-dock .pst-scan { position: absolute; left: 50%; top: -23px; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; flex: none; border: 3px solid #fff; border-radius: 50%; background: #0B3A4D; color: #FFD400; }
+.pst-dock .pst-add { background: #EDE7D6; }
+.pst-dock .pst-fin { background: #AC5F68; color: #fff; }
+.pst-dock .pst-scan { position: absolute; left: 50%; top: -23px; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; flex: none; border: 3px solid #fff; border-radius: 50%; background: #0B3A4D; color: #EDE7D6; }
 .pst-dock .pst-scan svg { width: 22px; height: 22px; }
 
 @media (min-width: 640px) {
@@ -924,7 +924,7 @@ html.easy-mode .pst-card { height: 130px; }
   max-width: 1200px;
   margin: 0 auto;
   padding: 18px 16px 16px;
-  background: #FFD400;
+  background: #EDE7D6;
   animation: pstInR .7s cubic-bezier(.22, 1, .36, 1) both;
 }
 
@@ -934,7 +934,7 @@ html.easy-mode .pst-card { height: 130px; }
   inset-inline: 0;
   bottom: -18px;
   height: 18px;
-  background: #FFD400;
+  background: #EDE7D6;
   clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%);
   pointer-events: none;
 }
@@ -1002,7 +1002,7 @@ html.easy-mode .pst-card { height: 130px; }
 }
 
 .pst-backlink svg { width: 18px; height: 18px; flex: none; }
-.pst-backlink:hover { background: #0B3A4D; color: #FFD400; }
+.pst-backlink:hover { background: #0B3A4D; color: #EDE7D6; }
 .pst-backlink:active { opacity: .8; }
 .pst-backlink span { line-height: 1; }
 
@@ -1044,7 +1044,7 @@ html.easy-mode .pst-card { height: 130px; }
   gap: 10px;
   margin: 26px 0 12px;
   padding: 10px 16px;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   font-family: var(--font-display);
   font-size: 20px;
@@ -1053,7 +1053,7 @@ html.easy-mode .pst-card { height: 130px; }
   text-transform: uppercase;
 }
 
-.pst-h2-b { background: #FF3B5D; color: #fff; }
+.pst-h2-b { background: #AC5F68; color: #fff; }
 .pst-h2 small { margin-inline-start: auto; font-size: 15px; font-weight: 900; }
 
 /* שורה בתוך רשימה: כרטיס לבן עם מסגרת דיו וצל קשיח */
@@ -1072,14 +1072,14 @@ html.easy-mode .pst-card { height: 130px; }
 
 /* תמונת המוצר הקטנה בשורות המבצעים */
 .pst-thumb { width: 56px; height: 56px; flex: none; border: 3px solid #0B3A4D; border-radius: 14px; background: #fff; object-fit: contain; }
-.dark .pst-thumb { border-color: #FFD400; background: #12303b; }
+.dark .pst-thumb { border-color: #EDE7D6; background: #12303b; }
 
 /* שטח הפרסום בפס המבצעים — כרטיס ורוד מסומן, בפריים הראשון של הפס */
-.pst-spon { display: flex; align-items: center; gap: 12px; padding: 12px; border: 3px solid #0B3A4D; border-radius: 18px; background: #FF3B5D; color: #fff; box-shadow: 4px 4px 0 #0B3A4D; text-decoration: none; }
+.pst-spon { display: flex; align-items: center; gap: 12px; padding: 12px; border: 3px solid #0B3A4D; border-radius: 18px; background: #AC5F68; color: #fff; box-shadow: 4px 4px 0 #0B3A4D; text-decoration: none; }
 .pst-spon + .pst-lrow { margin-top: 10px; }
 .pst-spon-t { flex: 1; min-width: 0; font-size: 15px; font-weight: 900; line-height: 1.2; }
 .pst-spon-s { display: block; font-size: 12px; font-weight: 800; color: rgba(255, 255, 255, .86); }
-.pst-spon-tag { flex: none; padding: 4px 12px; border-radius: 999px; background: #FFD400; color: #0B3A4D; font-size: 13px; font-weight: 900; text-decoration: none; }
+.pst-spon-tag { flex: none; padding: 4px 12px; border-radius: 999px; background: #EDE7D6; color: #0B3A4D; font-size: 13px; font-weight: 900; text-decoration: none; }
 .pst-lrow-t { flex: 1; min-width: 0; font-size: 16px; font-weight: 900; line-height: 1.2; }
 .pst-lrow-s { font-size: 13px; font-weight: 700; color: rgba(11, 58, 77, .7); }
 .pst-lrow-v { flex: none; font-size: 17px; font-weight: 900; }
@@ -1140,8 +1140,8 @@ html.easy-mode .pst-card { height: 130px; }
   line-height: 1.35;
 }
 
-.pst-why:nth-child(3n+2) { background: #FFD400; }
-.pst-why:nth-child(3n) { background: #FF3B5D; color: #fff; }
+.pst-why:nth-child(3n+2) { background: #EDE7D6; }
+.pst-why:nth-child(3n) { background: #AC5F68; color: #fff; }
 
 .pst-why-n {
   flex: none;
@@ -1185,8 +1185,8 @@ html.easy-mode .pst-card { height: 130px; }
 }
 
 .dark [role="dialog"] {
-  border-color: #FFD400;
-  box-shadow: 6px 6px 0 #FFD400;
+  border-color: #EDE7D6;
+  box-shadow: 6px 6px 0 #EDE7D6;
 }
 
 /* מצב גדול ונוח גם במסכי הפנים */
@@ -1213,7 +1213,7 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 .dark .pst-card { color: #0B3A4D; }
 
 .dark .pst-num { color: #fff; }
-.dark .pst-trust { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-trust { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
 .dark .pst-num-t { color: #0B3A4D; }
 .dark .pst-h2-b,
 .dark .pst-sh-b,
@@ -1226,55 +1226,55 @@ html.easy-mode .pst-inner textarea { font-size: 1.05rem; min-height: 3rem; }
 .dark .pst-lrow,
 .dark .pst-why,
 .dark .pst-empty,
-.dark .pst-menu { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-menu { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
 
 .dark .pst-panel,
 .dark .pst-tile,
-.dark .pst-why { box-shadow: 5px 5px 0 #FFD400; }
+.dark .pst-why { box-shadow: 5px 5px 0 #EDE7D6; }
 
-.dark .pst-lrow { box-shadow: 4px 4px 0 #FFD400; }
+.dark .pst-lrow { box-shadow: 4px 4px 0 #EDE7D6; }
 .dark .pst-empty { border-style: dashed; }
 .dark .pst-lrow-s { color: rgba(245, 241, 235, .72); }
-.dark .pst-why:nth-child(3n+2) { background: #FFD400; color: #0B3A4D; }
-.dark .pst-why:nth-child(3n) { background: #FF3B5D; color: #fff; }
+.dark .pst-why:nth-child(3n+2) { background: #EDE7D6; color: #0B3A4D; }
+.dark .pst-why:nth-child(3n) { background: #AC5F68; color: #fff; }
 
 /* אריח המוצר */
-.dark .pst-ph { border-color: #FFD400; }
+.dark .pst-ph { border-color: #EDE7D6; }
 .dark .pst-meta { color: rgba(245, 241, 235, .72); }
 .dark .pst-q,
 .dark .pst-amount,
 .dark .pst-unit,
 .dark .pst-more,
-.dark .pst-remove { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-remove { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
 .dark .pst-q button { color: #0B3A4D; }
-.dark .pst-buy { background: #FFD400; color: #0B3A4D; }
-.dark .pst-buy:hover { background: #FF3B5D; color: #fff; }
+.dark .pst-buy { background: #EDE7D6; color: #0B3A4D; }
+.dark .pst-buy:hover { background: #AC5F68; color: #fff; }
 .dark .pst-remove { color: #FF8FA3; }
 .dark .pst-deal,
-.dark .pst-tag { border-color: #FFD400; }
+.dark .pst-tag { border-color: #EDE7D6; }
 
 /* פסים, כפתורים ושדות במסכי הפנים */
 .dark .pst-back,
 .dark .pst-backlink,
-.dark .pst-btn { border-color: #FFD400; background: #12303b; }
+.dark .pst-btn { border-color: #EDE7D6; background: #12303b; }
 .dark .pst-back,
-.dark .pst-backlink { color: #FFD400; }
-.dark .pst-bar { border-bottom-color: #FFD400; background: #0b1f27; }
-.dark .pst-bar-in span { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
-.dark .pst-bar-in .pst-bar-a { background: #FFD400; color: #0B3A4D; }
-.dark .pst-bar-in .pst-bar-b { background: #FF3B5D; color: #fff; }
+.dark .pst-backlink { color: #EDE7D6; }
+.dark .pst-bar { border-bottom-color: #EDE7D6; background: #0b1f27; }
+.dark .pst-bar-in span { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
+.dark .pst-bar-in .pst-bar-a { background: #EDE7D6; color: #0B3A4D; }
+.dark .pst-bar-in .pst-bar-b { background: #AC5F68; color: #fff; }
 .dark .pst-inner input:not([type="checkbox"]):not([type="radio"]),
 .dark .pst-inner textarea,
-.dark .pst-inner select { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
+.dark .pst-inner select { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
 .dark .pst-inner input::placeholder,
 .dark .pst-inner textarea::placeholder { color: rgba(245, 241, 235, .5); }
-.dark .pst-inner .pst-panel button { border-color: #FFD400; }
+.dark .pst-inner .pst-panel button { border-color: #EDE7D6; }
 .dark .pst-note { background: #12303b; }
 .dark .pst-ft a { color: #f5f1eb; }
-.dark .pst-dock { border-top-color: #FFD400; background: #0b1f27; }
+.dark .pst-dock { border-top-color: #EDE7D6; background: #0b1f27; }
 .dark .pst-tools { background: #071e27; }
 .dark .pst-credit { color: #0B3A4D; }
-.dark .pst-spon { border-color: #FFD400; box-shadow: 4px 4px 0 #FFD400; }
+.dark .pst-spon { border-color: #EDE7D6; box-shadow: 4px 4px 0 #EDE7D6; }
 .dark .pst-n { color: #fff; }
 
 /* ===================================================================
@@ -1553,7 +1553,7 @@ img,
   padding: 1px 8px;
   border: 2px solid #0B3A4D;
   border-radius: 999px;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   font-size: 12px;
   font-weight: 900;
@@ -1592,7 +1592,7 @@ img,
   .pst-list { padding: 20px 64px 0; }
 }
 
-.dark .pst-price { border-color: #FFD400; }
+.dark .pst-price { border-color: #EDE7D6; }
 
 html:not(.skin-poster) .pst-price {
   border: 1px solid hsl(var(--skin-line));
@@ -1758,15 +1758,15 @@ html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
   gap: 5px;
   height: 34px;
   padding: 0 12px;
-  border: 2px solid #FFD400;
+  border: 2px solid #EDE7D6;
   border-radius: 999px;
   background: transparent;
-  color: #FFD400;
+  color: #EDE7D6;
   font-size: 13px;
   font-weight: 900;
   white-space: nowrap;
 }
-.pst-live-btn-solid { background: #FFD400; color: #0B3A4D; }
+.pst-live-btn-solid { background: #EDE7D6; color: #0B3A4D; }
 .pst-live-badge {
   display: inline-grid;
   place-items: center;
@@ -1774,7 +1774,7 @@ html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
   height: 18px;
   padding: 0 4px;
   border-radius: 999px;
-  background: #FF3B5D;
+  background: #AC5F68;
   color: #fff;
   font-size: 11px;
   font-weight: 900;
@@ -1795,7 +1795,7 @@ html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
   transition: background-color .2s;
 }
 .pst-live-chip[data-here="false"] { opacity: .62; }
-.pst-live-me { background: rgba(255, 212, 0, .2); }
+.pst-live-me { background: rgba(237, 231, 214, .2); }
 .pst-live-av {
   display: grid;
   place-items: center;
@@ -1803,7 +1803,7 @@ html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
   height: 24px;
   flex: none;
   border-radius: 50%;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   font-size: 11px;
   font-weight: 900;
@@ -1814,10 +1814,10 @@ html.easy-mode .pst-tile.pst-line .pst-unit { height: 44px; }
   flex: none;
   height: 34px;
   padding: 0 12px;
-  border: 2px dashed #FFD400;
+  border: 2px dashed #EDE7D6;
   border-radius: 999px;
   background: transparent;
-  color: #FFD400;
+  color: #EDE7D6;
   font-size: 13px;
   font-weight: 900;
   white-space: nowrap;
@@ -1852,7 +1852,7 @@ html:not(.skin-poster) .pst-live-invite { border: 1px dashed hsl(var(--skin-line
 
 /* מצב כהה */
 .dark .pst-live { background: #0b1f27; color: #f5f1eb; }
-.dark .pst-live-btn { border-color: #FFD400; }
+.dark .pst-live-btn { border-color: #EDE7D6; }
 .dark .pst-live-chip { background: rgba(255, 255, 255, .12); }
 
 /* ===== לוגו גדול וממורכז בפתיח הרשימה ===== */
@@ -2022,7 +2022,7 @@ a.pst-btn,
   text-decoration: none;
 }
 
-html.skin-poster a.pst-btn { color: #FFD400; }
+html.skin-poster a.pst-btn { color: #EDE7D6; }
 html.skin-fridge a.pst-btn { color: var(--fridge-ink); }
 html:not(.skin-poster):not(.skin-fridge) a.pst-btn { color: #fff; }
 .dark a.pst-btn { color: #fff; }
@@ -2060,7 +2060,7 @@ html.dark:not(.skin-poster) .pst-sh {
 
 .pst-live .pst-live-chip.pst-live-me[data-here="true"] {
   border-color: #1fa971;
-  background: rgba(255, 212, 0, .22);
+  background: rgba(237, 231, 214, .22);
 }
 
 html:not(.skin-poster) .pst-live .pst-live-chip.pst-live-me[data-here="true"] {
@@ -2223,7 +2223,7 @@ html:not(.skin-poster) .pst-sync-time { background: hsl(var(--skin-surface-2)); 
   padding: 1px 9px;
   border: 2px solid #0B3A4D;
   border-radius: 999px;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   font-size: 12px;
   font-weight: 900;
@@ -2257,8 +2257,8 @@ html:not(.skin-poster) .pst-sync-time { background: hsl(var(--skin-surface-2)); 
   margin-top: -8px;
   border: 2px solid #0B3A4D;
   border-radius: 50%;
-  background: #FF3B5D;
-  box-shadow: 0 0 0 3px rgba(255, 212, 0, .5);
+  background: #AC5F68;
+  box-shadow: 0 0 0 3px rgba(237, 231, 214, .5);
 }
 
 .pst-range::-moz-range-track {
@@ -2273,7 +2273,7 @@ html:not(.skin-poster) .pst-sync-time { background: hsl(var(--skin-surface-2)); 
   height: 20px;
   border: 2px solid #0B3A4D;
   border-radius: 50%;
-  background: #FF3B5D;
+  background: #AC5F68;
 }
 
 .pst-range:focus-visible { outline: 3px solid #0B3A4D; outline-offset: 3px; }
@@ -2291,17 +2291,17 @@ html:not(.skin-poster) .pst-sync-time { background: hsl(var(--skin-surface-2)); 
   white-space: nowrap;
 }
 
-.pst-wchip-on { background: #FFD400; }
+.pst-wchip-on { background: #EDE7D6; }
 
 /* מצב כהה */
 .dark .pst-weight-top { color: #f5f1eb; }
-.dark .pst-weight-val { border-color: #FFD400; background: #FFD400; color: #0B3A4D; }
+.dark .pst-weight-val { border-color: #EDE7D6; background: #EDE7D6; color: #0B3A4D; }
 .dark .pst-range::-webkit-slider-runnable-track,
-.dark .pst-range::-moz-range-track { border-color: #FFD400; background: #12303b; }
+.dark .pst-range::-moz-range-track { border-color: #EDE7D6; background: #12303b; }
 .dark .pst-range::-webkit-slider-thumb,
-.dark .pst-range::-moz-range-thumb { border-color: #FFD400; background: #FF3B5D; }
-.dark .pst-wchip { border-color: #FFD400; background: #12303b; color: #f5f1eb; }
-.dark .pst-wchip-on { background: #FFD400; color: #0B3A4D; }
+.dark .pst-range::-moz-range-thumb { border-color: #EDE7D6; background: #AC5F68; }
+.dark .pst-wchip { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
+.dark .pst-wchip-on { background: #EDE7D6; color: #0B3A4D; }
 
 /* הערכה הרגועה */
 html:not(.skin-poster) .pst-weight-top { color: hsl(var(--skin-ink)); }

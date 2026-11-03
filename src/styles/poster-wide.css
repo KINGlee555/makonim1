@@ -5,12 +5,12 @@
 
 /* רקע הכרזה — נייר קרם עם פסים אלכסוניים והילה צהובה ורודה, כך שאין דף לבן ריק */
 .pw-page {
-  background-color: #FDF8E8;
+  background-color: #F8F6F0;
   background-image:
-    radial-gradient(70rem 26rem at 50% -8rem, rgba(255, 212, 0, .34) 0%, rgba(255, 212, 0, 0) 62%),
+    radial-gradient(70rem 26rem at 50% -8rem, rgba(237, 231, 214, .34) 0%, rgba(237, 231, 214, 0) 62%),
     radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
     radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
-    repeating-linear-gradient(45deg, #FFFDF4 0 22px, #F7EFD6 22px 44px);
+    repeating-linear-gradient(45deg, #FBFAF6 0 22px, #F1EEE4 22px 44px);
   color: #0B3A4D;
   padding-bottom: 118px;
 }
@@ -51,7 +51,7 @@
 /* ===== הפתיח הצהוב ===== */
 .pw-hero {
   position: relative;
-  background: #FFD400;
+  background: #EDE7D6;
   padding: 18px 16px 30px;
   display: flex;
   flex-direction: column;
@@ -66,7 +66,7 @@
   inset-inline: 0;
   bottom: -14px;
   height: 14px;
-  background: #FFD400;
+  background: #EDE7D6;
   clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%);
   pointer-events: none;
 }
@@ -102,7 +102,7 @@
   font-size: 13px;
   font-weight: 700;
   background: #0B3A4D;
-  color: #FFD400;
+  color: #EDE7D6;
   padding: 6px 14px;
   border-radius: 4px;
   letter-spacing: .08em;
@@ -128,7 +128,7 @@
   box-shadow: 0 3px 0 #0B3A4D;
 }
 
-.pw-btn-s { background: #FF3B5D; color: #fff; }
+.pw-btn-s { background: #AC5F68; color: #fff; }
 
 .pw-hint {
   font-size: 11px;
@@ -177,7 +177,7 @@
   letter-spacing: 0;
 }
 
-.pw-num-t { background: #FF3B5D; color: #fff; }
+.pw-num-t { background: #AC5F68; color: #fff; }
 
 /* ===== פס הדיו: מי ברשימה ומצב המחירים ===== */
 .pw-strip {
@@ -209,7 +209,7 @@
 
 .pw-strip .pst-live-top { gap: 8px; flex-wrap: wrap; }
 .pw-strip .pst-live-title { font-size: 14px; font-weight: 600; }
-.pw-strip .pst-live-dot { background: #FFD400; box-shadow: none; animation: none; }
+.pw-strip .pst-live-dot { background: #EDE7D6; box-shadow: none; animation: none; }
 
 .pw-strip .pst-live-btn {
   border: 2px solid #fff;
@@ -222,13 +222,13 @@
   font-weight: 800;
 }
 
-.pw-strip .pst-live-btn-solid { background: #FF3B5D; border-color: #FF3B5D; }
-.pw-strip .pst-live-badge { background: #FFD400; color: #0B3A4D; }
+.pw-strip .pst-live-btn-solid { background: #AC5F68; border-color: #AC5F68; }
+.pw-strip .pst-live-badge { background: #EDE7D6; color: #0B3A4D; }
 
 .pw-strip .pst-live-row { gap: 8px; }
 .pw-strip .pst-live-chip { background: rgba(255, 255, 255, .14); font-size: 13px; }
-.pw-strip .pst-live-av { background: #FFD400; color: #0B3A4D; }
-.pw-strip .pst-live-invite { border: 2px dashed #FFD400; color: #FFD400; background: transparent; border-radius: 4px; height: auto; padding: 6px 12px; }
+.pw-strip .pst-live-av { background: #EDE7D6; color: #0B3A4D; }
+.pw-strip .pst-live-invite { border: 2px dashed #EDE7D6; color: #EDE7D6; background: transparent; border-radius: 4px; height: auto; padding: 6px 12px; }
 
 .pw-strip .pst-sync {
   margin: 0;
@@ -239,10 +239,10 @@
   flex-wrap: wrap;
 }
 
-.pw-strip .pst-sync-dot { background: #FFD400; box-shadow: none; animation: none; }
+.pw-strip .pst-sync-dot { background: #EDE7D6; box-shadow: none; animation: none; }
 
 .pw-strip .pst-sync-btn {
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   border: 0;
   border-radius: 4px;
@@ -253,14 +253,14 @@
 }
 
 .pw-strip .pst-sync-btn:hover:not(:disabled) { background: #fff; }
-.pw-strip .pst-sync-time { background: rgba(255, 212, 0, .2); color: #FFD400; }
+.pw-strip .pst-sync-time { background: rgba(237, 231, 214, .2); color: #EDE7D6; }
 
 .pw-strip-sep {
   display: none;
   flex: none;
   width: 3px;
   height: 22px;
-  background: #FFD400;
+  background: #EDE7D6;
 }
 
 /* ===== בקשת הפעלת התראות ===== */
@@ -268,7 +268,7 @@
   width: auto;
   max-width: none;
   margin: 20px 16px 0;
-  background: #FFE680;
+  background: #F5F1E6;
   border: 3px solid #0B3A4D;
   border-radius: 4px;
   box-shadow: 6px 6px 0 #0B3A4D;
@@ -283,7 +283,7 @@
 }
 
 .pw-page .pst-note button {
-  background: #FFD400;
+  background: #EDE7D6;
   border: 3px solid #0B3A4D;
   border-radius: 4px;
   padding: 10px 18px;
@@ -337,7 +337,7 @@
   white-space: nowrap;
 }
 
-.pw-bar .pw-bar-a { background: #FFD400; }
+.pw-bar .pw-bar-a { background: #EDE7D6; }
 
 /* ===== שורת המיון ===== */
 .pw-sort {
@@ -368,7 +368,7 @@
 .pw-sort .pw-cmp {
   margin-inline-start: auto;
   background: #0B3A4D;
-  color: #FFD400;
+  color: #EDE7D6;
   border: 0;
   border-radius: 4px;
   padding: 10px 18px;
@@ -394,7 +394,7 @@
 .pw-sh {
   position: relative;
   margin: 0;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   padding: 14px 16px;
   display: flex;
@@ -413,7 +413,7 @@
   inset-inline: 0;
   top: -14px;
   height: 14px;
-  background: #FFD400;
+  background: #EDE7D6;
   clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 0);
 }
 
@@ -436,7 +436,7 @@
   font-size: 44px;
   line-height: 1;
   font-weight: 900;
-  color: #FF3B5D;
+  color: #AC5F68;
   -webkit-text-stroke: 2px #0B3A4D;
   letter-spacing: 0;
 }
@@ -477,7 +477,7 @@
   border-radius: 50%;
   border: 3px solid #0B3A4D;
   overflow: hidden;
-  background: #FFE680;
+  background: #F5F1E6;
 }
 
 .pw-ph > button { all: unset; display: block; width: 100%; height: 100%; cursor: pointer; }
@@ -485,7 +485,7 @@
 
 .pw-price {
   display: inline-block;
-  background: #FF3B5D;
+  background: #AC5F68;
   color: #fff;
   font-weight: 900;
   font-size: 19px;
@@ -520,7 +520,7 @@
 }
 
 .pw-deal {
-  background: #FFD400;
+  background: #EDE7D6;
   border: 2px solid #0B3A4D;
   border-radius: 4px;
   padding: 2px 9px;
@@ -534,14 +534,14 @@
   align-items: center;
   gap: 4px;
   background: #0B3A4D;
-  color: #FFD400;
+  color: #EDE7D6;
   border-radius: 4px;
   padding: 2px 9px;
   font-size: 12px;
   font-weight: 800;
 }
 
-.pw-remind-due { background: #FF3B5D; color: #fff; }
+.pw-remind-due { background: #AC5F68; color: #fff; }
 
 .pw-row {
   display: flex;
@@ -569,7 +569,7 @@
   height: 30px;
   border: 0;
   border-radius: 4px;
-  background: #FFE680;
+  background: #F5F1E6;
   color: #0B3A4D;
   font-size: 18px;
   font-weight: 900;
@@ -581,7 +581,7 @@
 
 .pw-buy {
   flex: 1;
-  background: #FFD400;
+  background: #EDE7D6;
   border: 3px solid #0B3A4D;
   border-radius: 4px;
   padding: 9px;
@@ -614,16 +614,16 @@
   height: 40px;
 }
 
-.pw-card .pst-unit { background: #FFE680; font-weight: 900; font-size: 13px; padding: 0 10px; }
+.pw-card .pst-unit { background: #F5F1E6; font-weight: 900; font-size: 13px; padding: 0 10px; }
 .pw-card .pst-amount { width: 58px; text-align: center; font-weight: 900; }
-.pw-card .pst-remove { width: 40px; color: #FF3B5D; }
+.pw-card .pst-remove { width: 40px; color: #AC5F68; }
 .pw-card .pst-group { display: flex; gap: 6px; align-items: center; }
 
 /* ===== מצב ריק ושלושת הכפתורים הגדולים ===== */
 .pw-empty {
   margin: 28px 16px 0;
   padding: 22px;
-  background: #FFE680;
+  background: #F5F1E6;
   border: 3px dashed #0B3A4D;
   border-radius: 4px;
   text-align: center;
@@ -663,13 +663,13 @@
 }
 
 .pw-big svg { width: 40px; height: 40px; }
-.pw-big-y { background: #FFD400; }
-.pw-big-k { background: #FF3B5D; color: #fff; }
+.pw-big-y { background: #EDE7D6; }
+.pw-big-k { background: #AC5F68; color: #fff; }
 
 /* ===== מבצעים וכלים — אותם מקטעים, בשפת הכרזה ===== */
 .pw-deals {
   margin: 28px 0 0;
-  background: #FF3B5D;
+  background: #AC5F68;
   padding: 20px 16px 24px;
   color: #fff;
 }
@@ -706,12 +706,12 @@
 .pw-deals-panel .pst-btn {
   border: 3px solid #0B3A4D;
   border-radius: 4px;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   font-weight: 900;
 }
 
-.pw-deals-panel .pst-btn-s { background: #FF3B5D; color: #fff; }
+.pw-deals-panel .pst-btn-s { background: #AC5F68; color: #fff; }
 
 /* עוד כלים — רצועת דיו עם כפתורים צהובים */
 .pw-page .pst-tools {
@@ -723,7 +723,7 @@
 
 .pw-page .pst-tools h2 {
   margin: 0 0 14px;
-  color: #FFD400;
+  color: #EDE7D6;
   font-size: 22px;
   font-weight: 900;
   letter-spacing: .12em;
@@ -736,7 +736,7 @@
 .pw-page .pst-tools .pst-card {
   border: 3px solid #fff;
   border-radius: 4px;
-  background: #FFD400;
+  background: #EDE7D6;
   color: #0B3A4D;
   width: 150px;
   height: auto;
@@ -747,9 +747,9 @@
   box-shadow: none;
 }
 
-.pw-page .pst-tools .pst-card:nth-child(3n+2) { background: #FF3B5D; color: #fff; }
+.pw-page .pst-tools .pst-card:nth-child(3n+2) { background: #AC5F68; color: #fff; }
 .pw-page .pst-tools .pst-card:nth-child(3n) { background: #fff; color: #0B3A4D; }
-.pw-page .pst-tools .pst-card-on { outline: 3px solid #FFD400; outline-offset: 2px; }
+.pw-page .pst-tools .pst-card-on { outline: 3px solid #EDE7D6; outline-offset: 2px; }
 .pw-page .pst-tools .pst-card small { font-size: 12px; font-weight: 700; }
 
 .pw-page .pst-tools .pst-panel {
@@ -763,7 +763,7 @@
 
 /* ===== תחתית ===== */
 .pw-page .pst-ft { padding: 24px 16px 0; font-size: 14px; gap: 10px; }
-.pw-page .pst-credit { font-size: 13px; font-weight: 600; background: #FFE680; }
+.pw-page .pst-credit { font-size: 13px; font-weight: 600; background: #F5F1E6; }
 
 /* ===== פס הפעולות התחתון ===== */
 .pw-dock {
@@ -774,7 +774,7 @@
   height: calc(86px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: #0B3A4D;
-  border-top: 4px solid #FFD400;
+  border-top: 4px solid #EDE7D6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -794,8 +794,8 @@
   letter-spacing: .06em;
 }
 
-.pw-add { background: #FFD400; color: #0B3A4D; }
-.pw-fin { background: #FF3B5D; color: #fff; }
+.pw-add { background: #EDE7D6; color: #0B3A4D; }
+.pw-fin { background: #AC5F68; color: #fff; }
 
 .pw-scan {
   position: absolute;
@@ -806,13 +806,13 @@
   height: 60px;
   flex: none;
   border-radius: 50%;
-  background: #FF3B5D;
+  background: #AC5F68;
   border: 4px solid #0B3A4D;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 0 #FFD400;
+  box-shadow: 0 6px 0 #EDE7D6;
 }
 
 .pw-scan svg { width: 28px; height: 28px; }
@@ -876,12 +876,12 @@
 
 /* ===== הרקע של הכרזה בכל המסכים, לא רק ברשימה ===== */
 html:not(.dark):not(.skin-fridge) body {
-  background-color: #FDF8E8;
+  background-color: #F8F6F0;
   background-image:
-    radial-gradient(70rem 26rem at 50% -8rem, rgba(255, 212, 0, .34) 0%, rgba(255, 212, 0, 0) 62%),
+    radial-gradient(70rem 26rem at 50% -8rem, rgba(237, 231, 214, .34) 0%, rgba(237, 231, 214, 0) 62%),
     radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
     radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
-    repeating-linear-gradient(45deg, #FFFDF4 0 22px, #F7EFD6 22px 44px);
+    repeating-linear-gradient(45deg, #FBFAF6 0 22px, #F1EEE4 22px 44px);
   background-attachment: fixed;
 }
 
@@ -995,12 +995,12 @@ html:not(.dark):not(.skin-fridge) .pw-page {
 
 /* מצב כהה לא משנה את הכרזה — היא נשארת בהירה וקריאה */
 .dark .pw-page {
-  background-color: #FDF8E8;
+  background-color: #F8F6F0;
   background-image:
-    radial-gradient(70rem 26rem at 50% -8rem, rgba(255, 212, 0, .34) 0%, rgba(255, 212, 0, 0) 62%),
+    radial-gradient(70rem 26rem at 50% -8rem, rgba(237, 231, 214, .34) 0%, rgba(237, 231, 214, 0) 62%),
     radial-gradient(38rem 30rem at 6% 22%, rgba(255, 59, 93, .13) 0%, rgba(255, 59, 93, 0) 70%),
     radial-gradient(34rem 26rem at 96% 64%, rgba(11, 58, 77, .1) 0%, rgba(11, 58, 77, 0) 70%),
-    repeating-linear-gradient(45deg, #FFFDF4 0 22px, #F7EFD6 22px 44px);
+    repeating-linear-gradient(45deg, #FBFAF6 0 22px, #F1EEE4 22px 44px);
   color: #0B3A4D;
 }
 
