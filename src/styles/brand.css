@@ -31,6 +31,11 @@
 
 .dark .brand-logo-word { color: #ede7d6; }
 
+/* במצב כהה פס הפתיח של הרשימה נשאר בהיר (קרם) — שם המילה בצבע הדיו,
+   אחרת הלוגו נעלם לגמרי על הרקע הבהיר */
+.dark .pw-hero .brand-logo-word,
+.dark .pst-hero .brand-logo-word { color: #0b3a4d; }
+
 /* בתוך פסי המיתוג הקיימים — בלי ריווח אותיות גדול ובלי אותיות גדולות */
 .pst-brand,
 .pw-brand,
