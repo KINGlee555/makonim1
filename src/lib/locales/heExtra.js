@@ -6,6 +6,8 @@ const heExtra = {
   "basket.addAll": "הוסף את כל הסל לרשימה",
   "basket.addOne": "הוסף לרשימה",
   "basket.remove": "הסר מהסל",
+  "basket.addProduct": "הוסף לסל הקבוע",
+  "basket.inBasket": "בסל הקבוע",
 
   // התראות
   "notify.turnOn": "הפעל התראות",

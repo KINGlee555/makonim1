@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Bell, Pencil, CircleSlash2, Star, Camera, Send, Flag, Clock } from "lucide-react";
+import { Bell, Pencil, CircleSlash2, Star, Camera, Send, Flag, Clock, ShoppingBasket } from "lucide-react";
 import ProductPhoto from "@/components/ProductPhoto";
 import WeightQuantity from "@/components/minimal/WeightQuantity";
 import WeightSlider from "@/components/minimal/WeightSlider";
@@ -100,6 +100,14 @@ function ListItemRow({ item, index = 0, onToggleBought, onUpdateQuantity, onNavi
           onClick={(event) => { celebrate(event.currentTarget); onToggleBought(item); }}
           className="pw-buy">
           {t("productItem.bought")}
+        </button>
+
+        <button type="button"
+          aria-label={`${isFavorite ? t("basket.inBasket") : t("basket.addProduct")}: ${item.name}`}
+          aria-pressed={!!isFavorite}
+          onClick={() => onToggleFavorite(item)}
+          className={`pw-kb pw-kb-basket ${isFavorite ? "pw-kb-on" : ""}`}>
+          <ShoppingBasket aria-hidden="true" className="h-4 w-4" />
         </button>
 
         <DropdownMenu>

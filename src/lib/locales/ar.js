@@ -189,6 +189,8 @@ const ar = {
   "basket.addAll": "أضف السلة كلها إلى القائمة",
   "basket.addOne": "أضف إلى القائمة",
   "basket.remove": "إزالة من السلة",
+  "basket.addProduct": "أضف إلى السلّة الثابتة",
+  "basket.inBasket": "في السلّة الثابتة",
   "favorites.save": "حفظ",
   "favorites.saved": "مفضّل",
   "favorites.add": "إضافة",

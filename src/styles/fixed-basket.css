@@ -87,6 +87,12 @@
 .fb-x svg,
 .fb-add svg { width: 17px; height: 17px; }
 
+/* כפתור ההוספה לסל בשורת המוצר שברשימה */
+.pw-kb-basket { display: grid; place-items: center; }
+.pw-kb-basket.pw-kb-on { background: #EDE7D6; color: #AC5F68; }
+.dark .pw-kb-basket.pw-kb-on { background: #EDE7D6; color: #AC5F68; }
+html:not(.skin-poster) .pw-kb-basket.pw-kb-on { background: hsl(var(--pst-yellow)); color: hsl(var(--pst-ink)); }
+
 /* מצב כהה */
 .dark .fb-row,
 .dark .fb-x,
