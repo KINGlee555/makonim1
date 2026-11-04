@@ -25,21 +25,29 @@ export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category
   itemsRef.current = items;
   const favoritesRef = useRef([]);
   favoritesRef.current = favorites;
+  // מי המשתמש — הסל הקבוע נשמר לו אישית, לא לרשימה ולא למשפחה
+  const userEmailRef = useRef("");
   const needProfileRef = useRef(onNeedProfile);
   needProfileRef.current = onNeedProfile;
 
+  const loadFavorites = useCallback(async () => {
+    const email = userEmailRef.current;
+    if (!email) return;
+    const mine = await base44.entities.FavoriteProduct.filter({ user_email: email }, "-created_date", 200);
+    setFavorites(mine);
+  }, []);
+
   const loadData = useCallback(async () => {
-    const [allLists, allItems, allFavorites] = await Promise.all([
+    const [allLists, allItems] = await Promise.all([
       base44.entities.ShoppingList.filter({ id: listId }),
-      base44.entities.ListItem.filter({ list_id: listId }, sortMode === "cheap" ? "price" : "-created_date", 200),
-      base44.entities.FavoriteProduct.filter({ list_id: listId }, "-created_date", 100)
+      base44.entities.ListItem.filter({ list_id: listId }, sortMode === "cheap" ? "price" : "-created_date", 200)
     ]);
     if (allLists.length > 0) setList(allLists[0]);
     setItems(allItems);
-    setFavorites(allFavorites);
-    writeListCache(listId, allLists[0], allItems, allFavorites);
+    writeListCache(listId, allLists[0], allItems, favoritesRef.current);
     setLoading(false);
-  }, [listId, sortMode]);
+    loadFavorites();
+  }, [listId, sortMode, loadFavorites]);
 
   // רענון שקט כל 5 שניות — כל המשתתפים רואים את אותה רשימה
   useEffect(() => {
@@ -54,6 +62,8 @@ export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category
     base44.auth.me().then(me => {
       setUser(me);
       userNameRef.current = me.full_name || me.email || "";
+      userEmailRef.current = me.email || "";
+      loadFavorites();
       if (!me.full_name) {
         const localName = loadLocalName();
         if (localName) {
@@ -101,7 +111,7 @@ export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category
     const unsubscribe = base44.entities.FavoriteProduct.subscribe((event) => {
       if (event.type === "delete") {
         setFavorites(prev => prev.filter(favorite => favorite.id !== event.id));
-      } else if (event.data?.list_id === listId) {
+      } else if (event.data?.user_email === userEmailRef.current) {
         setFavorites(prev => event.type === "create"
           ? (prev.some(favorite => favorite.id === event.data.id) ? prev : [event.data, ...prev])
           : prev.map(favorite => favorite.id === event.id ? event.data : favorite));
@@ -194,6 +204,7 @@ export function useShoppingList(listId, { t, onNeedProfile, sortMode = "category
       return;
     }
     const favorite = await base44.entities.FavoriteProduct.create({
+      user_email: userEmailRef.current,
       list_id: listId, name: product.name, price: product.price || 0,
       image_url: product.image_url || "", category: product.category || "אחר",
       brand: product.brand || ""
