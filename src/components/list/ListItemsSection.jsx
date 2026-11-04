@@ -1,5 +1,6 @@
 import { Search, ScanLine, ShoppingCart } from "lucide-react";
 import ListItemRow from "@/components/minimal/ListItemRow";
+import FixedBasket from "@/components/basket/FixedBasket";
 import AreaDeals from "@/components/deals/AreaDeals";
 import UnavailableItem from "@/components/UnavailableItem";
 import SectionRunner from "@/components/poster/SectionRunner";
@@ -12,12 +13,14 @@ export default function ListItemsSection({
   onToggleBought, onUpdateQuantity, onNavigate, onRemove, onEdit, onSetReminder,
   onUnavailable, onToggleFavorite, onChangePhoto, onUpdateDetails, onSuggestPhoto,
   onReportPrice, onPhotoFound, onRestore, onAddProduct, onOpenSearch, onOpenScanner, onOpenShoppingMode,
-  listId, onOpenAllDeals,
+  listId, onOpenAllDeals, onAddAllFavorites,
 }) {
   const t = useT();
 
   return (
     <>
+      <FixedBasket favorites={favorites} onAdd={onAddProduct} onAddAll={onAddAllFavorites} onRemove={onToggleFavorite} />
+
       {groupedCategories.map(([category, categoryItems]) => (
         <section key={category} className="pw-sec">
           <h2 className="pw-sh">

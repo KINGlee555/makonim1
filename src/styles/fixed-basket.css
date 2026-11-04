@@ -1,0 +1,112 @@
+/* ===== הסל הקבוע — המוצרים שתמיד קונים, בכרטיס אחד בראש הרשימה ===== */
+.fb-sec { animation: pwRise .5s .05s both; }
+
+.fb-panel { display: flex; flex-direction: column; gap: 12px; }
+
+/* "הוסף את כל הסל" — הפעולה המרכזית של הסל */
+.fb-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 3px solid #0B3A4D;
+  border-radius: 999px;
+  background: #0B3A4D;
+  color: #EDE7D6;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.fb-all:hover { background: #AC5F68; color: #fff; }
+
+/* רשימת המוצרים בסל — שורה אחת לכל מוצר, קומפקטי */
+.fb-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  border: 2px solid #0B3A4D;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.fb-photo {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.fb-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fb-price {
+  flex: none;
+  font-size: 13px;
+  font-weight: 900;
+  color: #AC5F68;
+}
+
+.fb-x,
+.fb-add {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  padding: 0;
+  border: 2px solid #0B3A4D;
+  border-radius: 50%;
+  background: #fff;
+  color: #0B3A4D;
+}
+
+.fb-x { color: #AC5F68; }
+.fb-add { background: #EDE7D6; }
+
+.fb-x svg,
+.fb-add svg { width: 17px; height: 17px; }
+
+/* מצב כהה */
+.dark .fb-row,
+.dark .fb-x,
+.dark .fb-add { border-color: #EDE7D6; background: #12303b; color: #f5f1eb; }
+.dark .fb-add { background: #EDE7D6; color: #0B3A4D; }
+.dark .fb-all { border-color: #EDE7D6; background: #EDE7D6; color: #0B3A4D; }
+.dark .fb-all:hover { background: #AC5F68; color: #fff; }
+
+/* הערכה הרגועה — אותה שורה, מסגרת דקה */
+html:not(.skin-poster) .fb-row { border: 1px solid hsl(var(--skin-line)); }
+html:not(.skin-poster) .fb-all { border: 0; background: hsl(var(--pst-ink)); color: #fff; }
+html:not(.skin-poster) .fb-x,
+html:not(.skin-poster) .fb-add { border: 1px solid hsl(var(--skin-line)); background: hsl(var(--skin-surface-2)); color: hsl(var(--skin-ink)); }
+html:not(.skin-poster) .fb-price { color: hsl(var(--pst-pink)); }
+
+@media (min-width: 640px) {
+  .fb-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fb-all { font-size: 17px; }
+}
+
+@media (min-width: 1024px) {
+  .fb-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

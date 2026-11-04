@@ -185,6 +185,10 @@ const ar = {
 
   "favorites.title": "منتجات مفضلة",
   "favorites.family": "مشترك للعائلة",
+  "basket.fixed": "سلّتي الثابتة",
+  "basket.addAll": "أضف السلة كلها إلى القائمة",
+  "basket.addOne": "أضف إلى القائمة",
+  "basket.remove": "إزالة من السلة",
   "favorites.save": "حفظ",
   "favorites.saved": "مفضّل",
   "favorites.add": "إضافة",

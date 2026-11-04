@@ -221,6 +221,7 @@ export default function ListView() {
           onOpenSearch={() => show("search")}
           onOpenScanner={() => show("scanner")}
           onOpenShoppingMode={() => show("shopping")}
+          onAddAllFavorites={() => favorites.forEach(favorite => handleAddProduct(favorite))}
           listId={listId}
           onOpenAllDeals={() => show("deals")}
         />
